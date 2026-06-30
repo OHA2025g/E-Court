@@ -30,7 +30,16 @@ style-src without fonts.googleapis.com
 
 ## 2. MongoDB (ecourtdb)
 
-Easypanel internal host: **`ecourt_ecourtdb`** (not `ecourtdb`).
+See **[MONGO_SETUP.md](./MONGO_SETUP.md)** for full database setup, verify, and restore steps.
+
+Easypanel credentials (internal):
+
+| Field | Value |
+|-------|-------|
+| User | `mongo` |
+| Internal host (backend `MONGO_URL`) | `ecourt_ecourtdb` |
+| Internal host (mongo terminal) | `localhost` |
+| Port | `27017` |
 
 On the **backend** service set:
 
@@ -39,7 +48,7 @@ MONGO_URL=mongodb://mongo:YOUR_PASSWORD@ecourt_ecourtdb:27017/pmis_ecourts?authS
 DB_NAME=pmis_ecourts
 ```
 
-Take the URI from [mongo ecourtdb](http://31.97.207.166:3000/projects/ecourt/mongo/ecourtdb) and add `/pmis_ecourts?authSource=admin` before `&tls=false` if missing.
+Take the password from Easypanel → mongo → ecourtdb → **Credentials**.
 
 ### Import seed data (first deploy)
 
