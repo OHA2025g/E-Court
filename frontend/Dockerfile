@@ -9,7 +9,7 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
-ARG REACT_APP_BACKEND_URL=http://localhost:5182
+ARG REACT_APP_BACKEND_URL=https://ecourt.demoapi.agrayianailabs.com
 ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
 ARG REACT_APP_SHOW_DEMO=false
 ENV REACT_APP_SHOW_DEMO=$REACT_APP_SHOW_DEMO
