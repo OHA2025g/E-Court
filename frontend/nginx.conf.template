@@ -9,8 +9,11 @@ server {
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
-    # Local dev reference — Docker uses nginx.conf.template + docker-entrypoint.sh
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' https://us.i.posthog.com; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'self';" always;
+    # CSP_CONNECT_SRC: set CSP_API_ORIGIN at container start when API is on another host
+    # e.g. CSP_API_ORIGIN=https://ecourt.demoapi.agrayianailabs.com
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' ${CSP_CONNECT_SRC} https://us.i.posthog.com; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'self';" always;
+    # Enable when TLS terminates at this nginx instance:
+    # add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
     location /api/ {
         proxy_pass http://backend:8001/api/;

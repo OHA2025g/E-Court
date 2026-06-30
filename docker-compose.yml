@@ -69,6 +69,10 @@ services:
         REACT_APP_BACKEND_URL: http://localhost:5182
         REACT_APP_SHOW_DEMO: ${REACT_APP_SHOW_DEMO:-true}
     restart: unless-stopped
+    environment:
+      # Split deploy only: allow cross-origin API in CSP (must match REACT_APP_BACKEND_URL origin)
+      # CSP_API_ORIGIN: https://ecourt.demoapi.agrayianailabs.com
+      CSP_API_ORIGIN: ${CSP_API_ORIGIN:-}
     ports:
       - "5182:80"
     depends_on:

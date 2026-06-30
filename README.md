@@ -313,7 +313,41 @@ Checks health, CAPTCHA, login lockout path, session API, and Admin 2FA gate.
 
 ---
 
-## 9. Security deployment notes
+## 9. Production deployment (split frontend + API)
+
+When the React app and API run on **different domains** (e.g. frontend on `ecourt.example.com`, API on `ecourt.demoapi.agrayianailabs.com`):
+
+### Frontend build
+
+```bash
+docker build ./frontend \
+  --build-arg REACT_APP_BACKEND_URL=https://ecourt.demoapi.agrayianailabs.com
+```
+
+### Frontend runtime (CSP)
+
+Set **`CSP_API_ORIGIN`** to the API origin (no trailing slash). This updates nginx `connect-src` so browser fetch is allowed:
+
+```bash
+CSP_API_ORIGIN=https://ecourt.demoapi.agrayianailabs.com
+```
+
+Without this, the public page shows *"Unable to load progress data"* and the console reports CSP `connect-src 'self'` violations.
+
+### Backend CORS
+
+Set **`CORS_ORIGINS`** to your frontend URL(s), comma-separated:
+
+```bash
+CORS_ORIGINS=https://ecourt.example.com,https://www.ecourt.example.com
+COOKIE_SECURE=true
+```
+
+Also set `CORS_ORIGINS` on the API host — cookies use `withCredentials: true`.
+
+---
+
+## 10. Security deployment notes
 
 | Control | Configuration |
 |---|---|
@@ -331,7 +365,7 @@ After deploy, all users must **sign in once** (session store migration).
 
 ---
 
-## 10. Useful Endpoints (Admin)
+## 11. Useful Endpoints (Admin)
 
 | Endpoint | Purpose |
 |---|---|
@@ -348,7 +382,7 @@ Full OpenAPI docs: open `http://localhost:8001/docs` while the backend is runnin
 
 ---
 
-## 11. Roadmap
+## 12. Roadmap
 
 See `memory/PRD.md` for the prioritised backlog (Phase 2, including live SMTP,
 PFMS integration, AI narrative summaries, 2FA for non-Admin roles, full
