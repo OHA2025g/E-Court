@@ -30,9 +30,16 @@ style-src without fonts.googleapis.com
 
 ## 2. MongoDB (ecourtdb)
 
-1. Open [mongo ecourtdb](http://31.97.207.166:3000/projects/ecourt/mongo/ecourtdb) in Easypanel.
-2. Copy the **internal connection string** (host is usually `ecourtdb`).
-3. Set `MONGO_URL` and `DB_NAME=pmis_ecourts` on the **backend** service.
+Easypanel internal host: **`ecourt_ecourtdb`** (not `ecourtdb`).
+
+On the **backend** service set:
+
+```env
+MONGO_URL=mongodb://mongo:YOUR_PASSWORD@ecourt_ecourtdb:27017/pmis_ecourts?authSource=admin&tls=false
+DB_NAME=pmis_ecourts
+```
+
+Take the URI from [mongo ecourtdb](http://31.97.207.166:3000/projects/ecourt/mongo/ecourtdb) and add `/pmis_ecourts?authSource=admin` before `&tls=false` if missing.
 
 ### Import seed data (first deploy)
 
