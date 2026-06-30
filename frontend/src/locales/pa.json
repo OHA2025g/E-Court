@@ -1,0 +1,328 @@
+{
+  "app": {
+    "title": "ਈ-ਕੋਰਟਸ PMIS",
+    "subtitle": "ਚਰਨ III · ਪ੍ਰੋਜੈਕਟ ਨਿਗਰਾਨੀ"
+  },
+  "nav": {
+    "dashboard": "ਡੈਸ਼ਬੋਰਡ",
+    "physical": "ਭੌਤਿਕ ਟ੍ਰੈਕਰ",
+    "financial": "ਵਿੱਤੀ ਟ੍ਰੈਕਰ",
+    "outcome": "ਨਤੀਜਾ ਟ੍ਰੈਕਰ",
+    "submissions": "ਜਮਾਅ",
+    "reports": "ਰਿਪੋਰਟਾਂ",
+    "master": "ਮਾਸਟਰ ਡੇਟਾ",
+    "schedules": "ਸ਼ਡਿਊਲ ਅਤੇ ਆਊਟਬਾਕਸ",
+    "pmu": "PMU ਕੰਮ",
+    "dpr": "DPR ਡਿਲਿਵਰੇਬਲ",
+    "ijuris": "iJuris ingest",
+    "users": "ਉਪਭੋਗਤਾ ਪ੍ਰਬੰਧਨ",
+    "backup": "ਬੈਕਅੱਪ ਅਤੇ ਬਹਾਲੀ",
+    "audit": "ਆਡਿਟ ਟ੍ਰੇਲ",
+    "account": "ਖਾਤਾ / 2FA",
+    "signOut": "ਸਾਈਨ ਆਊਟ",
+    "signedIn": "ਸਾਈਨ ਇਨ",
+    "mainNav": "ਮੁੱਖ ਨੈਵੀਗੇਸ਼ਨ"
+  },
+  "common": {
+    "save": "ਸੇਵ",
+    "cancel": "ਰੱਦ",
+    "delete": "ਮਿਟਾਓ",
+    "loading": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…",
+    "darkMode": "ਡਾਰਕ ਮੋਡ",
+    "lightMode": "ਲਾਈਟ ਮੋਡ",
+    "language": "ਭਾਸ਼ਾ",
+    "skipToContent": "ਮੁੱਖ ਸਮੱਗਰੀ 'ਤੇ ਜਾਓ"
+  },
+  "dashboard": {
+    "narrativeTitle": "Executive narrative",
+    "narrativeSubtitle": "Summary from approved dashboard data"
+  },
+  "submissions": {
+    "slaTitle": "ਜਮਾਅ SLA",
+    "reopenRequest": "ਦੁਬਾਰਾ ਖੋਲ੍ਹੋ",
+    "reopenReason": "ਕਾਰਨ",
+    "dashboardExcluded": "ਡੈਸ਼ਬੋਰਡ ਤੋਂ ਬਾਹਰ"
+  },
+  "reports": {
+    "savedViews": "ਸੇਵ ਕੀਤੇ ਦ੍ਰਿਸ਼",
+    "saveView": "ਦ੍ਰਿਸ਼ ਸੇਵ ਕਰੋ",
+    "deleteView": "ਦ੍ਰਿਸ਼ ਮਿਟਾਓ"
+  },
+  "onboarding": {
+    "welcome": "ਭੌਤਿਕ ਟ੍ਰੈਕਰ ਵਿੱਚ ਸਵਾਗਤ",
+    "filters": "ਹਾਈ ਕੋਰਟ ਅਤੇ ਅਵਧੀ ਚੁਣੋ.",
+    "entry": "ਲਕਸ਼ ਅਤੇ ਹਾਸਲ ਦਰਜ ਕਰਕੇ ਸੇਵ ਕਰੋ.",
+    "table": "ਹੇਠਲੀ ਟੇਬਲ ਵਿੱਚ ਸੰਪਾਦਨ ਕਰੋ.",
+    "done": "ਤੁਸੀਂ ਤਿਆਰ ਹੋ."
+  },
+  "tasks": {
+    "common": {
+      "loading": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…",
+      "noTasks": "ਕੋਈ ਕੰਮ ਨਹੀਂ ਮਿਲਿਆ।",
+      "createTask": "ਕੰਮ ਬਣਾਓ",
+      "creating": "ਬਣਾਇਆ ਜਾ ਰਿਹਾ ਹੈ…",
+      "back": "ਵਾਪਸ",
+      "search": "ਖੋਜੋ…",
+      "previous": "ਪਿਛਲਾ",
+      "next": "ਅਗਲਾ",
+      "page": "ਸਫ਼ਾ {{n}}",
+      "exportCsv": "CSV ਨਿਰਯਾਤ",
+      "exportXlsx": "Excel ਨਿਰਯਾਤ",
+      "exportPdf": "PDF ਨਿਰਯਾਤ",
+      "unassigned": "ਨਿਯੁਕਤ ਨਹੀਂ",
+      "download": "ਡਾਊਨਲੋਡ",
+      "post": "ਪੋਸਟ",
+      "remarksOptional": "ਟਿੱਪਣੀ (ਵਿਕਲਪਿਕ)",
+      "assignmentNotes": "ਨਿਯੁਕਤੀ ਨੋਟ…"
+    },
+    "layout": {
+      "commandCentreTitle": "ਕੰਮ ਕਮਾਂਡ ਸੈਂਟਰ",
+      "taskManagement": "ਕੰਮ ਪ੍ਰਬੰਧਨ",
+      "navLabel": "ਕੰਮ ਪ੍ਰਬੰਧਨ ਨੈਵੀਗੇਸ਼ਨ",
+      "appSelector": "ਐਪ ਚੋਣਕਰਤਾ",
+      "pmisApp": "PMIS ਐਪਲੀਕੇਸ਼ਨ",
+      "toggleTheme": "ਥੀਮ ਬਦਲੋ",
+      "nav": {
+        "commandCentre": "ਕਮਾਂਡ ਸੈਂਟਰ",
+        "workbench": "ਵਰਕਬੈਂਚ",
+        "myTasks": "ਮੇਰੇ ਕੰਮ",
+        "allTasks": "ਸਾਰੇ ਕੰਮ",
+        "reports": "ਰਿਪੋਰਟਾਂ",
+        "configuration": "ਕੌਂਫਿਗਰੇਸ਼ਨ",
+        "auditorOverview": "ਆਡੀਟਰ ਸੰਖੇਪ"
+      }
+    },
+    "table": {
+      "listAria": "ਕੰਮ ਸੂਚੀ",
+      "code": "ਕੋਡ",
+      "title": "ਸਿਰਲੇਖ",
+      "priority": "ਤਰਜੀਹ",
+      "status": "ਸਥਿਤੀ",
+      "owner": "ਮਾਲਕ",
+      "due": "ਮਿਤੀ",
+      "sla": "SLA"
+    },
+    "appSelector": {
+      "initialising": "PMIS ਸ਼ੁਰੂ ਹੋ ਰਿਹਾ ਹੈ…",
+      "signedInAs": "{{name}} · {{role}} ਵਜੋਂ ਸਾਈਨ ਇਨ",
+      "chooseWorkspace": "ਵਰਕਸਪੇਸ ਚੁਣੋ",
+      "subtitle": "ਨਿਯੁਕਤੀਆਂ ਅਤੇ ਮਨਜ਼ੂਰੀਆਂ ਲਈ ਕੰਮ ਪ੍ਰਬੰਧਨ ਚੁਣੋ, ਜਾਂ ਮੁੱਖ PMIS ਐਪਲੀਕੇਸ਼ਨ ਤੇ ਜਾਓ।",
+      "taskTitle": "ਕੰਮ ਪ੍ਰਬੰਧਨ",
+      "taskDesc": "ਆਪਣੀ ਸੰਸਥਾ ਵਿੱਚ ਕੰਮ, ਨਿਯੁਕਤੀਆਂ, ਸਬੂਤ, ਮਨਜ਼ੂਰੀ, SLA ਅਤੇ ਡ੍ਰਿਲਡਾਊਨ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
+      "openTask": "ਕੰਮ ਪ੍ਰਬੰਧਨ ਖੋਲ੍ਹੋ →",
+      "appTitle": "ਐਪਲੀਕੇਸ਼ਨ",
+      "appDesc": "ਮੁੱਖ ਡੈਸ਼ਬੋਰਡ ਤੇ ਜਾਓ — ਟਰੈਕਰ, ਜਮ੍ਹਾਂ, ਰਿਪੋਰਟਾਂ ਅਤੇ ਮਾਸਟਰ ਡੇਟਾ।",
+      "openApp": "ਐਪਲੀਕੇਸ਼ਨ ਖੋਲ੍ਹੋ →",
+      "directLinks": "ਸਿੱਧੇ ਲਿੰਕ ਅਜੇ ਵੀ ਕੰਮ ਕਰਦੇ ਹਨ:",
+      "taskModule": "ਕੰਮ ਮੌਡਿਊਲ"
+    },
+    "manager": {
+      "loading": "ਕਮਾਂਡ ਸੈਂਟਰ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…",
+      "title": "ਮੈਨੇਜਰ ਕੰਮ ਕਮਾਂਡ ਸੈਂਟਰ",
+      "subtitle": "ਸੰਸਥਾ-ਵਿਆਪੀ ਕੰਮ ਦਰਿਸ਼ਟਾ, SLA ਅਤੇ ਮਨਜ਼ੂਰੀਆਂ",
+      "kpiTotal": "ਕੁੱਲ ਕੰਮ",
+      "kpiUnassigned": "ਨਿਯੁਕਤ ਨਹੀਂ",
+      "kpiInProgress": "ਚੱਲ ਰਿਹਾ",
+      "kpiSubmitted": "ਮਨਜ਼ੂਰੀ ਲਈ ਜਮ੍ਹਾਂ",
+      "kpiSlaBreached": "SLA ਉਲੰਘਣ",
+      "kpiHighPriority": "ਉੱਚ ਤਰਜੀਹ ਖੁੱਲ੍ਹਾ",
+      "kpiManagerPending": "ਮੈਨੇਜਰ ਮਨਜ਼ੂਰੀ ਬਾਕੀ",
+      "kpiClosedMonth": "ਇਸ ਮਹੀਨੇ ਬੰਦ",
+      "pendingApproval": "ਮੈਨੇਜਰ ਮਨਜ਼ੂਰੀ ਬਾਕੀ",
+      "pendingApprovalSub": "ਨਾਜ਼ੁਕ ਬੰਦੀ ਕਤਾਰ",
+      "unassignedPool": "ਨਿਯੁਕਤ ਨਹੀਂ ਪੂਲ",
+      "unassignedPoolSub": "ਟੀਮ ਲੀਡ ਦੀ ਉਡੀਕ ਕਰ ਰਹੇ ਕੰਮ",
+      "escalations": "ਤਾਜ਼ਾ ਐਸਕਲੇਸ਼ਨ",
+      "escalationsSub": "ਐਸਕਲੇਟ ਕੀਤੇ ਕੰਮ",
+      "byModule": "ਮੌਡਿਊਲ ਅਨੁਸਾਰ",
+      "byModuleSub": "ਡ੍ਰਿਲਡਾਊਨ — ਮੌਡਿਊਲ-ਵਾਰ ਵੰਡ"
+    },
+    "lead": {
+      "loading": "ਵਰਕਬੈਂਚ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…",
+      "title": "ਟੀਮ ਲੀਡ ਵਰਕਬੈਂਚ",
+      "subtitle": "ਟੀਮ ਕੰਮ ਨਿਯੁਕਤ ਕਰੋ, ਜਾਂਚੋ ਅਤੇ ਐਸਕਲੇਟ ਕਰੋ",
+      "kpiReceived": "ਪ੍ਰਾਪਤ ਕੰਮ",
+      "kpiPendingDist": "ਵੰਡ ਬਾਕੀ",
+      "kpiAssigned": "ਮੈਂਬਰਾਂ ਨੂੰ ਨਿਯੁਕਤ",
+      "kpiInProgress": "ਚੱਲ ਰਿਹਾ",
+      "kpiSubmitted": "ਮਨਜ਼ੂਰੀ ਲਈ ਜਮ੍ਹਾਂ",
+      "kpiRework": "ਮੁੜ ਕੰਮ ਲੋੜੀਂਦਾ",
+      "kpiSlaRisk": "SLA ਜੋਖਮ",
+      "kpiProposed": "ਮੈਂਬਰਾਂ ਵੱਲੋਂ ਤਜਵੀਜ਼",
+      "submittedCard": "ਮਨਜ਼ੂਰੀ ਲਈ ਜਮ੍ਹਾਂ",
+      "submittedCardSub": "ਤੁਹਾਡੀ ਜਾਂਚ ਦੀ ਉਡੀਕ",
+      "proposedCard": "ਮੈਂਬਰਾਂ ਵੱਲੋਂ ਤਜਵੀਜ਼",
+      "proposedCardSub": "ਸਮੀਖਿਆ ਕਰੋ ਅਤੇ ਮਨਜ਼ੂਰ ਜਾਂ ਰੱਦ ਕਰੋ"
+    },
+    "member": {
+      "loading": "ਵਰਕਸਪੇਸ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…",
+      "title": "ਟੀਮ ਮੈਂਬਰ ਵਰਕਸਪੇਸ",
+      "subtitle": "ਤੁਹਾਡੇ ਨਿਯੁਕਤ ਕੰਮ, ਸਬੂਤ ਅਤੇ ਜਮ੍ਹਾਂ",
+      "kpiOpen": "ਮੇਰੇ ਖੁੱਲ੍ਹੇ ਕੰਮ",
+      "kpiDueToday": "ਅੱਜ ਦੀ ਮਿਤੀ",
+      "kpiOverdue": "ਦੇਰੀ ਨਾਲ",
+      "kpiInProgress": "ਚੱਲ ਰਿਹਾ",
+      "kpiRework": "ਮੁੜ ਕੰਮ ਲੋੜੀਂਦਾ",
+      "kpiSubmitted": "ਜਮ੍ਹਾਂ",
+      "kpiProposed": "ਮੇਰੀ ਤਜਵੀਜ਼",
+      "recentCard": "ਤਾਜ਼ਾ ਕੰਮ",
+      "recentCardSub": "ਵੇਰਵੇ ਖੋਲ੍ਹਣ ਲਈ ਕਲਿੱਕ ਕਰੋ"
+    },
+    "list": {
+      "title": "ਕੰਮ ਸੂਚੀ",
+      "tasksCount": "{{count}} ਕੰਮ",
+      "filters": "ਫਿਲਟਰ",
+      "allStatuses": "ਸਾਰੀਆਂ ਸਥਿਤੀਆਂ",
+      "allPriorities": "ਸਾਰੀਆਂ ਤਰਜੀਹਾਂ"
+    },
+    "bulk": {
+      "selected": "{{count}} ਚੁਣੇ",
+      "selectAll": "ਸਫ਼ੇ ਤੇ ਸਭ ਚੁਣੋ",
+      "selectTask": "ਕੰਮ {{code}} ਚੁਣੋ",
+      "assignLead": "ਲੀਡ ਨਿਯੁਕਤ ਕਰੋ",
+      "assignMember": "ਮੈਂਬਰ ਨਿਯੁਕਤ ਕਰੋ",
+      "cancel": "ਕੰਮ ਰੱਦ ਕਰੋ",
+      "cancelReason": "ਰੱਦ ਕਰਨ ਦਾ ਕਾਰਨ",
+      "cancelPlaceholder": "ਬਲਕ ਰੱਦ ਕਰਨ ਦਾ ਕਾਰਨ…",
+      "clear": "ਚੋਣ ਸਾਫ਼ ਕਰੋ",
+      "leadDone": "{{count}} ਕੰਮ(ਾਂ) ਨੂੰ ਟੀਮ ਲੀਡ ਨਿਯੁਕਤ",
+      "memberDone": "{{count}} ਕੰਮ(ਾਂ) ਨੂੰ ਟੀਮ ਮੈਂਬਰ ਨਿਯੁਕਤ",
+      "cancelDone": "{{count}} ਕੰਮ(ਾਂ) ਰੱਦ ਕੀਤੇ",
+      "partialFail": "{{count}} ਕੰਮ(ਾਂ) ਅੱਪਡੇਟ ਨਹੀਂ ਹੋ ਸਕੇ"
+    },
+    "create": {
+      "title": "ਕੰਮ ਬਣਾਓ",
+      "titleRequired": "ਸਿਰਲੇਖ ਲਾਜ਼ਮੀ",
+      "titleField": "ਸਿਰਲੇਖ *",
+      "descriptionField": "ਵਿਵਰਣ *",
+      "category": "ਸ਼੍ਰੇਣੀ",
+      "priority": "ਤਰਜੀਹ *",
+      "module": "ਮੌਡਿਊਲ",
+      "project": "ਪ੍ਰੋਜੈਕਟ",
+      "department": "ਵਿਭਾਗ",
+      "dueDate": "ਨਿਰਧਾਰਿਤ ਮਿਤੀ",
+      "assignLead": "ਟੀਮ ਲੀਡ ਨਿਯੁਕਤ ਕਰੋ",
+      "assignMember": "ਟੀਮ ਮੈਂਬਰ ਨਿਯੁਕਤ ਕਰੋ",
+      "evidenceRequired": "ਸਬੂਤ ਲਾਜ਼ਮੀ",
+      "managerApproval": "ਮੈਨੇਜਰ ਦੀ ਅੰਤਿਮ ਮਨਜ਼ੂਰੀ",
+      "instructions": "ਹਦਾਇਤਾਂ",
+      "created": "ਕੰਮ {{code}} ਬਣਾਇਆ ਗਿਆ"
+    },
+    "assignment": {
+      "title": "ਨਿਯੁਕਤੀ",
+      "assignReassign": "ਨਿਯੁਕਤ ਕਰੋ / ਮੁੜ ਨਿਯੁਕਤ ਕਰੋ",
+      "teamLead": "ਟੀਮ ਲੀਡ",
+      "teamMember": "ਟੀਮ ਮੈਂਬਰ",
+      "assignLeadBtn": "ਲੀਡ ਨਿਯੁਕਤ ਕਰੋ",
+      "assignMemberBtn": "ਮੈਂਬਰ ਨਿਯੁਕਤ ਕਰੋ",
+      "selectLead": "ਟੀਮ ਲੀਡ ਚੁਣੋ",
+      "selectMember": "ਟੀਮ ਮੈਂਬਰ ਚੁਣੋ",
+      "leadAssigned": "ਟੀਮ ਲੀਡ ਨਿਯੁਕਤ ਕੀਤਾ",
+      "memberAssigned": "ਟੀਮ ਮੈਂਬਰ ਨਿਯੁਕਤ ਕੀਤਾ",
+      "currentLead": "ਮੌਜੂਦਾ ਲੀਡ: {{name}}",
+      "currentMember": "ਮੌਜੂਦਾ ਮੈਂਬਰ: {{name}}"
+    },
+    "detail": {
+      "loading": "ਕੰਮ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…",
+      "notFound": "ਕੰਮ ਨਹੀਂ ਮਿਲਿਆ",
+      "ownerDue": "ਮਾਲਕ: {{owner}} · ਮਿਤੀ: {{due}}",
+      "rejectPlaceholder": "ਰੱਦ / ਸਪੱਸ਼ਟੀਕਰਨ ਟਿੱਪਣੀ",
+      "tabs": {
+        "overview": "ਸੰਖੇਪ",
+        "assignment": "ਨਿਯੁਕਤੀ",
+        "evidence": "ਸਬੂਤ",
+        "approval": "ਮਨਜ਼ੂਰੀ",
+        "comments": "ਟਿੱਪਣੀਆਂ",
+        "audit": "ਆਡਿਟ"
+      },
+      "actions": {
+        "accept": "ਸਵੀਕਾਰ",
+        "start": "ਸ਼ੁਰੂ",
+        "updateProgress": "ਤਰੱਕੀ ਅੱਪਡੇਟ",
+        "submitApproval": "ਮਨਜ਼ੂਰੀ ਲਈ ਜਮ੍ਹਾਂ",
+        "acceptProposed": "ਤਜਵੀਜ਼ ਸਵੀਕਾਰ",
+        "rejectProposed": "ਤਜਵੀਜ਼ ਰੱਦ",
+        "verify": "ਜਾਂਚੋ & ਮਨਜ਼ੂਰ",
+        "reject": "ਰੱਦ",
+        "approveClosure": "ਬੰਦੀ ਮਨਜ਼ੂਰ",
+        "rejectClosure": "ਬੰਦੀ ਰੱਦ",
+        "subtask": "ਉਪ-ਕੰਮ",
+        "escalate": "ਐਸਕਲੇਟ",
+        "markBlocked": "ਬਲਾਕ ਦਰਜ ਕਰੋ"
+      },
+      "toast": {
+        "accepted": "ਕੰਮ ਸਵੀਕਾਰਿਆ",
+        "started": "ਕੰਮ ਸ਼ੁਰੂ",
+        "progressUpdated": "ਤਰੱਕੀ ਅੱਪਡੇਟ",
+        "submitted": "ਮਨਜ਼ੂਰੀ ਲਈ ਜਮ੍ਹਾਂ",
+        "proposedAccepted": "ਤਜਵੀਜ਼ਿਤ ਕੰਮ ਸਵੀਕਾਰਿਆ",
+        "rejected": "ਰੱਦ ਕੀਤਾ",
+        "verified": "ਜਾਂਚਿਆ",
+        "rework": "ਮੁੜ ਕੰਮ ਲਈ ਭੇਜਿਆ",
+        "closed": "ਕੰਮ ਬੰਦ",
+        "commentAdded": "ਟਿੱਪਣੀ ਜੋੜੀ",
+        "evidenceUploaded": "ਸਬੂਤ ਅੱਪਲੋਡ",
+        "escalated": "ਕੰਮ ਐਸਕਲੇਟ",
+        "blocked": "ਕੰਮ ਬਲਾਕ ਦਰਜ"
+      },
+      "actionRemarksPlaceholder": "ਰੱਦ, ਐਸਕਲੇਟ ਜਾਂ ਬਲਾਕ ਲਈ ਟਿੱਪਣੀ",
+      "overview": {
+        "moduleProject": "ਮੌਡਿਊਲ: {{module}} · ਪ੍ਰੋਜੈਕਟ: {{project}}",
+        "categorySource": "ਸ਼੍ਰੇਣੀ: {{category}} · ਸਰੋਤ: {{source}}",
+        "progressEvidence": "ਤਰੱਕੀ: {{progress}}% · ਸਬੂਤ: {{evidence}}",
+        "instructions": "ਹਦਾਇਤਾਂ: {{text}}"
+      },
+      "assignmentCard": {
+        "lead": "ਟੀਮ ਲੀਡ: {{name}}",
+        "member": "ਟੀਮ ਮੈਂਬਰ: {{name}}",
+        "createdBy": "ਬਣਾਇਆ: {{name}}"
+      },
+      "evidence": {
+        "upload": "ਸਬੂਤ ਅੱਪਲੋਡ"
+      },
+      "checklist": {
+        "title": "ਜਾਂਚ ਸੂਚੀ",
+        "resolution_matches": "ਹੱਲ ਲੋੜ ਨਾਲ ਮੇਲ ਖਾਂਦਾ ਹੈ",
+        "evidence_uploaded": "ਸਬੂਤ ਅੱਪਲੋਡ ਹੋਇਆ",
+        "evidence_relevant": "ਸਬੂਤ ਸੰਬੰਧਿਤ",
+        "no_dependency_pending": "ਕੋਈ ਨਿਰਭਰਤਾ ਬਾਕੀ ਨਹੀਂ",
+        "sla_checked": "SLA ਅਨੁਪਾਲਣਾ ਜਾਂਚੀ"
+      },
+      "comments": {
+        "placeholder": "ਟਿੱਪਣੀ ਜੋੜੋ…"
+      },
+      "subtasks": "ਉਪ-ਕੰਮ",
+      "approvalHistory": "ਮਨਜ਼ੂਰੀ ਇਤਿਹਾਸ",
+      "auditTrail": "ਆਡਿਟ ਟ੍ਰੇਲ"
+    },
+    "reports": {
+      "loading": "ਰਿਪੋਰਟਾਂ ਲੋਡ…",
+      "title": "ਕੰਮ ਰਿਪੋਰਟਾਂ",
+      "subtitle": "ਸੰਖੇਪ ਵਿਸ਼ਲੇਸ਼ਣ ਅਤੇ ਕੰਮ ਭਾਰ ਵੰਡ",
+      "kpiTotal": "ਕੁੱਲ ਕੰਮ",
+      "kpiSlaBreached": "SLA ਉਲੰਘਣ",
+      "kpiPending": "ਮਨਜ਼ੂਰੀ ਬਾਕੀ",
+      "kpiRework": "ਮੁੜ ਕੰਮ ਕਤਾਰ",
+      "kpiEscalated": "ਐਸਕਲੇਟ",
+      "kpiClosed": "ਇਸ ਮਹੀਨੇ ਬੰਦ",
+      "byStatus": "ਸਥਿਤੀ ਅਨੁਸਾਰ",
+      "byPriority": "ਤਰਜੀਹ ਅਨੁਸਾਰ",
+      "byModule": "ਮੌਡਿਊਲ ਅਨੁਸਾਰ"
+    },
+    "config": {
+      "title": "ਕੰਮ ਕੌਂਫਿਗਰੇਸ਼ਨ",
+      "subtitle": "ਸ਼੍ਰੇਣੀਆਂ, SLA ਨਿਯਮ ਅਤੇ ਕੰਮ ਮੌਡਿਊਲ ਸੈਟਿੰਗਾਂ (ਐਡਮਿਨ)",
+      "slaHours": "ਡਿਫੌਲਟ SLA ਘੰਟੇ",
+      "categories": "ਸ਼੍ਰੇਣੀਆਂ",
+      "apiConfig": "API ਕੌਂਫਿਗਰੇਸ਼ਨ",
+      "apiHint": "POST /api/tasks/config/categories ਅਤੇ /api/tasks/config/sla-rules ਨਾਲ ਕੌਂਫਿਗਰੇਸ਼ਨ ਵਧਾਓ। task_role ਅਤੇ team_lead_id ਨਾਲ ਭੂਮਿਕਾ ਸੈੱਟ ਕਰੋ।"
+    },
+    "auditor": {
+      "loading": "ਆਡੀਟਰ ਸੰਖੇਪ ਲੋਡ…",
+      "title": "ਆਡੀਟਰ ਕੰਮ ਸੰਖੇਪ",
+      "subtitle": "ਸਿਰਫ਼ ਪੜ੍ਹਨ ਵਾਲਾ ਸੰਸਥਾ-ਵਿਆਪੀ ਕੰਮ ਮਾਪਦੰਡ ਅਤੇ ਆਡਿਟ ਨਮੂਨਾ",
+      "recentTasks": "ਤਾਜ਼ਾ ਕੰਮ",
+      "recentTasksSub": "ਸਬੂਤ ਅਤੇ ਆਡਿਟ ਟ੍ਰੇਲ ਲਈ ਕੋਈ ਵੀ ਕੰਮ ਖੋਲ੍ਹੋ (ਸਿਰਫ਼ ਪੜ੍ਹਨ)"
+    }
+  }
+}

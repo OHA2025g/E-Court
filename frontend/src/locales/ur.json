@@ -1,0 +1,328 @@
+{
+  "app": {
+    "title": "ای کورٹس PMIS",
+    "subtitle": "مرحلہ III · منصوبہ نگرانی"
+  },
+  "nav": {
+    "dashboard": "ڈیش بورڈ",
+    "physical": "فزیکل ٹریکر",
+    "financial": "مالی ٹریکر",
+    "outcome": "Outcome ٹریکر",
+    "submissions": "جمع کرائیں",
+    "reports": "رپورٹس",
+    "master": "ماسٹر ڈیٹا",
+    "schedules": "شیڈول اور آؤٹ باکس",
+    "pmu": "PMU کام",
+    "dpr": "DPR ڈیلیور ایبلز",
+    "ijuris": "iJuris ingest",
+    "users": "صارف انتظام",
+    "backup": "بیک اپ اور بحالی",
+    "audit": "آڈٹ ٹریل",
+    "account": "اکاؤنٹ / 2FA",
+    "signOut": "سائن آؤٹ",
+    "signedIn": "سائن ان",
+    "mainNav": "مرکزی نیویگیشن"
+  },
+  "common": {
+    "save": "محفوظ کریں",
+    "cancel": "منسوخ",
+    "delete": "حذف",
+    "loading": "لوڈ ہو رہا ہے…",
+    "darkMode": "ڈارک موڈ",
+    "lightMode": "لائٹ موڈ",
+    "language": "زبان",
+    "skipToContent": "مواد پر جائیں"
+  },
+  "dashboard": {
+    "narrativeTitle": "تنفیذی خلاصہ",
+    "narrativeSubtitle": "منظور شدہ ڈیش بورڈ ڈیٹا سے خلاصہ"
+  },
+  "submissions": {
+    "slaTitle": "جمع کرانے کی SLA",
+    "reopenRequest": "دوبارہ کھولنے کی درخواست",
+    "reopenReason": "دوبارہ کھولنے کی وجہ",
+    "dashboardExcluded": "ڈیش بورڈ سے خارج"
+  },
+  "reports": {
+    "savedViews": "محفوظ مناظر",
+    "saveView": "موجودہ منظر محفوظ کریں",
+    "deleteView": "منظر حذف کریں"
+  },
+  "onboarding": {
+    "welcome": "فزیکل ٹریکر میں خوش آمدید",
+    "filters": "فلٹر کے لیے ہائی کورٹ اور رپورٹنگ مدت منتخب کریں۔",
+    "entry": "ہدف اور حاصل شدہ اقدار درج کریں، پھر محفوظ کریں۔",
+    "table": "نیچے کی جدول میں قطاریں دیکھیں اور ترمیم کریں۔",
+    "done": "آپ ٹریکنگ شروع کرنے کے لیے تیار ہیں۔"
+  },
+  "tasks": {
+    "common": {
+      "loading": "لوڈ ہو رہا ہے…",
+      "noTasks": "کوئی کام نہیں ملا۔",
+      "createTask": "کام بنائیں",
+      "creating": "بنایا جا رہا ہے…",
+      "back": "واپس",
+      "search": "تلاش کریں…",
+      "previous": "پچھلا",
+      "next": "اگلا",
+      "page": "صفحہ {{n}}",
+      "exportCsv": "CSV برآمد",
+      "exportXlsx": "Excel برآمد",
+      "exportPdf": "PDF برآمد",
+      "unassigned": "غیر تفویض شدہ",
+      "download": "ڈاؤن لوڈ",
+      "post": "پوسٹ",
+      "remarksOptional": "تبصرہ (اختیاری)",
+      "assignmentNotes": "تفویض نوٹ…"
+    },
+    "layout": {
+      "commandCentreTitle": "کام کمانڈ سنٹر",
+      "taskManagement": "کام کا انتظام",
+      "navLabel": "کام کے انتظام کی نیویگیشن",
+      "appSelector": "ایپ انتخاب کنندہ",
+      "pmisApp": "PMIS ایپلیکیشن",
+      "toggleTheme": "تھیم تبدیل کریں",
+      "nav": {
+        "commandCentre": "کمانڈ سنٹر",
+        "workbench": "ورک بینچ",
+        "myTasks": "میرے کام",
+        "allTasks": "تمام کام",
+        "reports": "رپورٹیں",
+        "configuration": "ترتیب",
+        "auditorOverview": "آڈیٹر جائزہ"
+      }
+    },
+    "table": {
+      "listAria": "کام کی فہرست",
+      "code": "کوڈ",
+      "title": "عنوان",
+      "priority": "ترجیح",
+      "status": "حیثیت",
+      "owner": "مالک",
+      "due": "مقررہ",
+      "sla": "SLA"
+    },
+    "appSelector": {
+      "initialising": "PMIS شروع ہو رہا ہے…",
+      "signedInAs": "{{name}} · {{role}} کے طور پر سائن ان",
+      "chooseWorkspace": "ورک اسپیس منتخب کریں",
+      "subtitle": "تفویض اور منظوریوں کے لیے کام کا انتظام منتخب کریں، یا مرکزی PMIS ایپلیکیشن جاری رکھیں۔",
+      "taskTitle": "کام کا انتظام",
+      "taskDesc": "اپنی تنظیم میں کام، تفویض، شواہد، منظوری، SLA اور تفصیلی تجزیہ کا انتظام کریں۔",
+      "openTask": "کام کا انتظام کھولیں →",
+      "appTitle": "ایپلیکیشن",
+      "appDesc": "مرکزی ڈیش بورڈ پر جائیں — ٹریکرز، جمع کرائی، رپورٹیں اور ماسٹر ڈیٹا۔",
+      "openApp": "ایپلیکیشن کھولیں →",
+      "directLinks": "براہ راست لنک ابھی بھی کام کرتے ہیں:",
+      "taskModule": "کام ماڈیول"
+    },
+    "manager": {
+      "loading": "کمانڈ سنٹر لوڈ ہو رہا ہے…",
+      "title": "مینیجر کام کمانڈ سنٹر",
+      "subtitle": "تنظیم بھر میں کام کی نمائش، SLA اور منظوریاں",
+      "kpiTotal": "کل کام",
+      "kpiUnassigned": "غیر تفویض شدہ",
+      "kpiInProgress": "جاری",
+      "kpiSubmitted": "منظوری کے لیے جمع",
+      "kpiSlaBreached": "SLA خلاف ورزی",
+      "kpiHighPriority": "اعلیٰ ترجیح کھلا",
+      "kpiManagerPending": "مینیجر منظوری زیر التواء",
+      "kpiClosedMonth": "اس ماہ بند",
+      "pendingApproval": "مینیجر منظوری زیر التواء",
+      "pendingApprovalSub": "اہم اختتام قطار",
+      "unassignedPool": "غیر تفویض پول",
+      "unassignedPoolSub": "ٹیم لیڈ کے منتظر کام",
+      "escalations": "حالیہ اسکیلیشنز",
+      "escalationsSub": "اسکیلیٹ کیے گئے کام",
+      "byModule": "ماڈیول کے مطابق",
+      "byModuleSub": "گہرا تجزیہ — ماڈیول وار تقسیم"
+    },
+    "lead": {
+      "loading": "ورک بینچ لوڈ ہو رہا ہے…",
+      "title": "ٹیم لیڈ ورک بینچ",
+      "subtitle": "ٹیم کے کام تفویض، تصدیق اور اسکیلیٹ کریں",
+      "kpiReceived": "موصولہ کام",
+      "kpiPendingDist": "تقسیم زیر التواء",
+      "kpiAssigned": "ارکان کو تفویض",
+      "kpiInProgress": "جاری",
+      "kpiSubmitted": "منظوری کے لیے جمع",
+      "kpiRework": "دوبارہ کام درکار",
+      "kpiSlaRisk": "SLA خطرہ",
+      "kpiProposed": "ارکان نے تجویز کیا",
+      "submittedCard": "منظوری کے لیے جمع",
+      "submittedCardSub": "آپ کی تصدیق کے منتظر",
+      "proposedCard": "ارکان نے تجویز کیا",
+      "proposedCardSub": "جائزہ لے کر منظور یا مسترد کریں"
+    },
+    "member": {
+      "loading": "ورک اسپیس لوڈ ہو رہا ہے…",
+      "title": "ٹیم رکن ورک اسپیس",
+      "subtitle": "آپ کے تفویض کام، شواہد اور جمع کرائی",
+      "kpiOpen": "میرے کھلے کام",
+      "kpiDueToday": "آج کی مقررہ",
+      "kpiOverdue": "تاخیر سے",
+      "kpiInProgress": "جاری",
+      "kpiRework": "دوبارہ کام درکار",
+      "kpiSubmitted": "جمع",
+      "kpiProposed": "میری تجویز",
+      "recentCard": "حالیہ کام",
+      "recentCardSub": "تفصیل کھولنے کے لیے کلک کریں"
+    },
+    "list": {
+      "title": "کام کی فہرست",
+      "tasksCount": "{{count}} کام",
+      "filters": "فلٹرز",
+      "allStatuses": "تمام حیثیتیں",
+      "allPriorities": "تمام ترجیحات"
+    },
+    "bulk": {
+      "selected": "{{count}} منتخب",
+      "selectAll": "صفحے پر سب منتخب کریں",
+      "selectTask": "کام {{code}} منتخب کریں",
+      "assignLead": "لیڈ تفویض کریں",
+      "assignMember": "رکن تفویض کریں",
+      "cancel": "کام منسوخ",
+      "cancelReason": "منسوخی کی وجہ",
+      "cancelPlaceholder": "بلک منسوخی کی وجہ…",
+      "clear": "انتخاب صاف",
+      "leadDone": "{{count}} کام(وں) کو ٹیم لیڈ تفویض",
+      "memberDone": "{{count}} کام(وں) کو ٹیم رکن تفویض",
+      "cancelDone": "{{count}} کام(وں) منسوخ",
+      "partialFail": "{{count}} کام(وں) کو اپ ڈیٹ نہیں کیا جا سکا"
+    },
+    "create": {
+      "title": "کام بنائیں",
+      "titleRequired": "عنوان لازمی ہے",
+      "titleField": "عنوان *",
+      "descriptionField": "تفصیل *",
+      "category": "زمرہ",
+      "priority": "ترجیح *",
+      "module": "ماڈیول",
+      "project": "منصوبہ",
+      "department": "شعبہ",
+      "dueDate": "مقررہ تاریخ",
+      "assignLead": "ٹیم لیڈ تفویض کریں",
+      "assignMember": "ٹیم رکن تفویض کریں",
+      "evidenceRequired": "ثبوت لازمی",
+      "managerApproval": "مینیجر کی حتمی منظوری",
+      "instructions": "ہدایات",
+      "created": "کام {{code}} بنایا گیا"
+    },
+    "assignment": {
+      "title": "تفویض",
+      "assignReassign": "تفویض / دوبارہ تفویض",
+      "teamLead": "ٹیم لیڈ",
+      "teamMember": "ٹیم رکن",
+      "assignLeadBtn": "لیڈ تفویض کریں",
+      "assignMemberBtn": "رکن تفویض کریں",
+      "selectLead": "ٹیم لیڈ منتخب کریں",
+      "selectMember": "ٹیم رکن منتخب کریں",
+      "leadAssigned": "ٹیم لیڈ تفویض ہوا",
+      "memberAssigned": "ٹیم رکن تفویض ہوا",
+      "currentLead": "موجودہ لیڈ: {{name}}",
+      "currentMember": "موجودہ رکن: {{name}}"
+    },
+    "detail": {
+      "loading": "کام لوڈ ہو رہا ہے…",
+      "notFound": "کام نہیں ملا",
+      "ownerDue": "مالک: {{owner}} · مقررہ: {{due}}",
+      "rejectPlaceholder": "مسترد / وضاحت تبصرہ",
+      "tabs": {
+        "overview": "جائزہ",
+        "assignment": "تفویض",
+        "evidence": "شواہد",
+        "approval": "منظوری",
+        "comments": "تبصرے",
+        "audit": "آڈٹ"
+      },
+      "actions": {
+        "accept": "قبول کریں",
+        "start": "شروع",
+        "updateProgress": "پیشرفت اپ ڈیٹ",
+        "submitApproval": "منظوری کے لیے جمع",
+        "acceptProposed": "تجویز قبول کریں",
+        "rejectProposed": "تجویز مسترد کریں",
+        "verify": "تصدیق کریں و منظور",
+        "reject": "مسترد",
+        "approveClosure": "اختتام منظور",
+        "rejectClosure": "اختتام مسترد",
+        "subtask": "ذیلی کام",
+        "escalate": "اسکیلیٹ",
+        "markBlocked": "بلاک نشان زد"
+      },
+      "toast": {
+        "accepted": "کام قبول ہوا",
+        "started": "کام شروع",
+        "progressUpdated": "پیشرفت اپ ڈیٹ ہوئی",
+        "submitted": "منظوری کے لیے جمع",
+        "proposedAccepted": "تجویز کردہ کام قبول",
+        "rejected": "مسترد",
+        "verified": "تصدیق شدہ",
+        "rework": "دوبارہ کام کے لیے بھیجا",
+        "closed": "کام بند",
+        "commentAdded": "تبصرہ شامل",
+        "evidenceUploaded": "ثبوت اپ لوڈ",
+        "escalated": "کام اسکیلیٹ",
+        "blocked": "کام بلاک نشان زد"
+      },
+      "actionRemarksPlaceholder": "مسترد، اسکیلیٹ یا بلاک کے لیے تبصرہ",
+      "overview": {
+        "moduleProject": "ماڈیول: {{module}} · منصوبہ: {{project}}",
+        "categorySource": "زمرہ: {{category}} · ماخذ: {{source}}",
+        "progressEvidence": "پیشرفت: {{progress}}% · شواہد: {{evidence}}",
+        "instructions": "ہدایات: {{text}}"
+      },
+      "assignmentCard": {
+        "lead": "ٹیم لیڈ: {{name}}",
+        "member": "ٹیم رکن: {{name}}",
+        "createdBy": "بنایا: {{name}}"
+      },
+      "evidence": {
+        "upload": "ثبوت اپ لوڈ"
+      },
+      "checklist": {
+        "title": "تصدیقی چیک لسٹ",
+        "resolution_matches": "حل ضرورت سے مطابقت رکھتا ہے",
+        "evidence_uploaded": "ثبوت اپ لوڈ ہو گیا",
+        "evidence_relevant": "ثبوت متعلقہ ہے",
+        "no_dependency_pending": "کوئی انحصار زیر التواء نہیں",
+        "sla_checked": "SLA تعمیل جانچی گئی"
+      },
+      "comments": {
+        "placeholder": "تبصرہ شامل کریں…"
+      },
+      "subtasks": "ذیلی کام",
+      "approvalHistory": "منظوری کی تاریخ",
+      "auditTrail": "آڈٹ ٹریل"
+    },
+    "reports": {
+      "loading": "رپورٹیں لوڈ ہو رہی ہیں…",
+      "title": "کام کی رپورٹیں",
+      "subtitle": "خلاصہ تجزیہ اور کام کے بوجھ کی تقسیم",
+      "kpiTotal": "کل کام",
+      "kpiSlaBreached": "SLA خلاف ورزی",
+      "kpiPending": "منظوری زیر التواء",
+      "kpiRework": "دوبارہ کام قطار",
+      "kpiEscalated": "اسکیلیٹ",
+      "kpiClosed": "اس ماہ بند",
+      "byStatus": "حیثیت کے مطابق",
+      "byPriority": "ترجیح کے مطابق",
+      "byModule": "ماڈیول کے مطابق"
+    },
+    "config": {
+      "title": "کام کی ترتیب",
+      "subtitle": "زمرے، SLA قواعد اور کام ماڈیول کی ترتیبات (ایڈمن)",
+      "slaHours": "ڈیفالٹ SLA گھنٹے",
+      "categories": "زمرے",
+      "apiConfig": "API ترتیب",
+      "apiHint": "POST /api/tasks/config/categories اور /api/tasks/config/sla-rules سے ترتیب بڑھائیں۔ task_role اور team_lead_id سے صارف کردار مقرر ہوتے ہیں۔"
+    },
+    "auditor": {
+      "loading": "آڈیٹر جائزہ لوڈ ہو رہا ہے…",
+      "title": "آڈیٹر کام جائزہ",
+      "subtitle": "صرف پڑھنے کے قابل تنظیم بھر میں کام کے اعداد و شمار اور آڈٹ نمونہ",
+      "recentTasks": "حالیہ کام",
+      "recentTasksSub": "شواہد اور آڈٹ ٹریل کے جائزے کے لیے کوئی بھی کام کھولیں (صرف پڑھنے)"
+    }
+  }
+}

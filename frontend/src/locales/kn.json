@@ -1,0 +1,328 @@
+{
+  "app": {
+    "title": "ಇ-ಕೋರ್ಟ್ಸ್ PMIS",
+    "subtitle": "ಹಂತ III · ಯೋಜನೆ ಮೇಲ್ವಿಚಾರಣೆ"
+  },
+  "nav": {
+    "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+    "physical": "ಭೌತಿಕ ಟ್ರ್ಯಾಕರ್",
+    "financial": "ಹಣಕಾಸು ಟ್ರ್ಯಾಕರ್",
+    "outcome": "ಫಲಿತಾಂಶ ಟ್ರ್ಯಾಕರ್",
+    "submissions": "ಸಲ್ಲಿಕೆಗಳು",
+    "reports": "ವರದಿಗಳು",
+    "master": "ಮಾಸ್ಟರ್ ಡೇಟಾ",
+    "schedules": "ವೇಳಾಪಟ್ಟಿ & ಔಟ್‌ಬಾಕ್ಸ್",
+    "pmu": "PMU ಕಾರ್ಯಗಳು",
+    "dpr": "DPR ಡೆಲಿವರಬಲ್ಸ್",
+    "ijuris": "iJuris ingest",
+    "users": "ಬಳಕೆದಾರ ನಿರ್ವಹಣೆ",
+    "backup": "ಬ್ಯಾಕಪ್ & ಮರುಸ್ಥಾಪನೆ",
+    "audit": "ಆಡಿಟ್ ಟ್ರೇಲ್",
+    "account": "ಖಾತೆ / 2FA",
+    "signOut": "ಸೈನ್ ಔಟ್",
+    "signedIn": "ಸೈನ್ ಇನ್",
+    "mainNav": "ಮುಖ್ಯ ನ್ಯಾವಿಗೇಶನ್"
+  },
+  "common": {
+    "save": "ಉಳಿಸಿ",
+    "cancel": "ರದ್ದು",
+    "delete": "ಅಳಿಸಿ",
+    "loading": "ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+    "darkMode": "ಡಾರ್ಕ್ ಮೋಡ್",
+    "lightMode": "ಲೈಟ್ ಮೋಡ್",
+    "language": "ಭಾಷೆ",
+    "skipToContent": "ಮುಖ್ಯ ವಿಷಯಕ್ಕೆ ಹೋಗಿ"
+  },
+  "dashboard": {
+    "narrativeTitle": "Executive narrative",
+    "narrativeSubtitle": "Summary from approved dashboard data"
+  },
+  "submissions": {
+    "slaTitle": "ಸಲ್ಲಿಕೆ SLA",
+    "reopenRequest": "ಮರು ತೆರೆಯಿರಿ",
+    "reopenReason": "ಕಾರಣ",
+    "dashboardExcluded": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ನಿಂದ ಹೊರಗಿಡಲಾಗಿದೆ"
+  },
+  "reports": {
+    "savedViews": "ಉಳಿಸಿದ ವೀಕ್ಷಣೆಗಳು",
+    "saveView": "ವೀಕ್ಷಣೆ ಉಳಿಸಿ",
+    "deleteView": "ವೀಕ್ಷಣೆ ಅಳಿಸಿ"
+  },
+  "onboarding": {
+    "welcome": "ಭೌತಿಕ ಟ್ರ್ಯಾಕರ್‌ಗೆ ಸ್ವಾಗತ",
+    "filters": "ಹೈಕೋರ್ಟ್ ಮತ್ತು ಅವಧಿ ಆಯ್ಕೆಮಾಡಿ.",
+    "entry": "ಗುರಿ ಮತ್ತು ಸಾಧನೆ ನಮೂದಿಸಿ ಉಳಿಸಿ.",
+    "table": "ಕೆಳಗಿನ ಪಟ್ಟಿಯಲ್ಲಿ ಸಂಪಾದಿಸಿ.",
+    "done": "ನೀವು ಸಿದ್ಧರಿದ್ದೀರಿ."
+  },
+  "tasks": {
+    "common": {
+      "loading": "ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+      "noTasks": "ಯಾವುದೇ ಕಾರ್ಯಗಳು ಕಂಡುಬಂದಿಲ್ಲ.",
+      "createTask": "ಕಾರ್ಯ ರಚಿಸಿ",
+      "creating": "ರಚಿಸಲಾಗುತ್ತಿದೆ…",
+      "back": "ಹಿಂದೆ",
+      "search": "ಹುಡುಕಿ…",
+      "previous": "ಹಿಂದಿನ",
+      "next": "ಮುಂದಿನ",
+      "page": "ಪುಟ {{n}}",
+      "exportCsv": "CSV ರಫ್ತು",
+      "exportXlsx": "Excel ರಫ್ತು",
+      "exportPdf": "PDF ರಫ್ತು",
+      "unassigned": "ನಿಯೋಜಿತವಾಗಿಲ್ಲ",
+      "download": "ಡೌನ್‌ಲೋಡ್",
+      "post": "ಪೋಸ್ಟ್",
+      "remarksOptional": "ಟಿಪ್ಪಣಿ (ಐಚ್ಛಿಕ)",
+      "assignmentNotes": "ನಿಯೋಜನ ಟಿಪ್ಪಣಿ…"
+    },
+    "layout": {
+      "commandCentreTitle": "ಕಾರ್ಯ ಕಮಾಂಡ್ ಸೆಂಟರ್",
+      "taskManagement": "ಕಾರ್ಯ ನಿರ್ವಹಣೆ",
+      "navLabel": "ಕಾರ್ಯ ನಿರ್ವಹಣೆ ನ್ಯಾವಿಗೇಶನ್",
+      "appSelector": "ಅಪ್ಲಿಕೇಶನ್ ಆಯ್ಕೆ",
+      "pmisApp": "PMIS ಅಪ್ಲಿಕೇಶನ್",
+      "toggleTheme": "ಥೀಮ್ ಬದಲಾಯಿಸಿ",
+      "nav": {
+        "commandCentre": "ಕಮಾಂಡ್ ಸೆಂಟರ್",
+        "workbench": "ವರ್ಕ್‌ಬೆಂಚ್",
+        "myTasks": "ನನ್ನ ಕಾರ್ಯಗಳು",
+        "allTasks": "ಎಲ್ಲ ಕಾರ್ಯಗಳು",
+        "reports": "ವರದಿಗಳು",
+        "configuration": "ಕಾನ್ಫಿಗರೇಶನ್",
+        "auditorOverview": "ಲೆಕ್ಕ ಪರಿಶೋಧಕ ಅವಲೋಕನ"
+      }
+    },
+    "table": {
+      "listAria": "ಕಾರ್ಯ ಪಟ್ಟಿ",
+      "code": "ಕೋಡ್",
+      "title": "ಶೀರ್ಷಿಕೆ",
+      "priority": "ಆದ್ಯತೆ",
+      "status": "ಸ್ಥಿತಿ",
+      "owner": "ಮಾಲೀಕ",
+      "due": "ನಿಗದಿ",
+      "sla": "SLA"
+    },
+    "appSelector": {
+      "initialising": "PMIS ಪ್ರಾರಂಭಿಸಲಾಗುತ್ತಿದೆ…",
+      "signedInAs": "{{name}} · {{role}} ಆಗಿ ಸೈನ್ ಇನ್",
+      "chooseWorkspace": "ವರ್ಕ್‌ಸ್ಪೇಸ್ ಆಯ್ಕೆ ಮಾಡಿ",
+      "subtitle": "ನಿಯೋಜನ ಮತ್ತು ಅನುಮೋದನೆಗಳಿಗಾಗಿ ಕಾರ್ಯ ನಿರ್ವಹಣೆ ಆಯ್ಕೆ ಮಾಡಿ, ಅಥವಾ ಮುಖ್ಯ PMIS ಅಪ್ಲಿಕೇಶನ್‌ಗೆ ಮುಂದುವರಿಯಿರಿ.",
+      "taskTitle": "ಕಾರ್ಯ ನಿರ್ವಹಣೆ",
+      "taskDesc": "ನಿಮ್ಮ ಸಂಸ್ಥೆಯಾದ್ಯಂತ ಕಾರ್ಯಗಳು, ನಿಯೋಜನಗಳು, ಸಾಕ್ಷ್ಯ, ಅನುಮೋದನೆ, SLA ಮತ್ತು ಆಳ ವಿಶ್ಲೇಷಣೆ ನಿರ್ವಹಿಸಿ.",
+      "openTask": "ಕಾರ್ಯ ನಿರ್ವಹಣೆ ತೆರೆಯಿರಿ →",
+      "appTitle": "ಅಪ್ಲಿಕೇಶನ್",
+      "appDesc": "ಮುಖ್ಯ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಹೋಗಿ — ಟ್ರ್ಯಾಕರ್‌ಗಳು, ಸಲ್ಲಿಕೆ, ವರದಿ ಮತ್ತು ಮಾಸ್ಟರ್ ಡೇಟಾ.",
+      "openApp": "ಅಪ್ಲಿಕೇಶನ್ ತೆರೆಯಿರಿ →",
+      "directLinks": "ನೇರ ಲಿಂಕ್‌ಗಳು ಇನ್ನೂ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತವೆ:",
+      "taskModule": "ಕಾರ್ಯ ಮಾಡ್ಯೂಲ್"
+    },
+    "manager": {
+      "loading": "ಕಮಾಂಡ್ ಸೆಂಟರ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+      "title": "ಮ್ಯಾನೇಜರ್ ಕಾರ್ಯ ಕಮಾಂಡ್ ಸೆಂಟರ್",
+      "subtitle": "ಸಂಸ್ಥೆ-ವ್ಯಾಪಿ ಕಾರ್ಯ ದೃಶ್ಯಮಾನತೆ, SLA ಮತ್ತು ಅನುಮೋದನೆ",
+      "kpiTotal": "ಒಟ್ಟು ಕಾರ್ಯಗಳು",
+      "kpiUnassigned": "ನಿಯೋಜಿತವಾಗಿಲ್ಲ",
+      "kpiInProgress": "ಪ್ರಗತಿಯಲ್ಲಿ",
+      "kpiSubmitted": "ಅನುಮೋದನೆಗೆ ಸಲ್ಲಿಸಲಾಗಿದೆ",
+      "kpiSlaBreached": "SLA ಉಲ್ಲಂಘನೆ",
+      "kpiHighPriority": "ಹೆಚ್ಚಿನ ಆದ್ಯತೆ ತೆರೆದಿದೆ",
+      "kpiManagerPending": "ಮ್ಯಾನೇಜರ್ ಅನುಮೋದನೆ ಬಾಕಿ",
+      "kpiClosedMonth": "ಈ ತಿಂಗಳಲ್ಲಿ ಮುಚ್ಚಲಾಗಿದೆ",
+      "pendingApproval": "ಮ್ಯಾನೇಜರ್ ಅನುಮೋದನೆ ಬಾಕಿ",
+      "pendingApprovalSub": "ನಿರ್ಣಾಯಕ ಮುಕ್ತಾಯ ಸರದಿ",
+      "unassignedPool": "ನಿಯೋಜಿಸದ ಪೂಲ್",
+      "unassignedPoolSub": "ತಂಡ ನಾಯಕನ ನಿರೀಕ್ಷೆಯ ಕಾರ್ಯಗಳು",
+      "escalations": "ಇತ್ತೀಚಿನ ಎಸ್ಕಲೇಶನ್‌ಗಳು",
+      "escalationsSub": "ಎಸ್ಕಲೇಟ್ ಮಾಡಿದ ಕಾರ್ಯಗಳು",
+      "byModule": "ಮಾಡ್ಯೂಲ್ ಪ್ರಕಾರ",
+      "byModuleSub": "ಆಳ ವಿಶ್ಲೇಷಣೆ — ಮಾಡ್ಯೂಲ್-ವಾರ ವಿತರಣೆ"
+    },
+    "lead": {
+      "loading": "ವರ್ಕ್‌ಬೆಂಚ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+      "title": "ತಂಡ ನಾಯಕ ವರ್ಕ್‌ಬೆಂಚ್",
+      "subtitle": "ತಂಡ ಕಾರ್ಯಗಳನ್ನು ನಿಯೋಜಿಸಿ, ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಎಸ್ಕಲೇಟ್ ಮಾಡಿ",
+      "kpiReceived": "ಸ್ವೀಕರಿಸಿದ ಕಾರ್ಯಗಳು",
+      "kpiPendingDist": "ವಿತರಣೆ ಬಾಕಿ",
+      "kpiAssigned": "ಸದಸ್ಯರಿಗೆ ನಿಯೋಜಿಸಲಾಗಿದೆ",
+      "kpiInProgress": "ಪ್ರಗತಿಯಲ್ಲಿ",
+      "kpiSubmitted": "ಅನುಮೋದನೆಗೆ ಸಲ್ಲಿಸಲಾಗಿದೆ",
+      "kpiRework": "ಮರು ಕಾರ್ಯ ಅಗತ್ಯ",
+      "kpiSlaRisk": "SLA ಅಪಾಯ",
+      "kpiProposed": "ಸದಸ್ಯರಿಂದ ಪ್ರಸ್ತಾವ",
+      "submittedCard": "ಅನುಮೋದನೆಗೆ ಸಲ್ಲಿಸಲಾಗಿದೆ",
+      "submittedCardSub": "ನಿಮ್ಮ ಪರಿಶೀಲನೆ ನಿರೀಕ್ಷೆಯಲ್ಲಿದೆ",
+      "proposedCard": "ಸದಸ್ಯರಿಂದ ಪ್ರಸ್ತಾವ",
+      "proposedCardSub": "ಪರಿಶೀಲಿಸಿ ಒಪ್ಪಿಕೊಳ್ಳಿ ಅಥವಾ ತಿರಸ್ಕರಿಸಿ"
+    },
+    "member": {
+      "loading": "ವರ್ಕ್‌ಸ್ಪೇಸ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+      "title": "ತಂಡ ಸದಸ್ಯ ವರ್ಕ್‌ಸ್ಪೇಸ್",
+      "subtitle": "ನಿಮ್ಮ ನಿಯೋಜಿತ ಕಾರ್ಯಗಳು, ಸಾಕ್ಷ್ಯ ಮತ್ತು ಸಲ್ಲಿಕೆ",
+      "kpiOpen": "ನನ್ನ ತೆರೆದ ಕಾರ್ಯಗಳು",
+      "kpiDueToday": "ಇಂದು ನಿಗದಿ",
+      "kpiOverdue": "ವಿಳಂಬ",
+      "kpiInProgress": "ಪ್ರಗತಿಯಲ್ಲಿ",
+      "kpiRework": "ಮರು ಕಾರ್ಯ ಅಗತ್ಯ",
+      "kpiSubmitted": "ಸಲ್ಲಿಸಲಾಗಿದೆ",
+      "kpiProposed": "ನಾನು ಪ್ರಸ್ತಾವಿಸಿದ್ದೇನೆ",
+      "recentCard": "ಇತ್ತೀಚಿನ ಕಾರ್ಯಗಳು",
+      "recentCardSub": "ವಿವರ ತೆರೆಯಲು ಕ್ಲಿಕ್ ಮಾಡಿ"
+    },
+    "list": {
+      "title": "ಕಾರ್ಯ ಪಟ್ಟಿ",
+      "tasksCount": "{{count}} ಕಾರ್ಯಗಳು",
+      "filters": "ಫಿಲ್ಟರ್‌ಗಳು",
+      "allStatuses": "ಎಲ್ಲ ಸ್ಥಿತಿಗಳು",
+      "allPriorities": "ಎಲ್ಲ ಆದ್ಯತೆಗಳು"
+    },
+    "bulk": {
+      "selected": "{{count}} ಆಯ್ಕೆ",
+      "selectAll": "ಪುಟದಲ್ಲಿ ಎಲ್ಲ ಆಯ್ಕೆ ಮಾಡಿ",
+      "selectTask": "ಕಾರ್ಯ {{code}} ಆಯ್ಕೆ",
+      "assignLead": "ನಾಯಕ ನಿಯೋಜಿಸಿ",
+      "assignMember": "ಸದಸ್ಯ ನಿಯೋಜಿಸಿ",
+      "cancel": "ಕಾರ್ಯ ರದ್ದು",
+      "cancelReason": "ರದ್ದು ಕಾರಣ",
+      "cancelPlaceholder": "ಬಲ್ಕ್ ರದ್ದಿಗೆ ಕಾರಣ…",
+      "clear": "ಆಯ್ಕೆ ತೆರವು",
+      "leadDone": "{{count}} ಕಾರ್ಯ(ಗಳಿಗೆ) ತಂಡ ನಾಯಕ ನಿಯೋಜಿಸಲಾಗಿದೆ",
+      "memberDone": "{{count}} ಕಾರ್ಯ(ಗಳಿಗೆ) ತಂಡ ಸದಸ್ಯ ನಿಯೋಜಿಸಲಾಗಿದೆ",
+      "cancelDone": "{{count}} ಕಾರ್ಯ(ಗಳು) ರದ್ದಾಗಿವೆ",
+      "partialFail": "{{count}} ಕಾರ್ಯ(ಗಳನ್ನು) ನವೀಕರಿಸಲಾಗಲಿಲ್ಲ"
+    },
+    "create": {
+      "title": "ಕಾರ್ಯ ರಚಿಸಿ",
+      "titleRequired": "ಶೀರ್ಷಿಕೆ ಅಗತ್ಯ",
+      "titleField": "ಶೀರ್ಷಿಕೆ *",
+      "descriptionField": "ವಿವರಣೆ *",
+      "category": "ವರ್ಗ",
+      "priority": "ಆದ್ಯತೆ *",
+      "module": "ಮಾಡ್ಯೂಲ್",
+      "project": "ಯೋಜನೆ",
+      "department": "ವಿಭಾಗ",
+      "dueDate": "ನಿಗದಿ ದಿನಾಂಕ",
+      "assignLead": "ತಂಡ ನಾಯಕ ನಿಯೋಜಿಸಿ",
+      "assignMember": "ತಂಡ ಸದಸ್ಯ ನಿಯೋಜಿಸಿ",
+      "evidenceRequired": "ಸಾಕ್ಷ್ಯ ಅಗತ್ಯ",
+      "managerApproval": "ಮ್ಯಾನೇಜರ್ ಅಂತಿಮ ಅನುಮೋದನೆ",
+      "instructions": "ಸೂಚನೆಗಳು",
+      "created": "ಕಾರ್ಯ {{code}} ರಚಿಸಲಾಗಿದೆ"
+    },
+    "assignment": {
+      "title": "ನಿಯೋಜನ",
+      "assignReassign": "ನಿಯೋಜಿಸಿ / ಮರು ನಿಯೋಜಿಸಿ",
+      "teamLead": "ತಂಡ ನಾಯಕ",
+      "teamMember": "ತಂಡ ಸದಸ್ಯ",
+      "assignLeadBtn": "ನಾಯಕ ನಿಯೋಜಿಸಿ",
+      "assignMemberBtn": "ಸದಸ್ಯ ನಿಯೋಜಿಸಿ",
+      "selectLead": "ತಂಡ ನಾಯಕ ಆಯ್ಕೆ ಮಾಡಿ",
+      "selectMember": "ತಂಡ ಸದಸ್ಯ ಆಯ್ಕೆ ಮಾಡಿ",
+      "leadAssigned": "ತಂಡ ನಾಯಕ ನಿಯೋಜಿಸಲಾಗಿದೆ",
+      "memberAssigned": "ತಂಡ ಸದಸ್ಯ ನಿಯೋಜಿಸಲಾಗಿದೆ",
+      "currentLead": "ಪ್ರಸ್ತುತ ನಾಯಕ: {{name}}",
+      "currentMember": "ಪ್ರಸ್ತುತ ಸದಸ್ಯ: {{name}}"
+    },
+    "detail": {
+      "loading": "ಕಾರ್ಯ ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+      "notFound": "ಕಾರ್ಯ ಕಂಡುಬಂದಿಲ್ಲ",
+      "ownerDue": "ಮಾಲೀಕ: {{owner}} · ನಿಗದಿ: {{due}}",
+      "rejectPlaceholder": "ತಿರಸ್ಕರಣ / ಸ್ಪಷ್ಟೀಕರಣ ಟಿಪ್ಪಣಿ",
+      "tabs": {
+        "overview": "ಅವಲೋಕನ",
+        "assignment": "ನಿಯೋಜನ",
+        "evidence": "ಸಾಕ್ಷ್ಯ",
+        "approval": "ಅನುಮೋದನೆ",
+        "comments": "ಟಿಪ್ಪಣಿಗಳು",
+        "audit": "ಆಡಿಟ್"
+      },
+      "actions": {
+        "accept": "ಒಪ್ಪಿಕೊಳ್ಳಿ",
+        "start": "ಪ್ರಾರಂಭ",
+        "updateProgress": "ಪ್ರಗತಿ ನವೀಕರಣ",
+        "submitApproval": "ಅನುಮೋದನೆಗೆ ಸಲ್ಲಿಸಿ",
+        "acceptProposed": "ಪ್ರಸ್ತಾವ ಒಪ್ಪಿಕೊಳ್ಳಿ",
+        "rejectProposed": "ಪ್ರಸ್ತಾವ ತಿರಸ್ಕರಿಸಿ",
+        "verify": "ಪರಿಶೀಲಿಸಿ & ಅನುಮೋದಿಸಿ",
+        "reject": "ತಿರಸ್ಕರಿಸಿ",
+        "approveClosure": "ಮುಕ್ತಾಯ ಅನುಮೋದನೆ",
+        "rejectClosure": "ಮುಕ್ತಾಯ ತಿರಸ್ಕಾರ",
+        "subtask": "ಉಪ-ಕಾರ್ಯ",
+        "escalate": "ಎಸ್ಕಲೇಟ್",
+        "markBlocked": "ನಿರ್ಬಂಧಿತ ಎಂದು ಗುರುತಿಸಿ"
+      },
+      "toast": {
+        "accepted": "ಕಾರ್ಯ ಒಪ್ಪಿಕೊಳ್ಳಲಾಗಿದೆ",
+        "started": "ಕಾರ್ಯ ಪ್ರಾರಂಭ",
+        "progressUpdated": "ಪ್ರಗತಿ ನವೀಕರಿಸಲಾಗಿದೆ",
+        "submitted": "ಅನುಮೋದನೆಗೆ ಸಲ್ಲಿಸಲಾಗಿದೆ",
+        "proposedAccepted": "ಪ್ರಸ್ತಾವ ಒಪ್ಪಿಕೊಳ್ಳಲಾಗಿದೆ",
+        "rejected": "ತಿರಸ್ಕರಿಸಲಾಗಿದೆ",
+        "verified": "ಪರಿಶೀಲಿಸಲಾಗಿದೆ",
+        "rework": "ಮರು ಕಾರ್ಯಕ್ಕೆ ಕಳುಹಿಸಲಾಗಿದೆ",
+        "closed": "ಕಾರ್ಯ ಮುಚ್ಚಲಾಗಿದೆ",
+        "commentAdded": "ಟಿಪ್ಪಣಿ ಸೇರಿಸಲಾಗಿದೆ",
+        "evidenceUploaded": "ಸಾಕ್ಷ್ಯ ಅಪ್‌ಲೋಡ್",
+        "escalated": "ಕಾರ್ಯ ಎಸ್ಕಲೇಟ್",
+        "blocked": "ಕಾರ್ಯ ನಿರ್ಬಂಧಿತ ಗುರುತಿಸಲಾಗಿದೆ"
+      },
+      "actionRemarksPlaceholder": "ತಿರಸ್ಕಾರ, ಎಸ್ಕಲೇಶನ್ ಅಥವಾ ನಿರ್ಬಂಧಕ್ಕಾಗಿ ಟಿಪ್ಪಣಿ",
+      "overview": {
+        "moduleProject": "ಮಾಡ್ಯೂಲ್: {{module}} · ಯೋಜನೆ: {{project}}",
+        "categorySource": "ವರ್ಗ: {{category}} · ಮೂಲ: {{source}}",
+        "progressEvidence": "ಪ್ರಗತಿ: {{progress}}% · ಸಾಕ್ಷ್ಯ: {{evidence}}",
+        "instructions": "ಸೂಚನೆಗಳು: {{text}}"
+      },
+      "assignmentCard": {
+        "lead": "ತಂಡ ನಾಯಕ: {{name}}",
+        "member": "ತಂಡ ಸದಸ್ಯ: {{name}}",
+        "createdBy": "ರಚಿಸಿದ: {{name}}"
+      },
+      "evidence": {
+        "upload": "ಸಾಕ್ಷ್ಯ ಅಪ್‌ಲೋಡ್"
+      },
+      "checklist": {
+        "title": "ಪರಿಶೀಲನ ಪರಿಶೀಲನ ಪಟ್ಟಿ",
+        "resolution_matches": "ನಿರ್ಣಯ ಅಗತ್ಯಕ್ಕೆ ಸರಿಹೊಂದಿದೆ",
+        "evidence_uploaded": "ಸಾಕ್ಷ್ಯ ಅಪ್‌ಲೋಡ್ ಆಗಿದೆ",
+        "evidence_relevant": "ಸಾಕ್ಷ್ಯ ಸಂಬಂಧಿತ",
+        "no_dependency_pending": "ಯಾವ ಅವಲಂಬನೆ ಬಾಕಿ ಇಲ್ಲ",
+        "sla_checked": "SLA ಅನುಪಾಲನೆ ಪರಿಶೀಲಿಸಲಾಗಿದೆ"
+      },
+      "comments": {
+        "placeholder": "ಟಿಪ್ಪಣಿ ಸೇರಿಸಿ…"
+      },
+      "subtasks": "ಉಪ-ಕಾರ್ಯಗಳು",
+      "approvalHistory": "ಅನುಮೋದನ ಇತಿಹಾಸ",
+      "auditTrail": "ಆಡಿಟ್ ಟ್ರೇಲ್"
+    },
+    "reports": {
+      "loading": "ವರದಿಗಳು ಲೋಡ್…",
+      "title": "ಕಾರ್ಯ ವರದಿ",
+      "subtitle": "ಸಾರಾಂಶ ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ಕೆಲಸದ ಹೊರೆ ವಿತರಣೆ",
+      "kpiTotal": "ಒಟ್ಟು ಕಾರ್ಯಗಳು",
+      "kpiSlaBreached": "SLA ಉಲ್ಲಂಘನೆ",
+      "kpiPending": "ಅನುಮೋದನೆ ಬಾಕಿ",
+      "kpiRework": "ಮರು ಕಾರ್ಯ ಸರದಿ",
+      "kpiEscalated": "ಎಸ್ಕಲೇಟ್",
+      "kpiClosed": "ಈ ತಿಂಗಳಲ್ಲಿ ಮುಚ್ಚಲಾಗಿದೆ",
+      "byStatus": "ಸ್ಥಿತಿ ಪ್ರಕಾರ",
+      "byPriority": "ಆದ್ಯತೆ ಪ್ರಕಾರ",
+      "byModule": "ಮಾಡ್ಯೂಲ್ ಪ್ರಕಾರ"
+    },
+    "config": {
+      "title": "ಕಾರ್ಯ ಕಾನ್ಫಿಗರೇಶನ್",
+      "subtitle": "ವರ್ಗಗಳು, SLA ನಿಯಮಗಳು ಮತ್ತು ಕಾರ್ಯ ಮಾಡ್ಯೂಲ್ ಸೆಟ್ಟಿಂಗ್ (ನಿರ್ವಾಹಕ)",
+      "slaHours": "ಡಿಫಾಲ್ಟ್ SLA ಗಂಟೆಗಳು",
+      "categories": "ವರ್ಗಗಳು",
+      "apiConfig": "API ಕಾನ್ಫಿಗರೇಶನ್",
+      "apiHint": "POST /api/tasks/config/categories ಮತ್ತು /api/tasks/config/sla-rules ಮೂಲಕ ಕಾನ್ಫಿಗರೇಶನ್ ವಿಸ್ತರಿಸಿ. task_role ಮತ್ತು team_lead_id ಮೂಲಕ ಬಳಕೆದಾರ ಪಾತ್ರ ಸೆಟ್."
+    },
+    "auditor": {
+      "loading": "ಲೆಕ್ಕ ಪರಿಶೋಧಕ ಅವಲೋಕನ ಲೋಡ್…",
+      "title": "ಲೆಕ್ಕ ಪರಿಶೋಧಕ ಕಾರ್ಯ ಅವಲೋಕನ",
+      "subtitle": "ಓದಲು ಮಾತ್ರ ಸಂಸ್ಥೆ-ವ್ಯಾಪಿ ಕಾರ್ಯ ಮೆಟ್ರಿಕ್ ಮತ್ತು ಆಡಿಟ್ ಮಾದರಿ",
+      "recentTasks": "ಇತ್ತೀಚಿನ ಕಾರ್ಯಗಳು",
+      "recentTasksSub": "ಸಾಕ್ಷ್ಯ ಮತ್ತು ಆಡಿಟ್ ಟ್ರೇಲ್ ಪರಿಶೀಲಿಸಲು ಯಾವ ಕಾರ್ಯವನ್ನಾದರೂ ತೆರೆಯಿರಿ (ಓದಲು ಮಾತ್ರ)"
+    }
+  }
+}

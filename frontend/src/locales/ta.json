@@ -1,0 +1,328 @@
+{
+  "app": {
+    "title": "இ-கோர்ட்ஸ் PMIS",
+    "subtitle": "பா III · திட்ட கண்காணிப்பு"
+  },
+  "nav": {
+    "dashboard": "டாஷ்போர்டு",
+    "physical": "இயற்பியல் டிராக்கர்",
+    "financial": "நிதி டிராக்கர்",
+    "outcome": "விளைவு டிராக்கர்",
+    "submissions": "சமர்ப்பிப்புகள்",
+    "reports": "அறிக்கைகள்",
+    "master": "மாஸ்டர் தரவு",
+    "schedules": "அட்டவணை & அவுட்பாக்ஸ்",
+    "pmu": "PMU பணிகள்",
+    "dpr": "DPR விநியோகங்கள்",
+    "ijuris": "iJuris ingest",
+    "users": "பயனர் நிர்வாகம்",
+    "backup": "காப்பு & மீட்டமை",
+    "audit": "தணிக்கை பதிவு",
+    "account": "கணக்கு / 2FA",
+    "signOut": "வெளியேறு",
+    "signedIn": "உள்நுழைந்தது",
+    "mainNav": "முதன்மை வழிசெலுத்தல்"
+  },
+  "common": {
+    "save": "சேமி",
+    "cancel": "ரத்து",
+    "delete": "நீக்கு",
+    "loading": "ஏற்றுகிறது…",
+    "darkMode": "இருண்ட பயன்முறை",
+    "lightMode": "வெளிச்ச பயன்முறை",
+    "language": "மொழி",
+    "skipToContent": "முதன்மை உள்ளடக்கத்திற்கு செல்"
+  },
+  "dashboard": {
+    "narrativeTitle": "Executive narrative",
+    "narrativeSubtitle": "Summary from approved dashboard data"
+  },
+  "submissions": {
+    "slaTitle": "சமர்ப்பிப்பு SLA",
+    "reopenRequest": "மீண்டும் திற",
+    "reopenReason": "காரணம்",
+    "dashboardExcluded": "டாஷ்போர்டிலிருந்து விலக்கப்பட்டது"
+  },
+  "reports": {
+    "savedViews": "சேமிக்கப்பட்ட காட்சிகள்",
+    "saveView": "காட்சியை சேமி",
+    "deleteView": "காட்சியை நீக்கு"
+  },
+  "onboarding": {
+    "welcome": "இயற்பியல் டிராக்கருக்கு வரவேற்கிறோம்",
+    "filters": "உயர் நீதிமன்றம் மற்றும் காலம் தேர்ந்தெடுக்கவும்.",
+    "entry": "இலக்கு மற்றும் அடைந்ததை உள்ளிட்டு சேமிக்கவும்.",
+    "table": "கீழே உள்ள அட்டவணையில் திருத்தவும்.",
+    "done": "தயார்."
+  },
+  "tasks": {
+    "common": {
+      "loading": "ஏற்றுகிறது…",
+      "noTasks": "பணிகள் எதுவும் கிடைக்கவில்லை.",
+      "createTask": "பணி உருவாக்கு",
+      "creating": "உருவாக்குகிறது…",
+      "back": "பின்செல்",
+      "search": "தேடு…",
+      "previous": "முந்தைய",
+      "next": "அடுத்த",
+      "page": "பக்கம் {{n}}",
+      "exportCsv": "CSV ஏற்றுமதி",
+      "exportXlsx": "எக்செல் ஏற்றுமதி",
+      "exportPdf": "PDF ஏற்றுமதி",
+      "unassigned": "ஒதுக்கப்படாத",
+      "download": "பதிவிறக்கம்",
+      "post": "இடுகை",
+      "remarksOptional": "கருத்துரை (விருப்பம்)",
+      "assignmentNotes": "நியமன குறிப்புகள்…"
+    },
+    "layout": {
+      "commandCentreTitle": "பணி கட்டளை மையம்",
+      "taskManagement": "பணி மேலாண்மை",
+      "navLabel": "பணி மேலாண்மை வழிசெலுத்தல்",
+      "appSelector": "பயன்பாட்டு தேர்வாளர்",
+      "pmisApp": "PMIS பயன்பாடு",
+      "toggleTheme": "தீம் மாற்று",
+      "nav": {
+        "commandCentre": "கட்டளை மையம்",
+        "workbench": "பணிக்கட்டை",
+        "myTasks": "என் பணிகள்",
+        "allTasks": "அனைத்து பணிகள்",
+        "reports": "அறிக்கைகள்",
+        "configuration": "கட்டமைப்பு",
+        "auditorOverview": "தணிக்கையாளர் கண்ணோட்டம்"
+      }
+    },
+    "table": {
+      "listAria": "பணி பட்டியல்",
+      "code": "குறியீடு",
+      "title": "தலைப்பு",
+      "priority": "முன்னுரிமை",
+      "status": "நிலை",
+      "owner": "உரிமையாளர்",
+      "due": "கடைசி நாள்",
+      "sla": "SLA"
+    },
+    "appSelector": {
+      "initialising": "PMIS தொடங்குகிறது…",
+      "signedInAs": "{{name}} · {{role}} என உள்நுழைந்துள்ளீர்கள்",
+      "chooseWorkspace": "பணியிடத்தைத் தேர்ந்தெடுக்கவும்",
+      "subtitle": "நியமனங்கள் மற்றும் அங்கீகாரங்களுக்கு பணி மேலாண்மையைத் தேர்ந்தெடுக்கவும், அல்லது PMIS பயன்பாட்டிற்குத் தொடரவும்.",
+      "taskTitle": "பணி மேலாண்மை",
+      "taskDesc": "உங்கள் நிறுவனம் முழுவதும் பணிகள், நியமனங்கள், சான்றுகள், அங்கீகாரங்கள், SLA மற்றும் ஆழமான பகுப்பாய்வை நிர்வகிக்கவும்.",
+      "openTask": "பணி மேலாண்மை திற →",
+      "appTitle": "பயன்பாடு",
+      "appDesc": "முதன்மை பயன்பாட்டு டாஷ்போர்டிற்குச் செல்லுங்கள் — கண்காணிப்புகள், சமர்பிப்புகள், அறிக்கைகள் மற்றும் மாஸ்டர் தரவு.",
+      "openApp": "பயன்பாடு திற →",
+      "directLinks": "நேரடி இணைப்புகள் இன்னும் செயல்படுகின்றன:",
+      "taskModule": "பணி தொகுதி"
+    },
+    "manager": {
+      "loading": "கட்டளை மையம் ஏற்றுகிறது…",
+      "title": "மேலாளர் பணி கட்டளை மையம்",
+      "subtitle": "நிறுவனம் முழுவதும் பணி தெரிவு, SLA மற்றும் அங்கீகாரம்",
+      "kpiTotal": "மொத்த பணிகள்",
+      "kpiUnassigned": "ஒதுக்கப்படாத",
+      "kpiInProgress": "செயலில்",
+      "kpiSubmitted": "அங்கீகாரத்திற்கு சமர்பிக்கப்பட்டது",
+      "kpiSlaBreached": "SLA மீறப்பட்டது",
+      "kpiHighPriority": "அதிக முன்னுரிமை திறந்தது",
+      "kpiManagerPending": "மேலாளர் அங்கீகாரம் நிலுவை",
+      "kpiClosedMonth": "இந்த மாதம் முடிந்தது",
+      "pendingApproval": "மேலாளர் அங்கீகாரம் நிலுவை",
+      "pendingApprovalSub": "முக்கியமான முடிவு வரிசை",
+      "unassignedPool": "ஒதுக்கப்படாத தொகுப்பு",
+      "unassignedPoolSub": "அணி தலைவருக்காக காத்திருக்கும் பணிகள்",
+      "escalations": "சமீபத்திய அதிகரிப்புகள்",
+      "escalationsSub": "அதிகரிக்கப்பட்ட பணிகள்",
+      "byModule": "தொகுதி வாரியாக",
+      "byModuleSub": "ஆழமான பகுப்பாய்வு — தொகுதி வாரி விநியோகம்"
+    },
+    "lead": {
+      "loading": "பணிக்கட்டை ஏற்றுகிறது…",
+      "title": "அணி தலைவர் பணிக்கட்டை",
+      "subtitle": "அணி பணிகளை நியமிக்கவும், சரிபார்க்கவும், அதிகரிக்கவும்",
+      "kpiReceived": "பெறப்பட்ட பணிகள்",
+      "kpiPendingDist": "விநியோகம் நிலுவை",
+      "kpiAssigned": "உறுப்பினர்களுக்கு ஒதுக்கப்பட்டது",
+      "kpiInProgress": "செயலில்",
+      "kpiSubmitted": "அங்கீகாரத்திற்கு சமர்பிக்கப்பட்டது",
+      "kpiRework": "மறு செய்பணி தேவை",
+      "kpiSlaRisk": "SLA ஆபத்து",
+      "kpiProposed": "உறுப்பினர்களால் முன்மொழியப்பட்டது",
+      "submittedCard": "அங்கீகாரத்திற்கு சமர்பிக்கப்பட்டது",
+      "submittedCardSub": "உங்கள் சரிபார்ப்பிற்காக காத்திருக்கிறது",
+      "proposedCard": "உறுப்பினர்களால் முன்மொழியப்பட்டது",
+      "proposedCardSub": "மதிப்பாய்வு செய்து ஏற்கவும் அல்லது நிராகரிக்கவும்"
+    },
+    "member": {
+      "loading": "பணியிடம் ஏற்றுகிறது…",
+      "title": "அணி உறுப்பினர் பணியிடம்",
+      "subtitle": "உங்கள் ஒதுக்கப்பட்ட பணிகள், சான்றுகள் மற்றும் சமர்பிப்புகள்",
+      "kpiOpen": "என் திறந்த பணிகள்",
+      "kpiDueToday": "இன்று கடைசி",
+      "kpiOverdue": "காலதாமதமான",
+      "kpiInProgress": "செயலில்",
+      "kpiRework": "மறு செய்பணி தேவை",
+      "kpiSubmitted": "சமர்பிக்கப்பட்டது",
+      "kpiProposed": "என்னால் முன்மொழியப்பட்டது",
+      "recentCard": "சமீபத்திய பணிகள்",
+      "recentCardSub": "விவரங்களை திறக்க கிளிக் செய்யவும்"
+    },
+    "list": {
+      "title": "பணி பட்டியல்",
+      "tasksCount": "{{count}} பணிகள்",
+      "filters": "வடிகட்டிகள்",
+      "allStatuses": "அனைத்து நிலைகள்",
+      "allPriorities": "அனைத்து முன்னுரிமைகள்"
+    },
+    "bulk": {
+      "selected": "{{count}} தேர்ந்தெடுக்கப்பட்டது",
+      "selectAll": "பக்கத்தில் அனைத்தையும் தேர்ந்தெடு",
+      "selectTask": "பணி {{code}} தேர்ந்தெடு",
+      "assignLead": "தலைவரை நியமிக்கவும்",
+      "assignMember": "உறுப்பினரை நியமிக்கவும்",
+      "cancel": "பணிகளை ரத்துசெய்",
+      "cancelReason": "ரத்துக்கான காரணம்",
+      "cancelPlaceholder": "வெகுஜன ரத்துக்கான காரணம்…",
+      "clear": "தேர்வை அழி",
+      "leadDone": "{{count}} பணி(களில்) அணி தலைவர் நியமிக்கப்பட்டார்",
+      "memberDone": "{{count}} பணி(களில்) அணி உறுப்பினர் நியமிக்கப்பட்டார்",
+      "cancelDone": "{{count}} பணி(கள்) ரத்துசெய்யப்பட்டது",
+      "partialFail": "{{count}} பணி(கள்) புதுப்பிக்க முடியவில்லை"
+    },
+    "create": {
+      "title": "பணி உருவாக்கு",
+      "titleRequired": "தலைப்பு அவசியம்",
+      "titleField": "தலைப்பு *",
+      "descriptionField": "விளக்கம் *",
+      "category": "வகை",
+      "priority": "முன்னுரிமை *",
+      "module": "தொகுதி",
+      "project": "திட்டம்",
+      "department": "துறை",
+      "dueDate": "கடைசி நாள்",
+      "assignLead": "அணி தலைவரை நியமிக்கவும்",
+      "assignMember": "அணி உறுப்பினரை நியமிக்கவும்",
+      "evidenceRequired": "சான்று அவசியம்",
+      "managerApproval": "மேலாளரின் இறுதி அங்கீகாரம்",
+      "instructions": "வழிமுறைகள்",
+      "created": "பணி {{code}} உருவாக்கப்பட்டது"
+    },
+    "assignment": {
+      "title": "நியமனம்",
+      "assignReassign": "நியமனம் / மறு நியமனம்",
+      "teamLead": "அணி தலைவர்",
+      "teamMember": "அணி உறுப்பினர்",
+      "assignLeadBtn": "தலைவரை நியமிக்கவும்",
+      "assignMemberBtn": "உறுப்பினரை நியமிக்கவும்",
+      "selectLead": "ஒரு அணி தலைவரை தேர்ந்தெடுக்கவும்",
+      "selectMember": "ஒரு அணி உறுப்பினரை தேர்ந்தெடுக்கவும்",
+      "leadAssigned": "அணி தலைவர் நியமிக்கப்பட்டார்",
+      "memberAssigned": "அணி உறுப்பினர் நியமிக்கப்பட்டார்",
+      "currentLead": "தற்போதைய தலைவர்: {{name}}",
+      "currentMember": "தற்போதைய உறுப்பினர்: {{name}}"
+    },
+    "detail": {
+      "loading": "பணி ஏற்றுகிறது…",
+      "notFound": "பணி கிடைக்கவில்லை",
+      "ownerDue": "உரிமையாளர்: {{owner}} · கடைசி: {{due}}",
+      "rejectPlaceholder": "நிராகரிப்பு / தெளிவுபடுத்தல் கருத்துரை",
+      "tabs": {
+        "overview": "கண்ணோட்டம்",
+        "assignment": "நியமனம்",
+        "evidence": "சான்று",
+        "approval": "அங்கீகாரம்",
+        "comments": "கருத்துரைகள்",
+        "audit": "தணிக்கை"
+      },
+      "actions": {
+        "accept": "ஏற்கவும்",
+        "start": "தொடங்கு",
+        "updateProgress": "முன்னேற்றம் புதுப்பி",
+        "submitApproval": "அங்கீகாரத்திற்கு சமர்பி",
+        "acceptProposed": "முன்மொழிவை ஏற்கவும்",
+        "rejectProposed": "முன்மொழிவை நிராகரி",
+        "verify": "சரிபார்த்து அங்கீகரி",
+        "reject": "நிராகரி",
+        "approveClosure": "முடிவை அங்கீகரி",
+        "rejectClosure": "முடிவை நிராகரி",
+        "subtask": "துணை பணி",
+        "escalate": "அதிகரி",
+        "markBlocked": "தடுக்கப்பட்டதாக குறி"
+      },
+      "toast": {
+        "accepted": "பணி ஏற்கப்பட்டது",
+        "started": "பணி தொடங்கியது",
+        "progressUpdated": "முன்னேற்றம் புதுப்பிக்கப்பட்டது",
+        "submitted": "அங்கீகாரத்திற்கு சமர்பிக்கப்பட்டது",
+        "proposedAccepted": "முன்மொழிந்த பணி ஏற்கப்பட்டது",
+        "rejected": "நிராகரிக்கப்பட்டது",
+        "verified": "சரிபார்க்கப்பட்டது",
+        "rework": "மறு செய்பணிக்கு அனுப்பப்பட்டது",
+        "closed": "பணி முடிக்கப்பட்டது",
+        "commentAdded": "கருத்துரை சேர்க்கப்பட்டது",
+        "evidenceUploaded": "சான்று பதிவேற்றப்பட்டது",
+        "escalated": "பணி அதிகரிக்கப்பட்டது",
+        "blocked": "பணி தடுக்கப்பட்டதாக குறிக்கப்பட்டது"
+      },
+      "actionRemarksPlaceholder": "நிராகரிப்பு, அதிகரிப்பு அல்லது தடைக்கான கருத்துரை",
+      "overview": {
+        "moduleProject": "தொகுதி: {{module}} · திட்டம்: {{project}}",
+        "categorySource": "வகை: {{category}} · மூலம்: {{source}}",
+        "progressEvidence": "முன்னேற்றம்: {{progress}}% · சான்று: {{evidence}}",
+        "instructions": "வழிமுறைகள்: {{text}}"
+      },
+      "assignmentCard": {
+        "lead": "அணி தலைவர்: {{name}}",
+        "member": "அணி உறுப்பினர்: {{name}}",
+        "createdBy": "உருவாக்கியவர்: {{name}}"
+      },
+      "evidence": {
+        "upload": "சான்று பதிவேற்று"
+      },
+      "checklist": {
+        "title": "சரிபார்ப்பு பட்டியல்",
+        "resolution_matches": "தீர்மானம் தேவையை பூர்த்திசெய்கிறது",
+        "evidence_uploaded": "சான்று பதிவேற்றப்பட்டது",
+        "evidence_relevant": "சான்று தொடர்புடையது",
+        "no_dependency_pending": "எந்த சார்பும் நிலுவையில் இல்லை",
+        "sla_checked": "SLA இணக்கம் சரிபார்க்கப்பட்டது"
+      },
+      "comments": {
+        "placeholder": "கருத்துரை சேர்க்கவும்…"
+      },
+      "subtasks": "துணை பணிகள்",
+      "approvalHistory": "அங்கீகார வரலாறு",
+      "auditTrail": "தணிக்கை பாதை"
+    },
+    "reports": {
+      "loading": "அறிக்கைகள் ஏற்றுகிறது…",
+      "title": "பணி அறிக்கைகள்",
+      "subtitle": "சுருக்க பகுப்பாய்வு மற்றும் பணிச்சுமை விநியோகம்",
+      "kpiTotal": "மொத்த பணிகள்",
+      "kpiSlaBreached": "SLA மீறப்பட்டது",
+      "kpiPending": "அங்கீகாரம் நிலுவை",
+      "kpiRework": "மறு செய்பணி வரிசை",
+      "kpiEscalated": "அதிகரிக்கப்பட்டது",
+      "kpiClosed": "இந்த மாதம் முடிந்தது",
+      "byStatus": "நிலை வாரியாக",
+      "byPriority": "முன்னுரிமை வாரியாக",
+      "byModule": "தொகுதி வாரியாக"
+    },
+    "config": {
+      "title": "பணி கட்டமைப்பு",
+      "subtitle": "வகைகள், SLA விதிகள் மற்றும் பணி தொகுதி அமைப்புகள் (நிர்வாகி)",
+      "slaHours": "இயல்புநிலை SLA மணிநேரம்",
+      "categories": "வகைகள்",
+      "apiConfig": "API கட்டமைப்பு",
+      "apiHint": "POST /api/tasks/config/categories மற்றும் /api/tasks/config/sla-rules மூலம் கட்டமைப்பை விரிவாக்கவும். task_role மற்றும் team_lead_id மூலம் பயனர் பணி பாத்திரங்கள் அமைக்கப்படுகின்றன."
+    },
+    "auditor": {
+      "loading": "தணிக்கையாளர் கண்ணோட்டம் ஏற்றுகிறது…",
+      "title": "தணிக்கையாளர் பணி கண்ணோட்டம்",
+      "subtitle": "படிக்க மட்டும் நிறுவன அளவிலான பணி அளவீடுகள் மற்றும் தணிக்கை மாதிரி",
+      "recentTasks": "சமீபத்திய பணிகள்",
+      "recentTasksSub": "சான்று மற்றும் தணிக்கை பாதையை மதிப்பாய்வு செய்ய எந்த பணியையும் திறக்கவும் (படிக்க மட்டும்)"
+    }
+  }
+}

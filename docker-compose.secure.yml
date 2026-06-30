@@ -1,0 +1,40 @@
+# Production overlay — use with: docker compose -f docker-compose.yml -f docker-compose.secure.yml up -d
+# Requires a fresh Mongo volume (docker compose down -v) on first run with auth enabled.
+
+services:
+  mongo:
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-pmis}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?Set MONGO_ROOT_PASSWORD in .env}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--quiet",
+          "-u",
+          "${MONGO_ROOT_USER:-pmis}",
+          "-p",
+          "${MONGO_ROOT_PASSWORD}",
+          "--authenticationDatabase",
+          "admin",
+          "--eval",
+          "db.adminCommand('ping').ok",
+        ]
+
+  redis:
+    command: redis-server --requirepass ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+
+  backend:
+    environment:
+      MONGO_URL: mongodb://${MONGO_ROOT_USER:-pmis}:${MONGO_ROOT_PASSWORD}@mongo:27017/?authSource=admin
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      JWT_STRICT: ${JWT_STRICT:-true}
+      APP_ENV: production
+      REQUIRE_REDIS: "true"
+      WEBHOOK_HTTPS_ONLY: "true"
+      DISABLE_OPENAPI: "true"
+      TRUST_PROXY_HEADERS: "true"

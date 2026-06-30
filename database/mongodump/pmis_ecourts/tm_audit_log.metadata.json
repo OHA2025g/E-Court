@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"task_id":{"$numberInt":"1"},"performed_at":{"$numberInt":"-1"}},"name":"task_id_1_performed_at_-1"}],"uuid":"84917263b2cf4b5c8a281aba99dd7f39","collectionName":"tm_audit_log","type":"collection"}

@@ -1,0 +1,328 @@
+{
+  "app": {
+    "title": "ఇ-కోర్ట్స్ PMIS",
+    "subtitle": "దశ III · ప్రాజెక్ట్ మానిటరింగ్"
+  },
+  "nav": {
+    "dashboard": "డాష్‌బోర్డ్",
+    "physical": "భౌతిక ట్రాకర్",
+    "financial": "ఆర్థిక ట్రాకర్",
+    "outcome": "ఫలిత ట్రాకర్",
+    "submissions": "సమర్పణలు",
+    "reports": "నివేదికలు",
+    "master": "మాస్టర్ డేటా",
+    "schedules": "షెడ్యూల్ & అవుట్‌బాక్స్",
+    "pmu": "PMU పనులు",
+    "dpr": "DPR డెలివరబుల్స్",
+    "ijuris": "iJuris ingest",
+    "users": "వినియోగదారు నిర్వహణ",
+    "backup": "బ్యాకప్ & పునరుద్ధరణ",
+    "audit": "ఆడిట్ ట్రెయిల్",
+    "account": "ఖాతా / 2FA",
+    "signOut": "సైన్ అవుట్",
+    "signedIn": "సైన్ ఇన్",
+    "mainNav": "ప్రధాన నావిగేషన్"
+  },
+  "common": {
+    "save": "సేవ్",
+    "cancel": "రద్దు",
+    "delete": "తొలగించు",
+    "loading": "లోడ్ అవుతోంది…",
+    "darkMode": "డార్క్ మోడ్",
+    "lightMode": "లైట్ మోడ్",
+    "language": "భాష",
+    "skipToContent": "ప్రధాన కంటెంట్‌కు వెళ్లండి"
+  },
+  "dashboard": {
+    "narrativeTitle": "Executive narrative",
+    "narrativeSubtitle": "Summary from approved dashboard data"
+  },
+  "submissions": {
+    "slaTitle": "సమర్పణ SLA",
+    "reopenRequest": "మళ్లీ తెరవండి",
+    "reopenReason": "కారణం",
+    "dashboardExcluded": "డాష్‌బోర్డ్ నుండి మినహాయించబడింది"
+  },
+  "reports": {
+    "savedViews": "సేవ్ చేసిన వీక్షణలు",
+    "saveView": "వీక్షణను సేవ్ చేయండి",
+    "deleteView": "వీక్షణను తొలగించండి"
+  },
+  "onboarding": {
+    "welcome": "భౌతిక ట్రాకర్‌కు స్వాగతం",
+    "filters": "హైకోర్ట్ మరియు కాలం ఎంచుకోండి.",
+    "entry": "లక్ష్యం మరియు సాధించినది నమోదు చేసి సేవ్ చేయండి.",
+    "table": "క్రింది పట్టికలో సవరించండి.",
+    "done": "మీరు సిద్ధంగా ఉన్నారు."
+  },
+  "tasks": {
+    "common": {
+      "loading": "లోడవుతోంది…",
+      "noTasks": "పనులు ఏవీ కనుగొనబడలేదు.",
+      "createTask": "పని సృష్టించు",
+      "creating": "సృష్టిస్తోంది…",
+      "back": "వెనక్కి",
+      "search": "వెతుకు…",
+      "previous": "మునుపటి",
+      "next": "తదుపరి",
+      "page": "పేజీ {{n}}",
+      "exportCsv": "CSV ఎగుమతి",
+      "exportXlsx": "Excel ఎగుమతి",
+      "exportPdf": "PDF ఎగుమతి",
+      "unassigned": "నియమించబడలేదు",
+      "download": "డౌన్‌లోడ్",
+      "post": "పోస్ట్",
+      "remarksOptional": "వ్యాఖ్యలు (ఐచ్ఛికం)",
+      "assignmentNotes": "నియామక గమనికలు…"
+    },
+    "layout": {
+      "commandCentreTitle": "పని కమాండ్ సెంటర్",
+      "taskManagement": "పని నిర్వహణ",
+      "navLabel": "పని నిర్వహణ నావిగేషన్",
+      "appSelector": "యాప్ సెలెక్టర్",
+      "pmisApp": "PMIS అప్లికేషన్",
+      "toggleTheme": "థీమ్ మార్చు",
+      "nav": {
+        "commandCentre": "కమాండ్ సెంటర్",
+        "workbench": "వర్క్‌బెంచ్",
+        "myTasks": "నా పనులు",
+        "allTasks": "అన్ని పనులు",
+        "reports": "నివేదికలు",
+        "configuration": "కాన్ఫిగరేషన్",
+        "auditorOverview": "ఆడిటర్ అవలోకనం"
+      }
+    },
+    "table": {
+      "listAria": "పని జాబితా",
+      "code": "కోడ్",
+      "title": "శీర్షిక",
+      "priority": "ప్రాధాన్యత",
+      "status": "స్థితి",
+      "owner": "యజమాని",
+      "due": "గడువు",
+      "sla": "SLA"
+    },
+    "appSelector": {
+      "initialising": "PMIS ప్రారంభమవుతోంది…",
+      "signedInAs": "{{name}} · {{role}} గా సైన్ ఇన్ అయ్యారు",
+      "chooseWorkspace": "వర్క్‌స్పేస్ ఎంచుకోండి",
+      "subtitle": "నియామకాలు మరియు ఆమోదాల కోసం పని నిర్వహణను ఎంచుకోండి, లేదా ప్రధాన PMIS అప్లికేషన్‌కు కొనసాగండి.",
+      "taskTitle": "పని నిర్వహణ",
+      "taskDesc": "మీ సంస్థ అంతటా పనులు, నియామకాలు, సాక్ష్యాలు, ఆమోదాలు, SLA మరియు లోతైన విశ్లేషణలను నిర్వహించండి.",
+      "openTask": "పని నిర్వహణ తెరవండి →",
+      "appTitle": "అప్లికేషన్",
+      "appDesc": "ప్రధాన అప్లికేషన్ డ్యాష్‌బోర్డ్‌కు వెళ్ళండి — ట్రాకర్లు, సమర్పణలు, నివేదికలు మరియు మాస్టర్ డేటా.",
+      "openApp": "అప్లికేషన్ తెరవండి →",
+      "directLinks": "నేరుగా లింకులు ఇంకా పని చేస్తాయి:",
+      "taskModule": "పని మాడ్యూల్"
+    },
+    "manager": {
+      "loading": "కమాండ్ సెంటర్ లోడవుతోంది…",
+      "title": "మేనేజర్ పని కమాండ్ సెంటర్",
+      "subtitle": "సంస్థ అంతటా పని దృశ్యమానత, SLA మరియు ఆమోదాలు",
+      "kpiTotal": "మొత్తం పనులు",
+      "kpiUnassigned": "నియమించబడలేదు",
+      "kpiInProgress": "పురోగతిలో",
+      "kpiSubmitted": "ఆమోదం కోసం సమర్పించబడింది",
+      "kpiSlaBreached": "SLA ఉల్లంఘించబడింది",
+      "kpiHighPriority": "అధిక ప్రాధాన్యత తెరచింది",
+      "kpiManagerPending": "మేనేజర్ ఆమోదం పెండింగ్",
+      "kpiClosedMonth": "ఈ నెలలో మూసివేయబడింది",
+      "pendingApproval": "మేనేజర్ ఆమోదం పెండింగ్",
+      "pendingApprovalSub": "క్లిష్టమైన మూసివేత క్యూ",
+      "unassignedPool": "నియమించబడని పూల్",
+      "unassignedPoolSub": "టీమ్ లీడ్ కోసం వేచి ఉన్న పనులు",
+      "escalations": "ఇటీవలి ఎస్కలేషన్లు",
+      "escalationsSub": "ఎస్కలేట్ చేసిన పనులు",
+      "byModule": "మాడ్యూల్ వారీగా",
+      "byModuleSub": "లోతైన విశ్లేషణ — మాడ్యూల్ వారీ పంపిణీ"
+    },
+    "lead": {
+      "loading": "వర్క్‌బెంచ్ లోడవుతోంది…",
+      "title": "టీమ్ లీడ్ వర్క్‌బెంచ్",
+      "subtitle": "టీమ్ పనులను నియమించండి, ధృవీకరించండి మరియు ఎస్కలేట్ చేయండి",
+      "kpiReceived": "స్వీకరించిన పనులు",
+      "kpiPendingDist": "పంపిణీ పెండింగ్",
+      "kpiAssigned": "సభ్యులకు నియమించబడింది",
+      "kpiInProgress": "పురోగతిలో",
+      "kpiSubmitted": "ఆమోదం కోసం సమర్పించబడింది",
+      "kpiRework": "మళ్ళీ పని అవసరం",
+      "kpiSlaRisk": "SLA ప్రమాదం",
+      "kpiProposed": "సభ్యులు ప్రతిపాదించారు",
+      "submittedCard": "ఆమోదం కోసం సమర్పించబడింది",
+      "submittedCardSub": "మీ ధృవీకరణ కోసం వేచి ఉంది",
+      "proposedCard": "సభ్యులు ప్రతిపాదించారు",
+      "proposedCardSub": "సమీక్షించి ఆమోదించండి లేదా తిరస్కరించండి"
+    },
+    "member": {
+      "loading": "వర్క్‌స్పేస్ లోడవుతోంది…",
+      "title": "టీమ్ సభ్యుని వర్క్‌స్పేస్",
+      "subtitle": "మీకు నియమించబడిన పనులు, సాక్ష్యాలు మరియు సమర్పణలు",
+      "kpiOpen": "నా తెరచిన పనులు",
+      "kpiDueToday": "నేడు గడువు",
+      "kpiOverdue": "గడువు దాటిన",
+      "kpiInProgress": "పురోగతిలో",
+      "kpiRework": "మళ్ళీ పని అవసరం",
+      "kpiSubmitted": "సమర్పించబడింది",
+      "kpiProposed": "నేను ప్రతిపాదించాను",
+      "recentCard": "ఇటీవలి పనులు",
+      "recentCardSub": "వివరాలు తెరవడానికి క్లిక్ చేయండి"
+    },
+    "list": {
+      "title": "పని జాబితా",
+      "tasksCount": "{{count}} పనులు",
+      "filters": "ఫిల్టర్లు",
+      "allStatuses": "అన్ని స్థితులు",
+      "allPriorities": "అన్ని ప్రాధాన్యతలు"
+    },
+    "bulk": {
+      "selected": "{{count}} ఎంచుకోబడింది",
+      "selectAll": "పేజీలో అన్నీ ఎంచుకోండి",
+      "selectTask": "పని {{code}} ఎంచుకోండి",
+      "assignLead": "లీడ్‌ను నియమించు",
+      "assignMember": "సభ్యుణ్ణి నియమించు",
+      "cancel": "పనులు రద్దు చేయి",
+      "cancelReason": "రద్దు కారణం",
+      "cancelPlaceholder": "బల్క్ రద్దుకు కారణం…",
+      "clear": "ఎంపికను తొలగించు",
+      "leadDone": "{{count}} పని(పనుల)కు టీమ్ లీడ్ నియమించబడ్డారు",
+      "memberDone": "{{count}} పని(పనుల)కు టీమ్ సభ్యుడు నియమించబడ్డారు",
+      "cancelDone": "{{count}} పని(పనులు) రద్దు చేయబడ్డాయి",
+      "partialFail": "{{count}} పని(పనులు) అప్‌డేట్ చేయబడలేదు"
+    },
+    "create": {
+      "title": "పని సృష్టించు",
+      "titleRequired": "శీర్షిక అవసరం",
+      "titleField": "శీర్షిక *",
+      "descriptionField": "వివరణ *",
+      "category": "వర్గం",
+      "priority": "ప్రాధాన్యత *",
+      "module": "మాడ్యూల్",
+      "project": "ప్రాజెక్ట్",
+      "department": "విభాగం",
+      "dueDate": "గడువు తేదీ",
+      "assignLead": "టీమ్ లీడ్‌ను నియమించు",
+      "assignMember": "టీమ్ సభ్యుణ్ణి నియమించు",
+      "evidenceRequired": "సాక్ష్యం అవసరం",
+      "managerApproval": "మేనేజర్ తుది ఆమోదం",
+      "instructions": "సూచనలు",
+      "created": "పని {{code}} సృష్టించబడింది"
+    },
+    "assignment": {
+      "title": "నియామకం",
+      "assignReassign": "నియమించు / తిరిగి నియమించు",
+      "teamLead": "టీమ్ లీడ్",
+      "teamMember": "టీమ్ సభ్యుడు",
+      "assignLeadBtn": "లీడ్‌ను నియమించు",
+      "assignMemberBtn": "సభ్యుణ్ణి నియమించు",
+      "selectLead": "ఒక టీమ్ లీడ్‌ను ఎంచుకోండి",
+      "selectMember": "ఒక టీమ్ సభ్యుణ్ణి ఎంచుకోండి",
+      "leadAssigned": "టీమ్ లీడ్ నియమించబడ్డారు",
+      "memberAssigned": "టీమ్ సభ్యుడు నియమించబడ్డారు",
+      "currentLead": "ప్రస్తుత లీడ్: {{name}}",
+      "currentMember": "ప్రస్తుత సభ్యుడు: {{name}}"
+    },
+    "detail": {
+      "loading": "పని లోడవుతోంది…",
+      "notFound": "పని కనుగొనబడలేదు",
+      "ownerDue": "యజమాని: {{owner}} · గడువు: {{due}}",
+      "rejectPlaceholder": "తిరస్కరణ / స్పష్టీకరణ వ్యాఖ్యలు",
+      "tabs": {
+        "overview": "అవలోకనం",
+        "assignment": "నియామకం",
+        "evidence": "సాక్ష్యం",
+        "approval": "ఆమోదం",
+        "comments": "వ్యాఖ్యలు",
+        "audit": "ఆడిట్"
+      },
+      "actions": {
+        "accept": "ఆమోదించు",
+        "start": "ప్రారంభించు",
+        "updateProgress": "పురోగతి అప్‌డేట్",
+        "submitApproval": "ఆమోదానికి సమర్పించు",
+        "acceptProposed": "ప్రతిపాదనను ఆమోదించు",
+        "rejectProposed": "ప్రతిపాదనను తిరస్కరించు",
+        "verify": "ధృవీకరించు & ఆమోదించు",
+        "reject": "తిరస్కరించు",
+        "approveClosure": "మూసివేతను ఆమోదించు",
+        "rejectClosure": "మూసివేతను తిరస్కరించు",
+        "subtask": "ఉప పని",
+        "escalate": "ఎస్కలేట్",
+        "markBlocked": "బ్లాక్ అయినట్లు గుర్తించు"
+      },
+      "toast": {
+        "accepted": "పని ఆమోదించబడింది",
+        "started": "పని ప్రారంభమైంది",
+        "progressUpdated": "పురోగతి అప్‌డేట్ చేయబడింది",
+        "submitted": "ఆమోదానికి సమర్పించబడింది",
+        "proposedAccepted": "ప్రతిపాదిత పని ఆమోదించబడింది",
+        "rejected": "తిరస్కరించబడింది",
+        "verified": "ధృవీకరించబడింది",
+        "rework": "మళ్ళీ పని కోసం పంపబడింది",
+        "closed": "పని మూసివేయబడింది",
+        "commentAdded": "వ్యాఖ్య జోడించబడింది",
+        "evidenceUploaded": "సాక్ష్యం అప్‌లోడ్ చేయబడింది",
+        "escalated": "పని ఎస్కలేట్ చేయబడింది",
+        "blocked": "పని బ్లాక్ అయినట్లు గుర్తించబడింది"
+      },
+      "actionRemarksPlaceholder": "తిరస్కరణ, ఎస్కలేషన్ లేదా బ్లాక్‌కు వ్యాఖ్యలు",
+      "overview": {
+        "moduleProject": "మాడ్యూల్: {{module}} · ప్రాజెక్ట్: {{project}}",
+        "categorySource": "వర్గం: {{category}} · మూలం: {{source}}",
+        "progressEvidence": "పురోగతి: {{progress}}% · సాక్ష్యం: {{evidence}}",
+        "instructions": "సూచనలు: {{text}}"
+      },
+      "assignmentCard": {
+        "lead": "టీమ్ లీడ్: {{name}}",
+        "member": "టీమ్ సభ్యుడు: {{name}}",
+        "createdBy": "సృష్టించిన వారు: {{name}}"
+      },
+      "evidence": {
+        "upload": "సాక్ష్యం అప్‌లోడ్"
+      },
+      "checklist": {
+        "title": "ధృవీకరణ చెక్‌లిస్ట్",
+        "resolution_matches": "రిజల్యూషన్ అవసరాన్ని సరిపోల్చింది",
+        "evidence_uploaded": "సాక్ష్యం అప్‌లోడ్ చేయబడింది",
+        "evidence_relevant": "సాక్ష్యం సంబంధితమైనది",
+        "no_dependency_pending": "ఏ డిపెండెన్సీ పెండింగ్ లేదు",
+        "sla_checked": "SLA సమ్మతి తనిఖీ చేయబడింది"
+      },
+      "comments": {
+        "placeholder": "వ్యాఖ్య జోడించండి…"
+      },
+      "subtasks": "ఉప పనులు",
+      "approvalHistory": "ఆమోద చరిత్ర",
+      "auditTrail": "ఆడిట్ ట్రెయిల్"
+    },
+    "reports": {
+      "loading": "నివేదికలు లోడవుతున్నాయి…",
+      "title": "పని నివేదికలు",
+      "subtitle": "సారాంశ విశ్లేషణ మరియు పని భారం పంపిణీ",
+      "kpiTotal": "మొత్తం పనులు",
+      "kpiSlaBreached": "SLA ఉల్లంఘించబడింది",
+      "kpiPending": "ఆమోదం పెండింగ్",
+      "kpiRework": "మళ్ళీ పని క్యూ",
+      "kpiEscalated": "ఎస్కలేట్ చేయబడింది",
+      "kpiClosed": "ఈ నెలలో మూసివేయబడింది",
+      "byStatus": "స్థితి వారీగా",
+      "byPriority": "ప్రాధాన్యత వారీగా",
+      "byModule": "మాడ్యూల్ వారీగా"
+    },
+    "config": {
+      "title": "పని కాన్ఫిగరేషన్",
+      "subtitle": "వర్గాలు, SLA నియమాలు మరియు పని మాడ్యూల్ సెట్టింగ్‌లు (అడ్మిన్)",
+      "slaHours": "డిఫాల్ట్ SLA గంటలు",
+      "categories": "వర్గాలు",
+      "apiConfig": "API కాన్ఫిగరేషన్",
+      "apiHint": "కాన్ఫిగరేషన్ పెంచడానికి POST /api/tasks/config/categories మరియు /api/tasks/config/sla-rules వినియోగించండి. task_role మరియు team_lead_id ద్వారా వినియోగదారు పని పాత్రలు సెట్ చేయబడతాయి."
+    },
+    "auditor": {
+      "loading": "ఆడిటర్ అవలోకనం లోడవుతోంది…",
+      "title": "ఆడిటర్ పని అవలోకనం",
+      "subtitle": "చదవడానికి మాత్రమే సంస్థ అంతటా పని మెట్రిక్స్ మరియు ఆడిట్ నమూనా",
+      "recentTasks": "ఇటీవలి పనులు",
+      "recentTasksSub": "సాక్ష్యం మరియు ఆడిట్ ట్రెయిల్ సమీక్షించడానికి ఏదైనా పనిని తెరవండి (చదవడానికి మాత్రమే)"
+    }
+  }
+}

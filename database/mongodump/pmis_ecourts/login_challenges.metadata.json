@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"created_at":{"$numberInt":"1"}},"name":"created_at_1","expireAfterSeconds":{"$numberInt":"600"}}],"uuid":"3d02f9b21e0e4b0fbd11780b0e9881f0","collectionName":"login_challenges","type":"collection"}

@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"task_id":{"$numberInt":"1"},"version":{"$numberInt":"-1"}},"name":"task_id_1_version_-1"}],"uuid":"8250786f96204190a732878383ef4fe9","collectionName":"tm_evidence","type":"collection"}

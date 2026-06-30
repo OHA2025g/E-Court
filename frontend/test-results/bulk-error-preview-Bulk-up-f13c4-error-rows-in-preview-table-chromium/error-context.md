@@ -1,0 +1,1004 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: bulk-error-preview.spec.js >> Bulk upload error row preview >> shows error rows in preview table
+- Location: e2e/bulk-error-preview.spec.js:21:7
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByText(/Preview \(dry-run\)/i)
+Expected: visible
+Timeout: 20000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 20000ms
+  - waiting for getByText(/Preview \(dry-run\)/i)
+
+```
+
+```yaml
+- link "Skip to main content":
+  - /url: "#main-content"
+- complementary "Main navigation":
+  - img
+  - text: eCourts PMIS Phase III · Project Monitoring
+  - navigation:
+    - link "Dashboard":
+      - /url: /dashboard
+      - img
+      - text: Dashboard
+    - link "Physical Tracker":
+      - /url: /physical
+      - img
+      - text: Physical Tracker
+    - link "Financial Tracker":
+      - /url: /financial
+      - img
+      - text: Financial Tracker
+    - link "Outcome Tracker":
+      - /url: /outcome
+      - img
+      - text: Outcome Tracker
+    - link "Submissions":
+      - /url: /submissions
+      - img
+      - text: Submissions
+    - link "Reports":
+      - /url: /reports
+      - img
+      - text: Reports
+    - link "Audit Trail":
+      - /url: /audit
+      - img
+      - text: Audit Trail
+    - link "Scope Charter":
+      - /url: /scope-charter
+      - img
+      - text: Scope Charter
+    - link "Account / 2FA":
+      - /url: /account
+      - img
+      - text: Account / 2FA
+  - text: Signed in Allahabad CPC Officer cpc.allahabad@pmis.gov.in CPC Allahabad
+  - button "Sign out":
+    - img
+    - text: Sign out
+- main:
+  - text: eCourts Phase III · Project Monitoring
+  - heading "Physical Tracker" [level=1]
+  - combobox "Language":
+    - option "EN" [selected]
+    - option "HI"
+    - option "BN"
+    - option "TA"
+    - option "TE"
+    - option "MR"
+    - option "GU"
+    - option "KN"
+    - option "ML"
+    - option "PA"
+    - option "UR"
+  - button "Dark mode":
+    - img
+  - button "Notifications, 99 unread":
+    - img
+    - text: 9+
+  - img
+  - paragraph: Approved — request re-open to edit
+  - paragraph: Grace deadline was 2026-07-07
+  - heading "Data Entry" [level=3]
+  - paragraph: Capture target & achieved for a component-indicator-month
+  - text: High Court
+  - combobox "High Court" [disabled]:
+    - option "— Select —"
+    - option "Allahabad" [selected]
+    - option "Andhra Pradesh"
+    - option "Bombay"
+    - option "Calcutta"
+    - option "Chhattisgarh"
+    - option "Delhi"
+    - option "Gauhati - Nagaland"
+    - option "Gauhati – Arunachal Pradesh"
+    - option "Gauhati – Assam"
+    - option "Gauhati – Mizoram"
+    - option "Gujarat"
+    - option "Himachal Pradesh"
+    - option "Jammu & Kashmir"
+    - option "Jharkhand"
+    - option "Karnataka"
+    - option "Kerala"
+    - option "Madhya Pradesh"
+    - option "Madras"
+    - option "Manipur"
+    - option "Meghalaya"
+    - option "Odisha"
+    - option "Patna"
+    - option "Punjab & Haryana"
+    - option "Rajasthan"
+    - option "Sikkim"
+    - option "Telangana"
+    - option "Tripura"
+    - option "Uttarakhand"
+  - text: Reporting Month
+  - combobox "Reporting Month":
+    - option "— Select —"
+    - option "Baseline (Sep 2023 – May 2026)"
+    - option "June 2026" [selected]
+    - option "July 2026"
+    - option "August 2026"
+    - option "September 2026"
+    - option "October 2026"
+    - option "November 2026"
+    - option "December 2026"
+    - option "January 2027"
+    - option "February 2027"
+  - text: District (optional)
+  - combobox "District (optional)":
+    - option "— Select —" [selected]
+    - option "(HC-level)"
+    - option "Kanpur"
+    - option "Lucknow"
+    - option "Prayagraj"
+    - option "Varanasi"
+  - text: Table filter
+  - combobox "Table filter":
+    - option "— Select —" [selected]
+    - option "All districts"
+    - option "HC-level only"
+    - option "Kanpur"
+    - option "Lucknow"
+    - option "Prayagraj"
+    - option "Varanasi"
+  - text: Component
+  - combobox "Component":
+    - option "— Select —" [selected]
+    - option "e-Sewa Kendras"
+    - option "Paperless Courts"
+    - option "Expansion of Virtual Courts"
+    - option "Live Streaming"
+    - option "Digitisation of Court Records"
+    - option "Video Conferencing Upgrade"
+    - option "Solar Power for ICT"
+    - option "Additional Hardware — Phase I & II"
+    - option "ICT for Newly Set-Up Courts"
+    - option "HC & DC Website Migration — S3WaaS"
+    - option "Cloud Computing & Storage"
+    - option "ICT Training / Change Management"
+    - option "NSTEP Expansion"
+    - option "Software Development"
+    - option "PMU in e-Committee & DoJ"
+    - option "Connectivity — Primary + Redundancy"
+    - option "e-Office for HCs & District Courts"
+  - text: Indicator
+  - combobox "Indicator" [disabled]:
+    - option "— Select —" [selected]
+  - text: Target (Admin-managed)
+  - spinbutton "Target (Admin-managed)" [disabled]
+  - text: Achieved (cumulative)
+  - spinbutton "Achieved (cumulative)"
+  - text: Remarks (optional)
+  - textbox "Remarks (optional)"
+  - button "Save Entry":
+    - img
+    - text: Save Entry
+  - button "Initialize indicator rows":
+    - img
+    - text: Initialize indicator rows
+  - heading "Export & Bulk Upload" [level=3]
+  - paragraph: Filtered by current selection
+  - link "Export Excel":
+    - /url: http://localhost:5182/api/export/physical?high_court=Allahabad&reporting_period=2026-06&format=xlsx
+    - img
+    - text: Export Excel
+  - link "Export PDF":
+    - /url: http://localhost:5182/api/export/physical?high_court=Allahabad&reporting_period=2026-06&format=pdf
+    - img
+    - text: Export PDF
+  - paragraph: Upload Excel after selecting a reporting month. Preview validates rows before commit.
+  - link "Download Excel template":
+    - /url: http://localhost:5182/api/physical/bulk-template
+    - img
+    - text: Download Excel template
+  - img
+  - text: Upload & preview
+  - heading "Physical Tracker Entries" [level=3]
+  - paragraph: 43 rows · click cells to edit
+  - region "Physical Tracker Entries":
+    - table:
+      - rowgroup:
+        - row "High Court District Component Indicator Period Target Achieved % RAG Remarks":
+          - columnheader "High Court"
+          - columnheader "District"
+          - columnheader "Component"
+          - columnheader "Indicator"
+          - columnheader "Period"
+          - columnheader "Target"
+          - columnheader "Achieved"
+          - columnheader "%"
+          - columnheader "RAG"
+          - columnheader "Remarks"
+          - columnheader
+      - rowgroup:
+        - row "Allahabad (HC-level) Additional Hardware — Phase I & II No of Courts upgraded with new infrastructure (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Additional Hardware — Phase I & II"
+          - cell "No of Courts upgraded with new infrastructure (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Cloud Computing & Storage Total centralised storage capacity (in PB) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Cloud Computing & Storage"
+          - cell "Total centralised storage capacity (in PB)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Connectivity — Primary + Redundancy No of New Court Complexes Connected through WAN (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Connectivity — Primary + Redundancy"
+          - cell "No of New Court Complexes Connected through WAN (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Digitisation of Court Records No of pages (of active cases) digitized (in Cr.) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Digitisation of Court Records"
+          - cell "No of pages (of active cases) digitized (in Cr.)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Digitisation of Court Records No of pages (of legacy cases) digitized (in Cr.) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Digitisation of Court Records"
+          - cell "No of pages (of legacy cases) digitized (in Cr.)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Digitisation of Court Records No of pages digitized (in Cr.) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Digitisation of Court Records"
+          - cell "No of pages digitized (in Cr.)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Expansion of Virtual Courts No of court rooms with Computer system installed (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Expansion of Virtual Courts"
+          - cell "No of court rooms with Computer system installed (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Expansion of Virtual Courts No of court rooms with Led Display (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Expansion of Virtual Courts"
+          - cell "No of court rooms with Led Display (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Expansion of Virtual Courts No of court rooms with Scanner Deployed (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Expansion of Virtual Courts"
+          - cell "No of court rooms with Scanner Deployed (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Expansion of Virtual Courts No of court rooms with Speech to text enabled (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Expansion of Virtual Courts"
+          - cell "No of court rooms with Speech to text enabled (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Expansion of Virtual Courts No of court rooms with VC enabled (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Expansion of Virtual Courts"
+          - cell "No of court rooms with VC enabled (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Expansion of Virtual Courts No of sites prepared (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Expansion of Virtual Courts"
+          - cell "No of sites prepared (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Expansion of Virtual Courts No of virtual courts operational (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Expansion of Virtual Courts"
+          - cell "No of virtual courts operational (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) HC & DC Website Migration — S3WaaS No of District Court websites migrated (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "HC & DC Website Migration — S3WaaS"
+          - cell "No of District Court websites migrated (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) HC & DC Website Migration — S3WaaS No of visitors to the migrated District Court websites (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "HC & DC Website Migration — S3WaaS"
+          - cell "No of visitors to the migrated District Court websites (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) ICT Training / Change Management No of training programmes conducted (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "ICT Training / Change Management"
+          - cell "No of training programmes conducted (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) ICT for Newly Set-Up Courts No of new Courts covered (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "ICT for Newly Set-Up Courts"
+          - cell "No of new Courts covered (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Live Streaming No of court rooms enabled for live streaming (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Live Streaming"
+          - cell "No of court rooms enabled for live streaming (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Live Streaming No of court rooms with Computer system installed (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Live Streaming"
+          - cell "No of court rooms with Computer system installed (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Live Streaming No of court rooms with Led Display (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Live Streaming"
+          - cell "No of court rooms with Led Display (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Live Streaming No of court rooms with Scanner Deployed (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Live Streaming"
+          - cell "No of court rooms with Scanner Deployed (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Live Streaming No of court rooms with Speech to text enabled (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Live Streaming"
+          - cell "No of court rooms with Speech to text enabled (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Live Streaming No of court rooms with VC enabled (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Live Streaming"
+          - cell "No of court rooms with VC enabled (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Live Streaming No of document visualiser installed (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Live Streaming"
+          - cell "No of document visualiser installed (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Live Streaming No of sites prepared (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Live Streaming"
+          - cell "No of sites prepared (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) NSTEP Expansion No of Court Establishments covered (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "NSTEP Expansion"
+          - cell "No of Court Establishments covered (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) NSTEP Expansion No of hand held devices deployed (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "NSTEP Expansion"
+          - cell "No of hand held devices deployed (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) PMU in e-Committee & DoJ Percentage of project targets achieved (in %) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "PMU in e-Committee & DoJ"
+          - cell "Percentage of project targets achieved (in %)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Paperless Courts No of court rooms with Computer system installed (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Paperless Courts"
+          - cell "No of court rooms with Computer system installed (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Paperless Courts No of court rooms with Led Display (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Paperless Courts"
+          - cell "No of court rooms with Led Display (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Paperless Courts No of court rooms with Scanner Deployed (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Paperless Courts"
+          - cell "No of court rooms with Scanner Deployed (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Paperless Courts No of court rooms with Speech to text enabled (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Paperless Courts"
+          - cell "No of court rooms with Speech to text enabled (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Paperless Courts No of court rooms with VC enabled (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Paperless Courts"
+          - cell "No of court rooms with VC enabled (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Paperless Courts No of paperless courts (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Paperless Courts"
+          - cell "No of paperless courts (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Software Development No of technical support team members recruited (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Software Development"
+          - cell "No of technical support team members recruited (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Solar Power for ICT No of solar panels installed (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Solar Power for ICT"
+          - cell "No of solar panels installed (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Video Conferencing Upgrade No of video conference installed in Courts + DSA (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Video Conferencing Upgrade"
+          - cell "No of video conference installed in Courts + DSA (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Video Conferencing Upgrade No of video conference installed in Jails (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Video Conferencing Upgrade"
+          - cell "No of video conference installed in Jails (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Video Conferencing Upgrade No of video conference installed in district govt hospitals (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Video Conferencing Upgrade"
+          - cell "No of video conference installed in district govt hospitals (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Video Conferencing Upgrade No of video conference units functional (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Video Conferencing Upgrade"
+          - cell "No of video conference units functional (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) Video Conferencing Upgrade No of video conference units installed (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "Video Conferencing Upgrade"
+          - cell "No of video conference units installed (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad (HC-level) e-Office for HCs & District Courts No of Courts implemented e-Office (in Absolute Count) 2026-06 — — — — — Comments":
+          - cell "Allahabad"
+          - cell "(HC-level)"
+          - cell "e-Office for HCs & District Courts"
+          - cell "No of Courts implemented e-Office (in Absolute Count)"
+          - cell "2026-06"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "—"
+          - cell "—"
+          - cell "—":
+            - button "—"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+        - row "Allahabad Lucknow e-Sewa Kendras No of sites prepared (in Absolute Count) 2026-06 12 7 58.33% RED e2e physical Comments":
+          - cell "Allahabad"
+          - cell "Lucknow"
+          - cell "e-Sewa Kendras"
+          - cell "No of sites prepared (in Absolute Count)"
+          - cell "2026-06"
+          - cell "12"
+          - cell "7":
+            - button "7"
+          - cell "58.33%"
+          - cell "RED"
+          - cell "e2e physical":
+            - button "e2e physical"
+          - cell "Comments":
+            - button "Comments":
+              - img
+              - text: Comments
+- region "Notifications alt+T"
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect } from "@playwright/test";
+  2  | import path from "path";
+  3  | import { loginCpc } from "./helpers/auth.js";
+  4  | 
+  5  | const FIXTURES = path.join(process.cwd(), "e2e", "fixtures");
+  6  | const PERIOD = "2026-06";
+  7  | 
+  8  | async function login(page, email, password) {
+  9  |   await page.goto("/login");
+  10 |   await page.getByTestId("login-email-input").fill(email);
+  11 |   await page.getByTestId("login-password-input").fill(password);
+  12 |   await page.getByTestId("login-submit-btn").click();
+  13 |   await page.waitForURL("**/dashboard", { timeout: 15_000 });
+  14 | }
+  15 | 
+  16 | test.describe("Bulk upload error row preview", () => {
+  17 |   test.beforeEach(async ({ page }) => {
+  18 |     await loginCpc(page);
+  19 |   });
+  20 | 
+  21 |   test("shows error rows in preview table", async ({ page }) => {
+  22 |     await page.goto("/physical");
+  23 |     await page.getByTestId("period-select").selectOption(PERIOD);
+  24 | 
+  25 |     const fileInput = page.locator('input[type="file"]');
+  26 |     await fileInput.setInputFiles(path.join(FIXTURES, "physical-bulk-errors.xlsx"));
+  27 | 
+> 28 |     await expect(page.getByText(/Preview \(dry-run\)/i)).toBeVisible({ timeout: 20_000 });
+     |                                                          ^ Error: expect(locator).toBeVisible() failed
+  29 |     await expect(page.getByText(/Errors:/i)).toBeVisible();
+  30 |     await expect(page.locator("tbody tr.bg-red-50").first()).toBeVisible();
+  31 |     await expect(page.getByText(/^Error$/i).first()).toBeVisible();
+  32 |     await expect(page.getByRole("button", { name: /Confirm import/i })).toBeDisabled();
+  33 |   });
+  34 | });
+  35 | 
+```

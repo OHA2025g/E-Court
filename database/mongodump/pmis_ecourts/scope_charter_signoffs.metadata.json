@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"slot_id":{"$numberInt":"1"}},"name":"slot_id_1","unique":true}],"uuid":"16d4f945b914432897ad69e57d2a7cf0","collectionName":"scope_charter_signoffs","type":"collection"}

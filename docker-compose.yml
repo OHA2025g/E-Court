@@ -1,0 +1,78 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - pmis_mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 20s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MONGO_URL: ${MONGO_URL:-mongodb://mongo:27017}
+      DB_NAME: ${DB_NAME:-pmis_ecourts}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5182}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      JWT_SECRET: ${JWT_SECRET:-docker-dev-jwt-secret-change-in-prod!!}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@pmis.gov.in}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin@PMIS2026}
+      CPC_DEMO_EMAIL: ${CPC_DEMO_EMAIL:-cpc.allahabad@pmis.gov.in}
+      CPC_DEMO_PASSWORD: ${CPC_DEMO_PASSWORD:-Cpc@PMIS2026}
+      VIEWER_DEMO_EMAIL: ${VIEWER_DEMO_EMAIL:-viewer@pmis.gov.in}
+      VIEWER_DEMO_PASSWORD: ${VIEWER_DEMO_PASSWORD:-View@PMIS2026}
+      TASK_MEMBER_EMAIL: ${TASK_MEMBER_EMAIL:-member@pmis.gov.in}
+      TASK_MEMBER_PASSWORD: ${TASK_MEMBER_PASSWORD:-Member@PMIS2026}
+      APP_NAME: ecourts-pmis
+      LOCKOUT_MAX_FAILS: "5"
+      LOCKOUT_DURATION_MIN: "15"
+      LOCKOUT_CAPTCHA_AFTER: "3"
+      PASSWORD_MIN_LENGTH: "12"
+      PASSWORD_HISTORY_COUNT: "5"
+      PASSWORD_MAX_AGE_DAYS: "90"
+      ADMIN_IP_ALLOWLIST_ENABLED: ${ADMIN_IP_ALLOWLIST_ENABLED:-false}
+      ADMIN_IP_ALLOWLIST: ${ADMIN_IP_ALLOWLIST:-}
+      REQUIRE_2FA_ROLES: Admin
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+      MISTRAL_MODEL: ${MISTRAL_MODEL:-mistral-small-latest}
+      DASHBOARD_INSIGHTS_ENABLED: ${DASHBOARD_INSIGHTS_ENABLED:-false}
+      TRUST_PROXY_HEADERS: ${TRUST_PROXY_HEADERS:-true}
+      TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_BACKEND_URL: http://localhost:5182
+        REACT_APP_SHOW_DEMO: ${REACT_APP_SHOW_DEMO:-true}
+    restart: unless-stopped
+    ports:
+      - "5182:80"
+    depends_on:
+      - backend
+
+volumes:
+  pmis_mongo_data:

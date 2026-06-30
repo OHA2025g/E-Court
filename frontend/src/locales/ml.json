@@ -1,0 +1,328 @@
+{
+  "app": {
+    "title": "ഇ-കോർട്ട്സ് PMIS",
+    "subtitle": "ഘട്ടം III · പ്രോജക്റ്റ് മോണിറ്ററിംഗ്"
+  },
+  "nav": {
+    "dashboard": "ഡാഷ്‌ബോർഡ്",
+    "physical": "ഭൗതിക ട്രാക്കർ",
+    "financial": "സാമ്പത്തിക ട്രാക്കർ",
+    "outcome": "ഫല ട്രാക്കർ",
+    "submissions": "സമർപ്പണങ്ങൾ",
+    "reports": "റിപ്പോർട്ടുകൾ",
+    "master": "മാസ്റ്റർ ഡാറ്റ",
+    "schedules": "ഷെഡ്യൂൾ & ഔട്ട്‌ബോക്സ്",
+    "pmu": "PMU ടാസ്കുകൾ",
+    "dpr": "DPR ഡെലിവറബിളുകൾ",
+    "ijuris": "iJuris ingest",
+    "users": "ഉപയോക്തൃ നിയന്ത്രണം",
+    "backup": "ബാക്കപ്പ് & പുനഃസ്ഥാപനം",
+    "audit": "ഓഡിറ്റ് ട്രെയിൽ",
+    "account": "അക്കൗണ്ട് / 2FA",
+    "signOut": "സൈൻ ഔട്ട്",
+    "signedIn": "സൈൻ ഇൻ",
+    "mainNav": "പ്രധാന നാവിഗേഷൻ"
+  },
+  "common": {
+    "save": "സേവ്",
+    "cancel": "റദ്ദാക്കുക",
+    "delete": "ഇല്ലാതാക്കുക",
+    "loading": "ലോഡ് ചെയ്യുന്നു…",
+    "darkMode": "ഡാർക്ക് മോഡ്",
+    "lightMode": "ലൈറ്റ് മോഡ്",
+    "language": "ഭാഷ",
+    "skipToContent": "പ്രധാന ഉള്ളടക്കത്തിലേക്ക്"
+  },
+  "dashboard": {
+    "narrativeTitle": "Executive narrative",
+    "narrativeSubtitle": "Summary from approved dashboard data"
+  },
+  "submissions": {
+    "slaTitle": "സമർപ്പണ SLA",
+    "reopenRequest": "വീണ്ടും തുറക്കുക",
+    "reopenReason": "കാരണം",
+    "dashboardExcluded": "ഡാഷ്‌ബോർഡിൽ നിന്ന് ഒഴിവാക്കി"
+  },
+  "reports": {
+    "savedViews": "സേവ് ചെയ്ത കാഴ്ചകൾ",
+    "saveView": "കാഴ്ച സേവ് ചെയ്യുക",
+    "deleteView": "കാഴ്ച ഇല്ലാതാക്കുക"
+  },
+  "onboarding": {
+    "welcome": "ഭൗതിക ട്രാക്കറിലേക്ക് സ്വാഗതം",
+    "filters": "ഹൈക്കോർട്ടും കാലവും തിരഞ്ഞെടുക്കുക.",
+    "entry": "ലക്ഷ്യവും നേടിയതും നൽകി സേവ് ചെയ്യുക.",
+    "table": "താഴെയുള്ള പട്ടികയിൽ എഡിറ്റ് ചെയ്യുക.",
+    "done": "നിങ്ങൾ തയ്യാറാണ്."
+  },
+  "tasks": {
+    "common": {
+      "loading": "ലോഡ് ആകുന്നു…",
+      "noTasks": "ടാസ്‌ക്കുകൾ ഒന്നും കണ്ടെത്തിയില്ല.",
+      "createTask": "ടാസ്‌ക് സൃഷ്ടിക്കുക",
+      "creating": "സൃഷ്ടിക്കുന്നു…",
+      "back": "മടങ്ങുക",
+      "search": "തിരയുക…",
+      "previous": "മുൻപത്തേത്",
+      "next": "അടുത്തത്",
+      "page": "പേജ് {{n}}",
+      "exportCsv": "CSV കയറ്റുമതി",
+      "exportXlsx": "Excel കയറ്റുമതി",
+      "exportPdf": "PDF കയറ്റുമതി",
+      "unassigned": "നിയോഗിക്കപ്പെട്ടിട്ടില്ല",
+      "download": "ഡൗൺലോഡ്",
+      "post": "പോസ്റ്റ്",
+      "remarksOptional": "അഭിപ്രായം (ഐഛികം)",
+      "assignmentNotes": "നിയമന കുറിപ്പുകൾ…"
+    },
+    "layout": {
+      "commandCentreTitle": "ടാസ്‌ക് കമാൻഡ് സെന്റർ",
+      "taskManagement": "ടാസ്‌ക് മാനേജ്മെന്റ്",
+      "navLabel": "ടാസ്‌ക് മാനേജ്മെന്റ് നാവിഗേഷൻ",
+      "appSelector": "ആപ്പ് സെലക്ടർ",
+      "pmisApp": "PMIS ആപ്ലിക്കേഷൻ",
+      "toggleTheme": "തീം മാറ്റുക",
+      "nav": {
+        "commandCentre": "കമാൻഡ് സെന്റർ",
+        "workbench": "വർക്ക്ബെഞ്ച്",
+        "myTasks": "എന്റെ ടാസ്‌ക്കുകൾ",
+        "allTasks": "എല്ലാ ടാസ്‌ക്കുകളും",
+        "reports": "റിപ്പോർട്ടുകൾ",
+        "configuration": "കോൺഫിഗറേഷൻ",
+        "auditorOverview": "ഓഡിറ്റർ അവലോകനം"
+      }
+    },
+    "table": {
+      "listAria": "ടാസ്‌ക് ലിസ്റ്റ്",
+      "code": "കോഡ്",
+      "title": "തലക്കെട്ട്",
+      "priority": "മുൻഗണന",
+      "status": "നില",
+      "owner": "ഉടമ",
+      "due": "നിശ്ചിത",
+      "sla": "SLA"
+    },
+    "appSelector": {
+      "initialising": "PMIS ആരംഭിക്കുന്നു…",
+      "signedInAs": "{{name}} · {{role}} ആയി സൈൻ ഇൻ ചെയ്തു",
+      "chooseWorkspace": "വർക്ക്സ്‌പേസ് തിരഞ്ഞെടുക്കുക",
+      "subtitle": "നിയോഗം, അനുമതികൾ എന്നിവയ്ക്ക് ടാസ്‌ക് മാനേജ്മെന്റ് തിരഞ്ഞെടുക്കുക, അല്ലെങ്കിൽ പ്രധാന PMIS ആപ്ലിക്കേഷനിലേക്ക് തുടരുക.",
+      "taskTitle": "ടാസ്‌ക് മാനേജ്മെന്റ്",
+      "taskDesc": "നിങ്ങളുടെ ഓർഗനൈസേഷൻ മുഴുവൻ ടാസ്‌ക്കുകൾ, നിയോഗം, തെളിവ്, അനുമതി, SLA, ആഴത്തിലുള്ള വിശകലനം എന്നിവ നിയന്ത്രിക്കുക.",
+      "openTask": "ടാസ്‌ക് മാനേജ്മെന്റ് തുറക്കുക →",
+      "appTitle": "ആപ്ലിക്കേഷൻ",
+      "appDesc": "പ്രധാന ഡാഷ്‌ബോർഡിലേക്ക് പോകുക — ട്രാക്കറുകൾ, സമർപ്പണം, റിപ്പോർട്ട്, മാസ്റ്റർ ഡേറ്റ.",
+      "openApp": "ആപ്ലിക്കേഷൻ തുറക്കുക →",
+      "directLinks": "നേരിട്ടുള്ള ലിങ്കുകൾ ഇപ്പോഴും പ്രവർത്തിക്കുന്നു:",
+      "taskModule": "ടാസ്‌ക് മൊഡ്യൂൾ"
+    },
+    "manager": {
+      "loading": "കമാൻഡ് സെന്റർ ലോഡ് ആകുന്നു…",
+      "title": "മാനേജർ ടാസ്‌ക് കമാൻഡ് സെന്റർ",
+      "subtitle": "ഓർഗനൈസേഷൻ-വ്യാപകമായ ടാസ്‌ക് ദൃശ്യത, SLA, അനുമതികൾ",
+      "kpiTotal": "ആകെ ടാസ്‌ക്കുകൾ",
+      "kpiUnassigned": "നിയോഗിക്കാത്തത്",
+      "kpiInProgress": "പുരോഗതിയിൽ",
+      "kpiSubmitted": "അനുമതിക്ക് സമർപ്പിച്ചു",
+      "kpiSlaBreached": "SLA ലംഘനം",
+      "kpiHighPriority": "ഉയർന്ന മുൻഗണന തുറന്നത്",
+      "kpiManagerPending": "മാനേജർ അനുമതി ബാക്കി",
+      "kpiClosedMonth": "ഈ മാസം അടച്ചത്",
+      "pendingApproval": "മാനേജർ അനുമതി ബാക്കി",
+      "pendingApprovalSub": "നിർണായക ക്ലോഷർ ക്യൂ",
+      "unassignedPool": "നിയോഗിക്കാത്ത പൂൾ",
+      "unassignedPoolSub": "ടീം ലീഡ് കാക്കുന്ന ടാസ്‌ക്കുകൾ",
+      "escalations": "സമീപകാല എസ്‌കലേഷനുകൾ",
+      "escalationsSub": "എസ്‌കലേറ്റ് ചെയ്ത ടാസ്‌ക്കുകൾ",
+      "byModule": "മൊഡ്യൂൾ അനുസരിച്ച്",
+      "byModuleSub": "ആഴത്തിലുള്ള വിശകലനം — മൊഡ്യൂൾ-വാർ വിതരണം"
+    },
+    "lead": {
+      "loading": "വർക്ക്ബെഞ്ച് ലോഡ് ആകുന്നു…",
+      "title": "ടീം ലീഡ് വർക്ക്ബെഞ്ച്",
+      "subtitle": "ടീം ടാസ്‌ക്കുകൾ നിയോഗിക്കുക, പരിശോധിക്കുക, എസ്‌കലേറ്റ് ചെയ്യുക",
+      "kpiReceived": "സ്വീകരിച്ച ടാസ്‌ക്കുകൾ",
+      "kpiPendingDist": "വിതരണം ബാക്കി",
+      "kpiAssigned": "അംഗങ്ങൾക്ക് നിയോഗിച്ചത്",
+      "kpiInProgress": "പുരോഗതിയിൽ",
+      "kpiSubmitted": "അനുമതിക്ക് സമർപ്പിച്ചു",
+      "kpiRework": "വീണ്ടും ചെയ്യണം",
+      "kpiSlaRisk": "SLA അപകടം",
+      "kpiProposed": "അംഗങ്ങൾ നിർദ്ദേശിച്ചത്",
+      "submittedCard": "അനുമതിക്ക് സമർപ്പിച്ചു",
+      "submittedCardSub": "നിങ്ങളുടെ പരിശോധന കാക്കുന്നു",
+      "proposedCard": "അംഗങ്ങൾ നിർദ്ദേശിച്ചത്",
+      "proposedCardSub": "അവലോകനം ചെയ്ത് അംഗീകരിക്കുക അല്ലെങ്കിൽ നിരസിക്കുക"
+    },
+    "member": {
+      "loading": "വർക്ക്സ്‌പേസ് ലോഡ് ആകുന്നു…",
+      "title": "ടീം അംഗ വർക്ക്സ്‌പേസ്",
+      "subtitle": "നിങ്ങൾക്ക് നിയോഗിക്കപ്പെട്ട ടാസ്‌ക്കുകൾ, തെളിവ്, സമർപ്പണം",
+      "kpiOpen": "എന്റെ തുറന്ന ടാസ്‌ക്കുകൾ",
+      "kpiDueToday": "ഇന്ന് നിശ്ചിത",
+      "kpiOverdue": "കാലഹരണപ്പെട്ടത്",
+      "kpiInProgress": "പുരോഗതിയിൽ",
+      "kpiRework": "വീണ്ടും ചെയ്യണം",
+      "kpiSubmitted": "സമർപ്പിച്ചു",
+      "kpiProposed": "ഞാൻ നിർദ്ദേശിച്ചത്",
+      "recentCard": "സമീപകാല ടാസ്‌ക്കുകൾ",
+      "recentCardSub": "വിവരങ്ങൾ തുറക്കാൻ ക്ലിക്ക് ചെയ്യുക"
+    },
+    "list": {
+      "title": "ടാസ്‌ക് ലിസ്റ്റ്",
+      "tasksCount": "{{count}} ടാസ്‌ക്കുകൾ",
+      "filters": "ഫിൽട്ടറുകൾ",
+      "allStatuses": "എല്ലാ നിലകളും",
+      "allPriorities": "എല്ലാ മുൻഗണനകളും"
+    },
+    "bulk": {
+      "selected": "{{count}} തിരഞ്ഞെടുത്തു",
+      "selectAll": "പേജിലെ എല്ലാം തിരഞ്ഞെടുക്കുക",
+      "selectTask": "ടാസ്‌ക് {{code}} തിരഞ്ഞെടുക്കുക",
+      "assignLead": "ലീഡ് നിയോഗിക്കുക",
+      "assignMember": "അംഗം നിയോഗിക്കുക",
+      "cancel": "ടാസ്‌ക്കുകൾ റദ്ദാക്കുക",
+      "cancelReason": "റദ്ദാക്കൽ കാരണം",
+      "cancelPlaceholder": "ബൾക്ക് റദ്ദാക്കലിന്റെ കാരണം…",
+      "clear": "തിരഞ്ഞെടുക്കൽ മായ്ക്കുക",
+      "leadDone": "{{count}} ടാസ്‌ക്ക്(കൾ)ക്ക് ടീം ലീഡ് നിയോഗിച്ചു",
+      "memberDone": "{{count}} ടാസ്‌ക്ക്(കൾ)ക്ക് ടീം അംഗം നിയോഗിച്ചു",
+      "cancelDone": "{{count}} ടാസ്‌ക്ക്(കൾ) റദ്ദാക്കി",
+      "partialFail": "{{count}} ടാസ്‌ക്ക്(കൾ) അപ്‌ഡേറ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല"
+    },
+    "create": {
+      "title": "ടാസ്‌ക് സൃഷ്ടിക്കുക",
+      "titleRequired": "തലക്കെട്ട് ആവശ്യമാണ്",
+      "titleField": "തലക്കെട്ട് *",
+      "descriptionField": "വിവരണം *",
+      "category": "വിഭാഗം",
+      "priority": "മുൻഗണന *",
+      "module": "മൊഡ്യൂൾ",
+      "project": "പ്രോജക്ട്",
+      "department": "വകുപ്പ്",
+      "dueDate": "നിശ്ചിത തിയതി",
+      "assignLead": "ടീം ലീഡ് നിയോഗിക്കുക",
+      "assignMember": "ടീം അംഗം നിയോഗിക്കുക",
+      "evidenceRequired": "തെളിവ് ആവശ്യമാണ്",
+      "managerApproval": "മാനേജറുടെ അന്തിമ അനുമതി",
+      "instructions": "നിർദ്ദേശങ്ങൾ",
+      "created": "ടാസ്‌ക് {{code}} സൃഷ്ടിച്ചു"
+    },
+    "assignment": {
+      "title": "നിയോഗം",
+      "assignReassign": "നിയോഗിക്കുക / വീണ്ടും നിയോഗിക്കുക",
+      "teamLead": "ടീം ലീഡ്",
+      "teamMember": "ടീം അംഗം",
+      "assignLeadBtn": "ലീഡ് നിയോഗിക്കുക",
+      "assignMemberBtn": "അംഗം നിയോഗിക്കുക",
+      "selectLead": "ഒരു ടീം ലീഡ് തിരഞ്ഞെടുക്കുക",
+      "selectMember": "ഒരു ടീം അംഗം തിരഞ്ഞെടുക്കുക",
+      "leadAssigned": "ടീം ലീഡ് നിയോഗിച്ചു",
+      "memberAssigned": "ടീം അംഗം നിയോഗിച്ചു",
+      "currentLead": "നിലവിലെ ലീഡ്: {{name}}",
+      "currentMember": "നിലവിലെ അംഗം: {{name}}"
+    },
+    "detail": {
+      "loading": "ടാസ്‌ക് ലോഡ് ആകുന്നു…",
+      "notFound": "ടാസ്‌ക് കണ്ടെത്തിയില്ല",
+      "ownerDue": "ഉടമ: {{owner}} · നിശ്ചിത: {{due}}",
+      "rejectPlaceholder": "നിരസിക്കൽ / വ്യക്തതാ അഭിപ്രായം",
+      "tabs": {
+        "overview": "അവലോകനം",
+        "assignment": "നിയോഗം",
+        "evidence": "തെളിവ്",
+        "approval": "അനുമതി",
+        "comments": "അഭിപ്രായങ്ങൾ",
+        "audit": "ഓഡിറ്റ്"
+      },
+      "actions": {
+        "accept": "സ്വീകരിക്കുക",
+        "start": "ആരംഭിക്കുക",
+        "updateProgress": "പുരോഗതി അപ്‌ഡേറ്റ്",
+        "submitApproval": "അനുമതിക്ക് സമർപ്പിക്കുക",
+        "acceptProposed": "നിർദ്ദേശം സ്വീകരിക്കുക",
+        "rejectProposed": "നിർദ്ദേശം നിരസിക്കുക",
+        "verify": "പരിശോധിക്കുക & അംഗീകരിക്കുക",
+        "reject": "നിരസിക്കുക",
+        "approveClosure": "ക്ലോഷർ അംഗീകരിക്കുക",
+        "rejectClosure": "ക്ലോഷർ നിരസിക്കുക",
+        "subtask": "ഉപ-ടാസ്‌ക്",
+        "escalate": "എസ്‌കലേറ്റ്",
+        "markBlocked": "ബ്ലോക്ക് ആയി അടയാളപ്പെടുത്തുക"
+      },
+      "toast": {
+        "accepted": "ടാസ്‌ക് സ്വീകരിച്ചു",
+        "started": "ജോലി ആരംഭിച്ചു",
+        "progressUpdated": "പുരോഗതി അപ്‌ഡേറ്റ് ചെയ്തു",
+        "submitted": "അനുമതിക്ക് സമർപ്പിച്ചു",
+        "proposedAccepted": "നിർദ്ദിഷ്ട ടാസ്‌ക് സ്വീകരിച്ചു",
+        "rejected": "നിരസിക്കപ്പെട്ടു",
+        "verified": "പരിശോധിച്ചു",
+        "rework": "വീണ്ടും ചെയ്യാൻ അയച്ചു",
+        "closed": "ടാസ്‌ക് അടച്ചു",
+        "commentAdded": "അഭിപ്രായം ചേർത്തു",
+        "evidenceUploaded": "തെളിവ് അപ്‌ലോഡ് ചെയ്തു",
+        "escalated": "ടാസ്‌ക് എസ്‌കലേറ്റ് ചെയ്തു",
+        "blocked": "ടാസ്‌ക് ബ്ലോക്ക് ആയി അടയാളപ്പെടുത്തി"
+      },
+      "actionRemarksPlaceholder": "നിരസിക്കൽ, എസ്‌കലേഷൻ അല്ലെങ്കിൽ ബ്ലോക്കിന് അഭിപ്രായം",
+      "overview": {
+        "moduleProject": "മൊഡ്യൂൾ: {{module}} · പ്രോജക്ട്: {{project}}",
+        "categorySource": "വിഭാഗം: {{category}} · ഉറവിടം: {{source}}",
+        "progressEvidence": "പുരോഗതി: {{progress}}% · തെളിവ്: {{evidence}}",
+        "instructions": "നിർദ്ദേശങ്ങൾ: {{text}}"
+      },
+      "assignmentCard": {
+        "lead": "ടീം ലീഡ്: {{name}}",
+        "member": "ടീം അംഗം: {{name}}",
+        "createdBy": "സൃഷ്ടിച്ചത്: {{name}}"
+      },
+      "evidence": {
+        "upload": "തെളിവ് അപ്‌ലോഡ്"
+      },
+      "checklist": {
+        "title": "പരിശോധനാ ചെക്ക്‌ലിസ്റ്റ്",
+        "resolution_matches": "റെസലൂഷൻ ആവശ്യകതയുമായി പൊരുത്തപ്പെടുന്നു",
+        "evidence_uploaded": "തെളിവ് അപ്‌ലോഡ് ചെയ്തു",
+        "evidence_relevant": "തെളിവ് പ്രസക്തമാണ്",
+        "no_dependency_pending": "ഒരു ഡിപ്പൻഡൻസിയും ബാക്കിയില്ല",
+        "sla_checked": "SLA അനുസരണം പരിശോധിച്ചു"
+      },
+      "comments": {
+        "placeholder": "അഭിപ്രായം ചേർക്കുക…"
+      },
+      "subtasks": "ഉപ-ടാസ്‌ക്കുകൾ",
+      "approvalHistory": "അനുമതി ചരിത്രം",
+      "auditTrail": "ഓഡിറ്റ് ട്രെയ്ൽ"
+    },
+    "reports": {
+      "loading": "റിപ്പോർട്ടുകൾ ലോഡ് ആകുന്നു…",
+      "title": "ടാസ്‌ക് റിപ്പോർട്ടുകൾ",
+      "subtitle": "സംഗ്രഹ വിശകലനം, ജോലി ഭാര വിതരണം",
+      "kpiTotal": "ആകെ ടാസ്‌ക്കുകൾ",
+      "kpiSlaBreached": "SLA ലംഘനം",
+      "kpiPending": "അനുമതി ബാക്കി",
+      "kpiRework": "വീണ്ടും ജോലി ക്യൂ",
+      "kpiEscalated": "എസ്‌കലേറ്റ് ചെയ്തത്",
+      "kpiClosed": "ഈ മാസം അടച്ചത്",
+      "byStatus": "നില അനുസരിച്ച്",
+      "byPriority": "മുൻഗണന അനുസരിച്ച്",
+      "byModule": "മൊഡ്യൂൾ അനുസരിച്ച്"
+    },
+    "config": {
+      "title": "ടാസ്‌ക് കോൺഫിഗറേഷൻ",
+      "subtitle": "വിഭാഗങ്ങൾ, SLA നിയമങ്ങൾ, ടാസ്‌ക് മൊഡ്യൂൾ ക്രമീകരണങ്ങൾ (അഡ്മിൻ)",
+      "slaHours": "ഡിഫോൾട്ട് SLA മണിക്കൂറുകൾ",
+      "categories": "വിഭാഗങ്ങൾ",
+      "apiConfig": "API കോൺഫിഗറേഷൻ",
+      "apiHint": "POST /api/tasks/config/categories, /api/tasks/config/sla-rules ഉപയോഗിച്ച് കോൺഫിഗറേഷൻ വിപുലീകരിക്കുക. task_role, team_lead_id വഴി ഉപയോക്തൃ ടാസ്‌ക് ദൗത്യം സജ്ജമാക്കുക."
+    },
+    "auditor": {
+      "loading": "ഓഡിറ്റർ അവലോകനം ലോഡ് ആകുന്നു…",
+      "title": "ഓഡിറ്റർ ടാസ്‌ക് അവലോകനം",
+      "subtitle": "വായിക്കാൻ മാത്രം ഓർഗനൈസേഷൻ-വ്യാപക ടാസ്‌ക് മെട്രിക്കുകൾ, ഓഡിറ്റ് സാമ്പിൾ",
+      "recentTasks": "സമീപകാല ടാസ്‌ക്കുകൾ",
+      "recentTasksSub": "തെളിവ്, ഓഡിറ്റ് ട്രെയ്ൽ അവലോകനത്തിന് ഏതെങ്കിലും ടാസ്‌ക് തുറക്കുക (വായിക്കാൻ മാത്രം)"
+    }
+  }
+}

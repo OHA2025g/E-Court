@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"24f9764091e447b6a627cd773cb3ef40","collectionName":"dpr_deliverables","type":"collection"}

@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install backend deps
+        working-directory: backend
+        run: pip install -r requirements.txt
+      - name: Pytest
+        working-directory: backend
+        env:
+          MONGO_URL: mongodb://localhost:27017
+          DB_NAME: pmis_ecourts_ci
+          JWT_SECRET: ci-jwt-secret-key-32-chars-min!!
+          DASHBOARD_REQUIRE_APPROVAL: "false"
+        run: pytest tests/ -q
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start application stack
+        run: docker compose up -d --build --wait
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install frontend and Playwright
+        working-directory: frontend
+        run: |
+          yarn install --frozen-lockfile
+          npx playwright install chromium --with-deps
+      - name: Run Playwright E2E
+        working-directory: frontend
+        env:
+          PMIS_BASE_URL: http://localhost:5182
+          ADMIN_TOTP_SECRET: JBSWY3DPEHPK3PXP
+          PMIS_ADMIN_EMAIL: admin@pmis.gov.in
+          PMIS_ADMIN_PASSWORD: Admin@PMIS2026
+        run: yarn test:e2e

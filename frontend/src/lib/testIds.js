@@ -1,0 +1,77 @@
+/**
+ * Centralised data-testid keys to ensure unique, stable references for QA.
+ */
+export const TID = {
+  // auth
+  loginForm: "login-form",
+  loginEmail: "login-email-input",
+  loginPassword: "login-password-input",
+  loginSubmit: "login-submit-btn",
+  logoutBtn: "logout-btn",
+  // shell
+  sidebar: "app-sidebar",
+  userBadge: "user-badge",
+  navDashboard: "nav-dashboard",
+  navPhysical: "nav-physical",
+  navFinancial: "nav-financial",
+  navOutcome: "nav-outcome",
+  navReports: "nav-reports",
+  navMaster: "nav-master",
+  navAudit: "nav-audit",
+  navPmu: "nav-pmu",
+  navDpr: "nav-dpr",
+  navIjuris: "nav-ijuris",
+  navUsers: "nav-users",
+  // dashboard
+  dashboard: "dashboard-root",
+  dashboardNarrative: "dashboard-narrative",
+  dashboardAiInsights: "dashboard-ai-insights",
+  kpiPhysicalTarget: "kpi-physical-target",
+  kpiPhysicalAchieved: "kpi-physical-achieved",
+  kpiPhysicalPercent: "kpi-physical-percent",
+  kpiFinReleased: "kpi-fin-released",
+  kpiFinUtilized: "kpi-fin-utilized",
+  kpiFinPercent: "kpi-fin-percent",
+  ragDonut: "rag-donut",
+  componentChart: "component-bar-chart",
+  hcChart: "hc-bar-chart",
+  // common form
+  periodSelect: "period-select",
+  hcSelect: "hc-select",
+  componentSelect: "component-select",
+  indicatorSelect: "indicator-select",
+  subjectSelect: "subject-select",
+  kpiSelect: "kpi-select",
+  saveBtn: "save-entry-btn",
+  // physical
+  physicalTable: "physical-table",
+  targetInput: "target-input",
+  achievedInput: "achieved-input",
+  remarksInput: "remarks-input",
+  exportXlsx: "export-xlsx-btn",
+  exportPdf: "export-pdf-btn",
+  // financial
+  financialTable: "financial-table",
+  releasedInput: "released-input",
+  utilizedInput: "utilized-input",
+  // outcome
+  outcomeTable: "outcome-table",
+  valueInput: "value-input",
+  baselineInput: "baseline-input",
+  // pmu
+  pmuList: "pmu-task-list",
+  pmuCreateBtn: "pmu-create-btn",
+  // dpr
+  dprList: "dpr-list",
+  dprCreateBtn: "dpr-create-btn",
+  // ijuris
+  ijurisPayload: "ijuris-payload-input",
+  ijurisIngestBtn: "ijuris-ingest-btn",
+  // users
+  userList: "user-list",
+  userCreateBtn: "user-create-btn",
+  // audit
+  auditTable: "audit-table",
+  // reports
+  reportsRoot: "reports-root",
+};

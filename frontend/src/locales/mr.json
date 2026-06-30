@@ -1,0 +1,328 @@
+{
+  "app": {
+    "title": "ई-कोर्ट्स PMIS",
+    "subtitle": "टप्पा III · प्रकल्प देखरेख"
+  },
+  "nav": {
+    "dashboard": "डॅशबोर्ड",
+    "physical": "भौतिक ट्रॅकर",
+    "financial": "आर्थिक ट्रॅकर",
+    "outcome": "परिणाम ट्रॅकर",
+    "submissions": "सबमिशन",
+    "reports": "अहवाल",
+    "master": "मास्टर डेटा",
+    "schedules": "वेळापत्रक आणि आउटबॉक्स",
+    "pmu": "PMU कार्य",
+    "dpr": "DPR डिलिव्हरेबल",
+    "ijuris": "iJuris इngest",
+    "users": "वापरकर्ता व्यवस्थापन",
+    "backup": "बॅकअप आणि पुनर्स्थापना",
+    "audit": "ऑडिट ट्रेल",
+    "account": "खाते / 2FA",
+    "signOut": "साइन आउट",
+    "signedIn": "साइन इन",
+    "mainNav": "मुख्य नेव्हिगेशन"
+  },
+  "common": {
+    "save": "जतन करा",
+    "cancel": "रद्द",
+    "delete": "हटवा",
+    "loading": "लोड होत आहे…",
+    "darkMode": "डार्क मोड",
+    "lightMode": "लाइट मोड",
+    "language": "भाषा",
+    "skipToContent": "मुख्य सामग्रीवर जा"
+  },
+  "dashboard": {
+    "narrativeTitle": "Executive narrative",
+    "narrativeSubtitle": "Summary from approved dashboard data"
+  },
+  "submissions": {
+    "slaTitle": "सबमिशन SLA",
+    "reopenRequest": "पुन्हा उघडण्याची विनंती",
+    "reopenReason": "कारण",
+    "dashboardExcluded": "डॅशबोर्डमधून वगळले"
+  },
+  "reports": {
+    "savedViews": "जतन केलेले दृश्य",
+    "saveView": "दृश्य जतन करा",
+    "deleteView": "दृश्य हटवा"
+  },
+  "onboarding": {
+    "welcome": "भौतिक ट्रॅकरमध्ये स्वागत",
+    "filters": "उच्च न्यायालय आणि कालावधी निवडा.",
+    "entry": "लक्ष्य आणि साध्य प्रविष्ट करा, नंतर जतन करा.",
+    "table": "खालील तक्त्यात संपादन करा.",
+    "done": "आपण तयार आहात."
+  },
+  "tasks": {
+    "common": {
+      "loading": "लोड होत आहे…",
+      "noTasks": "कोणतेही कार्य सापडले नाहीत.",
+      "createTask": "कार्य तयार करा",
+      "creating": "तयार होत आहे…",
+      "back": "मागे",
+      "search": "शोधा…",
+      "previous": "मागील",
+      "next": "पुढील",
+      "page": "पृष्ठ {{n}}",
+      "exportCsv": "CSV निर्यात",
+      "exportXlsx": "Excel निर्यात",
+      "exportPdf": "PDF निर्यात",
+      "unassigned": "नियुक्त न केलेले",
+      "download": "डाउनलोड",
+      "post": "पोस्ट",
+      "remarksOptional": "टिप्पणी (पर्यायी)",
+      "assignmentNotes": "नियुक्ती नोंद…"
+    },
+    "layout": {
+      "commandCentreTitle": "कार्य कमांड सेंटर",
+      "taskManagement": "कार्य व्यवस्थापन",
+      "navLabel": "कार्य व्यवस्थापन नेविगेशन",
+      "appSelector": "अॅप निवडकर्ता",
+      "pmisApp": "PMIS अनुप्रयोग",
+      "toggleTheme": "थीम बदला",
+      "nav": {
+        "commandCentre": "कमांड सेंटर",
+        "workbench": "वर्कबेंच",
+        "myTasks": "माझी कार्ये",
+        "allTasks": "सर्व कार्ये",
+        "reports": "अहवाल",
+        "configuration": "कॉन्फिगरेशन",
+        "auditorOverview": "ऑडिटर विहंगावलोकन"
+      }
+    },
+    "table": {
+      "listAria": "कार्य यादी",
+      "code": "कोड",
+      "title": "शीर्षक",
+      "priority": "प्राधान्य",
+      "status": "स्थिती",
+      "owner": "मालक",
+      "due": "देय",
+      "sla": "SLA"
+    },
+    "appSelector": {
+      "initialising": "PMIS सुरू करा हो रहा है…",
+      "signedInAs": "{{name}} के रूप में साइन इन · {{role}}",
+      "chooseWorkspace": "कार्यक्षेत्र निवडा",
+      "subtitle": "नियुक्ती और मंजुरी के लिए कार्य व्यवस्थापन निवडा, या मुख्य PMIS अनुप्रयोग पर जाएँ।",
+      "taskTitle": "कार्य व्यवस्थापन",
+      "taskDesc": "कार्य, नियुक्ती, पुरावा, मंजुरी, SLA और संगठन-व्यापी विश्लेषण प्रबंधित करें।",
+      "openTask": "कार्य व्यवस्थापन खोलें →",
+      "appTitle": "एप्लिकेशन",
+      "appDesc": "मुख्य डैशबोर्ड — ट्रैकर, सबमिशन, अहवाल और मास्टर डेटा।",
+      "openApp": "एप्लिकेशन खोलें →",
+      "directLinks": "थेट दुवे:",
+      "taskModule": "कार्य मॉड्यूल"
+    },
+    "manager": {
+      "loading": "कमांड सेंटर लोड होत आहे…",
+      "title": "व्यवस्थापक कार्य कमांड सेंटर",
+      "subtitle": "संगठन-व्यापी कार्य दृश्यता, SLA और मंजुरी",
+      "kpiTotal": "कुल कार्य",
+      "kpiUnassigned": "नियुक्त न केलेले",
+      "kpiInProgress": "प्रगतीत",
+      "kpiSubmitted": "मंजुरी हेतु प्रस्तुत",
+      "kpiSlaBreached": "SLA उल्लंघन",
+      "kpiHighPriority": "उच्च प्राधान्य खुले",
+      "kpiManagerPending": "व्यवस्थापक मंजुरी लंबित",
+      "kpiClosedMonth": "या महिन्यात बंद",
+      "pendingApproval": "व्यवस्थापक मंजुरी लंबित",
+      "pendingApprovalSub": "महत्वपूर्ण समापन कतार",
+      "unassignedPool": "नियुक्त न केलेले पूल",
+      "unassignedPoolSub": "संघ प्रमुख की प्रतीक्षा",
+      "escalations": "अलीकडील वाढ",
+      "escalationsSub": "वाढवलेली कार्ये",
+      "byModule": "मॉड्यूल के अनुसार",
+      "byModuleSub": "ड्रिलडाउन — मॉड्यूल-वार वितरण"
+    },
+    "lead": {
+      "loading": "वर्कबेंच लोड होत आहे…",
+      "title": "संघ प्रमुख वर्कबेंच",
+      "subtitle": "टीम कार्य नियुक्त, सत्यापित और वाढवा",
+      "kpiReceived": "प्राप्त कार्य",
+      "kpiPendingDist": "वितरण लंबित",
+      "kpiAssigned": "सदस्यों को नियुक्त",
+      "kpiInProgress": "प्रगतीत",
+      "kpiSubmitted": "मंजुरी हेतु प्रस्तुत",
+      "kpiRework": "पुनः कार्य आवश्यक",
+      "kpiSlaRisk": "SLA जोखिम",
+      "kpiProposed": "सदस्यों द्वारा प्रस्तावित",
+      "submittedCard": "मंजुरी हेतु प्रस्तुत",
+      "submittedCardSub": "आपके सत्यापन की प्रतीक्षा",
+      "proposedCard": "सदस्यों द्वारा प्रस्तावित",
+      "proposedCardSub": "स्वीकारा या नाकाराा करें"
+    },
+    "member": {
+      "loading": "वर्कस्पेस लोड होत आहे…",
+      "title": "संघ सदस्य वर्कस्पेस",
+      "subtitle": "आपके नियुक्त कार्य, पुरावा और सबमिशन",
+      "kpiOpen": "मेरे खुले कार्य",
+      "kpiDueToday": "आज देय",
+      "kpiOverdue": "अतिदेय",
+      "kpiInProgress": "प्रगतीत",
+      "kpiRework": "पुनः कार्य आवश्यक",
+      "kpiSubmitted": "प्रस्तुत",
+      "kpiProposed": "मेरे द्वारा प्रस्तावित",
+      "recentCard": "हाल के कार्य",
+      "recentCardSub": "विवरण खोलने के लिए क्लिक करें"
+    },
+    "list": {
+      "title": "कार्य यादी",
+      "tasksCount": "{{count}} कार्य",
+      "filters": "फिल्टर",
+      "allStatuses": "सभी स्थितीयाँ",
+      "allPriorities": "सभी प्राधान्यएँ"
+    },
+    "bulk": {
+      "selected": "{{count}} निवडले",
+      "selectAll": "पृष्ठ पर सभी निवडा",
+      "selectTask": "कार्य {{code}} निवडा",
+      "assignLead": "लीड नियुक्त करें",
+      "assignMember": "सदस्य नियुक्त करें",
+      "cancel": "कार्य रद्द करा",
+      "cancelReason": "रद्दीकरण का कारण",
+      "cancelPlaceholder": "थोक रद्दीकरण का कारण…",
+      "clear": "निवड साफ करा",
+      "leadDone": "{{count}} कार्य(ों) में संघ प्रमुख नियुक्त",
+      "memberDone": "{{count}} कार्य(ों) में सदस्य नियुक्त",
+      "cancelDone": "{{count}} कार्य रद्द",
+      "partialFail": "{{count}} कार्य अपडेट नहीं हो सके"
+    },
+    "create": {
+      "title": "कार्य तयार करा",
+      "titleRequired": "शीर्षक आवश्यक है",
+      "titleField": "शीर्षक *",
+      "descriptionField": "विवरण *",
+      "category": "श्रेणी",
+      "priority": "प्राधान्य *",
+      "module": "मॉड्यूल",
+      "project": "प्रकल्प",
+      "department": "विभाग",
+      "dueDate": "देय तिथि",
+      "assignLead": "संघ प्रमुख नियुक्त करें",
+      "assignMember": "संघ सदस्य नियुक्त करें",
+      "evidenceRequired": "पुरावा आवश्यक",
+      "managerApproval": "व्यवस्थापक अंतिम मंजुरी",
+      "instructions": "सूचना",
+      "created": "कार्य {{code}} बनाया गया"
+    },
+    "assignment": {
+      "title": "नियुक्ती",
+      "assignReassign": "नियुक्त / पुनः नियुक्त",
+      "teamLead": "संघ प्रमुख",
+      "teamMember": "संघ सदस्य",
+      "assignLeadBtn": "लीड नियुक्त करें",
+      "assignMemberBtn": "सदस्य नियुक्त करें",
+      "selectLead": "संघ प्रमुख निवडा",
+      "selectMember": "संघ सदस्य निवडा",
+      "leadAssigned": "संघ प्रमुख नियुक्त",
+      "memberAssigned": "संघ सदस्य नियुक्त",
+      "currentLead": "वर्तमान लीड: {{name}}",
+      "currentMember": "वर्तमान सदस्य: {{name}}"
+    },
+    "detail": {
+      "loading": "कार्य लोड होत आहे…",
+      "notFound": "कार्य नहीं मिला",
+      "ownerDue": "मालक: {{owner}} · देय: {{due}}",
+      "rejectPlaceholder": "अस्वीकृति / स्पष्टीकरण टिप्पणी",
+      "tabs": {
+        "overview": "विहंगावलोकन",
+        "assignment": "नियुक्ती",
+        "evidence": "पुरावा",
+        "approval": "मंजुरी",
+        "comments": "टिप्पण्या",
+        "audit": "ऑडिट"
+      },
+      "actions": {
+        "accept": "स्वीकारा",
+        "start": "सुरू करा",
+        "updateProgress": "प्रगति अपडेट",
+        "submitApproval": "मंजुरी हेतु प्रस्तुत",
+        "acceptProposed": "प्रस्ताव स्वीकारा",
+        "rejectProposed": "प्रस्ताव नाकाराा",
+        "verify": "सत्यापित और अनुमोदित",
+        "reject": "नाकाराा",
+        "approveClosure": "समापन अनुमोदित",
+        "rejectClosure": "समापन नाकाराा",
+        "subtask": "उप-कार्य",
+        "escalate": "वाढवा",
+        "markBlocked": "अवरोधित चिन्हांकित करा"
+      },
+      "toast": {
+        "accepted": "कार्य स्वीकारा किया",
+        "started": "कार्य सुरू करा",
+        "progressUpdated": "प्रगति अपडेट",
+        "submitted": "मंजुरी हेतु प्रस्तुत",
+        "proposedAccepted": "प्रस्तावित कार्य स्वीकारा",
+        "rejected": "अस्वीकृत",
+        "verified": "सत्यापित",
+        "rework": "पुनः कार्य हेतु भेजा",
+        "closed": "कार्य बंद",
+        "commentAdded": "टिप्पणी जोड़ी",
+        "evidenceUploaded": "पुरावा अपलोड",
+        "escalated": "कार्य बढ़ाया गया",
+        "blocked": "कार्य अवरुद्ध चिह्नित"
+      },
+      "actionRemarksPlaceholder": "अस्वीकृति, बढ़ाने या अवरोध हेतु टिप्पणी",
+      "overview": {
+        "moduleProject": "मॉड्यूल: {{module}} · प्रकल्प: {{project}}",
+        "categorySource": "श्रेणी: {{category}} · स्रोत: {{source}}",
+        "progressEvidence": "प्रगति: {{progress}}% · पुरावा: {{evidence}}",
+        "instructions": "सूचना: {{text}}"
+      },
+      "assignmentCard": {
+        "lead": "संघ प्रमुख: {{name}}",
+        "member": "संघ सदस्य: {{name}}",
+        "createdBy": "द्वारा बनाया: {{name}}"
+      },
+      "evidence": {
+        "upload": "पुरावा अपलोड"
+      },
+      "checklist": {
+        "title": "सत्यापन चेकलिस्ट",
+        "resolution_matches": "समाधान आवश्यकता से मेल खाता है",
+        "evidence_uploaded": "पुरावा अपलोड",
+        "evidence_relevant": "पुरावा प्रासंगिक",
+        "no_dependency_pending": "कोई निर्भरता लंबित नहीं",
+        "sla_checked": "SLA अनुपालन जाँच"
+      },
+      "comments": {
+        "placeholder": "टिप्पणी जोडा…"
+      },
+      "subtasks": "उप-कार्य",
+      "approvalHistory": "मंजुरी इतिहास",
+      "auditTrail": "ऑडिट ट्रेल"
+    },
+    "reports": {
+      "loading": "अहवाल लोड होत आहे…",
+      "title": "कार्य अहवाल",
+      "subtitle": "सारांश विश्लेषण और कार्यभार वितरण",
+      "kpiTotal": "कुल कार्य",
+      "kpiSlaBreached": "SLA उल्लंघन",
+      "kpiPending": "मंजुरी लंबित",
+      "kpiRework": "पुनः कार्य कतार",
+      "kpiEscalated": "बढ़ाए गए",
+      "kpiClosed": "या महिन्यात बंद",
+      "byStatus": "स्थिती के अनुसार",
+      "byPriority": "प्राधान्य के अनुसार",
+      "byModule": "मॉड्यूल के अनुसार"
+    },
+    "config": {
+      "title": "कार्य कॉन्फिगरेशन",
+      "subtitle": "श्रेणियाँ, SLA नियम और कार्य मॉड्यूल सेटिंग (व्यवस्थापक)",
+      "slaHours": "डिफ़ॉल्ट SLA घंटे",
+      "categories": "श्रेणियाँ",
+      "apiConfig": "API कॉन्फिगरेशन",
+      "apiHint": "कॉन्फिगरेशन विस्तार हेतु POST /api/tasks/config/categories और /api/tasks/config/sla-rules उपयोग करें। उपयोगकर्ता task_role और team_lead_id से सेट होते हैं।"
+    },
+    "auditor": {
+      "loading": "ऑडिटर विहंगावलोकन लोड होत आहे…",
+      "title": "ऑडिटर कार्य विहंगावलोकन",
+      "subtitle": "केवल-पठन संगठन-व्यापी कार्य मेट्रिक्स और ऑडिट नमूना",
+      "recentTasks": "हाल के कार्य",
+      "recentTasksSub": "पुरावा और ऑडिट ट्रेल देखने हेतु कार्य खोलें (केवल-पठन)"
+    }
+  }
+}

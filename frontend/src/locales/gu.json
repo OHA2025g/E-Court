@@ -1,0 +1,328 @@
+{
+  "app": {
+    "title": "ઈ-કોર્ટ્સ PMIS",
+    "subtitle": "ફેઝ III · પ્રોજેક્ટ મોનિટરિંગ"
+  },
+  "nav": {
+    "dashboard": "ડેશબોર્ડ",
+    "physical": "ભૌતિક ટ્રેકર",
+    "financial": "નાણાકીય ટ્રેકર",
+    "outcome": "પરિણામ ટ્રેકર",
+    "submissions": "સબમિશન",
+    "reports": "અહેવાલો",
+    "master": "માસ્ટર ડેટા",
+    "schedules": "શેડ્યૂલ અને આઉટબોક્સ",
+    "pmu": "PMU કાર્યો",
+    "dpr": "DPR ડિલિવરેબલ",
+    "ijuris": "iJuris ingest",
+    "users": "વપરાશકર્તા વ્યવસ્થાપન",
+    "backup": "બેકઅપ અને પુનઃસ્થાપના",
+    "audit": "ઑડિટ ટ્રેઇલ",
+    "account": "એકાઉન્ટ / 2FA",
+    "signOut": "સાઇન આઉટ",
+    "signedIn": "સાઇન ઇન",
+    "mainNav": "મુખ્ય નેવિગેશન"
+  },
+  "common": {
+    "save": "સાચવો",
+    "cancel": "રદ",
+    "delete": "કાઢો",
+    "loading": "લોડ થઈ રહ્યું છે…",
+    "darkMode": "ડાર્ક મોડ",
+    "lightMode": "લાઇટ મોડ",
+    "language": "ભાષા",
+    "skipToContent": "મુખ્ય સામગ્રી પર જાઓ"
+  },
+  "dashboard": {
+    "narrativeTitle": "Executive narrative",
+    "narrativeSubtitle": "Summary from approved dashboard data"
+  },
+  "submissions": {
+    "slaTitle": "સબમિશન SLA",
+    "reopenRequest": "ફરી ખોલો",
+    "reopenReason": "કારણ",
+    "dashboardExcluded": "ડેશબોર્ડમાંથી બાકાત"
+  },
+  "reports": {
+    "savedViews": "સાચવેલા દૃશ્યો",
+    "saveView": "દૃશ્ય સાચવો",
+    "deleteView": "દૃશ્ય કાઢો"
+  },
+  "onboarding": {
+    "welcome": "ભૌતિક ટ્રેકરમાં સ્વાગત",
+    "filters": "હાઇકોર્ટ અને સમયગાળો પસંદ કરો.",
+    "entry": "લક્ષ્ય અને સિદ્ધિ દાખલ કરી સાચવો.",
+    "table": "નીચેની ટેબલમાં સંપાદન કરો.",
+    "done": "તમે તૈયાર છો."
+  },
+  "tasks": {
+    "common": {
+      "loading": "લોડ થઈ રહ્યું છે…",
+      "noTasks": "કોઈ કાર્ય મળ્યું નહીં.",
+      "createTask": "કાર્ય બનાવો",
+      "creating": "બનાવી રહ્યા છીએ…",
+      "back": "પાછળ",
+      "search": "શોધો…",
+      "previous": "પાછળનું",
+      "next": "આગળ",
+      "page": "પૃષ્ઠ {{n}}",
+      "exportCsv": "CSV નિકાસ",
+      "exportXlsx": "Excel નિકાસ",
+      "exportPdf": "PDF નિકાસ",
+      "unassigned": "નિયુક્ત નહીં",
+      "download": "ડાઉનલોડ",
+      "post": "પોસ્ટ",
+      "remarksOptional": "ટિપ્પણી (વૈકલ્પિક)",
+      "assignmentNotes": "સોંપણી નોંધ…"
+    },
+    "layout": {
+      "commandCentreTitle": "કાર્ય આદેશ કેન્દ્ર",
+      "taskManagement": "કાર્ય વ્યવસ્થાપન",
+      "navLabel": "કાર્ય વ્યવસ્થાપન નેવિગેશન",
+      "appSelector": "એપ પસંદ કરનાર",
+      "pmisApp": "PMIS એપ્લિકેશન",
+      "toggleTheme": "થીમ બદલો",
+      "nav": {
+        "commandCentre": "આદેશ કેન્દ્ર",
+        "workbench": "વર્કબેન્ચ",
+        "myTasks": "મારા કાર્યો",
+        "allTasks": "બધા કાર્યો",
+        "reports": "અહેવાલો",
+        "configuration": "રૂપરેખા",
+        "auditorOverview": "ઓડિટર વિહંગાવલોકન"
+      }
+    },
+    "table": {
+      "listAria": "કાર્ય સૂચિ",
+      "code": "કોડ",
+      "title": "શીર્ષક",
+      "priority": "અગ્રતા",
+      "status": "સ્થિતિ",
+      "owner": "માલિક",
+      "due": "નિયત",
+      "sla": "SLA"
+    },
+    "appSelector": {
+      "initialising": "PMIS શરૂ થઈ રહ્યું છે…",
+      "signedInAs": "{{name}} · {{role}} તરીકે સાઇન ઇન",
+      "chooseWorkspace": "વર્કસ્પેસ પસંદ કરો",
+      "subtitle": "સોંપણી અને મંજૂરી માટે કાર્ય વ્યવસ્થાપન પસંદ કરો, અથવા મુખ્ય PMIS એપ્લિકેશન પર ચાલુ રાખો.",
+      "taskTitle": "કાર્ય વ્યવસ્થાપન",
+      "taskDesc": "તમારી સંસ્થામાં કાર્યો, સોંપણી, પ્રમાણ, મંજૂરી, SLA અને ઊંડા વિશ્લેષણ સંચાલિત કરો.",
+      "openTask": "કાર્ય વ્યવસ્થાપન ખોલો →",
+      "appTitle": "એપ્લિકેશન",
+      "appDesc": "મુખ્ય ડૅશબોર્ડ પર જાઓ — ટ્રૅકર, સબમિશન, રિપોર્ટ અને માસ્ટર ડેટા.",
+      "openApp": "એપ્લિકેશન ખોલો →",
+      "directLinks": "સીધી કડીઓ હજી કાર્ય કરે છે:",
+      "taskModule": "કાર્ય મૉડ્યૂલ"
+    },
+    "manager": {
+      "loading": "આદેશ કેન્દ્ર લોડ થઈ રહ્યું છે…",
+      "title": "મૅનેજર કાર્ય આદેશ કેન્દ્ર",
+      "subtitle": "સંસ્થા-વ્યાપી કાર્ય દૃશ્યતા, SLA અને મંજૂરી",
+      "kpiTotal": "કુલ કાર્યો",
+      "kpiUnassigned": "નિયુક્ત નહીં",
+      "kpiInProgress": "પ્રગતિમાં",
+      "kpiSubmitted": "મંજૂરી માટે સબમિટ",
+      "kpiSlaBreached": "SLA ભંગ",
+      "kpiHighPriority": "ઉચ્ચ અગ્રતા ખુલ્લા",
+      "kpiManagerPending": "મૅનેજર મંજૂરી બાકી",
+      "kpiClosedMonth": "આ મહિને બંધ",
+      "pendingApproval": "મૅનેજર મંજૂરી બાકી",
+      "pendingApprovalSub": "નિર્ણાયક સમાપ્તિ કતાર",
+      "unassignedPool": "નિયુક્ત ન થયેલ પૂલ",
+      "unassignedPoolSub": "ટીમ લીડ ની રાહ જોઈ રહેલ કાર્યો",
+      "escalations": "તાજેતરના એસ્કેલેશન",
+      "escalationsSub": "એસ્કેલેટ થયેલ કાર્યો",
+      "byModule": "મૉડ્યૂલ મુજબ",
+      "byModuleSub": "ઊંડુ વિશ્લેષણ — મૉડ્યૂલ-વાર વિતરણ"
+    },
+    "lead": {
+      "loading": "વર્કબેન્ચ લોડ થઈ રહ્યું છે…",
+      "title": "ટીમ લીડ વર્કબેન્ચ",
+      "subtitle": "ટીમ કાર્ય સોંપો, ચકાસો અને એસ્કેલેટ કરો",
+      "kpiReceived": "પ્રાપ્ત કાર્યો",
+      "kpiPendingDist": "વિતરણ બાકી",
+      "kpiAssigned": "સભ્યોને સોંપ્યું",
+      "kpiInProgress": "પ્રગતિમાં",
+      "kpiSubmitted": "મંજૂરી માટે સબમિટ",
+      "kpiRework": "ફરી કાર્ય જરૂરી",
+      "kpiSlaRisk": "SLA જોખમ",
+      "kpiProposed": "સભ્યો દ્વારા પ્રસ્તાવ",
+      "submittedCard": "મંજૂરી માટે સબમિટ",
+      "submittedCardSub": "તમારી ચકાસણીની રાહ",
+      "proposedCard": "સભ્યો દ્વારા પ્રસ્તાવ",
+      "proposedCardSub": "સમીક્ષા કરીને સ્વીકારો અથવા નકારો"
+    },
+    "member": {
+      "loading": "વર્કસ્પેસ લોડ થઈ રહ્યું છે…",
+      "title": "ટીમ સભ્ય વર્કસ્પેસ",
+      "subtitle": "તમારા સોંપેલ કાર્યો, પ્રમાણ અને સબમિશન",
+      "kpiOpen": "મારા ખુલ્લા કાર્યો",
+      "kpiDueToday": "આજે નિયત",
+      "kpiOverdue": "મોડાં",
+      "kpiInProgress": "પ્રગતિમાં",
+      "kpiRework": "ફરી કાર્ય જરૂરી",
+      "kpiSubmitted": "સબમિટ",
+      "kpiProposed": "મારા દ્વારા પ્રસ્તાવ",
+      "recentCard": "તાજેતરના કાર્યો",
+      "recentCardSub": "વિગત ખોલવા ક્લિક કરો"
+    },
+    "list": {
+      "title": "કાર્ય સૂચિ",
+      "tasksCount": "{{count}} કાર્યો",
+      "filters": "ફિલ્ટર",
+      "allStatuses": "બધી સ્થિતિઓ",
+      "allPriorities": "બધી અગ્રતા"
+    },
+    "bulk": {
+      "selected": "{{count}} પસંદ",
+      "selectAll": "પૃષ્ઠ પર બધા પસંદ કરો",
+      "selectTask": "કાર્ય {{code}} પસંદ કરો",
+      "assignLead": "લીડ સોંપો",
+      "assignMember": "સભ્ય સોંપો",
+      "cancel": "કાર્ય રદ કરો",
+      "cancelReason": "રદ કારણ",
+      "cancelPlaceholder": "બલ્ક રદ માટેનું કારણ…",
+      "clear": "પસંદ ક્લિયર",
+      "leadDone": "{{count}} કાર્ય(ઓ)ને ટીમ લીડ સોંપ્યા",
+      "memberDone": "{{count}} કાર્ય(ઓ)ને ટીમ સભ્ય સોંપ્યા",
+      "cancelDone": "{{count}} કાર્ય(ઓ) રદ કર્યા",
+      "partialFail": "{{count}} કાર્ય(ઓ) અપડેટ ન થઈ શક્યા"
+    },
+    "create": {
+      "title": "કાર્ય બનાવો",
+      "titleRequired": "શીર્ષક જરૂરી",
+      "titleField": "શીર્ષક *",
+      "descriptionField": "વર્ણન *",
+      "category": "શ્રેણી",
+      "priority": "અગ્રતા *",
+      "module": "મૉડ્યૂલ",
+      "project": "પ્રોજેક્ટ",
+      "department": "વિભાગ",
+      "dueDate": "નિયત તારીખ",
+      "assignLead": "ટીમ લીડ સોંપો",
+      "assignMember": "ટીમ સભ્ય સોંપો",
+      "evidenceRequired": "પ્રમાણ જરૂરી",
+      "managerApproval": "મૅનેજરની અંતિમ મંજૂરી",
+      "instructions": "સૂચનાઓ",
+      "created": "કાર્ય {{code}} બન્યું"
+    },
+    "assignment": {
+      "title": "સોંપણી",
+      "assignReassign": "સોંપો / ફરી સોંપો",
+      "teamLead": "ટીમ લીડ",
+      "teamMember": "ટીમ સભ્ય",
+      "assignLeadBtn": "લીડ સોંપો",
+      "assignMemberBtn": "સભ્ય સોંપો",
+      "selectLead": "ટીમ લીડ પસંદ કરો",
+      "selectMember": "ટીમ સભ્ય પસંદ કરો",
+      "leadAssigned": "ટીમ લીડ સોંપ્યા",
+      "memberAssigned": "ટીમ સભ્ય સોંપ્યા",
+      "currentLead": "હાલના લીડ: {{name}}",
+      "currentMember": "હાલના સભ્ય: {{name}}"
+    },
+    "detail": {
+      "loading": "કાર્ય લોડ થઈ રહ્યું છે…",
+      "notFound": "કાર્ય મળ્યું નહીં",
+      "ownerDue": "માલિક: {{owner}} · નિયત: {{due}}",
+      "rejectPlaceholder": "અસ્વીકૃતિ / સ્પષ્ટીકરણ ટિપ્પણી",
+      "tabs": {
+        "overview": "વિહંગ",
+        "assignment": "સોંપણી",
+        "evidence": "પ્રમાણ",
+        "approval": "મંજૂરી",
+        "comments": "ટિપ્પણી",
+        "audit": "ઓડિટ"
+      },
+      "actions": {
+        "accept": "સ્વીકારો",
+        "start": "શરૂ",
+        "updateProgress": "પ્રગતિ અપડેટ",
+        "submitApproval": "મંજૂરી માટે સબમિટ",
+        "acceptProposed": "પ્રસ્તાવ સ્વીકારો",
+        "rejectProposed": "પ્રસ્તાવ નકારો",
+        "verify": "ચકાસો & મંજૂર",
+        "reject": "નકારો",
+        "approveClosure": "સમાપ્તિ મંજૂર",
+        "rejectClosure": "સમાપ્તિ નકારો",
+        "subtask": "પેટા-કાર્ય",
+        "escalate": "એસ્કેલેટ",
+        "markBlocked": "અવરોધ ચિહ્નિત"
+      },
+      "toast": {
+        "accepted": "કાર્ય સ્વીકૃત",
+        "started": "કાર્ય શરૂ",
+        "progressUpdated": "પ્રગતિ અપડેટ",
+        "submitted": "મંજૂરી માટે સબમિટ",
+        "proposedAccepted": "પ્રસ્તાવ સ્વીકૃત",
+        "rejected": "અસ્વીકૃત",
+        "verified": "ચકાસ્યું",
+        "rework": "ફરી કાર્ય માટે મોકલ્યું",
+        "closed": "કાર્ય બંધ",
+        "commentAdded": "ટિપ્પણી ઉમેર્યો",
+        "evidenceUploaded": "પ્રમાણ અપલોડ",
+        "escalated": "કાર્ય એસ્કેલેટ",
+        "blocked": "કાર્ય અવરોધ ચિહ્નિત"
+      },
+      "actionRemarksPlaceholder": "અસ્વીકૃતિ, એસ્કેલેટ અથવા અવરોધ ટિપ્પણી",
+      "overview": {
+        "moduleProject": "મૉડ્યૂલ: {{module}} · પ્રોજેક્ટ: {{project}}",
+        "categorySource": "શ્રેણી: {{category}} · સ્રોત: {{source}}",
+        "progressEvidence": "પ્રગતિ: {{progress}}% · પ્રમાણ: {{evidence}}",
+        "instructions": "સૂચનાઓ: {{text}}"
+      },
+      "assignmentCard": {
+        "lead": "ટીમ લીડ: {{name}}",
+        "member": "ટીમ સભ્ય: {{name}}",
+        "createdBy": "બનાવ્યું: {{name}}"
+      },
+      "evidence": {
+        "upload": "પ્રમાણ અપલોડ"
+      },
+      "checklist": {
+        "title": "ચકાસણી ચેકલિસ્ટ",
+        "resolution_matches": "નિર્ણય જરૂરિયાત સાથે મળે",
+        "evidence_uploaded": "પ્રમાણ અપલોડ થઈ ગ્યું",
+        "evidence_relevant": "પ્રમાણ સુસંગત",
+        "no_dependency_pending": "કોઈ નિર્ભરતા બાકી નહીં",
+        "sla_checked": "SLA અનુપાલન ચકાસ્યું"
+      },
+      "comments": {
+        "placeholder": "ટિપ્પણી ઉમેરો…"
+      },
+      "subtasks": "પેટા-કાર્ય",
+      "approvalHistory": "મંજૂરી ઇતિહાસ",
+      "auditTrail": "ઓડિટ ટ્રેઇલ"
+    },
+    "reports": {
+      "loading": "અહેવાલ લોડ…",
+      "title": "કાર્ય અહેવાલ",
+      "subtitle": "સારાંશ વિશ્લેષણ અને કાર્ય ભાર વિતરણ",
+      "kpiTotal": "કુલ કાર્યો",
+      "kpiSlaBreached": "SLA ભંગ",
+      "kpiPending": "મંજૂરી બાકી",
+      "kpiRework": "ફરી કાર્ય કતાર",
+      "kpiEscalated": "એસ્કેલેટ",
+      "kpiClosed": "આ મહિને બંધ",
+      "byStatus": "સ્થિતિ પ્રમાણે",
+      "byPriority": "અગ્રતા પ્રમાણે",
+      "byModule": "મૉડ્યૂલ પ્રમાણે"
+    },
+    "config": {
+      "title": "કાર્ય રૂપરેખા",
+      "subtitle": "શ્રેણી, SLA નિયમ અને કાર્ય મૉડ્યૂલ સેટિંગ (એડ્મિન)",
+      "slaHours": "ડિફૉલ્ટ SLA કલાક",
+      "categories": "શ્રેણી",
+      "apiConfig": "API રૂપરેખા",
+      "apiHint": "POST /api/tasks/config/categories અને /api/tasks/config/sla-rules દ્વારા રૂપરેખા વધારો. task_role અને team_lead_id દ્વારા વપરાશકર્તા ભૂમિકા સેટ."
+    },
+    "auditor": {
+      "loading": "ઓડિટર વિહંગ લોડ…",
+      "title": "ઓડિટર કાર્ય વિહંગ",
+      "subtitle": "માત્ર વાંચવા-સંસ્થા-વ્યાપી કાર્ય મૅટ્રિક્સ અને ઓડિટ નમૂના",
+      "recentTasks": "તાજેતરના કાર્યો",
+      "recentTasksSub": "પ્રમાણ અને ઓડિટ ટ્રેઇલ સમીક્ષા માટે કોઈ પણ કાર્ય ખોલો (ફક્ત વાંચો)"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"high_court":{"$numberInt":"1"},"reporting_period":{"$numberInt":"1"}},"name":"high_court_1_reporting_period_1"}],"uuid":"947d28a2678444d58bf281706949fab0","collectionName":"period_reopen_requests","type":"collection"}
