@@ -109,9 +109,13 @@ export default function FinancialTracker() {
   const hcPeriodRows = useQuery({
     queryKey: ["financial", "hc-period", hc, period],
     enabled: !!hc && !!period,
-    queryFn: () => api.get("/financial", { params: { high_court: hc, reporting_period: period } }).then((r) => unwrapTrackerResponse(r.data)),
+    queryFn: () => api.get("/financial", { params: { high_court: hc, reporting_period: period, page_size: 500 } }).then((r) => unwrapTrackerResponse(r.data)),
   });
   const hcPeriodCount = hcPeriodRows.data?.total ?? hcPeriodRows.data?.items?.length ?? 0;
+  const entryLookupItems = useMemo(
+    () => (hc && period ? hcPeriodRows.data?.items : null) || listItems,
+    [hc, period, hcPeriodRows.data?.items, listItems],
+  );
 
   useEffect(() => {
     if (!initPromptKey) return;
@@ -135,9 +139,9 @@ export default function FinancialTracker() {
   });
 
   useEffect(() => {
-    if (!listItems.length || !hc || !component || !period) return;
+    if (!entryLookupItems.length || !hc || !component || !period) return;
     const d = district || null;
-    const found = listItems.find(r =>
+    const found = entryLookupItems.find(r =>
       r.high_court === hc && r.component === component && r.reporting_period === period &&
       (r.district || null) === d
     );
@@ -147,10 +151,10 @@ export default function FinancialTracker() {
       setReleased(found.fund_released ?? "");
       setUtilized(found.fund_utilized ?? "");
       setRemarks(found.remarks ?? "");
-    } else {
+    } else if (user?.role !== "Admin") {
       setTarget(""); setAllocated(""); setReleased(""); setUtilized(""); setRemarks("");
     }
-  }, [listItems, hc, component, period, district]);
+  }, [entryLookupItems, hc, component, period, district, user?.role]);
 
   const isCpc = user?.role === "CPC";
   const canAddEntry = user?.role === "Admin";
@@ -160,15 +164,16 @@ export default function FinancialTracker() {
     if (!isCpc) return true;
     return field === "fund_utilized" || field === "remarks";
   }, [canEdit, isCpc]);
+  const formMandatoryReady = Boolean(hc && component && period);
   const selectedEntryExists = useMemo(() => {
-    if (!hc || !component || !period) return false;
+    if (!formMandatoryReady) return false;
     const d = district || null;
-    return listItems.some((r) =>
+    return entryLookupItems.some((r) =>
       r.high_court === hc && r.component === component &&
       r.reporting_period === period && (r.district || null) === d
     );
-  }, [listItems, hc, component, period, district]);
-  const canSaveEntry = canEdit && (canAddEntry || selectedEntryExists);
+  }, [entryLookupItems, formMandatoryReady, hc, component, period, district]);
+  const canSaveEntry = canEdit && (canAddEntry ? formMandatoryReady : formMandatoryReady && selectedEntryExists);
   const showInitPrompt = canAddEntry && hc && period && !initPromptDismissed &&
     hcPeriodCount === 0 && !hcPeriodRows.isLoading;
 

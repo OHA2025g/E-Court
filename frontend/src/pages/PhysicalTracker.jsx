@@ -86,9 +86,13 @@ export default function PhysicalTracker() {
   const hcPeriodRows = useQuery({
     queryKey: ["physical", "hc-period", hc, period],
     enabled: !!hc && !!period,
-    queryFn: () => api.get("/physical", { params: { high_court: hc, reporting_period: period } }).then((r) => unwrapTrackerResponse(r.data)),
+    queryFn: () => api.get("/physical", { params: { high_court: hc, reporting_period: period, page_size: 500 } }).then((r) => unwrapTrackerResponse(r.data)),
   });
   const hcPeriodCount = hcPeriodRows.data?.total ?? hcPeriodRows.data?.items?.length ?? 0;
+  const entryLookupItems = useMemo(
+    () => (hc && period ? hcPeriodRows.data?.items : null) || listItems,
+    [hc, period, hcPeriodRows.data?.items, listItems],
+  );
 
   useEffect(() => {
     if (!initPromptKey) return;
@@ -109,9 +113,9 @@ export default function PhysicalTracker() {
   });
 
   useEffect(() => {
-    if (!listItems.length || !hc || !component || !indicator || !period) return;
+    if (!entryLookupItems.length || !hc || !component || !indicator || !period) return;
     const d = district || null;
-    const found = listItems.find(r =>
+    const found = entryLookupItems.find(r =>
       r.high_court === hc && r.component === component &&
       r.indicator === indicator && r.reporting_period === period &&
       (r.district || null) === d
@@ -120,23 +124,24 @@ export default function PhysicalTracker() {
       setTarget(found.target ?? "");
       setAchieved(found.achieved ?? "");
       setRemarks(found.remarks ?? "");
-    } else {
+    } else if (user?.role !== "Admin") {
       setTarget(""); setAchieved(""); setRemarks("");
     }
-  }, [listItems, hc, component, indicator, period, district]);
+  }, [entryLookupItems, hc, component, indicator, period, district, user?.role]);
 
   const canAddEntry = user?.role === "Admin";
   const canEditTarget = user?.role === "Admin";
   const canEdit = user?.role !== "Viewer";
+  const formMandatoryReady = Boolean(hc && component && indicator && period);
   const selectedEntryExists = useMemo(() => {
-    if (!hc || !component || !indicator || !period) return false;
+    if (!formMandatoryReady) return false;
     const d = district || null;
-    return listItems.some((r) =>
+    return entryLookupItems.some((r) =>
       r.high_court === hc && r.component === component && r.indicator === indicator &&
       r.reporting_period === period && (r.district || null) === d
     );
-  }, [listItems, hc, component, indicator, period, district]);
-  const canSaveEntry = canEdit && (canAddEntry || selectedEntryExists);
+  }, [entryLookupItems, formMandatoryReady, hc, component, indicator, period, district]);
+  const canSaveEntry = canEdit && (canAddEntry ? formMandatoryReady : formMandatoryReady && selectedEntryExists);
   const showInitPrompt = canAddEntry && hc && period && !initPromptDismissed &&
     hcPeriodCount === 0 && !hcPeriodRows.isLoading;
 

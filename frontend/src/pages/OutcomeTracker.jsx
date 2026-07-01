@@ -95,9 +95,13 @@ export default function OutcomeTracker() {
   const hcPeriodRows = useQuery({
     queryKey: ["outcome", "hc-period", hc, period],
     enabled: !!hc && !!period,
-    queryFn: () => api.get("/outcome", { params: { high_court: hc, reporting_period: period } }).then((r) => unwrapTrackerResponse(r.data)),
+    queryFn: () => api.get("/outcome", { params: { high_court: hc, reporting_period: period, page_size: 500 } }).then((r) => unwrapTrackerResponse(r.data)),
   });
   const hcPeriodCount = hcPeriodRows.data?.total ?? hcPeriodRows.data?.items?.length ?? 0;
+  const entryLookupItems = useMemo(
+    () => (hc && period ? hcPeriodRows.data?.items : null) || listItems,
+    [hc, period, hcPeriodRows.data?.items, listItems],
+  );
 
   useEffect(() => {
     if (!initPromptKey) return;
@@ -151,9 +155,9 @@ export default function OutcomeTracker() {
   }, [granularity]);
 
   useEffect(() => {
-    if (!listItems.length || !subject || !kpiId || !period) return;
+    if (!entryLookupItems.length || !subject || !kpiId || !period) return;
     const d = granularity === "District" ? (district || null) : null;
-    const found = listItems.find(r =>
+    const found = entryLookupItems.find(r =>
       r.subject === subject && r.kpi_id === kpiId && r.reporting_period === period &&
       r.granularity === granularity && (r.high_court || "") === (hc || "") &&
       (r.district || null) === d
@@ -168,10 +172,10 @@ export default function OutcomeTracker() {
       setOutcomeType(found.outcome_type || outcomeType);
       setValueType(found.value_type || valueType);
       if (found.district) setDistrict(found.district);
-    } else if (subject && kpiId && period) {
+    } else if (user?.role !== "Admin") {
       setBaseline(""); setValue(""); setRemarks("");
     }
-  }, [listItems, subject, kpiId, period, hc, granularity, district, outcomeType, valueType]);
+  }, [entryLookupItems, subject, kpiId, period, hc, granularity, district, outcomeType, valueType, kpiMeta, subComponent, user?.role]);
 
   const districtRequired = granularity === "District";
 
@@ -197,16 +201,20 @@ export default function OutcomeTracker() {
 
   const canAddEntry = user?.role === "Admin";
   const canEdit = user?.role !== "Viewer";
+  const formMandatoryReady = Boolean(
+    kpiId && period && subject &&
+    (granularity !== "District" || (hc && district)),
+  );
   const selectedEntryExists = useMemo(() => {
-    if (!subject || !kpiId || !period) return false;
+    if (!formMandatoryReady) return false;
     const d = granularity === "District" ? (district || null) : null;
-    return listItems.some((r) =>
+    return entryLookupItems.some((r) =>
       r.subject === subject && r.kpi_id === kpiId && r.reporting_period === period &&
       r.granularity === granularity && (r.high_court || "") === (hc || "") &&
       (r.district || null) === d
     );
-  }, [listItems, subject, kpiId, period, hc, granularity, district]);
-  const canSaveEntry = canEdit && (canAddEntry || selectedEntryExists);
+  }, [entryLookupItems, formMandatoryReady, subject, kpiId, period, hc, granularity, district]);
+  const canSaveEntry = canEdit && (canAddEntry ? formMandatoryReady : formMandatoryReady && selectedEntryExists);
   const showInitPrompt = canAddEntry && hc && period && !initPromptDismissed &&
     hcPeriodCount === 0 && !hcPeriodRows.isLoading;
 
