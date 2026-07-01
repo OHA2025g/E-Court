@@ -222,3 +222,16 @@ def test_fifth_failure_locks_account(client):
     finally:
         clear_login_state(email)
         delete_user(email)
+
+
+def test_disable_2fa_skips_totp_at_login(client, admin_credentials, monkeypatch):
+    email, password = admin_credentials
+    monkeypatch.setenv("DISABLE_2FA", "true")
+    set_user(email, must_change_password=False, totp_enabled=True, totp_secret="JBSWY3DPEHPK3PXP")
+    try:
+        r = login(client, email, password)
+        assert r.status_code == 200
+        assert extract_token(r)
+        assert r.json().get("requires_2fa") is not True
+    finally:
+        set_user(email, must_change_password=False, totp_enabled=False, unset_fields=["totp_secret"])

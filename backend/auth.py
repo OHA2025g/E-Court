@@ -35,13 +35,22 @@ LOCKOUT_DURATION_MIN = int(os.environ.get("LOCKOUT_DURATION_MIN", "15"))
 ALL_ROLES = ("Admin", "CPC", "Viewer")
 
 
+def is_2fa_disabled() -> bool:
+    """Temporary bypass — set DISABLE_2FA=true to skip TOTP at login and mandatory setup."""
+    return os.environ.get("DISABLE_2FA", "false").lower() in ("1", "true", "yes")
+
+
 def get_require_2fa_roles() -> set[str]:
+    if is_2fa_disabled():
+        return set()
     raw = os.environ.get("REQUIRE_2FA_ROLES", "Admin")
     roles = {r.strip() for r in raw.split(",") if r.strip()}
     return roles or {"Admin"}
 
 
 def role_requires_2fa(role: str) -> bool:
+    if is_2fa_disabled():
+        return False
     return role in get_require_2fa_roles()
 
 
@@ -476,7 +485,7 @@ def register_auth_routes(api: APIRouter):
             await db.users.update_one({"_id": user["_id"]}, {"$set": {"must_change_password": True}})
             user["must_change_password"] = True
 
-        if user.get("totp_enabled") and user.get("totp_secret"):
+        if not is_2fa_disabled() and user.get("totp_enabled") and user.get("totp_secret"):
             if not body.totp_code:
                 return {"requires_2fa": True, "email": email}
             totp = pyotp.TOTP(user["totp_secret"])
@@ -547,6 +556,7 @@ def register_auth_routes(api: APIRouter):
             "required_roles": required,
             "optional_enrollment_roles": [r for r in ALL_ROLES if r not in required],
             "admin_mandatory": "Admin" in required,
+            "disabled": is_2fa_disabled(),
         }
 
     @api.post("/auth/2fa/setup")
