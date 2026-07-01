@@ -732,8 +732,9 @@ def register_auth_routes(api: APIRouter):
                 changes.append({"field": "high_court", "old": existing.get("high_court"), "new": None})
             update["high_court"] = None
         if body.password:
-            validate_password_policy(body.password, existing, verify_password)
+            validate_password_policy(body.password, existing, verify_password, skip_reuse_check=True)
             hist = build_password_history_update(existing, hash_password(body.password), hash_password)
+            hist["must_change_password"] = False
             update.update(hist)
             changes.append({"field": "password", "old": "***", "new": "***"})
             await revoke_all_user_sessions(user_id)

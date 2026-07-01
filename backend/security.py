@@ -73,7 +73,13 @@ def _peer_is_trusted_proxy(peer: str) -> bool:
     return False
 
 
-def validate_password_policy(password: str, user_record: Optional[dict] = None, verify_fn=None) -> None:
+def validate_password_policy(
+    password: str,
+    user_record: Optional[dict] = None,
+    verify_fn=None,
+    *,
+    skip_reuse_check: bool = False,
+) -> None:
     """Raise HTTPException if password fails policy."""
     if len(password) < PASSWORD_MIN_LENGTH:
         raise HTTPException(
@@ -88,6 +94,9 @@ def validate_password_policy(password: str, user_record: Optional[dict] = None, 
         raise HTTPException(status_code=400, detail="Password must include a digit")
     if not SPECIAL_CHARS.search(password):
         raise HTTPException(status_code=400, detail="Password must include a special character")
+
+    if skip_reuse_check:
+        return
 
     if user_record and verify_fn:
         current_hash = user_record.get("password_hash")
