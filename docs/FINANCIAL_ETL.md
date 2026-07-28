@@ -1,19 +1,28 @@
-# Financial Tracker ETL — Funds Released 2024–2027
+# Financial Tracker ETL — Released & Utilised
 
 Reusable pipeline to load DoJ wide-format Excel into PMIS `financial_entries`.
 
-## Source
+## Sources
 
-| Item | Value |
-|------|--------|
-| File | `Financial_Tracker_Data_for_Released_Fund_2024-2027.xlsx` |
-| Sheet | `Funds_Released` |
-| Shape | Wide: High Court × component columns |
-| Units | Absolute Indian Rupees |
-| Coverage | 28 High Courts × 13 components (364 cells) |
+| Mode | File | Sheet | PMIS field |
+|------|------|-------|------------|
+| `released` | `Financial_Tracker_Data_for_Released_Fund_2024-2027.xlsx` | `Funds_Released` | `fund_released` |
+| `utilised` | `Financial_Tracker_Data_for_Utilised_Fund_2023-2024.xlsx` | `Funds_Utilised` | `fund_utilized` |
 
-Components **not** in this source (remain unchanged in PMIS):  
-S3WaaS, Cloud Computing & Storage, PMU, Connectivity.
+Both are wide: High Court × component columns, amounts in absolute Indian Rupees.
+
+### Phase-III utilised component mapping
+
+| Excel header | Canonical BRD component |
+|--------------|-------------------------|
+| Digitization / Scanning (High Courts + Distt. Courts) | Digitisation of Court Records |
+| eSewa Kendras (Porta Cabins+LAN Points) | e-Sewa Kendras |
+| Addl. Hardware Components | Additional Hardware — Phase I & II |
+| Solar Power | Solar Power for ICT |
+| Handheld Devices/ NSTEP | NSTEP Expansion |
+| Capacity Building /Training | ICT Training / Change Management |
+| Additional requirement (For North Eastern States) | ICT for Newly Set-Up Courts |
+| Software Development/ Technical Manpower | Software Development |
 
 ## Target
 
@@ -36,15 +45,16 @@ S3WaaS, Cloud Computing & Storage, PMU, Connectivity.
 ```
 
 ### 1. Extract
-- Read sheet `Funds_Released` with `data_only=True`.
+- Read the mode’s sheet with `data_only=True`.
+- Skip total rows (e.g. `Total (In Cr.)`).
 - Code: `backend/scripts/import_financial_excel.py` → `extract_sheet_rows()`.
 
 ### 2. Transform
 - Map High Court aliases (`Orissa` → `Odisha`, Gauhati variants, etc.).
-- Map component headers to BRD-canonical names.
-- Unpivot to long rows: `(high_court, component, fund_released)`.
+- Map component headers to BRD-canonical names (`COMPONENT_ALIASES`).
+- Unpivot to long rows: `(high_court, component, fund_released|fund_utilized)`.
 - Convert ₹ → ₹ Cr (4 decimal places).
-- Leave `fund_utilized` blank so load **preserves** existing utilised / target / allocated.
+- Leave the *other* fund column blank; CLI enriches it from seed before load so existing values are preserved.
 - Code: `backend/financial_excel.py`.
 
 ### 3. Load
@@ -61,43 +71,46 @@ Bulk API is Admin-only and writes `source: bulk_excel`, recalculates utilisation
 ```bash
 cd backend
 
-# Inspect only
-python scripts/import_financial_excel.py --dry-run
-
-# Local artefacts + seed
-python scripts/import_financial_excel.py --write-bulk-xlsx --update-seed
-
-# Production load (baseline period)
-python scripts/import_financial_excel.py --load-api \
+# --- Funds Released 2024–2027 ---
+python scripts/import_financial_excel.py --mode released --dry-run
+python scripts/import_financial_excel.py --mode released \
+  --write-bulk-xlsx --update-seed --load-api \
   --api-url https://ecourt.demoapi.agrayianailabs.com \
-  --admin-email admin@pmis.gov.in \
-  --admin-password 'Admin@PMIS2026' \
+  --admin-email admin@pmis.gov.in --admin-password 'Admin@PMIS2026' \
   --period 2026-05
 
-# Preview only against API
-python scripts/import_financial_excel.py --load-api --api-dry-run-only \
+# --- Funds Utilised 2023–2024 ---
+python scripts/import_financial_excel.py --mode utilised --dry-run
+python scripts/import_financial_excel.py --mode utilised \
+  --write-bulk-xlsx --update-seed --load-api \
   --api-url https://ecourt.demoapi.agrayianailabs.com \
-  --admin-email admin@pmis.gov.in \
-  --admin-password '...' \
+  --admin-email admin@pmis.gov.in --admin-password 'Admin@PMIS2026' \
   --period 2026-05
 ```
 
 ## Reuse for future Excels
 
-1. Drop new wide file beside the repo (or pass `--source`).
-2. Add any new HC / component spellings to `HC_ALIASES` / `COMPONENT_ALIASES` in `financial_excel.py`.
+1. Drop a new wide file (or pass `--source` / `--sheet`).
+2. Add any new HC / component spellings to `HC_ALIASES` / `COMPONENT_ALIASES`.
 3. Run `--dry-run` until `unknown_high_courts == 0`.
 4. Run `--write-bulk-xlsx --update-seed --load-api --period YYYY-MM`.
+5. Choose `--mode released` or `--mode utilised` for the target field.
 
-To load **utilised** from a separate wide file later, extend transform to merge on `(HC, component)` into the `Fund Utilized` column of the same bulk template.
+## Last run snapshots
 
-## Last run snapshot
-
+### Released 2024–2027
 | Metric | Value |
 |--------|--------|
 | Records | 364 |
-| High Courts | 28 |
 | Components | 13 |
 | Total released | ₹ 2,372.4434 Cr |
-| Period | `2026-05` (baseline) |
-| Bulk artefact | `etl_output/financial_funds_released_2024_2027_bulk.xlsx` |
+| Periods | `2026-05`, `2026-07` |
+
+### Utilised 2023–2024
+| Metric | Value |
+|--------|--------|
+| Records | 223 |
+| Components | 8 |
+| Total utilised | ₹ 611.8843 Cr |
+| Periods | `2026-05`, `2026-07` |
+| Bulk artefact | `etl_output/financial_funds_utilised_2023_2024_bulk.xlsx` |

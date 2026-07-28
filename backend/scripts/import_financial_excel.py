@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
-"""Financial Tracker ETL CLI — Funds Released (wide DoJ Excel) → PMIS.
+"""Financial Tracker ETL CLI — wide DoJ Excel → PMIS (Released or Utilised).
 
 Pipeline stages (reusable):
-  1. EXTRACT  — read wide sheet Funds_Released from source .xlsx
+  1. EXTRACT  — read wide sheet from source .xlsx
   2. TRANSFORM — HC/component alias map, unpivot to long rows, ₹ → ₹ Cr
   3. LOAD     — one or more sinks:
        --write-bulk-xlsx   long-format file for Admin Bulk Upload UI / API
-       --update-seed       merge fund_released into seed_data.json baseline
+       --update-seed       merge into seed_data.json baseline
        --load-api          POST /api/financial/bulk (dry-run then confirm)
 
+Modes:
+  --mode released   (default) Funds Released → fund_released
+  --mode utilised   Funds Utilised → fund_utilized
+
 Examples:
-  # Transform only (inspect)
   python scripts/import_financial_excel.py --dry-run
 
-  # Write bulk template + update seed
-  python scripts/import_financial_excel.py --write-bulk-xlsx --update-seed
-
-  # Load into running API (baseline period)
-  python scripts/import_financial_excel.py --load-api \\
+  python scripts/import_financial_excel.py --mode utilised \\
+      --source ../Financial_Tracker_Data_for_Utilised_Fund_2023-2024.xlsx \\
+      --sheet Funds_Utilised --write-bulk-xlsx --update-seed --load-api \\
       --api-url https://ecourt.demoapi.agrayianailabs.com \\
       --admin-email admin@pmis.gov.in --admin-password '...' \\
       --period 2026-05
@@ -34,17 +35,20 @@ from openpyxl import Workbook
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = ROOT.parent
-DEFAULT_XLSX = REPO_ROOT / "Financial_Tracker_Data_for_Released_Fund_2024-2027.xlsx"
-DEFAULT_OUT = REPO_ROOT / "etl_output" / "financial_funds_released_2024_2027_bulk.xlsx"
+DEFAULT_RELEASED_XLSX = REPO_ROOT / "Financial_Tracker_Data_for_Released_Fund_2024-2027.xlsx"
+DEFAULT_UTILISED_XLSX = REPO_ROOT / "Financial_Tracker_Data_for_Utilised_Fund_2023-2024.xlsx"
 SEED_PATH = ROOT / "seed_data.json"
-DEFAULT_SHEET = "Funds_Released"
 DEFAULT_PERIOD = "2026-05"
 
 sys.path.insert(0, str(ROOT))
 from financial_excel import (  # noqa: E402
+    FUND_FIELD_RELEASED,
+    FUND_FIELD_UTILIZED,
     merge_released_into_seed_baseline,
+    merge_utilised_into_seed_baseline,
     records_to_bulk_rows,
     transform_funds_released_rows,
+    transform_funds_utilised_rows,
 )
 
 
@@ -69,11 +73,14 @@ def write_bulk_xlsx(records: list[dict], out_path: Path) -> None:
     wb.save(out_path)
 
 
-def update_seed(records: list[dict]) -> dict:
+def update_seed(records: list[dict], fund_field: str) -> dict:
     with open(SEED_PATH) as f:
         seed = json.load(f)
     baseline = seed.get("financial_baseline") or []
-    merged, stats = merge_released_into_seed_baseline(baseline, records)
+    if fund_field == FUND_FIELD_UTILIZED:
+        merged, stats = merge_utilised_into_seed_baseline(baseline, records)
+    else:
+        merged, stats = merge_released_into_seed_baseline(baseline, records)
     seed["financial_baseline"] = merged
     with open(SEED_PATH, "w") as f:
         json.dump(seed, f, indent=1, ensure_ascii=False)
@@ -81,8 +88,11 @@ def update_seed(records: list[dict]) -> dict:
     return stats
 
 
-def enrich_utilized_from_seed(records: list[dict]) -> int:
-    """Fill blank fund_utilized from seed baseline so older bulk APIs do not wipe values."""
+def enrich_counterpart_from_seed(records: list[dict], primary_field: str) -> int:
+    """Fill the blank counterpart fund column from seed so older bulk APIs do not wipe it."""
+    counterpart = (
+        FUND_FIELD_RELEASED if primary_field == FUND_FIELD_UTILIZED else FUND_FIELD_UTILIZED
+    )
     if not SEED_PATH.exists():
         return 0
     with open(SEED_PATH) as f:
@@ -93,11 +103,11 @@ def enrich_utilized_from_seed(records: list[dict]) -> int:
     }
     filled = 0
     for rec in records:
-        if rec.get("fund_utilized") is not None:
+        if rec.get(counterpart) is not None:
             continue
         existing = by_key.get((rec["high_court"], rec["component"]))
-        if existing and existing.get("fund_utilized") is not None:
-            rec["fund_utilized"] = existing["fund_utilized"]
+        if existing and existing.get(counterpart) is not None:
+            rec[counterpart] = existing[counterpart]
             filled += 1
     return filled
 
@@ -120,10 +130,8 @@ def load_via_api(
             raise SystemExit("httpx or requests is required for --load-api") from exc
 
     base = api_url.rstrip("/")
-    # Prefer httpx.Client; fall back to requests.Session with same call shape
     session_factory = getattr(httpx, "Client", None) or getattr(httpx, "Session")
     with session_factory() as client:
-        # httpx uses timeout=; requests uses timeout on each call
         login_kwargs = {"json": {"email": email, "password": password}}
         if session_factory.__name__ == "Client":
             login = client.post(f"{base}/api/auth/login", timeout=60.0, **login_kwargs)
@@ -154,7 +162,6 @@ def load_via_api(
         if dry_run_only:
             return result
         if not token:
-            # Fallback: re-upload file on commit (older servers)
             commit_params = {"reporting_period": period, "dry_run": "false"}
             if session_factory.__name__ == "Client":
                 commit = client.post(preview_url, params=commit_params, files=files, timeout=120.0)
@@ -173,12 +180,18 @@ def load_via_api(
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="ETL: Funds Released Excel → PMIS Financial Tracker")
-    p.add_argument("--source", type=Path, default=DEFAULT_XLSX, help="Wide DoJ Excel path")
-    p.add_argument("--sheet", default=DEFAULT_SHEET, help="Sheet name (default Funds_Released)")
+    p = argparse.ArgumentParser(description="ETL: DoJ Financial Excel → PMIS Financial Tracker")
+    p.add_argument(
+        "--mode",
+        choices=("released", "utilised", "utilized"),
+        default="released",
+        help="Which fund field to load (default: released)",
+    )
+    p.add_argument("--source", type=Path, default=None, help="Wide DoJ Excel path")
+    p.add_argument("--sheet", default=None, help="Sheet name")
     p.add_argument("--period", default=DEFAULT_PERIOD, help="Target reporting_period YYYY-MM")
     p.add_argument("--write-bulk-xlsx", action="store_true", help="Write long-format bulk Excel")
-    p.add_argument("--out", type=Path, default=DEFAULT_OUT, help="Bulk xlsx output path")
+    p.add_argument("--out", type=Path, default=None, help="Bulk xlsx output path")
     p.add_argument("--update-seed", action="store_true", help="Merge into seed_data.json")
     p.add_argument("--load-api", action="store_true", help="Upload via Admin bulk API")
     p.add_argument("--api-url", default="http://localhost:8001")
@@ -186,20 +199,39 @@ def main() -> None:
     p.add_argument("--admin-password", default="")
     p.add_argument("--api-dry-run-only", action="store_true", help="Stop after API dry-run")
     p.add_argument("--dry-run", action="store_true", help="Extract+transform only (print stats)")
-    p.add_argument("--exclude-zero", action="store_true", help="Skip zero released amounts")
+    p.add_argument("--exclude-zero", action="store_true", help="Skip zero amounts")
     args = p.parse_args()
+
+    mode = "utilised" if args.mode in ("utilised", "utilized") else "released"
+    fund_field = FUND_FIELD_UTILIZED if mode == "utilised" else FUND_FIELD_RELEASED
+
+    if args.source is None:
+        args.source = DEFAULT_UTILISED_XLSX if mode == "utilised" else DEFAULT_RELEASED_XLSX
+    if args.sheet is None:
+        args.sheet = "Funds_Utilised" if mode == "utilised" else "Funds_Released"
+    if args.out is None:
+        name = (
+            "financial_funds_utilised_2023_2024_bulk.xlsx"
+            if mode == "utilised"
+            else "financial_funds_released_2024_2027_bulk.xlsx"
+        )
+        args.out = REPO_ROOT / "etl_output" / name
 
     if not args.source.exists():
         raise SystemExit(f"Source Excel not found: {args.source}")
 
     print("=== ETL stage 1: EXTRACT ===")
+    print(f"  mode:   {mode} → {fund_field}")
     print(f"  source: {args.source}")
     print(f"  sheet:  {args.sheet}")
     rows = extract_sheet_rows(args.source, args.sheet)
     print(f"  rows:   {len(rows)} (incl. header)")
 
     print("=== ETL stage 2: TRANSFORM ===")
-    result = transform_funds_released_rows(rows, include_zero=not args.exclude_zero)
+    if mode == "utilised":
+        result = transform_funds_utilised_rows(rows, include_zero=not args.exclude_zero)
+    else:
+        result = transform_funds_released_rows(rows, include_zero=not args.exclude_zero)
     stats = result["stats"]
     for k, v in stats.items():
         print(f"  {k}: {v}")
@@ -218,16 +250,17 @@ def main() -> None:
         return
 
     print("=== ETL stage 3: LOAD ===")
-    filled = enrich_utilized_from_seed(records)
+    filled = enrich_counterpart_from_seed(records, fund_field)
     if filled:
-        print(f"  enriched fund_utilized from seed: {filled} rows")
+        counterpart = "fund_released" if fund_field == FUND_FIELD_UTILIZED else "fund_utilized"
+        print(f"  enriched {counterpart} from seed: {filled} rows")
 
     if args.write_bulk_xlsx or args.load_api:
         write_bulk_xlsx(records, args.out)
         print(f"  wrote bulk xlsx: {args.out} ({len(records)} data rows)")
 
     if args.update_seed:
-        seed_stats = update_seed(records)
+        seed_stats = update_seed(records, fund_field)
         print(f"  seed merge: {seed_stats} → {SEED_PATH}")
 
     if args.load_api:
