@@ -87,8 +87,9 @@ python scripts/import_physical_excel.py --load-api ... --period 2026-07
 
 | Metric | Value |
 |--------|--------|
-| Records | ~53–56 (digitization + eSewa; some NE eSewa blank) |
-| Digitization | pages → Cr. on `No of pages digitized (in Cr.)` |
-| eSewa | Absolute Count on kendras in court complexes |
-| Periods | `2025-09`, `2026-05`, `2026-07` |
+| Records | **53** (28 digitization + 25 eSewa; 3 NE eSewa blanks skipped) |
+| Digitization achieved | **579.5381 Cr pages** |
+| eSewa achieved | **2,236** kendras |
+| Periods loaded | `2025-09` (53 insert), `2026-05` (53 update), `2026-07` (53 insert) |
 | Bulk artefact | `etl_output/physical_achieved_till_sep_2025_bulk.xlsx` |
+| Verify | https://ecourt.demo.agrayianailabs.com → Physical Tracker → period **Physical Achieved till Sep 2025** |
