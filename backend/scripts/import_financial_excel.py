@@ -81,6 +81,27 @@ def update_seed(records: list[dict]) -> dict:
     return stats
 
 
+def enrich_utilized_from_seed(records: list[dict]) -> int:
+    """Fill blank fund_utilized from seed baseline so older bulk APIs do not wipe values."""
+    if not SEED_PATH.exists():
+        return 0
+    with open(SEED_PATH) as f:
+        seed = json.load(f)
+    by_key = {
+        (r["high_court"], r["component"]): r
+        for r in (seed.get("financial_baseline") or [])
+    }
+    filled = 0
+    for rec in records:
+        if rec.get("fund_utilized") is not None:
+            continue
+        existing = by_key.get((rec["high_court"], rec["component"]))
+        if existing and existing.get("fund_utilized") is not None:
+            rec["fund_utilized"] = existing["fund_utilized"]
+            filled += 1
+    return filled
+
+
 def load_via_api(
     bulk_path: Path,
     *,
@@ -197,6 +218,10 @@ def main() -> None:
         return
 
     print("=== ETL stage 3: LOAD ===")
+    filled = enrich_utilized_from_seed(records)
+    if filled:
+        print(f"  enriched fund_utilized from seed: {filled} rows")
+
     if args.write_bulk_xlsx or args.load_api:
         write_bulk_xlsx(records, args.out)
         print(f"  wrote bulk xlsx: {args.out} ({len(records)} data rows)")
