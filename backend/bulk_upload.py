@@ -228,11 +228,19 @@ async def process_financial_bulk(
             errors.append({"row": i, "error": "Fund values must be numeric"})
             continue
         remarks_val = str(r[col_rem]).strip() if (col_rem >= 0 and r[col_rem]) else None
+        q = entry_query_key_financial({"high_court": hc, "component": comp, "reporting_period": reporting_period, "district": district})
+        existing = await db.financial_entries.find_one(q)
+        # Partial ETL: blank cells preserve existing fund values on update
+        if existing:
+            if released is None:
+                released = existing.get("fund_released")
+            if utilized is None:
+                utilized = existing.get("fund_utilized")
+            if not remarks_val:
+                remarks_val = existing.get("remarks")
         utilisation = safe_div_fn(utilized, released)
         variance = round(released - utilized, 2) if released is not None and utilized is not None else None
         rag = compute_rag_fn(utilisation, thresholds)
-        q = entry_query_key_financial({"high_court": hc, "component": comp, "reporting_period": reporting_period, "district": district})
-        existing = await db.financial_entries.find_one(q)
         row_data = {**q, "fund_released": released, "fund_utilized": utilized,
                     "utilisation_percent": utilisation, "variance": variance, "rag": rag, "remarks": remarks_val}
         preview_rows.append({"row": i, "status": "ok", "data": row_data, "error": None})

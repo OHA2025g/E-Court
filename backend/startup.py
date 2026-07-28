@@ -133,6 +133,14 @@ async def seed_master(db):
         await db.outcome_subjects.insert_many([{"name": s} for s in OUTCOME_SUBJECTS])
     if await db.reporting_periods.count_documents({}) == 0:
         await db.reporting_periods.insert_many(REPORTING_PERIODS)
+    else:
+        # Keep labels / baseline flags in sync with seed constants (idempotent)
+        for row in REPORTING_PERIODS:
+            await db.reporting_periods.update_one(
+                {"period": row["period"]},
+                {"$set": {"label": row["label"], "is_baseline": row.get("is_baseline", False)}},
+                upsert=True,
+            )
     if await db.settings.count_documents({"key": "rag_thresholds"}) == 0:
         await db.settings.insert_one({"key": "rag_thresholds", "value": DEFAULT_RAG_THRESHOLDS})
     if await db.settings.count_documents({"key": "admin_ip_allowlist"}) == 0:

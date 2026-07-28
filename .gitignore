@@ -32,5 +32,6 @@ Thumbs.db
 # --- Misc ---
 .emergent/
 test_reports/
+etl_output/
 *.swp
 *.swo

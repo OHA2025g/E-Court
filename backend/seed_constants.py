@@ -157,7 +157,7 @@ DEFAULT_RAG_THRESHOLDS = {"green_min": 80.0, "amber_min": 65.0}
 
 # Reporting months: baseline (Sep 2023–May 2026 cumulative) + monthly from Jun 2026
 REPORTING_PERIODS = [
-    {"period": "2026-05", "label": "Baseline (Sep 2023 – May 2026)", "is_baseline": True},
+    {"period": "2026-05", "label": "Baseline — Funds Released 2024–2027 (cum. to May 2026)", "is_baseline": True},
     {"period": "2026-06", "label": "June 2026", "is_baseline": False},
     {"period": "2026-07", "label": "July 2026", "is_baseline": False},
     {"period": "2026-08", "label": "August 2026", "is_baseline": False},

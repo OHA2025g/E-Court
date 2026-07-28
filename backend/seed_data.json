@@ -9416,8 +9416,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 32.74,
    "fund_allocated": 31.64,
-   "fund_released": 23.13,
-   "fund_utilized": 16.0
+   "fund_released": 12.7257,
+   "fund_utilized": 16.0,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9425,8 +9426,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 13.94,
    "fund_allocated": 13.53,
-   "fund_released": 10.47,
-   "fund_utilized": 7.71
+   "fund_released": 8.0319,
+   "fund_utilized": 7.71,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9434,8 +9436,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 24.66,
    "fund_allocated": 23.69,
-   "fund_released": 21.79,
-   "fund_utilized": 13.74
+   "fund_released": 34.8318,
+   "fund_utilized": 13.74,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9443,8 +9446,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 8.93,
    "fund_allocated": 7.28,
-   "fund_released": 5.36,
-   "fund_utilized": 4.48
+   "fund_released": 3.3804,
+   "fund_utilized": 4.48,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9452,8 +9456,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 62.19,
    "fund_allocated": 56.38,
-   "fund_released": 42.46,
-   "fund_utilized": 19.58
+   "fund_released": 143.6065,
+   "fund_utilized": 19.58,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9461,8 +9466,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 23.9,
    "fund_allocated": 20.94,
-   "fund_released": 16.44,
-   "fund_utilized": 13.65
+   "fund_released": 5.565,
+   "fund_utilized": 13.65,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9470,8 +9476,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 36.17,
    "fund_allocated": 32.39,
-   "fund_released": 20.21,
-   "fund_utilized": 17.09
+   "fund_released": 0.0,
+   "fund_utilized": 17.09,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9479,8 +9486,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 81.33,
    "fund_allocated": 66.97,
-   "fund_released": 50.55,
-   "fund_utilized": 42.72
+   "fund_released": 0.0,
+   "fund_utilized": 42.72,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9488,8 +9496,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 48.98,
    "fund_allocated": 40.88,
-   "fund_released": 32.78,
-   "fund_utilized": 30.63
+   "fund_released": 29.687,
+   "fund_utilized": 30.63,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9515,8 +9524,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 12.5,
    "fund_allocated": 11.02,
-   "fund_released": 7.4,
-   "fund_utilized": 6.78
+   "fund_released": 1.0466,
+   "fund_utilized": 6.78,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9524,8 +9534,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 3.39,
    "fund_allocated": 2.73,
-   "fund_released": 1.6,
-   "fund_utilized": 1.44
+   "fund_released": 0.0,
+   "fund_utilized": 1.44,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9533,8 +9544,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 17.23,
    "fund_allocated": 14.05,
-   "fund_released": 12.28,
-   "fund_utilized": 6.23
+   "fund_released": 1.6224,
+   "fund_utilized": 6.23,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Allahabad",
@@ -9560,8 +9572,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 1.09,
    "fund_allocated": 0.97,
-   "fund_released": 0.91,
-   "fund_utilized": 0.7
+   "fund_released": 0.0,
+   "fund_utilized": 0.7,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9569,8 +9582,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 10.67,
    "fund_allocated": 9.95,
-   "fund_released": 9.31,
-   "fund_utilized": 8.48
+   "fund_released": 6.3825,
+   "fund_utilized": 8.48,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9578,8 +9592,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 5.96,
    "fund_allocated": 5.15,
-   "fund_released": 4.18,
-   "fund_utilized": 3.68
+   "fund_released": 0.546,
+   "fund_utilized": 3.68,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9587,8 +9602,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 9.86,
    "fund_allocated": 7.99,
-   "fund_released": 6.36,
-   "fund_utilized": 4.12
+   "fund_released": 1.3185,
+   "fund_utilized": 4.12,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9596,8 +9612,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 4.09,
    "fund_allocated": 3.85,
-   "fund_released": 2.36,
-   "fund_utilized": 1.81
+   "fund_released": 3.2412,
+   "fund_utilized": 1.81,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9605,8 +9622,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 36.07,
    "fund_allocated": 32.68,
-   "fund_released": 18.17,
-   "fund_utilized": 11.46
+   "fund_released": 35.375,
+   "fund_utilized": 11.46,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9614,8 +9632,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 6.95,
    "fund_allocated": 6.38,
-   "fund_released": 4.86,
-   "fund_utilized": 3.91
+   "fund_released": 11.9125,
+   "fund_utilized": 3.91,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9623,8 +9642,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 13.84,
    "fund_allocated": 12.62,
-   "fund_released": 7.24,
-   "fund_utilized": 5.96
+   "fund_released": 0.15,
+   "fund_utilized": 5.96,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9632,8 +9652,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 34.44,
    "fund_allocated": 33.57,
-   "fund_released": 21.02,
-   "fund_utilized": 20.2
+   "fund_released": 3.5278,
+   "fund_utilized": 20.2,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9641,8 +9662,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 26.25,
    "fund_allocated": 22.71,
-   "fund_released": 14.69,
-   "fund_utilized": 12.4
+   "fund_released": 15.0862,
+   "fund_utilized": 12.4,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9668,8 +9690,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 4.78,
    "fund_allocated": 4.32,
-   "fund_released": 3.14,
-   "fund_utilized": 2.4
+   "fund_released": 4.47,
+   "fund_utilized": 2.4,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9677,8 +9700,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.93,
    "fund_allocated": 0.85,
-   "fund_released": 0.75,
-   "fund_utilized": 0.57
+   "fund_released": 0.9612,
+   "fund_utilized": 0.57,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9686,8 +9710,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 7.28,
    "fund_allocated": 6.24,
-   "fund_released": 4.73,
-   "fund_utilized": 2.43
+   "fund_released": 2.4581,
+   "fund_utilized": 2.43,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Andhra Pradesh",
@@ -9713,8 +9738,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.43,
    "fund_allocated": 0.4,
-   "fund_released": 0.33,
-   "fund_utilized": 0.32
+   "fund_released": 0.3591,
+   "fund_utilized": 0.32,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9722,8 +9748,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 33.09,
    "fund_allocated": 29.99,
-   "fund_released": 21.98,
-   "fund_utilized": 15.15
+   "fund_released": 47.7638,
+   "fund_utilized": 15.15,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9731,8 +9758,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 15.3,
    "fund_allocated": 13.47,
-   "fund_released": 8.91,
-   "fund_utilized": 5.77
+   "fund_released": 4.0155,
+   "fund_utilized": 5.77,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9740,8 +9768,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 21.49,
    "fund_allocated": 19.68,
-   "fund_released": 18.68,
-   "fund_utilized": 11.71
+   "fund_released": 19.1304,
+   "fund_utilized": 11.71,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9749,8 +9778,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 7.41,
    "fund_allocated": 6.17,
-   "fund_released": 5.85,
-   "fund_utilized": 4.39
+   "fund_released": 3.169,
+   "fund_utilized": 4.39,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9758,8 +9788,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 51.63,
    "fund_allocated": 42.96,
-   "fund_released": 38.07,
-   "fund_utilized": 30.45
+   "fund_released": 25.3132,
+   "fund_utilized": 30.45,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9767,8 +9798,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 15.51,
    "fund_allocated": 13.31,
-   "fund_released": 11.09,
-   "fund_utilized": 8.48
+   "fund_released": 16.3375,
+   "fund_utilized": 8.48,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9776,8 +9808,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 33.6,
    "fund_allocated": 31.81,
-   "fund_released": 21.51,
-   "fund_utilized": 18.96
+   "fund_released": 40.35,
+   "fund_utilized": 18.96,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9785,8 +9818,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 94.84,
    "fund_allocated": 79.21,
-   "fund_released": 50.84,
-   "fund_utilized": 41.26
+   "fund_released": 15.3872,
+   "fund_utilized": 41.26,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9794,8 +9828,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 55.29,
    "fund_allocated": 45.37,
-   "fund_released": 30.2,
-   "fund_utilized": 23.28
+   "fund_released": 28.0774,
+   "fund_utilized": 23.28,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9821,8 +9856,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 11.81,
    "fund_allocated": 10.03,
-   "fund_released": 7.12,
-   "fund_utilized": 6.65
+   "fund_released": 25.1625,
+   "fund_utilized": 6.65,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9830,8 +9866,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 2.17,
    "fund_allocated": 1.96,
-   "fund_released": 1.74,
-   "fund_utilized": 1.37
+   "fund_released": 0.0,
+   "fund_utilized": 1.37,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9839,8 +9876,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 12.73,
    "fund_allocated": 12.06,
-   "fund_released": 8.5,
-   "fund_utilized": 4.32
+   "fund_released": 2.4581,
+   "fund_utilized": 4.32,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Bombay",
@@ -9866,8 +9904,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 1.81,
    "fund_allocated": 1.54,
-   "fund_released": 0.85,
-   "fund_utilized": 0.76
+   "fund_released": 0.0,
+   "fund_utilized": 0.76,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9875,8 +9914,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 17.06,
    "fund_allocated": 14.58,
-   "fund_released": 9.24,
-   "fund_utilized": 7.52
+   "fund_released": 7.4952,
+   "fund_utilized": 7.52,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9884,8 +9924,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 5.99,
    "fund_allocated": 5.63,
-   "fund_released": 5.15,
-   "fund_utilized": 4.12
+   "fund_released": 0.972,
+   "fund_utilized": 4.12,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9893,8 +9934,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 14.36,
    "fund_allocated": 12.91,
-   "fund_released": 9.53,
-   "fund_utilized": 7.21
+   "fund_released": 0.0,
+   "fund_utilized": 7.21,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9902,8 +9944,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 3.53,
    "fund_allocated": 2.99,
-   "fund_released": 2.82,
-   "fund_utilized": 2.35
+   "fund_released": 1.2568,
+   "fund_utilized": 2.35,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9911,8 +9954,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 38.89,
    "fund_allocated": 31.86,
-   "fund_released": 22.59,
-   "fund_utilized": 10.75
+   "fund_released": 6.4213,
+   "fund_utilized": 10.75,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9920,8 +9964,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 15.12,
    "fund_allocated": 14.23,
-   "fund_released": 8.24,
-   "fund_utilized": 7.76
+   "fund_released": 0.945,
+   "fund_utilized": 7.76,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9929,8 +9974,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 15.17,
    "fund_allocated": 14.07,
-   "fund_released": 11.28,
-   "fund_utilized": 8.07
+   "fund_released": 13.5,
+   "fund_utilized": 8.07,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9938,8 +9984,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 33.16,
    "fund_allocated": 31.47,
-   "fund_released": 27.11,
-   "fund_utilized": 22.18
+   "fund_released": 13.7199,
+   "fund_utilized": 22.18,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9947,8 +9994,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 29.09,
    "fund_allocated": 24.52,
-   "fund_released": 16.13,
-   "fund_utilized": 10.86
+   "fund_released": 9.5333,
+   "fund_utilized": 10.86,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9974,8 +10022,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 4.58,
    "fund_allocated": 4.15,
-   "fund_released": 3.88,
-   "fund_utilized": 3.67
+   "fund_released": 1.4872,
+   "fund_utilized": 3.67,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9983,8 +10032,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.94,
    "fund_allocated": 0.91,
-   "fund_released": 0.78,
-   "fund_utilized": 0.63
+   "fund_released": 0.0,
+   "fund_utilized": 0.63,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -9992,8 +10042,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 9.87,
    "fund_allocated": 8.19,
-   "fund_released": 4.89,
-   "fund_utilized": 2.65
+   "fund_released": 2.4581,
+   "fund_utilized": 2.65,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Calcutta",
@@ -10019,8 +10070,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.91,
    "fund_allocated": 0.8,
-   "fund_released": 0.46,
-   "fund_utilized": 0.4
+   "fund_released": 0.0,
+   "fund_utilized": 0.4,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10028,8 +10080,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 9.18,
    "fund_allocated": 7.38,
-   "fund_released": 6.41,
-   "fund_utilized": 5.58
+   "fund_released": 7.9965,
+   "fund_utilized": 5.58,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10037,8 +10090,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 6.3,
    "fund_allocated": 5.96,
-   "fund_released": 3.7,
-   "fund_utilized": 2.54
+   "fund_released": 5.9424,
+   "fund_utilized": 2.54,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10046,8 +10100,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 9.13,
    "fund_allocated": 8.43,
-   "fund_released": 6.52,
-   "fund_utilized": 4.46
+   "fund_released": 0.0,
+   "fund_utilized": 4.46,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10055,8 +10110,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 2.15,
    "fund_allocated": 2.1,
-   "fund_released": 1.53,
-   "fund_utilized": 0.86
+   "fund_released": 3.2412,
+   "fund_utilized": 0.86,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10064,8 +10120,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 20.67,
    "fund_allocated": 19.53,
-   "fund_released": 12.23,
-   "fund_utilized": 6.56
+   "fund_released": 26.8594,
+   "fund_utilized": 6.56,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10073,8 +10130,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 6.07,
    "fund_allocated": 5.89,
-   "fund_released": 4.96,
-   "fund_utilized": 4.47
+   "fund_released": 2.54,
+   "fund_utilized": 4.47,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10082,8 +10140,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 9.93,
    "fund_allocated": 8.91,
-   "fund_released": 5.37,
-   "fund_utilized": 5.09
+   "fund_released": 2.8262,
+   "fund_utilized": 5.09,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10091,8 +10150,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 20.3,
    "fund_allocated": 19.85,
-   "fund_released": 16.03,
-   "fund_utilized": 12.04
+   "fund_released": 5.2956,
+   "fund_utilized": 12.04,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10100,8 +10160,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 18.46,
    "fund_allocated": 17.26,
-   "fund_released": 10.3,
-   "fund_utilized": 9.2
+   "fund_released": 9.3811,
+   "fund_utilized": 9.2,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10127,8 +10188,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 4.11,
    "fund_allocated": 3.57,
-   "fund_released": 2.35,
-   "fund_utilized": 1.9
+   "fund_released": 2.1327,
+   "fund_utilized": 1.9,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10136,8 +10198,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.72,
    "fund_allocated": 0.6,
-   "fund_released": 0.56,
-   "fund_utilized": 0.41
+   "fund_released": 0.0564,
+   "fund_utilized": 0.41,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10145,8 +10208,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 4.24,
    "fund_allocated": 3.45,
-   "fund_released": 3.01,
-   "fund_utilized": 1.98
+   "fund_released": 2.4581,
+   "fund_utilized": 1.98,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Chhattisgarh",
@@ -10172,8 +10236,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.44,
    "fund_allocated": 0.43,
-   "fund_released": 0.27,
-   "fund_utilized": 0.26
+   "fund_released": 0.386,
+   "fund_utilized": 0.26,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10181,8 +10246,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 13.24,
    "fund_allocated": 12.86,
-   "fund_released": 9.1,
-   "fund_utilized": 8.33
+   "fund_released": 3.3377,
+   "fund_utilized": 8.33,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10190,8 +10256,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 7.2,
    "fund_allocated": 6.04,
-   "fund_released": 5.39,
-   "fund_utilized": 5.24
+   "fund_released": 13.1125,
+   "fund_utilized": 5.24,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10199,8 +10266,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 11.58,
    "fund_allocated": 9.48,
-   "fund_released": 7.65,
-   "fund_utilized": 5.46
+   "fund_released": 11.451,
+   "fund_utilized": 5.46,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10208,8 +10276,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 6.02,
    "fund_allocated": 5.39,
-   "fund_released": 3.18,
-   "fund_utilized": 2.23
+   "fund_released": 1.2568,
+   "fund_utilized": 2.23,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10217,8 +10286,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 24.62,
    "fund_allocated": 20.45,
-   "fund_released": 19.34,
-   "fund_utilized": 14.9
+   "fund_released": 31.25,
+   "fund_utilized": 14.9,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10226,8 +10296,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 9.87,
    "fund_allocated": 8.86,
-   "fund_released": 5.63,
-   "fund_utilized": 5.58
+   "fund_released": 14.49,
+   "fund_utilized": 5.58,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10235,8 +10306,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 14.26,
    "fund_allocated": 13.49,
-   "fund_released": 8.81,
-   "fund_utilized": 6.77
+   "fund_released": 0.6,
+   "fund_utilized": 6.77,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10244,8 +10316,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 30.91,
    "fund_allocated": 26.14,
-   "fund_released": 22.46,
-   "fund_utilized": 20.57
+   "fund_released": 0.5747,
+   "fund_utilized": 20.57,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10253,8 +10326,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 29.07,
    "fund_allocated": 25.46,
-   "fund_released": 17.35,
-   "fund_utilized": 16.53
+   "fund_released": 19.6862,
+   "fund_utilized": 16.53,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10280,8 +10354,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 6.89,
    "fund_allocated": 5.94,
-   "fund_released": 3.48,
-   "fund_utilized": 3.34
+   "fund_released": 8.447,
+   "fund_utilized": 3.34,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10289,8 +10364,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 1.21,
    "fund_allocated": 1.16,
-   "fund_released": 0.91,
-   "fund_utilized": 0.7
+   "fund_released": 0.2304,
+   "fund_utilized": 0.7,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10298,8 +10374,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 7.2,
    "fund_allocated": 6.81,
-   "fund_released": 4.41,
-   "fund_utilized": 3.19
+   "fund_released": 2.4581,
+   "fund_utilized": 3.19,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Delhi",
@@ -10325,8 +10402,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.51,
    "fund_allocated": 0.45,
-   "fund_released": 0.33,
-   "fund_utilized": 0.29
+   "fund_released": 0.3591,
+   "fund_utilized": 0.29,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10334,8 +10412,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 2.18,
    "fund_allocated": 2.02,
-   "fund_released": 1.89,
-   "fund_utilized": 1.34
+   "fund_released": 2.2067,
+   "fund_utilized": 1.34,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10343,8 +10422,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 1.42,
    "fund_allocated": 1.35,
-   "fund_released": 1.0,
-   "fund_utilized": 0.65
+   "fund_released": 0.0,
+   "fund_utilized": 0.65,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10352,8 +10432,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 2.32,
    "fund_allocated": 2.12,
-   "fund_released": 1.65,
-   "fund_utilized": 1.41
+   "fund_released": 0.0,
+   "fund_utilized": 1.41,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10361,8 +10442,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 0.57,
    "fund_allocated": 0.48,
-   "fund_released": 0.43,
-   "fund_utilized": 0.37
+   "fund_released": 0.6284,
+   "fund_utilized": 0.37,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10370,8 +10452,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 4.88,
    "fund_allocated": 4.16,
-   "fund_released": 2.59,
-   "fund_utilized": 2.07
+   "fund_released": 1.5638,
+   "fund_utilized": 2.07,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10379,8 +10462,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 2.27,
    "fund_allocated": 1.98,
-   "fund_released": 1.21,
-   "fund_utilized": 1.19
+   "fund_released": 1.155,
+   "fund_utilized": 1.19,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10388,8 +10472,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 2.3,
    "fund_allocated": 2.16,
-   "fund_released": 1.97,
-   "fund_utilized": 1.35
+   "fund_released": 1.95,
+   "fund_utilized": 1.35,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10397,8 +10482,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 6.36,
    "fund_allocated": 5.73,
-   "fund_released": 5.03,
-   "fund_utilized": 3.46
+   "fund_released": 0.4154,
+   "fund_utilized": 3.46,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10406,8 +10492,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 4.66,
    "fund_allocated": 4.19,
-   "fund_released": 2.72,
-   "fund_utilized": 1.79
+   "fund_released": 5.4371,
+   "fund_utilized": 1.79,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10433,8 +10520,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 0.78,
    "fund_allocated": 0.71,
-   "fund_released": 0.66,
-   "fund_utilized": 0.64
+   "fund_released": 0.4463,
+   "fund_utilized": 0.64,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10442,8 +10530,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.24,
    "fund_allocated": 0.21,
-   "fund_released": 0.13,
-   "fund_utilized": 0.12
+   "fund_released": 0.0492,
+   "fund_utilized": 0.12,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10451,8 +10540,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 0.97,
    "fund_allocated": 0.87,
-   "fund_released": 0.81,
-   "fund_utilized": 0.39
+   "fund_released": 2.7257,
+   "fund_utilized": 0.39,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -10478,8 +10568,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.1,
    "fund_allocated": 0.1,
-   "fund_released": 0.07,
-   "fund_utilized": 0.05
+   "fund_released": 0.3591,
+   "fund_utilized": 0.05,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10487,8 +10578,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 12.12,
    "fund_allocated": 9.87,
-   "fund_released": 5.84,
-   "fund_utilized": 5.26
+   "fund_released": 0.0,
+   "fund_utilized": 5.26,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10496,8 +10588,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 5.22,
    "fund_allocated": 4.7,
-   "fund_released": 2.66,
-   "fund_utilized": 1.92
+   "fund_released": 0.0,
+   "fund_utilized": 1.92,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10505,8 +10598,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 6.02,
    "fund_allocated": 5.4,
-   "fund_released": 5.05,
-   "fund_utilized": 3.61
+   "fund_released": 0.0,
+   "fund_utilized": 3.61,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10514,8 +10608,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 3.18,
    "fund_allocated": 2.68,
-   "fund_released": 1.73,
-   "fund_utilized": 1.14
+   "fund_released": 3.2412,
+   "fund_utilized": 1.14,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10523,8 +10618,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 11.57,
    "fund_allocated": 10.42,
-   "fund_released": 8.67,
-   "fund_utilized": 6.46
+   "fund_released": 1.45,
+   "fund_utilized": 6.46,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10532,8 +10628,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 6.77,
    "fund_allocated": 5.99,
-   "fund_released": 3.91,
-   "fund_utilized": 3.06
+   "fund_released": 8.3125,
+   "fund_utilized": 3.06,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10541,8 +10638,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 6.02,
    "fund_allocated": 5.3,
-   "fund_released": 4.66,
-   "fund_utilized": 3.67
+   "fund_released": 12.75,
+   "fund_utilized": 3.67,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10550,8 +10648,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 19.09,
    "fund_allocated": 17.74,
-   "fund_released": 13.99,
-   "fund_utilized": 11.81
+   "fund_released": 2.089,
+   "fund_utilized": 11.81,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10559,8 +10658,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 14.37,
    "fund_allocated": 11.51,
-   "fund_released": 7.68,
-   "fund_utilized": 6.24
+   "fund_released": 8.7585,
+   "fund_utilized": 6.24,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10586,8 +10686,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 4.51,
    "fund_allocated": 3.72,
-   "fund_released": 2.15,
-   "fund_utilized": 2.12
+   "fund_released": 1.0269,
+   "fund_utilized": 2.12,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10595,8 +10696,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.76,
    "fund_allocated": 0.73,
-   "fund_released": 0.47,
-   "fund_utilized": 0.37
+   "fund_released": 0.1116,
+   "fund_utilized": 0.37,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10604,8 +10706,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 4.23,
    "fund_allocated": 3.54,
-   "fund_released": 2.74,
-   "fund_utilized": 1.49
+   "fund_released": 2.4581,
+   "fund_utilized": 1.49,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Assam",
@@ -10631,8 +10734,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.41,
    "fund_allocated": 0.36,
-   "fund_released": 0.24,
-   "fund_utilized": 0.23
+   "fund_released": 0.386,
+   "fund_utilized": 0.23,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10640,8 +10744,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 1.43,
    "fund_allocated": 1.25,
-   "fund_released": 1.15,
-   "fund_utilized": 1.13
+   "fund_released": 0.5871,
+   "fund_utilized": 1.13,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10649,8 +10754,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 1.42,
    "fund_allocated": 1.16,
-   "fund_released": 0.73,
-   "fund_utilized": 0.54
+   "fund_released": 0.5284,
+   "fund_utilized": 0.54,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10658,8 +10764,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 1.98,
    "fund_allocated": 1.83,
-   "fund_released": 1.02,
-   "fund_utilized": 0.64
+   "fund_released": 0.0,
+   "fund_utilized": 0.64,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10667,8 +10774,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 0.53,
    "fund_allocated": 0.47,
-   "fund_released": 0.31,
-   "fund_utilized": 0.22
+   "fund_released": 0.6284,
+   "fund_utilized": 0.22,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10676,8 +10784,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 3.81,
    "fund_allocated": 3.52,
-   "fund_released": 2.56,
-   "fund_utilized": 1.46
+   "fund_released": 1.0776,
+   "fund_utilized": 1.46,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10685,8 +10794,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 1.71,
    "fund_allocated": 1.53,
-   "fund_released": 0.88,
-   "fund_utilized": 0.68
+   "fund_released": 0.3975,
+   "fund_utilized": 0.68,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10694,8 +10804,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 2.46,
    "fund_allocated": 2.21,
-   "fund_released": 1.37,
-   "fund_utilized": 1.16
+   "fund_released": 0.9,
+   "fund_utilized": 1.16,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10703,8 +10814,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 6.66,
    "fund_allocated": 5.96,
-   "fund_released": 4.16,
-   "fund_utilized": 3.58
+   "fund_released": 0.0,
+   "fund_utilized": 3.58,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10712,8 +10824,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 2.82,
    "fund_allocated": 2.41,
-   "fund_released": 1.88,
-   "fund_utilized": 1.45
+   "fund_released": 6.1018,
+   "fund_utilized": 1.45,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10739,8 +10852,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 0.48,
    "fund_allocated": 0.46,
-   "fund_released": 0.42,
-   "fund_utilized": 0.41
+   "fund_released": 0.149,
+   "fund_utilized": 0.41,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10748,8 +10862,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.14,
    "fund_allocated": 0.13,
-   "fund_released": 0.12,
-   "fund_utilized": 0.12
+   "fund_released": 0.0,
+   "fund_utilized": 0.12,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10757,8 +10872,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 1.06,
    "fund_allocated": 0.94,
-   "fund_released": 0.76,
-   "fund_utilized": 0.45
+   "fund_released": 2.4581,
+   "fund_utilized": 0.45,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -10784,8 +10900,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.09,
    "fund_allocated": 0.08,
-   "fund_released": 0.05,
-   "fund_utilized": 0.04
+   "fund_released": 0.3591,
+   "fund_utilized": 0.04,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10793,8 +10910,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 2.72,
    "fund_allocated": 2.32,
-   "fund_released": 1.31,
-   "fund_utilized": 1.22
+   "fund_released": 0.0,
+   "fund_utilized": 1.22,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10802,8 +10920,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 1.38,
    "fund_allocated": 1.18,
-   "fund_released": 0.66,
-   "fund_utilized": 0.41
+   "fund_released": 0.2877,
+   "fund_utilized": 0.41,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10811,8 +10930,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 1.26,
    "fund_allocated": 1.09,
-   "fund_released": 1.0,
-   "fund_utilized": 0.88
+   "fund_released": 0.0,
+   "fund_utilized": 0.88,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10820,8 +10940,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 0.47,
    "fund_allocated": 0.4,
-   "fund_released": 0.33,
-   "fund_utilized": 0.24
+   "fund_released": 0.6284,
+   "fund_utilized": 0.24,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10829,8 +10950,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 2.86,
    "fund_allocated": 2.78,
-   "fund_released": 2.6,
-   "fund_utilized": 1.93
+   "fund_released": 0.8438,
+   "fund_utilized": 1.93,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10838,8 +10960,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 1.64,
    "fund_allocated": 1.41,
-   "fund_released": 0.79,
-   "fund_utilized": 0.72
+   "fund_released": 0.385,
+   "fund_utilized": 0.72,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10847,8 +10970,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 2.07,
    "fund_allocated": 1.8,
-   "fund_released": 1.45,
-   "fund_utilized": 1.0
+   "fund_released": 0.996,
+   "fund_utilized": 1.0,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10856,8 +10980,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 5.59,
    "fund_allocated": 4.89,
-   "fund_released": 3.63,
-   "fund_utilized": 3.43
+   "fund_released": 0.3663,
+   "fund_utilized": 3.43,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10865,8 +10990,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 2.4,
    "fund_allocated": 2.27,
-   "fund_released": 1.91,
-   "fund_utilized": 1.52
+   "fund_released": 4.9395,
+   "fund_utilized": 1.52,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10892,8 +11018,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 1.02,
    "fund_allocated": 0.86,
-   "fund_released": 0.5,
-   "fund_utilized": 0.48
+   "fund_released": 0.26,
+   "fund_utilized": 0.48,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10901,8 +11028,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.15,
    "fund_allocated": 0.13,
-   "fund_released": 0.1,
-   "fund_utilized": 0.1
+   "fund_released": 0.0456,
+   "fund_utilized": 0.1,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10910,8 +11038,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 0.78,
    "fund_allocated": 0.64,
-   "fund_released": 0.54,
-   "fund_utilized": 0.38
+   "fund_released": 2.4581,
+   "fund_utilized": 0.38,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -10937,8 +11066,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.07,
    "fund_allocated": 0.07,
-   "fund_released": 0.06,
-   "fund_utilized": 0.05
+   "fund_released": 0.3591,
+   "fund_utilized": 0.05,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -10946,8 +11076,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 16.69,
    "fund_allocated": 14.86,
-   "fund_released": 12.89,
-   "fund_utilized": 9.35
+   "fund_released": 19.4456,
+   "fund_utilized": 9.35,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -10955,8 +11086,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 7.05,
    "fund_allocated": 5.78,
-   "fund_released": 5.29,
-   "fund_utilized": 4.36
+   "fund_released": 19.1876,
+   "fund_utilized": 4.36,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -10964,8 +11096,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 17.29,
    "fund_allocated": 15.27,
-   "fund_released": 10.55,
-   "fund_utilized": 6.92
+   "fund_released": 14.6006,
+   "fund_utilized": 6.92,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -10973,8 +11106,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 5.6,
    "fund_allocated": 4.6,
-   "fund_released": 3.79,
-   "fund_utilized": 2.59
+   "fund_released": 1.2568,
+   "fund_utilized": 2.59,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -10982,8 +11116,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 22.84,
    "fund_allocated": 20.6,
-   "fund_released": 18.75,
-   "fund_utilized": 12.25
+   "fund_released": 21.7843,
+   "fund_utilized": 12.25,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -10991,8 +11126,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 8.54,
    "fund_allocated": 7.51,
-   "fund_released": 6.75,
-   "fund_utilized": 6.24
+   "fund_released": 5.897,
+   "fund_utilized": 6.24,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -11000,8 +11136,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 17.57,
    "fund_allocated": 16.77,
-   "fund_released": 12.02,
-   "fund_utilized": 10.44
+   "fund_released": 3.4478,
+   "fund_utilized": 10.44,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -11009,8 +11146,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 49.55,
    "fund_allocated": 41.95,
-   "fund_released": 36.34,
-   "fund_utilized": 29.16
+   "fund_released": 27.4946,
+   "fund_utilized": 29.16,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -11018,8 +11156,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 22.28,
    "fund_allocated": 21.24,
-   "fund_released": 19.02,
-   "fund_utilized": 12.05
+   "fund_released": 8.8393,
+   "fund_utilized": 12.05,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -11045,8 +11184,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 6.85,
    "fund_allocated": 6.26,
-   "fund_released": 4.4,
-   "fund_utilized": 3.59
+   "fund_released": 9.7457,
+   "fund_utilized": 3.59,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -11054,8 +11194,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 1.49,
    "fund_allocated": 1.2,
-   "fund_released": 0.94,
-   "fund_utilized": 0.7
+   "fund_released": 0.1968,
+   "fund_utilized": 0.7,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -11063,8 +11204,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 9.22,
    "fund_allocated": 8.72,
-   "fund_released": 6.92,
-   "fund_utilized": 5.33
+   "fund_released": 0.0,
+   "fund_utilized": 5.33,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Gujarat",
@@ -11090,8 +11232,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.62,
    "fund_allocated": 0.51,
-   "fund_released": 0.48,
-   "fund_utilized": 0.44
+   "fund_released": 0.386,
+   "fund_utilized": 0.44,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11099,8 +11242,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 3.29,
    "fund_allocated": 3.13,
-   "fund_released": 2.82,
-   "fund_utilized": 2.62
+   "fund_released": 3.2734,
+   "fund_utilized": 2.62,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11108,8 +11252,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 2.18,
    "fund_allocated": 1.78,
-   "fund_released": 1.5,
-   "fund_utilized": 1.27
+   "fund_released": 0.0,
+   "fund_utilized": 1.27,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11117,8 +11262,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 3.72,
    "fund_allocated": 3.47,
-   "fund_released": 2.45,
-   "fund_utilized": 1.88
+   "fund_released": 0.0,
+   "fund_utilized": 1.88,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11126,8 +11272,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 1.04,
    "fund_allocated": 0.91,
-   "fund_released": 0.77,
-   "fund_utilized": 0.61
+   "fund_released": 1.2568,
+   "fund_utilized": 0.61,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11135,8 +11282,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 8.91,
    "fund_allocated": 8.22,
-   "fund_released": 6.43,
-   "fund_utilized": 4.44
+   "fund_released": 2.5,
+   "fund_utilized": 4.44,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11144,8 +11292,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 3.99,
    "fund_allocated": 3.4,
-   "fund_released": 2.47,
-   "fund_utilized": 2.44
+   "fund_released": 2.464,
+   "fund_utilized": 2.44,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11153,8 +11302,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 4.37,
    "fund_allocated": 3.56,
-   "fund_released": 3.15,
-   "fund_utilized": 2.11
+   "fund_released": 1.5,
+   "fund_utilized": 2.11,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11162,8 +11312,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 16.0,
    "fund_allocated": 15.44,
-   "fund_released": 9.01,
-   "fund_utilized": 8.6
+   "fund_released": 0.2769,
+   "fund_utilized": 8.6,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11171,8 +11322,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 5.88,
    "fund_allocated": 5.4,
-   "fund_released": 4.59,
-   "fund_utilized": 3.08
+   "fund_released": 1.6708,
+   "fund_utilized": 3.08,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11198,8 +11350,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 1.46,
    "fund_allocated": 1.41,
-   "fund_released": 1.05,
-   "fund_utilized": 1.01
+   "fund_released": 0.2878,
+   "fund_utilized": 1.01,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11207,8 +11360,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.58,
    "fund_allocated": 0.48,
-   "fund_released": 0.31,
-   "fund_utilized": 0.31
+   "fund_released": 0.0264,
+   "fund_utilized": 0.31,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11216,8 +11370,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 2.63,
    "fund_allocated": 2.11,
-   "fund_released": 1.75,
-   "fund_utilized": 0.91
+   "fund_released": 2.4581,
+   "fund_utilized": 0.91,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Himachal Pradesh",
@@ -11243,8 +11398,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.13,
    "fund_allocated": 0.12,
-   "fund_released": 0.11,
-   "fund_utilized": 0.09
+   "fund_released": 0.0,
+   "fund_utilized": 0.09,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11252,8 +11408,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 6.21,
    "fund_allocated": 5.49,
-   "fund_released": 3.58,
-   "fund_utilized": 3.45
+   "fund_released": 5.4023,
+   "fund_utilized": 3.45,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11261,8 +11418,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 3.73,
    "fund_allocated": 3.46,
-   "fund_released": 1.92,
-   "fund_utilized": 1.6
+   "fund_released": 5.8814,
+   "fund_utilized": 1.6,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11270,8 +11428,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 5.35,
    "fund_allocated": 4.83,
-   "fund_released": 3.24,
-   "fund_utilized": 2.57
+   "fund_released": 3.0924,
+   "fund_utilized": 2.57,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11279,8 +11438,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 1.27,
    "fund_allocated": 1.19,
-   "fund_released": 0.98,
-   "fund_utilized": 0.61
+   "fund_released": 1.8852,
+   "fund_utilized": 0.61,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11288,8 +11448,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 13.35,
    "fund_allocated": 12.65,
-   "fund_released": 7.98,
-   "fund_utilized": 3.59
+   "fund_released": 7.825,
+   "fund_utilized": 3.59,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11297,8 +11458,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 4.37,
    "fund_allocated": 3.97,
-   "fund_released": 2.45,
-   "fund_utilized": 2.45
+   "fund_released": 3.2775,
+   "fund_utilized": 2.45,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11306,8 +11468,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 5.33,
    "fund_allocated": 4.83,
-   "fund_released": 4.41,
-   "fund_utilized": 3.16
+   "fund_released": 3.6,
+   "fund_utilized": 3.16,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11315,8 +11478,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 15.13,
    "fund_allocated": 12.99,
-   "fund_released": 10.57,
-   "fund_utilized": 10.15
+   "fund_released": 1.3596,
+   "fund_utilized": 10.15,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11324,8 +11488,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 10.39,
    "fund_allocated": 8.56,
-   "fund_released": 6.22,
-   "fund_utilized": 5.41
+   "fund_released": 5.6598,
+   "fund_utilized": 5.41,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11351,8 +11516,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 1.91,
    "fund_allocated": 1.6,
-   "fund_released": 1.31,
-   "fund_utilized": 1.03
+   "fund_released": 5.3403,
+   "fund_utilized": 1.03,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11360,8 +11526,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.56,
    "fund_allocated": 0.49,
-   "fund_released": 0.31,
-   "fund_utilized": 0.24
+   "fund_released": 0.0372,
+   "fund_utilized": 0.24,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11369,8 +11536,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 2.72,
    "fund_allocated": 2.33,
-   "fund_released": 1.68,
-   "fund_utilized": 1.1
+   "fund_released": 2.4581,
+   "fund_utilized": 1.1,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -11396,8 +11564,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.19,
    "fund_allocated": 0.18,
-   "fund_released": 0.16,
-   "fund_utilized": 0.15
+   "fund_released": 0.3591,
+   "fund_utilized": 0.15,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11405,8 +11574,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 10.8,
    "fund_allocated": 9.49,
-   "fund_released": 6.68,
-   "fund_utilized": 4.54
+   "fund_released": 5.1633,
+   "fund_utilized": 4.54,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11414,8 +11584,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 4.44,
    "fund_allocated": 3.84,
-   "fund_released": 3.01,
-   "fund_utilized": 2.71
+   "fund_released": 7.271,
+   "fund_utilized": 2.71,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11423,8 +11594,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 9.8,
    "fund_allocated": 8.99,
-   "fund_released": 6.08,
-   "fund_utilized": 4.1
+   "fund_released": 6.51,
+   "fund_utilized": 4.1,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11432,8 +11604,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 2.73,
    "fund_allocated": 2.55,
-   "fund_released": 1.54,
-   "fund_utilized": 0.98
+   "fund_released": 1.2568,
+   "fund_utilized": 0.98,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11441,8 +11614,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 16.02,
    "fund_allocated": 15.48,
-   "fund_released": 11.59,
-   "fund_utilized": 9.05
+   "fund_released": 7.0625,
+   "fund_utilized": 9.05,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11450,8 +11624,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 6.12,
    "fund_allocated": 5.24,
-   "fund_released": 4.64,
-   "fund_utilized": 3.38
+   "fund_released": 4.9215,
+   "fund_utilized": 3.38,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11459,8 +11634,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 7.91,
    "fund_allocated": 7.59,
-   "fund_released": 6.75,
-   "fund_utilized": 4.81
+   "fund_released": 0.0,
+   "fund_utilized": 4.81,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11468,8 +11644,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 20.19,
    "fund_allocated": 19.72,
-   "fund_released": 16.46,
-   "fund_utilized": 11.3
+   "fund_released": 5.8297,
+   "fund_utilized": 11.3,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11477,8 +11654,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 8.55,
    "fund_allocated": 8.35,
-   "fund_released": 7.77,
-   "fund_utilized": 7.31
+   "fund_released": 8.162,
+   "fund_utilized": 7.31,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11504,8 +11682,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 3.29,
    "fund_allocated": 3.09,
-   "fund_released": 2.26,
-   "fund_utilized": 2.01
+   "fund_released": 2.1122,
+   "fund_utilized": 2.01,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11513,8 +11692,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.87,
    "fund_allocated": 0.83,
-   "fund_released": 0.55,
-   "fund_utilized": 0.39
+   "fund_released": 0.0864,
+   "fund_utilized": 0.39,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11522,8 +11702,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 6.47,
    "fund_allocated": 5.22,
-   "fund_released": 3.32,
-   "fund_utilized": 1.68
+   "fund_released": 0.696,
+   "fund_utilized": 1.68,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Jharkhand",
@@ -11549,8 +11730,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.34,
    "fund_allocated": 0.32,
-   "fund_released": 0.24,
-   "fund_utilized": 0.2
+   "fund_released": 0.386,
+   "fund_utilized": 0.2,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11558,8 +11740,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 23.88,
    "fund_allocated": 21.4,
-   "fund_released": 14.47,
-   "fund_utilized": 10.99
+   "fund_released": 14.7692,
+   "fund_utilized": 10.99,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11567,8 +11750,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 7.76,
    "fund_allocated": 6.5,
-   "fund_released": 5.76,
-   "fund_utilized": 5.44
+   "fund_released": 13.011,
+   "fund_utilized": 5.44,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11576,8 +11760,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 12.62,
    "fund_allocated": 11.02,
-   "fund_released": 10.39,
-   "fund_utilized": 7.23
+   "fund_released": 15.852,
+   "fund_utilized": 7.23,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11585,8 +11770,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 7.12,
    "fund_allocated": 5.77,
-   "fund_released": 4.22,
-   "fund_utilized": 2.33
+   "fund_released": 4.498,
+   "fund_utilized": 2.33,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11594,8 +11780,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 47.68,
    "fund_allocated": 40.85,
-   "fund_released": 23.69,
-   "fund_utilized": 15.22
+   "fund_released": 44.375,
+   "fund_utilized": 15.22,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11603,8 +11790,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 17.88,
    "fund_allocated": 15.68,
-   "fund_released": 8.82,
-   "fund_utilized": 8.63
+   "fund_released": 1.6775,
+   "fund_utilized": 8.63,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11612,8 +11800,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 12.74,
    "fund_allocated": 12.08,
-   "fund_released": 10.86,
-   "fund_utilized": 7.93
+   "fund_released": 13.611,
+   "fund_utilized": 7.93,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11621,8 +11810,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 79.32,
    "fund_allocated": 71.87,
-   "fund_released": 40.72,
-   "fund_utilized": 36.77
+   "fund_released": 7.8216,
+   "fund_utilized": 36.77,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11630,8 +11820,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 25.74,
    "fund_allocated": 22.51,
-   "fund_released": 18.76,
-   "fund_utilized": 13.23
+   "fund_released": 26.2488,
+   "fund_utilized": 13.23,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11657,8 +11848,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 7.19,
    "fund_allocated": 6.62,
-   "fund_released": 5.74,
-   "fund_utilized": 4.93
+   "fund_released": 10.2068,
+   "fund_utilized": 4.93,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11666,8 +11858,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 2.39,
    "fund_allocated": 2.1,
-   "fund_released": 1.17,
-   "fund_utilized": 1.02
+   "fund_released": 0.0,
+   "fund_utilized": 1.02,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11675,8 +11868,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 11.95,
    "fund_allocated": 9.93,
-   "fund_released": 6.0,
-   "fund_utilized": 3.32
+   "fund_released": 2.4581,
+   "fund_utilized": 3.32,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Karnataka",
@@ -11702,8 +11896,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.69,
    "fund_allocated": 0.67,
-   "fund_released": 0.59,
-   "fund_utilized": 0.58
+   "fund_released": 0.0,
+   "fund_utilized": 0.58,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11711,8 +11906,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 11.09,
    "fund_allocated": 9.94,
-   "fund_released": 6.41,
-   "fund_utilized": 5.8
+   "fund_released": 10.7752,
+   "fund_utilized": 5.8,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11720,8 +11916,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 7.47,
    "fund_allocated": 6.81,
-   "fund_released": 4.13,
-   "fund_utilized": 2.92
+   "fund_released": 14.6796,
+   "fund_utilized": 2.92,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11729,8 +11926,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 11.27,
    "fund_allocated": 9.88,
-   "fund_released": 5.62,
-   "fund_utilized": 3.69
+   "fund_released": 7.6853,
+   "fund_utilized": 3.69,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11738,8 +11936,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 3.1,
    "fund_allocated": 2.82,
-   "fund_released": 2.26,
-   "fund_utilized": 1.42
+   "fund_released": 2.7463,
+   "fund_utilized": 1.42,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11747,8 +11946,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 17.05,
    "fund_allocated": 16.46,
-   "fund_released": 11.99,
-   "fund_utilized": 9.54
+   "fund_released": 39.2845,
+   "fund_utilized": 9.54,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11756,8 +11956,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 7.4,
    "fund_allocated": 7.23,
-   "fund_released": 5.8,
-   "fund_utilized": 4.53
+   "fund_released": 10.765,
+   "fund_utilized": 4.53,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11765,8 +11966,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 8.8,
    "fund_allocated": 8.09,
-   "fund_released": 6.57,
-   "fund_utilized": 5.9
+   "fund_released": 4.35,
+   "fund_utilized": 5.9,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11774,8 +11976,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 27.1,
    "fund_allocated": 23.78,
-   "fund_released": 20.76,
-   "fund_utilized": 20.06
+   "fund_released": 3.1416,
+   "fund_utilized": 20.06,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11783,8 +11986,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 16.74,
    "fund_allocated": 13.58,
-   "fund_released": 12.68,
-   "fund_utilized": 12.06
+   "fund_released": 10.6394,
+   "fund_utilized": 12.06,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11810,8 +12014,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 4.25,
    "fund_allocated": 3.69,
-   "fund_released": 2.73,
-   "fund_utilized": 2.53
+   "fund_released": 7.9592,
+   "fund_utilized": 2.53,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11819,8 +12024,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 1.11,
    "fund_allocated": 0.9,
-   "fund_released": 0.56,
-   "fund_utilized": 0.44
+   "fund_released": 0.0,
+   "fund_utilized": 0.44,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11828,8 +12034,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 10.1,
    "fund_allocated": 8.14,
-   "fund_released": 4.51,
-   "fund_utilized": 2.6
+   "fund_released": 2.4581,
+   "fund_utilized": 2.6,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Kerala",
@@ -11855,8 +12062,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.55,
    "fund_allocated": 0.51,
-   "fund_released": 0.32,
-   "fund_utilized": 0.26
+   "fund_released": 0.0,
+   "fund_utilized": 0.26,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11864,8 +12072,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 23.74,
    "fund_allocated": 22.02,
-   "fund_released": 14.51,
-   "fund_utilized": 10.09
+   "fund_released": 18.5322,
+   "fund_utilized": 10.09,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11873,8 +12082,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 9.11,
    "fund_allocated": 8.38,
-   "fund_released": 5.77,
-   "fund_utilized": 4.43
+   "fund_released": 2.4105,
+   "fund_utilized": 4.43,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11882,8 +12092,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 18.32,
    "fund_allocated": 15.56,
-   "fund_released": 12.9,
-   "fund_utilized": 11.58
+   "fund_released": 15.507,
+   "fund_utilized": 11.58,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11891,8 +12102,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 5.91,
    "fund_allocated": 4.91,
-   "fund_released": 3.72,
-   "fund_utilized": 2.56
+   "fund_released": 4.498,
+   "fund_utilized": 2.56,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11900,8 +12112,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 39.46,
    "fund_allocated": 35.85,
-   "fund_released": 28.53,
-   "fund_utilized": 17.61
+   "fund_released": 33.055,
+   "fund_utilized": 17.61,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11909,8 +12122,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 13.63,
    "fund_allocated": 11.06,
-   "fund_released": 9.43,
-   "fund_utilized": 9.27
+   "fund_released": 4.0925,
+   "fund_utilized": 9.27,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11918,8 +12132,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 23.16,
    "fund_allocated": 20.98,
-   "fund_released": 14.84,
-   "fund_utilized": 13.47
+   "fund_released": 3.6,
+   "fund_utilized": 13.47,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11927,8 +12142,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 55.19,
    "fund_allocated": 49.26,
-   "fund_released": 42.7,
-   "fund_utilized": 38.02
+   "fund_released": 28.2906,
+   "fund_utilized": 38.02,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11936,8 +12152,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 30.18,
    "fund_allocated": 27.09,
-   "fund_released": 24.72,
-   "fund_utilized": 15.51
+   "fund_released": 38.5336,
+   "fund_utilized": 15.51,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11963,8 +12180,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 8.04,
    "fund_allocated": 7.12,
-   "fund_released": 5.97,
-   "fund_utilized": 5.18
+   "fund_released": 4.0828,
+   "fund_utilized": 5.18,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11972,8 +12190,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 2.49,
    "fund_allocated": 2.06,
-   "fund_released": 1.24,
-   "fund_utilized": 0.86
+   "fund_released": 1.3332,
+   "fund_utilized": 0.86,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -11981,8 +12200,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 10.52,
    "fund_allocated": 9.63,
-   "fund_released": 7.04,
-   "fund_utilized": 3.56
+   "fund_released": 2.4581,
+   "fund_utilized": 3.56,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madhya Pradesh",
@@ -12008,8 +12228,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.97,
    "fund_allocated": 0.91,
-   "fund_released": 0.64,
-   "fund_utilized": 0.64
+   "fund_released": 0.4176,
+   "fund_utilized": 0.64,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12017,8 +12238,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 18.14,
    "fund_allocated": 16.49,
-   "fund_released": 12.82,
-   "fund_utilized": 10.11
+   "fund_released": 32.501,
+   "fund_utilized": 10.11,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12026,8 +12248,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 7.25,
    "fund_allocated": 6.49,
-   "fund_released": 5.85,
-   "fund_utilized": 4.36
+   "fund_released": 41.9828,
+   "fund_utilized": 4.36,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12035,8 +12258,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 16.48,
    "fund_allocated": 13.77,
-   "fund_released": 11.96,
-   "fund_utilized": 7.35
+   "fund_released": 18.0902,
+   "fund_utilized": 7.35,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12044,8 +12268,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 4.72,
    "fund_allocated": 4.07,
-   "fund_released": 3.78,
-   "fund_utilized": 2.12
+   "fund_released": 3.8696,
+   "fund_utilized": 2.12,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12053,8 +12278,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 30.03,
    "fund_allocated": 29.31,
-   "fund_released": 21.56,
-   "fund_utilized": 13.3
+   "fund_released": 77.1433,
+   "fund_utilized": 13.3,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12062,8 +12288,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 10.77,
    "fund_allocated": 9.14,
-   "fund_released": 7.41,
-   "fund_utilized": 6.88
+   "fund_released": 16.6515,
+   "fund_utilized": 6.88,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12071,8 +12298,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 21.58,
    "fund_allocated": 18.37,
-   "fund_released": 11.61,
-   "fund_utilized": 8.77
+   "fund_released": 1.2,
+   "fund_utilized": 8.77,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12080,8 +12308,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 49.78,
    "fund_allocated": 44.24,
-   "fund_released": 37.11,
-   "fund_utilized": 26.01
+   "fund_released": 1.0578,
+   "fund_utilized": 26.01,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12089,8 +12318,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 28.23,
    "fund_allocated": 25.36,
-   "fund_released": 22.25,
-   "fund_utilized": 16.22
+   "fund_released": 25.521,
+   "fund_utilized": 16.22,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12116,8 +12346,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 8.49,
    "fund_allocated": 8.26,
-   "fund_released": 5.25,
-   "fund_utilized": 4.12
+   "fund_released": 2.7927,
+   "fund_utilized": 4.12,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12125,8 +12356,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 1.68,
    "fund_allocated": 1.35,
-   "fund_released": 1.23,
-   "fund_utilized": 0.94
+   "fund_released": 0.4572,
+   "fund_utilized": 0.94,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12134,8 +12366,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 6.55,
    "fund_allocated": 6.17,
-   "fund_released": 5.81,
-   "fund_utilized": 2.81
+   "fund_released": 2.4581,
+   "fund_utilized": 2.81,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Madras",
@@ -12161,8 +12394,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.7,
    "fund_allocated": 0.58,
-   "fund_released": 0.5,
-   "fund_utilized": 0.39
+   "fund_released": 0.3591,
+   "fund_utilized": 0.39,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12170,8 +12404,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 2.42,
    "fund_allocated": 2.24,
-   "fund_released": 1.52,
-   "fund_utilized": 1.3
+   "fund_released": 0.9593,
+   "fund_utilized": 1.3,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12179,8 +12414,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 0.96,
    "fund_allocated": 0.93,
-   "fund_released": 0.85,
-   "fund_utilized": 0.79
+   "fund_released": 0.1305,
+   "fund_utilized": 0.79,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12188,8 +12424,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 1.78,
    "fund_allocated": 1.64,
-   "fund_released": 1.46,
-   "fund_utilized": 1.05
+   "fund_released": 0.042,
+   "fund_utilized": 1.05,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12197,8 +12434,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 0.71,
    "fund_allocated": 0.58,
-   "fund_released": 0.4,
-   "fund_utilized": 0.23
+   "fund_released": 1.2568,
+   "fund_utilized": 0.23,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12206,8 +12444,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 4.08,
    "fund_allocated": 3.94,
-   "fund_released": 2.3,
-   "fund_utilized": 1.21
+   "fund_released": 0.5,
+   "fund_utilized": 1.21,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12215,8 +12454,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 1.27,
    "fund_allocated": 1.24,
-   "fund_released": 0.9,
-   "fund_utilized": 0.89
+   "fund_released": 0.2075,
+   "fund_utilized": 0.89,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12224,8 +12464,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 2.12,
    "fund_allocated": 1.74,
-   "fund_released": 1.34,
-   "fund_utilized": 0.91
+   "fund_released": 1.5,
+   "fund_utilized": 0.91,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12233,8 +12474,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 5.56,
    "fund_allocated": 5.28,
-   "fund_released": 4.53,
-   "fund_utilized": 3.26
+   "fund_released": 0.6765,
+   "fund_utilized": 3.26,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12242,8 +12484,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 3.55,
    "fund_allocated": 2.89,
-   "fund_released": 2.15,
-   "fund_utilized": 1.71
+   "fund_released": 2.4585,
+   "fund_utilized": 1.71,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12269,8 +12512,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 1.14,
    "fund_allocated": 1.06,
-   "fund_released": 0.61,
-   "fund_utilized": 0.45
+   "fund_released": 1.652,
+   "fund_utilized": 0.45,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12278,8 +12522,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.15,
    "fund_allocated": 0.15,
-   "fund_released": 0.13,
-   "fund_utilized": 0.09
+   "fund_released": 0.0624,
+   "fund_utilized": 0.09,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12287,8 +12532,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 1.26,
    "fund_allocated": 1.15,
-   "fund_released": 0.71,
-   "fund_utilized": 0.54
+   "fund_released": 2.4581,
+   "fund_utilized": 0.54,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Manipur",
@@ -12314,8 +12560,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.11,
    "fund_allocated": 0.1,
-   "fund_released": 0.06,
-   "fund_utilized": 0.05
+   "fund_released": 0.0,
+   "fund_utilized": 0.05,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12323,8 +12570,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 2.07,
    "fund_allocated": 2.03,
-   "fund_released": 1.24,
-   "fund_utilized": 0.94
+   "fund_released": 1.3477,
+   "fund_utilized": 0.94,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12332,8 +12580,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 1.08,
    "fund_allocated": 0.99,
-   "fund_released": 0.75,
-   "fund_utilized": 0.47
+   "fund_released": 0.2742,
+   "fund_utilized": 0.47,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12341,8 +12590,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 1.18,
    "fund_allocated": 1.13,
-   "fund_released": 0.95,
-   "fund_utilized": 0.66
+   "fund_released": 1.0503,
+   "fund_utilized": 0.66,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12350,8 +12600,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 0.44,
    "fund_allocated": 0.37,
-   "fund_released": 0.33,
-   "fund_utilized": 0.28
+   "fund_released": 2.932,
+   "fund_utilized": 0.28,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12359,8 +12610,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 2.7,
    "fund_allocated": 2.52,
-   "fund_released": 2.08,
-   "fund_utilized": 1.31
+   "fund_released": 0.0,
+   "fund_utilized": 1.31,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12368,8 +12620,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 0.87,
    "fund_allocated": 0.81,
-   "fund_released": 0.75,
-   "fund_utilized": 0.73
+   "fund_released": 0.41,
+   "fund_utilized": 0.73,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12377,8 +12630,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 2.14,
    "fund_allocated": 1.74,
-   "fund_released": 1.3,
-   "fund_utilized": 1.23
+   "fund_released": 0.0,
+   "fund_utilized": 1.23,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12386,8 +12640,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 4.75,
    "fund_allocated": 4.5,
-   "fund_released": 4.18,
-   "fund_utilized": 4.14
+   "fund_released": 0.7128,
+   "fund_utilized": 4.14,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12395,8 +12650,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 4.4,
    "fund_allocated": 3.66,
-   "fund_released": 2.14,
-   "fund_utilized": 1.4
+   "fund_released": 5.4549,
+   "fund_utilized": 1.4,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12422,8 +12678,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 0.75,
    "fund_allocated": 0.69,
-   "fund_released": 0.46,
-   "fund_utilized": 0.43
+   "fund_released": 0.6804,
+   "fund_utilized": 0.43,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12431,8 +12688,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.18,
    "fund_allocated": 0.15,
-   "fund_released": 0.13,
-   "fund_utilized": 0.11
+   "fund_released": 0.0,
+   "fund_utilized": 0.11,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12440,8 +12698,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 0.78,
    "fund_allocated": 0.76,
-   "fund_released": 0.61,
-   "fund_utilized": 0.45
+   "fund_released": 2.4581,
+   "fund_utilized": 0.45,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Meghalaya",
@@ -12467,8 +12726,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.09,
    "fund_allocated": 0.08,
-   "fund_released": 0.06,
-   "fund_utilized": 0.05
+   "fund_released": 0.3591,
+   "fund_utilized": 0.05,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12476,8 +12736,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 10.69,
    "fund_allocated": 9.65,
-   "fund_released": 6.51,
-   "fund_utilized": 5.6
+   "fund_released": 8.8924,
+   "fund_utilized": 5.6,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12485,8 +12746,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 6.29,
    "fund_allocated": 5.68,
-   "fund_released": 3.99,
-   "fund_utilized": 3.69
+   "fund_released": 0.972,
+   "fund_utilized": 3.69,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12494,8 +12756,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 7.37,
    "fund_allocated": 6.95,
-   "fund_released": 6.17,
-   "fund_utilized": 4.85
+   "fund_released": 11.178,
+   "fund_utilized": 4.85,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12503,8 +12766,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 2.62,
    "fund_allocated": 2.4,
-   "fund_released": 2.18,
-   "fund_utilized": 1.67
+   "fund_released": 1.2568,
+   "fund_utilized": 1.67,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12512,8 +12776,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 21.21,
    "fund_allocated": 17.5,
-   "fund_released": 11.08,
-   "fund_utilized": 8.54
+   "fund_released": 11.0379,
+   "fund_utilized": 8.54,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12521,8 +12786,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 5.03,
    "fund_allocated": 4.75,
-   "fund_released": 4.23,
-   "fund_utilized": 3.88
+   "fund_released": 3.5005,
+   "fund_utilized": 3.88,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12530,8 +12796,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 7.99,
    "fund_allocated": 6.9,
-   "fund_released": 6.47,
-   "fund_utilized": 5.07
+   "fund_released": 12.3,
+   "fund_utilized": 5.07,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12539,8 +12806,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 33.52,
    "fund_allocated": 30.34,
-   "fund_released": 23.05,
-   "fund_utilized": 16.2
+   "fund_released": 9.7862,
+   "fund_utilized": 16.2,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12548,8 +12816,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 18.99,
    "fund_allocated": 16.94,
-   "fund_released": 13.2,
-   "fund_utilized": 8.82
+   "fund_released": 14.7421,
+   "fund_utilized": 8.82,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12575,8 +12844,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 3.59,
    "fund_allocated": 3.42,
-   "fund_released": 2.57,
-   "fund_utilized": 2.42
+   "fund_released": 2.296,
+   "fund_utilized": 2.42,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12584,8 +12854,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 1.04,
    "fund_allocated": 0.85,
-   "fund_released": 0.67,
-   "fund_utilized": 0.46
+   "fund_released": 0.0,
+   "fund_utilized": 0.46,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12593,8 +12864,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 6.81,
    "fund_allocated": 5.85,
-   "fund_released": 3.28,
-   "fund_utilized": 2.44
+   "fund_released": 2.4581,
+   "fund_utilized": 2.44,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Odisha",
@@ -12620,8 +12892,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.47,
    "fund_allocated": 0.45,
-   "fund_released": 0.32,
-   "fund_utilized": 0.31
+   "fund_released": 0.0,
+   "fund_utilized": 0.31,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12629,8 +12902,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 17.7,
    "fund_allocated": 14.82,
-   "fund_released": 12.9,
-   "fund_utilized": 9.62
+   "fund_released": 17.4734,
+   "fund_utilized": 9.62,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12638,8 +12912,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 8.76,
    "fund_allocated": 8.28,
-   "fund_released": 6.42,
-   "fund_utilized": 4.22
+   "fund_released": 19.926,
+   "fund_utilized": 4.22,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12647,8 +12922,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 15.47,
    "fund_allocated": 14.59,
-   "fund_released": 10.89,
-   "fund_utilized": 7.55
+   "fund_released": 9.234,
+   "fund_utilized": 7.55,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12656,8 +12932,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 5.52,
    "fund_allocated": 4.56,
-   "fund_released": 3.77,
-   "fund_utilized": 3.11
+   "fund_released": 3.2412,
+   "fund_utilized": 3.11,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12665,8 +12942,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 39.85,
    "fund_allocated": 32.88,
-   "fund_released": 18.95,
-   "fund_utilized": 9.23
+   "fund_released": 61.25,
+   "fund_utilized": 9.23,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12674,8 +12952,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 11.82,
    "fund_allocated": 10.7,
-   "fund_released": 8.19,
-   "fund_utilized": 7.93
+   "fund_released": 25.0325,
+   "fund_utilized": 7.93,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12683,8 +12962,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 16.22,
    "fund_allocated": 15.82,
-   "fund_released": 11.32,
-   "fund_utilized": 8.61
+   "fund_released": 4.35,
+   "fund_utilized": 8.61,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12692,8 +12972,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 37.33,
    "fund_allocated": 33.99,
-   "fund_released": 31.7,
-   "fund_utilized": 31.58
+   "fund_released": 9.0455,
+   "fund_utilized": 31.58,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12701,8 +12982,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 26.58,
    "fund_allocated": 23.31,
-   "fund_released": 21.43,
-   "fund_utilized": 16.7
+   "fund_released": 33.1269,
+   "fund_utilized": 16.7,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12728,8 +13010,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 8.51,
    "fund_allocated": 7.61,
-   "fund_released": 4.57,
-   "fund_utilized": 4.29
+   "fund_released": 1.1111,
+   "fund_utilized": 4.29,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12737,8 +13020,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 1.64,
    "fund_allocated": 1.47,
-   "fund_released": 1.06,
-   "fund_utilized": 0.86
+   "fund_released": 0.0528,
+   "fund_utilized": 0.86,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12746,8 +13030,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 6.35,
    "fund_allocated": 5.76,
-   "fund_released": 5.05,
-   "fund_utilized": 3.92
+   "fund_released": 0.8357,
+   "fund_utilized": 3.92,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Patna",
@@ -12773,8 +13058,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.78,
    "fund_allocated": 0.74,
-   "fund_released": 0.5,
-   "fund_utilized": 0.49
+   "fund_released": 0.4176,
+   "fund_utilized": 0.49,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12782,8 +13068,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 18.45,
    "fund_allocated": 15.64,
-   "fund_released": 9.8,
-   "fund_utilized": 6.71
+   "fund_released": 4.1932,
+   "fund_utilized": 6.71,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12791,8 +13078,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 6.78,
    "fund_allocated": 6.16,
-   "fund_released": 4.91,
-   "fund_utilized": 3.46
+   "fund_released": 0.273,
+   "fund_utilized": 3.46,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12800,8 +13088,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 11.3,
    "fund_allocated": 10.71,
-   "fund_released": 9.85,
-   "fund_utilized": 6.02
+   "fund_released": 0.0,
+   "fund_utilized": 6.02,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12809,8 +13098,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 5.84,
    "fund_allocated": 5.43,
-   "fund_released": 3.27,
-   "fund_utilized": 2.69
+   "fund_released": 1.2568,
+   "fund_utilized": 2.69,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12818,8 +13108,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 22.36,
    "fund_allocated": 21.72,
-   "fund_released": 18.72,
-   "fund_utilized": 14.43
+   "fund_released": 0.9,
+   "fund_utilized": 14.43,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12827,8 +13118,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 11.61,
    "fund_allocated": 11.2,
-   "fund_released": 6.26,
-   "fund_utilized": 4.97
+   "fund_released": 3.64,
+   "fund_utilized": 4.97,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12836,8 +13128,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 19.49,
    "fund_allocated": 16.04,
-   "fund_released": 10.07,
-   "fund_utilized": 8.7
+   "fund_released": 8.85,
+   "fund_utilized": 8.7,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12845,8 +13138,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 45.6,
    "fund_allocated": 40.65,
-   "fund_released": 26.05,
-   "fund_utilized": 26.03
+   "fund_released": 2.8781,
+   "fund_utilized": 26.03,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12854,8 +13148,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 23.46,
    "fund_allocated": 20.28,
-   "fund_released": 16.73,
-   "fund_utilized": 12.0
+   "fund_released": 7.5328,
+   "fund_utilized": 12.0,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12881,8 +13176,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 4.1,
    "fund_allocated": 4.01,
-   "fund_released": 3.2,
-   "fund_utilized": 2.88
+   "fund_released": 8.1525,
+   "fund_utilized": 2.88,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12890,8 +13186,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 1.41,
    "fund_allocated": 1.32,
-   "fund_released": 0.78,
-   "fund_utilized": 0.66
+   "fund_released": 0.0,
+   "fund_utilized": 0.66,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12899,8 +13196,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 7.59,
    "fund_allocated": 6.21,
-   "fund_released": 5.23,
-   "fund_utilized": 2.78
+   "fund_released": 0.0,
+   "fund_utilized": 2.78,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Punjab & Haryana",
@@ -12926,8 +13224,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.65,
    "fund_allocated": 0.62,
-   "fund_released": 0.4,
-   "fund_utilized": 0.32
+   "fund_released": 0.4176,
+   "fund_utilized": 0.32,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -12935,8 +13234,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 24.33,
    "fund_allocated": 21.48,
-   "fund_released": 13.51,
-   "fund_utilized": 10.14
+   "fund_released": 10.857,
+   "fund_utilized": 10.14,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -12944,8 +13244,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 9.38,
    "fund_allocated": 7.77,
-   "fund_released": 5.92,
-   "fund_utilized": 3.8
+   "fund_released": 2.916,
+   "fund_utilized": 3.8,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -12953,8 +13254,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 15.16,
    "fund_allocated": 13.63,
-   "fund_released": 9.88,
-   "fund_utilized": 7.54
+   "fund_released": 9.2772,
+   "fund_utilized": 7.54,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -12962,8 +13264,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 5.46,
    "fund_allocated": 4.61,
-   "fund_released": 3.23,
-   "fund_utilized": 2.38
+   "fund_released": 3.5604,
+   "fund_utilized": 2.38,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -12971,8 +13274,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 41.33,
    "fund_allocated": 33.35,
-   "fund_released": 23.86,
-   "fund_utilized": 13.28
+   "fund_released": 27.375,
+   "fund_utilized": 13.28,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -12980,8 +13284,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 10.28,
    "fund_allocated": 9.32,
-   "fund_released": 7.1,
-   "fund_utilized": 5.24
+   "fund_released": 1.5925,
+   "fund_utilized": 5.24,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -12989,8 +13294,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 17.26,
    "fund_allocated": 16.89,
-   "fund_released": 10.37,
-   "fund_utilized": 6.93
+   "fund_released": 11.8846,
+   "fund_utilized": 6.93,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -12998,8 +13304,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 57.45,
    "fund_allocated": 53.98,
-   "fund_released": 34.1,
-   "fund_utilized": 32.17
+   "fund_released": 14.2196,
+   "fund_utilized": 32.17,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -13007,8 +13314,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 23.73,
    "fund_allocated": 22.13,
-   "fund_released": 17.76,
-   "fund_utilized": 15.14
+   "fund_released": 34.5166,
+   "fund_utilized": 15.14,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -13034,8 +13342,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 5.9,
    "fund_allocated": 5.4,
-   "fund_released": 4.81,
-   "fund_utilized": 4.07
+   "fund_released": 2.5604,
+   "fund_utilized": 4.07,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -13043,8 +13352,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 1.31,
    "fund_allocated": 1.23,
-   "fund_released": 0.98,
-   "fund_utilized": 0.72
+   "fund_released": 1.3028,
+   "fund_utilized": 0.72,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -13052,8 +13362,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 7.28,
    "fund_allocated": 6.41,
-   "fund_released": 5.72,
-   "fund_utilized": 3.59
+   "fund_released": 2.4581,
+   "fund_utilized": 3.59,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Rajasthan",
@@ -13079,8 +13390,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.66,
    "fund_allocated": 0.56,
-   "fund_released": 0.49,
-   "fund_utilized": 0.4
+   "fund_released": 0.4938,
+   "fund_utilized": 0.4,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13088,8 +13400,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 1.01,
    "fund_allocated": 0.94,
-   "fund_released": 0.86,
-   "fund_utilized": 0.68
+   "fund_released": 0.9516,
+   "fund_utilized": 0.68,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13097,8 +13410,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 0.85,
    "fund_allocated": 0.75,
-   "fund_released": 0.51,
-   "fund_utilized": 0.45
+   "fund_released": 2.99,
+   "fund_utilized": 0.45,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13106,8 +13420,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 1.28,
    "fund_allocated": 1.2,
-   "fund_released": 0.81,
-   "fund_utilized": 0.56
+   "fund_released": 0.273,
+   "fund_utilized": 0.56,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13115,8 +13430,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 0.31,
    "fund_allocated": 0.27,
-   "fund_released": 0.25,
-   "fund_utilized": 0.21
+   "fund_released": 1.2568,
+   "fund_utilized": 0.21,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13124,8 +13440,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 2.46,
    "fund_allocated": 2.01,
-   "fund_released": 1.28,
-   "fund_utilized": 0.83
+   "fund_released": 0.1375,
+   "fund_utilized": 0.83,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13133,8 +13450,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 0.63,
    "fund_allocated": 0.55,
-   "fund_released": 0.52,
-   "fund_utilized": 0.39
+   "fund_released": 0.2275,
+   "fund_utilized": 0.39,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13142,8 +13460,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 0.94,
    "fund_allocated": 0.83,
-   "fund_released": 0.75,
-   "fund_utilized": 0.57
+   "fund_released": 0.0,
+   "fund_utilized": 0.57,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13151,8 +13470,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 3.8,
    "fund_allocated": 3.58,
-   "fund_released": 2.16,
-   "fund_utilized": 2.1
+   "fund_released": 0.0,
+   "fund_utilized": 2.1,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13160,8 +13480,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 2.1,
    "fund_allocated": 1.83,
-   "fund_released": 1.18,
-   "fund_utilized": 0.82
+   "fund_released": 5.9595,
+   "fund_utilized": 0.82,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13187,8 +13508,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 0.71,
    "fund_allocated": 0.66,
-   "fund_released": 0.39,
-   "fund_utilized": 0.33
+   "fund_released": 3.536,
+   "fund_utilized": 0.33,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13196,8 +13518,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.11,
    "fund_allocated": 0.09,
-   "fund_released": 0.08,
-   "fund_utilized": 0.07
+   "fund_released": 0.0312,
+   "fund_utilized": 0.07,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13205,8 +13528,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 0.67,
    "fund_allocated": 0.64,
-   "fund_released": 0.46,
-   "fund_utilized": 0.36
+   "fund_released": 0.0,
+   "fund_utilized": 0.36,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Sikkim",
@@ -13232,8 +13556,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.04,
    "fund_allocated": 0.04,
-   "fund_released": 0.03,
-   "fund_utilized": 0.03
+   "fund_released": 0.3591,
+   "fund_utilized": 0.03,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13241,8 +13566,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 7.34,
    "fund_allocated": 6.9,
-   "fund_released": 5.69,
-   "fund_utilized": 5.57
+   "fund_released": 7.7306,
+   "fund_utilized": 5.57,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13250,8 +13576,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 5.35,
    "fund_allocated": 4.95,
-   "fund_released": 2.76,
-   "fund_utilized": 2.63
+   "fund_released": 0.759,
+   "fund_utilized": 2.63,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13259,8 +13586,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 10.67,
    "fund_allocated": 8.74,
-   "fund_released": 5.51,
-   "fund_utilized": 4.9
+   "fund_released": 8.0707,
+   "fund_utilized": 4.9,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13268,8 +13596,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 2.43,
    "fund_allocated": 2.26,
-   "fund_released": 1.86,
-   "fund_utilized": 1.26
+   "fund_released": 1.2568,
+   "fund_utilized": 1.26,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13277,8 +13606,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 15.51,
    "fund_allocated": 14.56,
-   "fund_released": 13.32,
-   "fund_utilized": 9.57
+   "fund_released": 24.625,
+   "fund_utilized": 9.57,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13286,8 +13616,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 4.08,
    "fund_allocated": 3.72,
-   "fund_released": 3.49,
-   "fund_utilized": 2.89
+   "fund_released": 1.32,
+   "fund_utilized": 2.89,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13295,8 +13626,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 9.29,
    "fund_allocated": 9.04,
-   "fund_released": 5.39,
-   "fund_utilized": 5.1
+   "fund_released": 0.0,
+   "fund_utilized": 5.1,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13304,8 +13636,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 27.99,
    "fund_allocated": 27.16,
-   "fund_released": 20.43,
-   "fund_utilized": 13.95
+   "fund_released": 0.7354,
+   "fund_utilized": 13.95,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13313,8 +13646,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 14.3,
    "fund_allocated": 13.07,
-   "fund_released": 11.15,
-   "fund_utilized": 9.89
+   "fund_released": 14.2885,
+   "fund_utilized": 9.89,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13340,8 +13674,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 3.91,
    "fund_allocated": 3.34,
-   "fund_released": 2.09,
-   "fund_utilized": 1.65
+   "fund_released": 1.8506,
+   "fund_utilized": 1.65,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13349,8 +13684,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.96,
    "fund_allocated": 0.86,
-   "fund_released": 0.5,
-   "fund_utilized": 0.45
+   "fund_released": 0.4703,
+   "fund_utilized": 0.45,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13358,8 +13694,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 5.3,
    "fund_allocated": 4.74,
-   "fund_released": 2.81,
-   "fund_utilized": 2.14
+   "fund_released": 2.4581,
+   "fund_utilized": 2.14,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Telangana",
@@ -13385,8 +13722,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.44,
    "fund_allocated": 0.4,
-   "fund_released": 0.3,
-   "fund_utilized": 0.27
+   "fund_released": 0.386,
+   "fund_utilized": 0.27,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13394,8 +13732,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 2.76,
    "fund_allocated": 2.52,
-   "fund_released": 1.96,
-   "fund_utilized": 1.67
+   "fund_released": 0.0186,
+   "fund_utilized": 1.67,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13403,8 +13742,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 1.68,
    "fund_allocated": 1.63,
-   "fund_released": 0.99,
-   "fund_utilized": 0.8
+   "fund_released": 1.6635,
+   "fund_utilized": 0.8,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13412,8 +13752,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 2.39,
    "fund_allocated": 2.08,
-   "fund_released": 1.3,
-   "fund_utilized": 0.78
+   "fund_released": 1.1955,
+   "fund_utilized": 0.78,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13421,8 +13762,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 0.75,
    "fund_allocated": 0.7,
-   "fund_released": 0.44,
-   "fund_utilized": 0.29
+   "fund_released": 2.5083,
+   "fund_utilized": 0.29,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13430,8 +13772,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 4.32,
    "fund_allocated": 3.92,
-   "fund_released": 3.47,
-   "fund_utilized": 2.6
+   "fund_released": 0.8315,
+   "fund_utilized": 2.6,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13439,8 +13782,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 1.49,
    "fund_allocated": 1.3,
-   "fund_released": 1.23,
-   "fund_utilized": 1.22
+   "fund_released": 0.14,
+   "fund_utilized": 1.22,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13448,8 +13792,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 1.99,
    "fund_allocated": 1.71,
-   "fund_released": 1.57,
-   "fund_utilized": 1.25
+   "fund_released": 0.75,
+   "fund_utilized": 1.25,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13457,8 +13802,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 9.35,
    "fund_allocated": 7.74,
-   "fund_released": 4.55,
-   "fund_utilized": 3.62
+   "fund_released": 2.7653,
+   "fund_utilized": 3.62,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13466,8 +13812,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 6.31,
    "fund_allocated": 5.06,
-   "fund_released": 2.91,
-   "fund_utilized": 2.71
+   "fund_released": 7.707,
+   "fund_utilized": 2.71,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13493,8 +13840,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 0.92,
    "fund_allocated": 0.75,
-   "fund_released": 0.64,
-   "fund_utilized": 0.47
+   "fund_released": 2.2745,
+   "fund_utilized": 0.47,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13502,8 +13850,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.25,
    "fund_allocated": 0.22,
-   "fund_released": 0.15,
-   "fund_utilized": 0.12
+   "fund_released": 0.078,
+   "fund_utilized": 0.12,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13511,8 +13860,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 1.23,
    "fund_allocated": 1.06,
-   "fund_released": 0.78,
-   "fund_utilized": 0.48
+   "fund_released": 1.7621,
+   "fund_utilized": 0.48,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Tripura",
@@ -13538,8 +13888,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.11,
    "fund_allocated": 0.1,
-   "fund_released": 0.08,
-   "fund_utilized": 0.07
+   "fund_released": 0.3591,
+   "fund_utilized": 0.07,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13547,8 +13898,9 @@
    "description": "Number of e-sewa kendras in court complexes (in Absolute Count)",
    "fund_target": 8.49,
    "fund_allocated": 8.09,
-   "fund_released": 4.49,
-   "fund_utilized": 4.11
+   "fund_released": 2.4345,
+   "fund_utilized": 4.11,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13556,8 +13908,9 @@
    "description": "Number of paperless courts (in Absolute Count)",
    "fund_target": 2.94,
    "fund_allocated": 2.5,
-   "fund_released": 2.08,
-   "fund_utilized": 1.57
+   "fund_released": 1.052,
+   "fund_utilized": 1.57,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13565,8 +13918,9 @@
    "description": "Number of virtual courts (in Absolute Count)",
    "fund_target": 5.14,
    "fund_allocated": 4.22,
-   "fund_released": 3.75,
-   "fund_utilized": 3.57
+   "fund_released": 4.7361,
+   "fund_utilized": 3.57,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13574,8 +13928,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 1.77,
    "fund_allocated": 1.61,
-   "fund_released": 1.0,
-   "fund_utilized": 0.86
+   "fund_released": 2.6828,
+   "fund_utilized": 0.86,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13583,8 +13938,9 @@
    "description": "Number of pages digitized (in Cr.)",
    "fund_target": 13.16,
    "fund_allocated": 11.07,
-   "fund_released": 8.1,
-   "fund_utilized": 4.65
+   "fund_released": 19.6078,
+   "fund_utilized": 4.65,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13592,8 +13948,9 @@
    "description": "Number of video conference (in Absolute Count)",
    "fund_target": 3.52,
    "fund_allocated": 3.44,
-   "fund_released": 2.91,
-   "fund_utilized": 2.49
+   "fund_released": 4.5675,
+   "fund_utilized": 2.49,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13601,8 +13958,9 @@
    "description": "Total units of power generated (kWH)",
    "fund_target": 6.07,
    "fund_allocated": 5.32,
-   "fund_released": 3.79,
-   "fund_utilized": 3.35
+   "fund_released": 1.2,
+   "fund_utilized": 3.35,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13610,8 +13968,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 16.59,
    "fund_allocated": 15.92,
-   "fund_released": 10.0,
-   "fund_utilized": 7.54
+   "fund_released": 0.0,
+   "fund_utilized": 7.54,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13619,8 +13978,9 @@
    "description": "Number of Courts (in Absolute Count)",
    "fund_target": 12.84,
    "fund_allocated": 10.84,
-   "fund_released": 6.68,
-   "fund_utilized": 5.38
+   "fund_released": 9.6042,
+   "fund_utilized": 5.38,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13646,8 +14006,9 @@
    "description": "Number of training programmes (in Absolute Count)",
    "fund_target": 1.68,
    "fund_allocated": 1.55,
-   "fund_released": 1.41,
-   "fund_utilized": 1.35
+   "fund_released": 6.3249,
+   "fund_utilized": 1.35,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13655,8 +14016,9 @@
    "description": "Number of Court Establishments. (in Absolute Count)",
    "fund_target": 0.46,
    "fund_allocated": 0.39,
-   "fund_released": 0.34,
-   "fund_utilized": 0.24
+   "fund_released": 0.03,
+   "fund_utilized": 0.24,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13664,8 +14026,9 @@
    "description": "Number of receipts (in Absolute Count)",
    "fund_target": 2.85,
    "fund_allocated": 2.76,
-   "fund_released": 2.3,
-   "fund_utilized": 1.31
+   "fund_released": 2.4581,
+   "fund_utilized": 1.31,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   },
   {
    "high_court": "Uttarakhand",
@@ -13691,8 +14054,9 @@
    "description": "Number of e-office installation. (in Absolute Count)",
    "fund_target": 0.23,
    "fund_allocated": 0.22,
-   "fund_released": 0.16,
-   "fund_utilized": 0.13
+   "fund_released": 0.386,
+   "fund_utilized": 0.13,
+   "remarks": "ETL: Funds Released 2024-2027 (DoJ source)"
   }
  ],
  "outcome_baseline": [
