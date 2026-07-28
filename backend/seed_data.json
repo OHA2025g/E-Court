@@ -11,8 +11,8 @@
    "high_court": "Allahabad",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 388.0,
-   "achieved": 183.0
+   "target": 353.0,
+   "achieved": 111.0
   },
   {
    "high_court": "Allahabad",
@@ -193,8 +193,8 @@
    "high_court": "Allahabad",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 331.17,
-   "achieved": 128.02
+   "target": 277.3673,
+   "achieved": 204.5787
   },
   {
    "high_court": "Allahabad",
@@ -347,8 +347,8 @@
    "high_court": "Andhra Pradesh",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 155.0,
-   "achieved": 54.0
+   "target": 169.0,
+   "achieved": 38.0
   },
   {
    "high_court": "Andhra Pradesh",
@@ -529,8 +529,8 @@
    "high_court": "Andhra Pradesh",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 118.71,
-   "achieved": 37.95
+   "target": 175.6666,
+   "achieved": 15.9448
   },
   {
    "high_court": "Andhra Pradesh",
@@ -683,8 +683,8 @@
    "high_court": "Bombay",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 466.0,
-   "achieved": 205.0
+   "target": 577.0,
+   "achieved": 272.0
   },
   {
    "high_court": "Bombay",
@@ -865,8 +865,8 @@
    "high_court": "Bombay",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 287.45,
-   "achieved": 67.73
+   "target": 468.8719,
+   "achieved": 7.258
   },
   {
    "high_court": "Bombay",
@@ -1019,8 +1019,8 @@
    "high_court": "Calcutta",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 225.0,
-   "achieved": 103.0
+   "target": 132.0,
+   "achieved": 86.0
   },
   {
    "high_court": "Calcutta",
@@ -1201,8 +1201,8 @@
    "high_court": "Calcutta",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 149.85,
-   "achieved": 41.78
+   "target": 240.7185,
+   "achieved": 5.6196
   },
   {
    "high_court": "Calcutta",
@@ -1355,8 +1355,8 @@
    "high_court": "Chhattisgarh",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 148.0,
-   "achieved": 73.0
+   "target": 107.0,
+   "achieved": 90.0
   },
   {
    "high_court": "Chhattisgarh",
@@ -1537,8 +1537,8 @@
    "high_court": "Chhattisgarh",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 84.92,
-   "achieved": 7.29
+   "target": 42.975,
+   "achieved": 1.0514
   },
   {
    "high_court": "Chhattisgarh",
@@ -1691,8 +1691,8 @@
    "high_court": "Delhi",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 179.0,
-   "achieved": 40.0
+   "target": 48.0,
+   "achieved": 27.0
   },
   {
    "high_court": "Delhi",
@@ -1873,8 +1873,8 @@
    "high_court": "Delhi",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 151.88,
-   "achieved": 34.12
+   "target": 109.0797,
+   "achieved": 32.969
   },
   {
    "high_court": "Delhi",
@@ -2027,8 +2027,8 @@
    "high_court": "Gauhati – Arunachal Pradesh",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 33.0,
-   "achieved": 10.0
+   "target": 132.0,
+   "achieved": 26.0
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -2209,8 +2209,8 @@
    "high_court": "Gauhati – Arunachal Pradesh",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 23.88,
-   "achieved": 5.9
+   "target": 2.5658,
+   "achieved": 0.061
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -2545,8 +2545,8 @@
    "high_court": "Gauhati – Assam",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 71.11,
-   "achieved": 9.86
+   "target": 49.7687,
+   "achieved": 18.5585
   },
   {
    "high_court": "Gauhati – Assam",
@@ -2881,8 +2881,8 @@
    "high_court": "Gauhati – Mizoram",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 18.31,
-   "achieved": 7.39
+   "target": 1.7684,
+   "achieved": 0.2968
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -3217,8 +3217,8 @@
    "high_court": "Gauhati - Nagaland",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 17.23,
-   "achieved": 6.46
+   "target": 3.5889,
+   "achieved": 0.0
   },
   {
    "high_court": "Gauhati - Nagaland",
@@ -3371,8 +3371,8 @@
    "high_court": "Gujarat",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 278.0,
-   "achieved": 104.0
+   "target": 392.0,
+   "achieved": 194.0
   },
   {
    "high_court": "Gujarat",
@@ -3553,8 +3553,8 @@
    "high_court": "Gujarat",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 170.57,
-   "achieved": 15.21
+   "target": 170.5839,
+   "achieved": 0.2059
   },
   {
    "high_court": "Gujarat",
@@ -3707,8 +3707,8 @@
    "high_court": "Himachal Pradesh",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 60.0,
-   "achieved": 18.0
+   "target": 57.0,
+   "achieved": 22.0
   },
   {
    "high_court": "Himachal Pradesh",
@@ -3889,8 +3889,8 @@
    "high_court": "Himachal Pradesh",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 52.59,
-   "achieved": 10.93
+   "target": 50.3,
+   "achieved": 0.7869
   },
   {
    "high_court": "Himachal Pradesh",
@@ -4043,8 +4043,8 @@
    "high_court": "Jammu & Kashmir",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 81.0,
-   "achieved": 25.0
+   "target": 88.0,
+   "achieved": 19.0
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -4225,8 +4225,8 @@
    "high_court": "Jammu & Kashmir",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 64.04,
-   "achieved": 13.14
+   "target": 43.995,
+   "achieved": 5.9339
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -4379,8 +4379,8 @@
    "high_court": "Jharkhand",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 127.0,
-   "achieved": 68.0
+   "target": 54.0,
+   "achieved": 61.0
   },
   {
    "high_court": "Jharkhand",
@@ -4561,8 +4561,8 @@
    "high_court": "Jharkhand",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 74.18,
-   "achieved": 21.55
+   "target": 117.383,
+   "achieved": 3.3163
   },
   {
    "high_court": "Jharkhand",
@@ -4715,8 +4715,8 @@
    "high_court": "Karnataka",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 255.0,
-   "achieved": 74.0
+   "target": 234.0,
+   "achieved": 75.0
   },
   {
    "high_court": "Karnataka",
@@ -4897,8 +4897,8 @@
    "high_court": "Karnataka",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 209.89,
-   "achieved": 33.59
+   "target": 177.5501,
+   "achieved": 8.6317
   },
   {
    "high_court": "Karnataka",
@@ -5051,8 +5051,8 @@
    "high_court": "Kerala",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 182.0,
-   "achieved": 72.0
+   "target": 179.0,
+   "achieved": 245.0
   },
   {
    "high_court": "Kerala",
@@ -5233,8 +5233,8 @@
    "high_court": "Kerala",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 102.91,
-   "achieved": 7.04
+   "target": 91.2452,
+   "achieved": 8.8154
   },
   {
    "high_court": "Kerala",
@@ -5387,8 +5387,8 @@
    "high_court": "Madhya Pradesh",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 244.0,
-   "achieved": 55.0
+   "target": 258.0,
+   "achieved": 277.0
   },
   {
    "high_court": "Madhya Pradesh",
@@ -5569,8 +5569,8 @@
    "high_court": "Madhya Pradesh",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 205.29,
-   "achieved": 75.11
+   "target": 125.8728,
+   "achieved": 86.2572
   },
   {
    "high_court": "Madhya Pradesh",
@@ -5723,8 +5723,8 @@
    "high_court": "Madras",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 227.0,
-   "achieved": 99.0
+   "target": 313.0,
+   "achieved": 17.0
   },
   {
    "high_court": "Madras",
@@ -5905,8 +5905,8 @@
    "high_court": "Madras",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 210.28,
-   "achieved": 63.35
+   "target": 157.0293,
+   "achieved": 30.6381
   },
   {
    "high_court": "Madras",
@@ -6059,8 +6059,8 @@
    "high_court": "Manipur",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 34.0,
-   "achieved": 12.0
+   "target": 16.0,
+   "achieved": 20.0
   },
   {
    "high_court": "Manipur",
@@ -6241,8 +6241,8 @@
    "high_court": "Manipur",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 25.13,
-   "achieved": 6.9
+   "target": 2.1919,
+   "achieved": 1.1292
   },
   {
    "high_court": "Manipur",
@@ -6395,8 +6395,8 @@
    "high_court": "Meghalaya",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 22.0,
-   "achieved": 8.0
+   "target": 12.0,
+   "achieved": 17.0
   },
   {
    "high_court": "Meghalaya",
@@ -6577,8 +6577,8 @@
    "high_court": "Meghalaya",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 20.64,
-   "achieved": 4.71
+   "target": 4.4974,
+   "achieved": 0.4742
   },
   {
    "high_court": "Meghalaya",
@@ -6731,8 +6731,8 @@
    "high_court": "Odisha",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 182.0,
-   "achieved": 73.0
+   "target": 181.0,
+   "achieved": 197.0
   },
   {
    "high_court": "Odisha",
@@ -6913,8 +6913,8 @@
    "high_court": "Odisha",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 94.05,
-   "achieved": 11.04
+   "target": 64.9832,
+   "achieved": 21.0476
   },
   {
    "high_court": "Odisha",
@@ -7067,8 +7067,8 @@
    "high_court": "Patna",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 283.0,
-   "achieved": 147.0
+   "target": 145.0,
+   "achieved": 155.0
   },
   {
    "high_court": "Patna",
@@ -7249,8 +7249,8 @@
    "high_court": "Patna",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 148.87,
-   "achieved": 49.06
+   "target": 226.9307,
+   "achieved": 3.9534
   },
   {
    "high_court": "Patna",
@@ -7403,8 +7403,8 @@
    "high_court": "Punjab & Haryana",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 163.0,
-   "achieved": 77.0
+   "target": 172.0,
+   "achieved": 76.0
   },
   {
    "high_court": "Punjab & Haryana",
@@ -7585,8 +7585,8 @@
    "high_court": "Punjab & Haryana",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 116.12,
-   "achieved": 28.39
+   "target": 87.3345,
+   "achieved": 84.7617
   },
   {
    "high_court": "Punjab & Haryana",
@@ -7739,8 +7739,8 @@
    "high_court": "Rajasthan",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 258.0,
-   "achieved": 104.0
+   "target": 374.0,
+   "achieved": 16.0
   },
   {
    "high_court": "Rajasthan",
@@ -7921,8 +7921,8 @@
    "high_court": "Rajasthan",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 163.04,
-   "achieved": 54.51
+   "target": 263.0177,
+   "achieved": 14.5792
   },
   {
    "high_court": "Rajasthan",
@@ -8075,8 +8075,8 @@
    "high_court": "Sikkim",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 16.0,
-   "achieved": 7.0
+   "target": 10.0,
+   "achieved": 11.0
   },
   {
    "high_court": "Sikkim",
@@ -8257,8 +8257,8 @@
    "high_court": "Sikkim",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 12.68,
-   "achieved": 3.36
+   "target": 1.3956,
+   "achieved": 0.6364
   },
   {
    "high_court": "Sikkim",
@@ -8411,8 +8411,8 @@
    "high_court": "Telangana",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 114.0,
-   "achieved": 42.0
+   "target": 124.0,
+   "achieved": 97.0
   },
   {
    "high_court": "Telangana",
@@ -8593,8 +8593,8 @@
    "high_court": "Telangana",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 79.43,
-   "achieved": 12.42
+   "target": 119.3446,
+   "achieved": 18.5528
   },
   {
    "high_court": "Telangana",
@@ -8747,8 +8747,8 @@
    "high_court": "Tripura",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 35.0,
-   "achieved": 19.0
+   "target": 16.0,
+   "achieved": 16.0
   },
   {
    "high_court": "Tripura",
@@ -8929,8 +8929,8 @@
    "high_court": "Tripura",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 29.37,
-   "achieved": 8.92
+   "target": 1.3721,
+   "achieved": 0.4087
   },
   {
    "high_court": "Tripura",
@@ -9083,8 +9083,8 @@
    "high_court": "Uttarakhand",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 90.0,
-   "achieved": 27.0
+   "target": 56.0,
+   "achieved": 71.0
   },
   {
    "high_court": "Uttarakhand",
@@ -9265,8 +9265,8 @@
    "high_court": "Uttarakhand",
    "component": "Digitisation of Court Records",
    "indicator": "No of pages digitized (in Cr.)",
-   "target": 56.52,
-   "achieved": 18.19
+   "target": 31.3725,
+   "achieved": 3.0717
   },
   {
    "high_court": "Uttarakhand",
