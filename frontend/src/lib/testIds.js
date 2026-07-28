@@ -21,7 +21,9 @@ export const TID = {
   navPmu: "nav-pmu",
   navDpr: "nav-dpr",
   navIjuris: "nav-ijuris",
+  navBulkUpload: "nav-bulk-upload",
   navUsers: "nav-users",
+  bulkUploadPage: "bulk-upload-page",
   // dashboard
   dashboard: "dashboard-root",
   dashboardNarrative: "dashboard-narrative",

@@ -15,6 +15,7 @@
     "pmu": "PMU Tasks",
     "dpr": "DPR Deliverables",
     "ijuris": "iJuris Ingestion",
+    "bulkUpload": "Bulk Data Upload",
     "users": "User Management",
     "backup": "Backup & Restore",
     "audit": "Audit Trail",
