@@ -158,6 +158,8 @@
     "tabPhysical": "भौतिक",
     "tabFinancial": "वित्तीय",
     "tabOutcome": "परिणाम",
+    "tabDemoCwpf": "डेमो घटकवार भौतिक एवं वित्तीय रिपोर्ट",
+    "filtersSubtitleDemo": "डेमो घटकवार रिपोर्ट के लिए रिपोर्टिंग अवधि चुनें",
     "noData": "कोई डेटा नहीं",
     "selectSavedView": "— सहेजा दृश्य चुनें —",
     "viewNamePlaceholder": "दृश्य का नाम…",

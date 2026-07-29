@@ -637,6 +637,8 @@ async def compute_dashboard_by_component(
     fin = await db.financial_entries.aggregate(
         financial_rollup_stages(fmatch) + [
             {"$group": {"_id": "$component",
+                        "allocated": {"$sum": {"$ifNull": ["$fund_allocated", 0]}},
+                        "target": {"$sum": {"$ifNull": ["$fund_target", 0]}},
                         "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
                         "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}}}},
         ]
@@ -647,13 +649,18 @@ async def compute_dashboard_by_component(
     for c in COMPONENTS:
         name = c["name"]
         p = pmap.get(name, {"target": 0, "achieved": 0})
-        f = fmap.get(name, {"released": 0, "utilized": 0})
+        f = fmap.get(name, {"allocated": 0, "target": 0, "released": 0, "utilized": 0})
+        budget = f["allocated"] or f["target"] or f["released"] or 0
         rows.append({
             "component": name,
             "phys_target": p["target"], "phys_achieved": p["achieved"],
             "phys_percent": safe_div_fn(p["achieved"], p["target"]),
+            "fin_allocated": f["allocated"],
+            "fin_target": f["target"],
+            "fin_budget": budget,
             "fin_released": f["released"], "fin_utilized": f["utilized"],
             "fin_percent": safe_div_fn(f["utilized"], f["released"]),
+            "fin_exp_percent": safe_div_fn(f["utilized"], budget if budget else None),
         })
     return rows
 

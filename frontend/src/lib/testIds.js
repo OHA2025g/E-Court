@@ -76,4 +76,5 @@ export const TID = {
   auditTable: "audit-table",
   // reports
   reportsRoot: "reports-root",
+  demoCwpfReport: "demo-cwpf-report",
 };

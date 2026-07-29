@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { api, fmtNum, fmtPct, BACKEND_URL, formatApiError } from "@/lib/api";
@@ -11,6 +11,7 @@ import { FileXls, FilePdf, MagnifyingGlass, FloppyDisk, Trash } from "@phosphor-
 import { SelectField } from "@/pages/PhysicalTracker";
 import { toast } from "sonner";
 import { unwrapTrackerResponse } from "@/lib/trackerApi";
+import ComponentWiseDemoReport from "@/components/reports/ComponentWiseDemoReport";
 
 function ExportBtn({ url, kind, testid }) {
   return (
@@ -201,48 +202,70 @@ export default function Reports() {
     [savedViews.data, activeTab],
   );
 
+  const isDemoCwpf = activeTab === "demo-cwpf";
+  const periodLabel = useMemo(() => {
+    const match = (periods.data || []).find((p) => p.period === period);
+    return match?.label || period || "";
+  }, [periods.data, period]);
+
+  // Prefer a concrete period for the demo report so totals are period-scoped
+  useEffect(() => {
+    if (!isDemoCwpf || period || !periods.data?.length) return;
+    const sorted = [...periods.data].sort((a, b) => String(b.period).localeCompare(String(a.period)));
+    if (sorted[0]?.period) setPeriod(sorted[0].period);
+  }, [isDemoCwpf, period, periods.data]);
+
   return (
     <div data-testid={TID.reportsRoot} className="space-y-6">
-      <Card title={t("reports.filtersTitle")} subtitle={t("reports.filtersSubtitle")}>
+      <Card title={t("reports.filtersTitle")} subtitle={isDemoCwpf ? t("reports.filtersSubtitleDemo") : t("reports.filtersSubtitle")}>
         <div className="p-4 space-y-3">
-          <div className="flex flex-wrap items-end gap-3">
-            <label className="block">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-slate-600 font-medium">{t("reports.savedViews")}</span>
-              <select value={selectedViewId} onChange={(e) => onSelectView(e.target.value)}
-                className="mt-1 block w-56 px-3 py-2 border border-slate-300 rounded-sm bg-white text-sm focus:outline-none focus:border-[#003B73]">
-                <option value="">{t("reports.selectSavedView")}</option>
-                {tabViews.map((v) => (
-                  <option key={v.id} value={v.id}>{v.name}</option>
-                ))}
-              </select>
-            </label>
-            <input type="text" value={viewName} onChange={(e) => setViewName(e.target.value)} placeholder={t("reports.viewNamePlaceholder")}
-              className="px-3 py-2 border border-slate-300 rounded-sm text-sm w-40 focus:outline-none focus:border-[#003B73]" />
-            <button type="button" disabled={viewBusy || !viewName.trim()} onClick={saveCurrentView}
-              className="inline-flex items-center gap-1.5 bg-[#003B73] hover:bg-[#002B54] disabled:bg-slate-400 text-white px-3 py-2 rounded-sm uppercase tracking-wider text-[11px]">
-              <FloppyDisk size={14} /> {t("reports.saveView")}
-            </button>
-            {selectedViewId && (
-              <button type="button" onClick={deleteSelectedView}
-                className="inline-flex items-center gap-1.5 border border-red-300 text-red-700 hover:bg-red-50 px-3 py-2 rounded-sm uppercase tracking-wider text-[11px]">
-                <Trash size={14} /> {t("reports.deleteView")}
+          {!isDemoCwpf && (
+            <div className="flex flex-wrap items-end gap-3">
+              <label className="block">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-slate-600 font-medium">{t("reports.savedViews")}</span>
+                <select value={selectedViewId} onChange={(e) => onSelectView(e.target.value)}
+                  className="mt-1 block w-56 px-3 py-2 border border-slate-300 rounded-sm bg-white text-sm focus:outline-none focus:border-[#003B73]">
+                  <option value="">{t("reports.selectSavedView")}</option>
+                  {tabViews.map((v) => (
+                    <option key={v.id} value={v.id}>{v.name}</option>
+                  ))}
+                </select>
+              </label>
+              <input type="text" value={viewName} onChange={(e) => setViewName(e.target.value)} placeholder={t("reports.viewNamePlaceholder")}
+                className="px-3 py-2 border border-slate-300 rounded-sm text-sm w-40 focus:outline-none focus:border-[#003B73]" />
+              <button type="button" disabled={viewBusy || !viewName.trim()} onClick={saveCurrentView}
+                className="inline-flex items-center gap-1.5 bg-[#003B73] hover:bg-[#002B54] disabled:bg-slate-400 text-white px-3 py-2 rounded-sm uppercase tracking-wider text-[11px]">
+                <FloppyDisk size={14} /> {t("reports.saveView")}
               </button>
-            )}
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <SelectField label={t("reports.colHighCourt")} value={hc} onChange={setHc} options={(hcs.data || []).map(h => h.name)} />
-          <SelectField label={t("reports.colComponent")} value={component} onChange={setComponent} options={(comps.data || []).map(c => c.name)} />
-          <SelectField label={t("reports.colSubject")} value={subject} onChange={setSubject} options={(subs.data || []).map(s => s.name)} />
+              {selectedViewId && (
+                <button type="button" onClick={deleteSelectedView}
+                  className="inline-flex items-center gap-1.5 border border-red-300 text-red-700 hover:bg-red-50 px-3 py-2 rounded-sm uppercase tracking-wider text-[11px]">
+                  <Trash size={14} /> {t("reports.deleteView")}
+                </button>
+              )}
+            </div>
+          )}
+          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 ${isDemoCwpf ? "lg:grid-cols-1 max-w-xs" : "lg:grid-cols-4"}`}>
+          {!isDemoCwpf && (
+            <>
+              <SelectField label={t("reports.colHighCourt")} value={hc} onChange={setHc} options={(hcs.data || []).map(h => h.name)} />
+              <SelectField label={t("reports.colComponent")} value={component} onChange={setComponent} options={(comps.data || []).map(c => c.name)} />
+              <SelectField label={t("reports.colSubject")} value={subject} onChange={setSubject} options={(subs.data || []).map(s => s.name)} />
+            </>
+          )}
           <SelectField label={t("reports.colPeriod")} value={period} onChange={setPeriod} options={(periods.data || []).map(p => ({ label: p.label, value: p.period }))} />
           </div>
         </div>
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-transparent border-b border-slate-200 w-full justify-start rounded-none p-0">
+        <TabsList className="bg-transparent border-b border-slate-200 w-full justify-start rounded-none p-0 flex-wrap h-auto">
           <TabsTrigger value="physical" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs">{t("reports.tabPhysical")}</TabsTrigger>
           <TabsTrigger value="financial" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs">{t("reports.tabFinancial")}</TabsTrigger>
           <TabsTrigger value="outcome" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs">{t("reports.tabOutcome")}</TabsTrigger>
+          <TabsTrigger value="demo-cwpf" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs max-w-[280px] whitespace-normal text-left leading-tight py-2">
+            {t("reports.tabDemoCwpf")}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="physical" className="mt-4">
@@ -312,6 +335,10 @@ export default function Reports() {
                 { key: "reporting_period", label: t("reports.colPeriod") },
               ]} />
           </Card>
+        </TabsContent>
+
+        <TabsContent value="demo-cwpf" className="mt-4">
+          <ComponentWiseDemoReport period={period} periodLabel={periodLabel} />
         </TabsContent>
       </Tabs>
     </div>

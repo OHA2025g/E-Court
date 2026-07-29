@@ -165,6 +165,8 @@
     "tabPhysical": "Physical",
     "tabFinancial": "Financial",
     "tabOutcome": "Outcome",
+    "tabDemoCwpf": "Demo Component Wise Physical & Financial Report",
+    "filtersSubtitleDemo": "Select reporting period for the component-wise demo report",
     "physicalReport": "Physical Report · {{count}} rows",
     "financialReport": "Financial Report · {{count}} rows",
     "outcomeReport": "Outcome Report · {{count}} rows",
