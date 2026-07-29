@@ -208,11 +208,20 @@ export default function Reports() {
     return match?.label || period || "";
   }, [periods.data, period]);
 
-  // Prefer a concrete period for the demo report so totals are period-scoped
+  // Demo report: prefer baseline (has seeded/ETL data). Avoid auto-picking empty future months.
   useEffect(() => {
-    if (!isDemoCwpf || period || !periods.data?.length) return;
-    const sorted = [...periods.data].sort((a, b) => String(b.period).localeCompare(String(a.period)));
-    if (sorted[0]?.period) setPeriod(sorted[0].period);
+    if (!isDemoCwpf || !periods.data?.length) return;
+    const list = periods.data;
+    const baseline = list.find((p) => p.is_baseline)?.period;
+    const nowYm = new Date().toISOString().slice(0, 7);
+    const latestWithOrBeforeNow = [...list]
+      .filter((p) => String(p.period) <= nowYm)
+      .sort((a, b) => String(b.period).localeCompare(String(a.period)))[0]?.period;
+    const preferred = baseline || latestWithOrBeforeNow || list[0]?.period;
+    if (!preferred) return;
+    if (!period || period > nowYm) {
+      setPeriod(preferred);
+    }
   }, [isDemoCwpf, period, periods.data]);
 
   return (

@@ -2,6 +2,7 @@ import React, { useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Printer, FileXls } from "@phosphor-icons/react";
 import { api, fmtNum } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 import { TID } from "@/lib/testIds";
 
 /** Excel-like pastel RAG fills matching DoJ component-wise report */
@@ -71,13 +72,19 @@ function DojEmblem() {
  */
 export default function ComponentWiseDemoReport({ period, periodLabel }) {
   const printRef = useRef(null);
+  const { user } = useAuth();
+  const isAdmin = user?.role === "Admin";
 
   const { data: rows = [], isLoading, isError } = useQuery({
-    queryKey: ["demo-cwpf-report", period],
+    queryKey: ["demo-cwpf-report", period, isAdmin],
     queryFn: () =>
       api
         .get("/dashboard/by-component", {
-          params: { reporting_period: period || undefined },
+          params: {
+            reporting_period: period || undefined,
+            // Admin: include ETL / unapproved periods so demo report shows loaded tracker data
+            include_unapproved: isAdmin ? true : undefined,
+          },
         })
         .then((r) => r.data),
   });
@@ -101,6 +108,11 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
       };
     });
   }, [rows]);
+
+  const hasData = useMemo(
+    () => enriched.some((r) => (Number(r.budget) || 0) > 0 || (Number(r.utilized) || 0) > 0 || (Number(r.phys_target) || 0) > 0),
+    [enriched],
+  );
 
   const totals = useMemo(() => {
     const budget = enriched.reduce((s, r) => s + (Number(r.budget) || 0), 0);
@@ -162,6 +174,13 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
 
         {isLoading && <div className="cwpf-status">Loading report…</div>}
         {isError && <div className="cwpf-status error">Unable to load component-wise data.</div>}
+
+        {!isLoading && !isError && !hasData && (
+          <div className="cwpf-status warn no-print">
+            No physical/financial figures for this period. Select the baseline period
+            (“Baseline — cum. to May 2026”) or another period with loaded tracker data.
+          </div>
+        )}
 
         {!isLoading && !isError && (
           <table className="cwpf-table">
@@ -250,6 +269,7 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
         .cwpf-total td { background: #fff !important; font-weight: 700; }
         .cwpf-status { padding: 24px; text-align: center; color: #64748b; }
         .cwpf-status.error { color: #b91c1c; }
+        .cwpf-status.warn { color: #92400e; background: #fffbeb; border: 1px solid #fcd34d; padding: 12px; margin-bottom: 12px; }
         .cwpf-footnote { margin-top: 12px; font-size: 11px; color: #64748b; line-height: 1.4; }
         @media print {
           .no-print, .app-sidebar, .app-topbar, nav, [data-testid="app-sidebar"] { display: none !important; }
