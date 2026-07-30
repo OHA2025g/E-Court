@@ -665,6 +665,78 @@ async def compute_dashboard_by_component(
     return rows
 
 
+async def compute_financial_status_yoy(
+    db,
+    scope_filter_fn: Callable,
+    safe_div_fn: Callable,
+    user: dict,
+    reporting_period: Optional[str],
+    extra_match: Optional[dict] = None,
+) -> dict:
+    """Component × FY financial status for the DoJ-style Year-on-Year demo report.
+
+    PMIS stores cumulative fund fields per reporting period (not native FY splits).
+    Mapping used for the demo layout:
+      - cost_estimation ← fund_allocated (fallback fund_target)
+      - FY 2023-24 expenditure ← fund_utilized (DoJ utilised 2023–24 + baseline util)
+      - FY 2024-25 released ← fund_released (DoJ released 2024–27 cumulative load)
+      - other FY cells ← 0 (provisional / not yet split in tracker)
+    """
+    fmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
+    fin = await db.financial_entries.aggregate(
+        financial_rollup_stages(fmatch) + [
+            {"$group": {"_id": "$component",
+                        "allocated": {"$sum": {"$ifNull": ["$fund_allocated", 0]}},
+                        "target": {"$sum": {"$ifNull": ["$fund_target", 0]}},
+                        "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
+                        "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}}}},
+        ]
+    ).to_list(100)
+    fmap = {f["_id"]: f for f in fin}
+    rows = []
+    for c in COMPONENTS:
+        name = c["name"]
+        f = fmap.get(name, {"allocated": 0, "target": 0, "released": 0, "utilized": 0})
+        cost = f["allocated"] or f["target"] or 0
+        fy2324_rel = 0.0
+        fy2324_exp = float(f["utilized"] or 0)
+        fy2425_rel = float(f["released"] or 0)
+        fy2425_exp = 0.0
+        fy2526_rel = 0.0
+        fy2526_exp = 0.0
+        fy2627_rel = 0.0
+        fy2627_exp = 0.0
+        grand_rel = fy2324_rel + fy2425_rel + fy2526_rel + fy2627_rel
+        grand_exp = fy2324_exp + fy2425_exp + fy2526_exp + fy2627_exp
+        exp_pct = safe_div_fn(grand_exp, cost if cost else None)
+        rows.append({
+            "component": name,
+            "cost_estimation": cost,
+            "fy2324_released": fy2324_rel,
+            "fy2324_expenditure": fy2324_exp,
+            "fy2425_released": fy2425_rel,
+            "fy2425_expenditure": fy2425_exp,
+            "fy2526_released": fy2526_rel,
+            "fy2526_expenditure": fy2526_exp,
+            "fy2627_released": fy2627_rel,
+            "fy2627_expenditure": fy2627_exp,
+            "grand_released": grand_rel,
+            "grand_expenditure": grand_exp,
+            "exp_percent_of_allocated": exp_pct,
+        })
+    return {
+        "reporting_period": reporting_period,
+        "fiscal_years": ["2023-24", "2024-25", "2025-26", "2026-27"],
+        "rows": rows,
+        "mapping_note": (
+            "Cost = Fund Allocated (fallback Target). "
+            "FY 2023-24 Expenditure = Fund Utilised. "
+            "FY 2024-25 Released = Fund Released (cumulative 2024–27 load). "
+            "FY 2025-26 / 2026-27 cells are provisional zeros until year-split data is tracked."
+        ),
+    }
+
+
 async def compute_dashboard_by_hc(
     db,
     scope_filter_fn: Callable,

@@ -12,6 +12,7 @@ import { SelectField } from "@/pages/PhysicalTracker";
 import { toast } from "sonner";
 import { unwrapTrackerResponse } from "@/lib/trackerApi";
 import ComponentWiseDemoReport from "@/components/reports/ComponentWiseDemoReport";
+import FinancialYoyDemoReport from "@/components/reports/FinancialYoyDemoReport";
 
 function ExportBtn({ url, kind, testid }) {
   return (
@@ -203,14 +204,16 @@ export default function Reports() {
   );
 
   const isDemoCwpf = activeTab === "demo-cwpf";
+  const isDemoFinYoy = activeTab === "demo-fin-yoy";
+  const isDemoReport = isDemoCwpf || isDemoFinYoy;
   const periodLabel = useMemo(() => {
     const match = (periods.data || []).find((p) => p.period === period);
     return match?.label || period || "";
   }, [periods.data, period]);
 
-  // Demo report: prefer baseline (has seeded/ETL data). Avoid auto-picking empty future months.
+  // Demo reports: prefer baseline (has seeded/ETL data). Avoid auto-picking empty future months.
   useEffect(() => {
-    if (!isDemoCwpf || !periods.data?.length) return;
+    if (!isDemoReport || !periods.data?.length) return;
     const list = periods.data;
     const baseline = list.find((p) => p.is_baseline)?.period;
     const nowYm = new Date().toISOString().slice(0, 7);
@@ -222,13 +225,13 @@ export default function Reports() {
     if (!period || period > nowYm) {
       setPeriod(preferred);
     }
-  }, [isDemoCwpf, period, periods.data]);
+  }, [isDemoReport, period, periods.data]);
 
   return (
     <div data-testid={TID.reportsRoot} className="space-y-6">
-      <Card title={t("reports.filtersTitle")} subtitle={isDemoCwpf ? t("reports.filtersSubtitleDemo") : t("reports.filtersSubtitle")}>
+      <Card title={t("reports.filtersTitle")} subtitle={isDemoReport ? t("reports.filtersSubtitleDemo") : t("reports.filtersSubtitle")}>
         <div className="p-4 space-y-3">
-          {!isDemoCwpf && (
+          {!isDemoReport && (
             <div className="flex flex-wrap items-end gap-3">
               <label className="block">
                 <span className="text-[10px] uppercase tracking-[0.2em] text-slate-600 font-medium">{t("reports.savedViews")}</span>
@@ -254,8 +257,8 @@ export default function Reports() {
               )}
             </div>
           )}
-          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 ${isDemoCwpf ? "lg:grid-cols-1 max-w-xs" : "lg:grid-cols-4"}`}>
-          {!isDemoCwpf && (
+          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 ${isDemoReport ? "lg:grid-cols-1 max-w-xs" : "lg:grid-cols-4"}`}>
+          {!isDemoReport && (
             <>
               <SelectField label={t("reports.colHighCourt")} value={hc} onChange={setHc} options={(hcs.data || []).map(h => h.name)} />
               <SelectField label={t("reports.colComponent")} value={component} onChange={setComponent} options={(comps.data || []).map(c => c.name)} />
@@ -274,6 +277,9 @@ export default function Reports() {
           <TabsTrigger value="outcome" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs">{t("reports.tabOutcome")}</TabsTrigger>
           <TabsTrigger value="demo-cwpf" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs max-w-[280px] whitespace-normal text-left leading-tight py-2">
             {t("reports.tabDemoCwpf")}
+          </TabsTrigger>
+          <TabsTrigger value="demo-fin-yoy" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs max-w-[280px] whitespace-normal text-left leading-tight py-2">
+            {t("reports.tabDemoFinYoy")}
           </TabsTrigger>
         </TabsList>
 
@@ -348,6 +354,10 @@ export default function Reports() {
 
         <TabsContent value="demo-cwpf" className="mt-4">
           <ComponentWiseDemoReport period={period} periodLabel={periodLabel} />
+        </TabsContent>
+
+        <TabsContent value="demo-fin-yoy" className="mt-4">
+          <FinancialYoyDemoReport period={period} periodLabel={periodLabel} />
         </TabsContent>
       </Tabs>
     </div>

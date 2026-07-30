@@ -8,6 +8,7 @@ from dashboard_agg import (
     compute_dashboard_by_component,
     compute_dashboard_by_hc,
     compute_dashboard_summary,
+    compute_financial_status_yoy,
     compute_financial_tracker_dashboard,
     compute_heatmap,
     compute_pareto_red_flags,
@@ -85,6 +86,20 @@ def register_dashboard_routes(
         return await _cached_dashboard(
             "by-component", user, reporting_period, include_unapproved,
             lambda: compute_dashboard_by_component(
+                db, scope_filter_fn, safe_div_fn, user, reporting_period, extra,
+            ),
+        )
+
+    @api.get("/dashboard/financial-status-yoy")
+    async def dashboard_financial_status_yoy(
+        reporting_period: Optional[str] = None,
+        include_unapproved: bool = False,
+        user: dict = Depends(require_fully_authenticated),
+    ):
+        extra = await _approval(user, reporting_period, include_unapproved)
+        return await _cached_dashboard(
+            "financial-status-yoy", user, reporting_period, include_unapproved,
+            lambda: compute_financial_status_yoy(
                 db, scope_filter_fn, safe_div_fn, user, reporting_period, extra,
             ),
         )

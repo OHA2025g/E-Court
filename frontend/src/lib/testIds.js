@@ -77,4 +77,5 @@ export const TID = {
   // reports
   reportsRoot: "reports-root",
   demoCwpfReport: "demo-cwpf-report",
+  demoFinYoyReport: "demo-fin-yoy-report",
 };
