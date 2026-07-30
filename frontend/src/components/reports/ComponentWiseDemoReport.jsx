@@ -4,6 +4,7 @@ import { Printer, FileXls } from "@phosphor-icons/react";
 import { api, fmtNum } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { TID } from "@/lib/testIds";
+import DojEmblem from "@/components/reports/DojEmblem";
 
 /** Excel-like pastel RAG fills matching DoJ component-wise report */
 const ROW_FILL = {
@@ -42,28 +43,6 @@ function fmtPhysAch(pct, target) {
   if (target == null || Number(target) === 0) return "-";
   if (pct == null || Number.isNaN(Number(pct))) return "-";
   return `${Math.round(Number(pct))}%`;
-}
-
-/** Compact DoJ-style emblem for report header (decorative branding). */
-function DojEmblem() {
-  return (
-    <div className="cwpf-emblem" aria-hidden="true">
-      <svg viewBox="0 0 64 64" width="48" height="48">
-        <circle cx="32" cy="32" r="31" fill="#1a237e" />
-        <circle cx="32" cy="32" r="26" fill="none" stroke="#c9a227" strokeWidth="2" />
-        <g fill="#c9a227">
-          <ellipse cx="32" cy="22" rx="7" ry="5" />
-          <rect x="28" y="26" width="8" height="14" rx="1" />
-          <path d="M18 40 L32 28 L46 40 Z" />
-        </g>
-        <text x="32" y="54" textAnchor="middle" fill="#c9a227" fontSize="6" fontFamily="serif">सत्यमेव जयते</text>
-      </svg>
-      <div className="cwpf-emblem-text">
-        <div className="cwpf-emblem-hi">न्याय विभाग</div>
-        <div className="cwpf-emblem-en">DEPARTMENT OF JUSTICE</div>
-      </div>
-    </div>
-  );
 }
 
 /**
@@ -247,10 +226,6 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
           font-size: 20px; font-weight: 700; color: #000; line-height: 1.25; padding-top: 2px;
         }
         .cwpf-title-asof { display: inline; font-size: 20px; font-weight: 700; }
-        .cwpf-emblem { display: flex; flex-direction: row; align-items: center; gap: 8px; justify-content: flex-end; }
-        .cwpf-emblem-text { text-align: left; line-height: 1.15; }
-        .cwpf-emblem-hi { font-size: 13px; font-weight: 700; color: #1a237e; }
-        .cwpf-emblem-en { font-size: 8px; font-weight: 700; color: #1a237e; letter-spacing: 0.02em; }
         .cwpf-rule { height: 3px; background: #1e3a5f; margin: 10px 0 14px; }
         .cwpf-table {
           width: 100%; border-collapse: collapse; table-layout: fixed;
