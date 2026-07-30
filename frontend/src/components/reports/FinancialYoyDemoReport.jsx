@@ -152,11 +152,6 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
           <h1 className="fyoy-title">Demo Financial Status of 24 Components – Year on Year</h1>
           <div className="fyoy-header-right">
             <DojEmblem />
-            <div className="fyoy-legend" aria-label="Expenditure percentage legend">
-              <div className="fyoy-leg-item"><span className="fyoy-swatch green" /> ≥ 50% High</div>
-              <div className="fyoy-leg-item"><span className="fyoy-swatch amber" /> 50-20% Moderate</div>
-              <div className="fyoy-leg-item"><span className="fyoy-swatch red" /> &lt;20% Low</div>
-            </div>
           </div>
         </header>
 
@@ -240,6 +235,12 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
           </div>
         )}
 
+        <div className="fyoy-legend" aria-label="Expenditure percentage legend">
+          <div className="fyoy-leg-item"><span className="fyoy-swatch green" /> ≥ 50% High</div>
+          <div className="fyoy-leg-item"><span className="fyoy-swatch amber" /> 50-20% Moderate</div>
+          <div className="fyoy-leg-item"><span className="fyoy-swatch red" /> &lt;20% Low</div>
+        </div>
+
         <p className="fyoy-footnote no-print">
           {data?.mapping_note ||
             "Amounts ₹ Cr. Row colour by expenditure % of allocated (Green ≥50%, Amber 20–50%, Red <20%)."}
@@ -270,9 +271,12 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
           font-size: 22px; font-weight: 700; color: #000; line-height: 1.25; max-width: 560px;
         }
         .fyoy-header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
-        .fyoy-legend { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: #111; }
-        .fyoy-leg-item { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-        .fyoy-swatch { width: 28px; height: 14px; border: 1px solid #333; display: inline-block; }
+        .fyoy-legend {
+          display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: center;
+          gap: 20px; margin: 14px auto 4px; font-size: 12px; color: #111; width: 100%;
+        }
+        .fyoy-leg-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .fyoy-swatch { width: 28px; height: 14px; border: 1px solid #333; display: inline-block; flex-shrink: 0; }
         .fyoy-swatch.green { background: #92D050; }
         .fyoy-swatch.amber { background: #FFC000; }
         .fyoy-swatch.red { background: #F8CBAD; }
