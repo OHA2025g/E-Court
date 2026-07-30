@@ -248,8 +248,8 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
       </div>
 
       <style>{`
-        .fyoy-wrap { background: #f1f5f9; padding: 12px; border-radius: 2px; }
-        .fyoy-toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+        .fyoy-wrap { background: #f1f5f9; padding: 8px; border-radius: 2px; width: 100%; }
+        .fyoy-toolbar { display: flex; gap: 8px; margin-bottom: 10px; }
         .fyoy-tool-btn {
           display: inline-flex; align-items: center; gap: 6px;
           background: #003B73; color: #fff; border: none; border-radius: 2px;
@@ -258,8 +258,8 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
         .fyoy-tool-btn.secondary { background: #fff; color: #334155; border: 1px solid #cbd5e1; }
         .fyoy-tool-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .fyoy-sheet {
-          background: #fff; padding: 20px 24px 28px; box-shadow: 0 1px 3px rgba(15,23,42,0.12);
-          max-width: 1400px; margin: 0 auto; overflow: hidden;
+          background: #fff; padding: 16px 12px 24px; box-shadow: 0 1px 3px rgba(15,23,42,0.12);
+          width: 100%; max-width: none; margin: 0; overflow: visible;
         }
         .fyoy-header {
           display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
@@ -267,9 +267,9 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
         }
         .fyoy-title {
           margin: 0; font-family: Georgia, "Times New Roman", serif;
-          font-size: 22px; font-weight: 700; color: #000; line-height: 1.25; max-width: 520px;
+          font-size: 22px; font-weight: 700; color: #000; line-height: 1.25; max-width: 560px;
         }
-        .fyoy-header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+        .fyoy-header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
         .fyoy-legend { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: #111; }
         .fyoy-leg-item { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
         .fyoy-swatch { width: 28px; height: 14px; border: 1px solid #333; display: inline-block; }
@@ -277,21 +277,22 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
         .fyoy-swatch.amber { background: #FFC000; }
         .fyoy-swatch.red { background: #F8CBAD; }
         .fyoy-period { margin: 0 0 8px; font-size: 12px; color: #475569; }
-        .fyoy-table-scroll { overflow-x: auto; }
+        .fyoy-table-scroll { overflow-x: visible; width: 100%; }
         .fyoy-table {
-          width: 100%; border-collapse: collapse; min-width: 1100px;
-          font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #000;
+          width: 100%; border-collapse: collapse; table-layout: fixed;
+          font-family: Arial, Helvetica, sans-serif; font-size: 10px; color: #000;
         }
         .fyoy-table th, .fyoy-table td {
-          border: 1px solid #000; padding: 4px 5px; vertical-align: middle;
+          border: 1px solid #000; padding: 3px 2px; vertical-align: middle;
+          word-wrap: break-word; overflow-wrap: anywhere;
         }
         .fyoy-table thead th {
-          background: #bdbdbd; font-weight: 700; text-align: center; line-height: 1.2;
+          background: #bdbdbd; font-weight: 700; text-align: center; line-height: 1.15;
         }
         .fyoy-table thead th.star { color: #c62828; }
-        .fyoy-table .col-sn { width: 44px; text-align: center; }
-        .fyoy-table .col-comp { text-align: left; min-width: 160px; }
-        .fyoy-table .col-num { text-align: center; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .fyoy-table .col-sn { width: 3%; text-align: center; }
+        .fyoy-table .col-comp { text-align: left; width: 14%; }
+        .fyoy-table .col-num { text-align: center; font-variant-numeric: tabular-nums; white-space: normal; }
         .fyoy-total td { background: #dce6f1 !important; font-weight: 700; }
         .fyoy-status { padding: 24px; text-align: center; color: #64748b; }
         .fyoy-status.error { color: #b91c1c; }
@@ -301,7 +302,7 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
           .no-print, .app-sidebar, .app-topbar, nav, [data-testid="app-sidebar"] { display: none !important; }
           .fyoy-wrap { background: #fff; padding: 0; }
           .fyoy-sheet { box-shadow: none; max-width: none; padding: 0; }
-          .fyoy-table { font-size: 9px; min-width: 0; }
+          .fyoy-table { font-size: 8px; }
           body { background: #fff; }
         }
       `}</style>
