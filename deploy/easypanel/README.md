@@ -10,21 +10,53 @@ Panel: [Easypanel on 31.97.207.166](http://31.97.207.166:3000)
 
 ---
 
-## 1. Diagnosis (current production issue)
+## Deploy / rebuild (recommended)
 
-The live frontend still serves an **old CSP** that blocks the API:
+### Known issue
 
+Easypanel **Deploy** button / `services.app.deployService` RPC often **hangs or returns an empty reply**. That does not mean Git is wrong — use the **deploy webhook** instead.
+
+### One-command redeploy
+
+```bash
+export EASYPANEL_EMAIL='your-panel-login@example.com'
+export EASYPANEL_PASSWORD='...'
+chmod +x deploy/easypanel/redeploy.sh
+./deploy/easypanel/redeploy.sh both      # or: frontend | backend
 ```
-connect-src 'self'          ← blocks https://ecourt.demoapi.agrayianailabs.com
-script-src 'self'           ← blocks inline scripts (CRA + PostHog)
-style-src without fonts.googleapis.com
+
+The script:
+
+1. Logs into the panel API  
+2. Pins each service source to GitHub `main` (`/frontend/` or `/backend/`)  
+3. Triggers `GET /api/deploy/<service-token>` (reliable path)
+
+Wait **3–5 minutes** for Docker rebuild, then verify:
+
+```bash
+curl -sS https://ecourt.demoapi.agrayianailabs.com/api/health
+curl -sSI https://ecourt.demo.agrayianailabs.com/ | head -5
 ```
 
-**Symptom:** Public page shows *"Unable to load progress data"*.
+### Auto-deploy from GitHub
 
-**Backend is OK** — `GET https://ecourt.demoapi.agrayianailabs.com/api/public/progress` returns data and CORS already allows `https://ecourt.demo.agrayianailabs.com`.
+Both services should have **GitHub auto-deploy enabled** (`source.autoDeploy: true`) on `main`. After a push to `main`, the panel should rebuild without a manual click. If a push does not appear within ~5 minutes, run `./deploy/easypanel/redeploy.sh`.
 
-**Fix:** Redeploy **frontend** from the latest GitHub code with the env vars below.
+### Manual webhook (panel UI)
+
+Easypanel → service → **Deploy** / **Webhooks**: open the deploy URL (or copy token from service settings):
+
+```text
+http://31.97.207.166:3000/api/deploy/<service-deploy-token>
+```
+
+A `200` body of `Deploying...` means the rebuild started.
+
+---
+
+## 1. Diagnosis (historical CSP issue)
+
+Older frontend images served a CSP that blocked the API (`connect-src 'self'` only). Current `main` injects `CSP_API_ORIGIN` via nginx. If the public page shows *"Unable to load progress data"*, redeploy **frontend** with the env vars in §4.
 
 ---
 
