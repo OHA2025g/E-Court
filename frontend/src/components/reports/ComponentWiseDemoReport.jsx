@@ -6,19 +6,19 @@ import { useAuth } from "@/lib/auth";
 import { TID } from "@/lib/testIds";
 import DojEmblem from "@/components/reports/DojEmblem";
 
-/** Excel-like pastel RAG fills matching DoJ component-wise report */
+/** DoJ RAG fills (legend: ≥50 High / 50–20 Moderate / <20 Low). */
 const ROW_FILL = {
-  GREEN: "#A9D08E",
-  AMBER: "#FFE699",
-  RED: "#F4B183",
+  GREEN: "#92D050",
+  AMBER: "#FFC000",
+  RED: "#F8CBAD",
   NA: "#FFFFFF",
 };
 
 function reportRag(expPct) {
   if (expPct == null || Number.isNaN(Number(expPct))) return "RED";
   const p = Number(expPct);
-  if (p >= 80) return "GREEN";
-  if (p > 0) return "AMBER";
+  if (p >= 50) return "GREEN";
+  if (p >= 20) return "AMBER";
   return "RED";
 }
 
@@ -196,9 +196,15 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
           </table>
         )}
 
+        <div className="cwpf-legend" aria-label="Expenditure percentage legend">
+          <div className="cwpf-leg-item"><span className="cwpf-swatch green" /> ≥ 50% High</div>
+          <div className="cwpf-leg-item"><span className="cwpf-swatch amber" /> 50-20% Moderate</div>
+          <div className="cwpf-leg-item"><span className="cwpf-swatch red" /> &lt;20% Low</div>
+        </div>
+
         <p className="cwpf-footnote no-print">
           Budget = Fund Allocated (fallback Released) ₹ Cr · Expenditure = Fund Utilised · Row colour by expenditure %
-          (Green ≥80%, Amber &gt;0%, Red 0%). Physical figures roll up all indicators under each BRD component.
+          (Green ≥50%, Amber 20–50%, Red &lt;20%). Physical figures roll up all indicators under each BRD component.
         </p>
       </div>
 
@@ -242,6 +248,16 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
         .cwpf-table .col-num { text-align: center; font-variant-numeric: tabular-nums; }
         .cwpf-table tbody td.col-comp { font-weight: 400; }
         .cwpf-total td { background: #fff !important; font-weight: 700; }
+        .cwpf-legend {
+          display: flex; justify-content: center; align-items: center; flex-wrap: wrap;
+          gap: 20px; margin-top: 14px; font-family: Arial, Helvetica, sans-serif;
+          font-size: 12px; color: #000;
+        }
+        .cwpf-leg-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .cwpf-swatch { width: 28px; height: 14px; border: 1px solid #333; display: inline-block; flex-shrink: 0; }
+        .cwpf-swatch.green { background: #92D050; }
+        .cwpf-swatch.amber { background: #FFC000; }
+        .cwpf-swatch.red { background: #F8CBAD; }
         .cwpf-status { padding: 24px; text-align: center; color: #64748b; }
         .cwpf-status.error { color: #b91c1c; }
         .cwpf-status.warn { color: #92400e; background: #fffbeb; border: 1px solid #fcd34d; padding: 12px; margin-bottom: 12px; }
