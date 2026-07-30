@@ -60,7 +60,21 @@ ensure_main() {
   local svc="$1" panel_token="$2" path="$3"
   PANEL_TOKEN="$panel_token" SERVICE="$svc" SRC_PATH="$path" python3 - <<'PY'
 import json, os, urllib.request
-payload = {
+
+def post(path, payload):
+    req = urllib.request.Request(
+        os.environ["PANEL_URL"] + path,
+        data=json.dumps(payload).encode(),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + os.environ["PANEL_TOKEN"],
+        },
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        return resp.read()
+
+post("/api/rpc/services/app/updateSourceGithub", {
     "json": {
         "projectName": os.environ["PROJECT"],
         "serviceName": os.environ["SERVICE"],
@@ -69,19 +83,15 @@ payload = {
         "ref": "main",
         "path": os.environ["SRC_PATH"],
     }
-}
-req = urllib.request.Request(
-    os.environ["PANEL_URL"] + "/api/rpc/services/app/updateSourceGithub",
-    data=json.dumps(payload).encode(),
-    headers={
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + os.environ["PANEL_TOKEN"],
-    },
-    method="POST",
-)
-with urllib.request.urlopen(req, timeout=30) as resp:
-    resp.read()
-print(f"  source {os.environ['SERVICE']} → main ({os.environ['SRC_PATH']})")
+})
+# updateSourceGithub clears autoDeploy — turn it back on
+post("/api/rpc/services/app/enableGithubDeploy", {
+    "json": {
+        "projectName": os.environ["PROJECT"],
+        "serviceName": os.environ["SERVICE"],
+    }
+})
+print(f"  source {os.environ['SERVICE']} → main ({os.environ['SRC_PATH']}) + autoDeploy")
 PY
 }
 
