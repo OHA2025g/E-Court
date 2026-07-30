@@ -84,14 +84,17 @@ post("/api/rpc/services/app/updateSourceGithub", {
         "path": os.environ["SRC_PATH"],
     }
 })
-# updateSourceGithub clears autoDeploy — turn it back on
-post("/api/rpc/services/app/enableGithubDeploy", {
-    "json": {
-        "projectName": os.environ["PROJECT"],
-        "serviceName": os.environ["SERVICE"],
-    }
-})
-print(f"  source {os.environ['SERVICE']} → main ({os.environ['SRC_PATH']}) + autoDeploy")
+# updateSourceGithub may clear autoDeploy — re-enable when possible
+try:
+    post("/api/rpc/services/app/enableGithubDeploy", {
+        "json": {
+            "projectName": os.environ["PROJECT"],
+            "serviceName": os.environ["SERVICE"],
+        }
+    })
+    print(f"  source {os.environ['SERVICE']} → main ({os.environ['SRC_PATH']}) + autoDeploy")
+except Exception as e:
+    print(f"  source {os.environ['SERVICE']} → main ({os.environ['SRC_PATH']}) (autoDeploy warn: {e})")
 PY
 }
 
