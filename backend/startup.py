@@ -352,8 +352,28 @@ async def fix_outcome_kpi_names(db):
 
 
 async def seed_baseline(db, now_utc_fn: Callable, compute_rag_fn: Callable, safe_div_fn: Callable):
-    if await db.physical_entries.count_documents({}) > 0:
+    """Seed tracker baseline once. Do NOT re-seed after an admin flush empties collections.
+
+    Previously this ran whenever physical_entries was empty, so docker rebuild / backend
+    restart after Flush restored seed_data.json. A durable settings flag prevents that.
+    """
+    if os.environ.get("SKIP_BASELINE_SEED", "").lower() in ("1", "true", "yes"):
+        logger.info("SKIP_BASELINE_SEED set — skipping tracker baseline seed")
         return
+
+    done = await db.settings.find_one({"key": "baseline_seed_done"})
+    if done and done.get("value"):
+        return
+
+    # Data already present (e.g. restored volume) — mark complete, do not re-import
+    if await db.physical_entries.count_documents({}) > 0:
+        await db.settings.update_one(
+            {"key": "baseline_seed_done"},
+            {"$set": {"value": True}},
+            upsert=True,
+        )
+        return
+
     path = ROOT_DIR / "seed_data.json"
     if not path.exists():
         return
@@ -412,6 +432,18 @@ async def seed_baseline(db, now_utc_fn: Callable, compute_rag_fn: Callable, safe
             await db.outcome_entries.insert_many(out_docs, ordered=False)
         except Exception as e:
             logger.warning("Some outcome seed dupes ignored: %s", e)
+
+    await db.settings.update_one(
+        {"key": "baseline_seed_done"},
+        {"$set": {"value": True}},
+        upsert=True,
+    )
+    logger.info(
+        "Baseline seed completed (physical=%d financial=%d outcome=%d) — will not auto-reload after flush",
+        len(phys_docs),
+        len(fin_docs),
+        len(out_docs),
+    )
 
 
 async def seed_dpr(db, now_utc_fn: Callable):

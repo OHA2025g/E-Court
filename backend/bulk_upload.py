@@ -9,8 +9,20 @@ from rollup import entry_query_key_financial, entry_query_key_physical
 from security import validate_upload_bytes
 from outcome_excel import parse_outcome_excel_rows
 
+PHYSICAL_TEMPLATE_HEADERS = [
+    "High Court", "Component", "Sub-Component", "District", "Target", "Achieved", "Remarks",
+]
+FINANCIAL_TEMPLATE_HEADERS = [
+    "High Court", "Component", "District", "Fund Released", "Fund Utilized", "Remarks",
+]
+OUTCOME_TEMPLATE_HEADERS = [
+    "High Court", "Component", "Sub-Component", "Subject", "KPI ID",
+    "Granularity", "District", "Value", "Baseline", "Remarks",
+]
+PREVIEW_ROW_LIMIT = 500
 
-def parse_excel_rows(raw: bytes, filename: str, ext: str) -> tuple[list, list[str]]:
+
+def parse_excel_rows(raw: bytes, filename: str, ext: str) -> tuple[list, list[str], list[str]]:
     validate_upload_bytes(raw, ext)
     try:
         wb = openpyxl.load_workbook(io.BytesIO(raw), data_only=True)
@@ -20,15 +32,9 @@ def parse_excel_rows(raw: bytes, filename: str, ext: str) -> tuple[list, list[st
     rows = list(ws.iter_rows(values_only=True))
     if not rows:
         raise HTTPException(status_code=400, detail="Empty sheet")
-    header_row = [str(h or "").strip().lower() for h in rows[0]]
-
-    def col(name: str) -> int:
-        try:
-            return header_row.index(name)
-        except ValueError:
-            return -1
-
-    return rows, header_row
+    display_headers = [str(h or "").strip() for h in rows[0]]
+    header_row = [h.lower() for h in display_headers]
+    return rows, header_row, display_headers
 
 
 def col_idx(header_row: list, name: str) -> int:
@@ -46,6 +52,29 @@ def col_idx_any(header_row: list, *names: str) -> int:
     return -1
 
 
+def _excel_snapshot(row, display_headers: list[str], indices: list[int]) -> dict:
+    out = {}
+    for idx in indices:
+        if idx < 0 or idx >= len(display_headers):
+            continue
+        label = display_headers[idx] or f"Col{idx + 1}"
+        val = row[idx] if idx < len(row) else None
+        if val is None or (isinstance(val, str) and not str(val).strip()):
+            continue
+        out[label] = val
+    return out
+
+
+def _db_snapshot(existing, fields: list[str]):
+    if not existing:
+        return None
+    return {f: existing.get(f) for f in fields}
+
+
+def _column_mappings(pairs: list[tuple[str, str, str]]) -> list[dict]:
+    return [{"source": s, "target": t, "transform": x} for s, t, x in pairs]
+
+
 def bulk_response(
     inserted: int,
     updated: int,
@@ -54,10 +83,15 @@ def bulk_response(
     reporting_period: str,
     dry_run: bool,
     preview_rows: Optional[list] = None,
+    *,
+    tracker: Optional[str] = None,
+    template_headers: Optional[list] = None,
+    column_mappings: Optional[list] = None,
 ) -> dict:
     valid = (inserted + updated) if dry_run else (inserted + updated)
     return {
         "dry_run": dry_run,
+        "tracker": tracker,
         "reporting_period": reporting_period,
         "inserted": inserted if not dry_run else 0,
         "updated": updated if not dry_run else 0,
@@ -69,7 +103,10 @@ def bulk_response(
             "would_insert": inserted if dry_run else inserted,
             "would_update": updated if dry_run else updated,
         },
-        "rows": (preview_rows or [])[:200],
+        "template_headers": template_headers or [],
+        "column_mappings": column_mappings or [],
+        "rows": (preview_rows or [])[:PREVIEW_ROW_LIMIT],
+        "rows_total": len(preview_rows or []),
     }
 
 
@@ -88,7 +125,7 @@ async def process_physical_bulk(
     dry_run: bool = False,
 ) -> dict:
     ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else "xlsx"
-    rows, header_row = parse_excel_rows(raw, filename, ext)
+    rows, header_row, display_headers = parse_excel_rows(raw, filename, ext)
     col_hc = col_idx(header_row, "high court")
     col_comp = col_idx(header_row, "component")
     col_ind = col_idx_any(header_row, "sub-component", "sub component", "indicator")
@@ -102,10 +139,23 @@ async def process_physical_bulk(
             detail="Missing required columns: High Court, Component, Sub-Component, Achieved",
         )
 
+    col_maps = _column_mappings([
+        (display_headers[col_hc] if col_hc >= 0 else "High Court", "High Court", "identity"),
+        (display_headers[col_comp] if col_comp >= 0 else "Component", "Component", "identity"),
+        (display_headers[col_ind] if col_ind >= 0 else "Sub-Component", "Sub-Component", "alias: indicator"),
+        (display_headers[col_dist] if col_dist >= 0 else "District", "District", "optional"),
+        (display_headers[col_target] if col_target >= 0 else "Target", "Target", "Admin-only write"),
+        (display_headers[col_ach] if col_ach >= 0 else "Achieved", "Achieved", "numeric"),
+        (display_headers[col_rem] if col_rem >= 0 else "Remarks", "Remarks", "optional"),
+    ])
+    interest = [c for c in (col_hc, col_comp, col_ind, col_dist, col_target, col_ach, col_rem) if c >= 0]
+    db_fields = ["high_court", "component", "indicator", "district", "target", "achieved", "remarks", "percent", "rag"]
+
     inserted, updated, skipped, errors, preview_rows = 0, 0, 0, [], []
     for i, r in enumerate(rows[1:], start=2):
         if not r or all(c is None for c in r):
             continue
+        excel = _excel_snapshot(r, display_headers, interest)
         hc = str(r[col_hc] or "").strip()
         comp = str(r[col_comp] or "").strip()
         ind = str(r[col_ind] or "").strip()
@@ -116,24 +166,24 @@ async def process_physical_bulk(
         if not (hc and comp and ind):
             skipped += 1
             errors.append({"row": i, "error": "Missing HC/Component/Sub-Component"})
-            preview_rows.append({"row": i, "status": "error", "error": "Missing HC/Component/Sub-Component"})
+            preview_rows.append({"row": i, "status": "error", "action": None, "error": "Missing HC/Component/Sub-Component", "excel": excel, "template": None, "database": None, "data": None})
             continue
         if user["role"] == "CPC" and hc != user.get("high_court"):
             skipped += 1
             errors.append({"row": i, "error": f"Out of CPC scope (HC={hc})"})
-            preview_rows.append({"row": i, "status": "error", "error": f"Out of CPC scope (HC={hc})"})
+            preview_rows.append({"row": i, "status": "error", "action": None, "error": f"Out of CPC scope (HC={hc})", "excel": excel, "template": None, "database": None, "data": None})
             continue
         try:
             ach_val = None if ach in (None, "") else float(ach)
         except (ValueError, TypeError):
             skipped += 1
             errors.append({"row": i, "error": "Achieved is not numeric"})
-            preview_rows.append({"row": i, "status": "error", "error": "Achieved is not numeric"})
+            preview_rows.append({"row": i, "status": "error", "action": None, "error": "Achieved is not numeric", "excel": excel, "template": None, "database": None, "data": None})
             continue
         if ach_val is not None and ach_val < 0:
             skipped += 1
             errors.append({"row": i, "error": "Achieved cannot be negative"})
-            preview_rows.append({"row": i, "status": "error", "error": "Achieved cannot be negative"})
+            preview_rows.append({"row": i, "status": "error", "action": None, "error": "Achieved cannot be negative", "excel": excel, "template": None, "database": None, "data": None})
             continue
         target_val = None
         if col_target >= 0 and user["role"] == "Admin":
@@ -151,7 +201,16 @@ async def process_physical_bulk(
         percent = safe_div_fn(ach_val, eff_target)
         rag = compute_rag_fn(percent, thresholds)
         row_data = {**q, "target": eff_target, "achieved": ach_val, "percent": percent, "rag": rag, "remarks": remarks_val}
-        preview_rows.append({"row": i, "status": "ok", "data": row_data, "error": None})
+        template = {
+            "High Court": hc, "Component": comp, "Sub-Component": ind,
+            "District": district or "", "Target": eff_target, "Achieved": ach_val,
+            "Remarks": remarks_val or "",
+        }
+        preview_rows.append({
+            "row": i, "status": "ok", "action": "update" if existing else "insert",
+            "data": row_data, "excel": excel, "template": template,
+            "database": _db_snapshot(existing, db_fields), "error": None,
+        })
 
         if dry_run:
             if existing:
@@ -174,7 +233,10 @@ async def process_physical_bulk(
             await audit_fn(user, "physical", "bulk_create", str(res.inserted_id),
                            [{"field": "entry", "old": None, "new": serialize_fn(doc)}], hc, reporting_period)
 
-    return bulk_response(inserted, updated, skipped, errors, reporting_period, dry_run, preview_rows)
+    return bulk_response(
+        inserted, updated, skipped, errors, reporting_period, dry_run, preview_rows,
+        tracker="physical", template_headers=PHYSICAL_TEMPLATE_HEADERS, column_mappings=col_maps,
+    )
 
 
 async def process_financial_bulk(
@@ -192,7 +254,7 @@ async def process_financial_bulk(
     dry_run: bool = False,
 ) -> dict:
     ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else "xlsx"
-    rows, header_row = parse_excel_rows(raw, filename, ext)
+    rows, header_row, display_headers = parse_excel_rows(raw, filename, ext)
     col_hc = col_idx(header_row, "high court")
     col_comp = col_idx(header_row, "component")
     col_rel = col_idx(header_row, "fund released")
@@ -202,10 +264,22 @@ async def process_financial_bulk(
     if min(col_hc, col_comp, col_rel, col_util) < 0:
         raise HTTPException(status_code=400, detail="Missing required columns: High Court, Component, Fund Released, Fund Utilized")
 
+    col_maps = _column_mappings([
+        (display_headers[col_hc] if col_hc >= 0 else "High Court", "High Court", "identity"),
+        (display_headers[col_comp] if col_comp >= 0 else "Component", "Component", "identity"),
+        (display_headers[col_dist] if col_dist >= 0 else "District", "District", "optional"),
+        (display_headers[col_rel] if col_rel >= 0 else "Fund Released", "Fund Released", "₹ Cr; blank preserves DB"),
+        (display_headers[col_util] if col_util >= 0 else "Fund Utilized", "Fund Utilized", "₹ Cr; blank preserves DB"),
+        (display_headers[col_rem] if col_rem >= 0 else "Remarks", "Remarks", "optional"),
+    ])
+    interest = [c for c in (col_hc, col_comp, col_dist, col_rel, col_util, col_rem) if c >= 0]
+    db_fields = ["high_court", "component", "district", "fund_released", "fund_utilized", "remarks", "utilisation_percent", "rag"]
+
     inserted, updated, skipped, errors, preview_rows = 0, 0, 0, [], []
     for i, r in enumerate(rows[1:], start=2):
         if not r or all(c is None for c in r):
             continue
+        excel = _excel_snapshot(r, display_headers, interest)
         hc = str(r[col_hc] or "").strip()
         comp = str(r[col_comp] or "").strip()
         district = None
@@ -214,7 +288,7 @@ async def process_financial_bulk(
         if not (hc and comp):
             skipped += 1
             errors.append({"row": i, "error": "Missing HC/Component"})
-            preview_rows.append({"row": i, "status": "error", "error": "Missing HC/Component"})
+            preview_rows.append({"row": i, "status": "error", "action": None, "error": "Missing HC/Component", "excel": excel, "template": None, "database": None, "data": None})
             continue
         if user["role"] == "CPC" and hc != user.get("high_court"):
             skipped += 1
@@ -243,7 +317,15 @@ async def process_financial_bulk(
         rag = compute_rag_fn(utilisation, thresholds)
         row_data = {**q, "fund_released": released, "fund_utilized": utilized,
                     "utilisation_percent": utilisation, "variance": variance, "rag": rag, "remarks": remarks_val}
-        preview_rows.append({"row": i, "status": "ok", "data": row_data, "error": None})
+        template = {
+            "High Court": hc, "Component": comp, "District": district or "",
+            "Fund Released": released, "Fund Utilized": utilized, "Remarks": remarks_val or "",
+        }
+        preview_rows.append({
+            "row": i, "status": "ok", "action": "update" if existing else "insert",
+            "data": row_data, "excel": excel, "template": template,
+            "database": _db_snapshot(existing, db_fields), "error": None,
+        })
 
         if dry_run:
             if existing:
@@ -265,7 +347,10 @@ async def process_financial_bulk(
             await audit_fn(user, "financial", "bulk_create", str(res.inserted_id),
                            [{"field": "entry", "old": None, "new": serialize_fn(doc)}], hc, reporting_period)
 
-    return bulk_response(inserted, updated, skipped, errors, reporting_period, dry_run, preview_rows)
+    return bulk_response(
+        inserted, updated, skipped, errors, reporting_period, dry_run, preview_rows,
+        tracker="financial", template_headers=FINANCIAL_TEMPLATE_HEADERS, column_mappings=col_maps,
+    )
 
 
 async def process_outcome_bulk(
@@ -281,14 +366,14 @@ async def process_outcome_bulk(
     dry_run: bool = False,
 ) -> dict:
     ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else "xlsx"
-    rows, header_row = parse_excel_rows(raw, filename, ext)
+    rows, header_row, display_headers = parse_excel_rows(raw, filename, ext)
     phase4 = col_idx(header_row, "kpid") >= 0 or (
         col_idx(header_row, "components") >= 0 and col_idx_any(header_row, "sub-component", "sub component") >= 0
     )
 
     if phase4:
         return await _process_outcome_phase4_bulk(
-            db, rows, reporting_period, user, safe_div_fn, audit_fn, serialize_fn, now_utc_fn, dry_run,
+            db, rows, display_headers, reporting_period, user, safe_div_fn, audit_fn, serialize_fn, now_utc_fn, dry_run,
         )
 
     col_hc = col_idx(header_row, "high court")
@@ -299,13 +384,34 @@ async def process_outcome_bulk(
     col_base = col_idx(header_row, "baseline")
     col_rem = col_idx(header_row, "remarks")
     col_dist = col_idx(header_row, "district")
+    col_comp = col_idx(header_row, "component")
+    col_subc = col_idx_any(header_row, "sub-component", "sub component")
     if min(col_hc, col_sub, col_kpi, col_gran, col_val) < 0:
         raise HTTPException(status_code=400, detail="Missing required columns: High Court, Subject, KPI ID, Granularity, Value")
+
+    col_maps = _column_mappings([
+        (display_headers[col_hc] if col_hc >= 0 else "High Court", "High Court", "identity"),
+        (display_headers[col_comp] if col_comp >= 0 else "Component", "Component", "from KPI master if blank"),
+        (display_headers[col_subc] if col_subc >= 0 else "Sub-Component", "Sub-Component", "from KPI master if blank"),
+        (display_headers[col_sub] if col_sub >= 0 else "Subject", "Subject", "identity"),
+        (display_headers[col_kpi] if col_kpi >= 0 else "KPI ID", "KPI ID", "identity"),
+        (display_headers[col_gran] if col_gran >= 0 else "Granularity", "Granularity", "identity"),
+        (display_headers[col_dist] if col_dist >= 0 else "District", "District", "required if District gran."),
+        (display_headers[col_val] if col_val >= 0 else "Value", "Value", "numeric"),
+        (display_headers[col_base] if col_base >= 0 else "Baseline", "Baseline", "optional"),
+        (display_headers[col_rem] if col_rem >= 0 else "Remarks", "Remarks", "optional"),
+    ])
+    interest = [c for c in (col_hc, col_comp, col_subc, col_sub, col_kpi, col_gran, col_dist, col_val, col_base, col_rem) if c >= 0]
+    db_fields = [
+        "high_court", "component", "sub_component", "subject", "kpi_id",
+        "granularity", "district", "value", "baseline", "remarks",
+    ]
 
     inserted, updated, skipped, errors, preview_rows = 0, 0, 0, [], []
     for i, r in enumerate(rows[1:], start=2):
         if not r or all(c is None for c in r):
             continue
+        excel = _excel_snapshot(r, display_headers, interest)
         hc = str(r[col_hc] or "").strip()
         subject = str(r[col_sub] or "").strip()
         kpi_id = str(r[col_kpi] or "").strip()
@@ -317,7 +423,7 @@ async def process_outcome_bulk(
             if not district:
                 skipped += 1
                 errors.append({"row": i, "error": "District required for District granularity"})
-                preview_rows.append({"row": i, "status": "error", "error": "District required for District granularity"})
+                preview_rows.append({"row": i, "status": "error", "action": None, "error": "District required for District granularity", "excel": excel, "template": None, "database": None, "data": None})
                 continue
         if not (subject and kpi_id and granularity):
             skipped += 1
@@ -331,7 +437,7 @@ async def process_outcome_bulk(
         if not kpi_meta:
             skipped += 1
             errors.append({"row": i, "error": f"Unknown KPI {subject}/{kpi_id}"})
-            preview_rows.append({"row": i, "status": "error", "error": f"Unknown KPI {subject}/{kpi_id}"})
+            preview_rows.append({"row": i, "status": "error", "action": None, "error": f"Unknown KPI {subject}/{kpi_id}", "excel": excel, "template": None, "database": None, "data": None})
             continue
         try:
             value = None if r[col_val] in (None, "") else float(r[col_val])
@@ -363,7 +469,23 @@ async def process_outcome_bulk(
             "computed_percent": computed,
             "remarks": remarks_val,
         }
-        preview_rows.append({"row": i, "status": "ok", "data": row_data, "error": None})
+        template = {
+            "High Court": hc,
+            "Component": kpi_meta.get("component") or "",
+            "Sub-Component": kpi_meta.get("sub_component") or "",
+            "Subject": subject,
+            "KPI ID": kpi_id,
+            "Granularity": granularity,
+            "District": district or "",
+            "Value": value,
+            "Baseline": baseline if baseline is not None else "",
+            "Remarks": remarks_val or "",
+        }
+        preview_rows.append({
+            "row": i, "status": "ok", "action": "update" if existing else "insert",
+            "data": row_data, "excel": excel, "template": template,
+            "database": _db_snapshot(existing, db_fields), "error": None,
+        })
 
         if dry_run:
             if existing:
@@ -385,12 +507,16 @@ async def process_outcome_bulk(
             await audit_fn(user, "outcome", "bulk_create", str(res.inserted_id),
                            [{"field": "entry", "old": None, "new": serialize_fn(doc)}], hc, reporting_period)
 
-    return bulk_response(inserted, updated, skipped, errors, reporting_period, dry_run, preview_rows)
+    return bulk_response(
+        inserted, updated, skipped, errors, reporting_period, dry_run, preview_rows,
+        tracker="outcome", template_headers=OUTCOME_TEMPLATE_HEADERS, column_mappings=col_maps,
+    )
 
 
 async def _process_outcome_phase4_bulk(
     db,
     rows: list,
+    display_headers: list,
     reporting_period: str,
     user: dict,
     safe_div_fn: Callable,
@@ -404,12 +530,34 @@ async def _process_outcome_phase4_bulk(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    col_maps = _column_mappings([
+        ("High Court", "High Court", "forward-fill"),
+        ("Components / Sub-Component", "Subject / Component / Sub-Component", "OUTCOME_SUBJECT_MAP"),
+        ("KPID / KPI ID", "KPI ID", "normalize"),
+        ("Granularity", "Granularity", "default District"),
+        ("Value / OUTCOME*", "Value", "numeric"),
+    ])
+    db_fields = [
+        "high_court", "component", "sub_component", "subject", "kpi_id",
+        "granularity", "district", "value", "baseline", "remarks",
+    ]
+
     inserted, updated, skipped, errors, preview_rows = 0, 0, 0, [], []
     for i, parsed in enumerate(parsed_rows, start=2):
         hc = parsed["high_court"]
         subject = parsed["subject"]
         kpi_id = parsed["kpi_id"]
         granularity = parsed.get("granularity") or "District"
+        excel = {
+            "High Court": hc,
+            "Components": parsed.get("component"),
+            "Sub-Component": parsed.get("sub_component"),
+            "Subject": subject,
+            "KPI ID": kpi_id,
+            "KPI": parsed.get("kpi"),
+            "Granularity": granularity,
+            "Value": parsed.get("value"),
+        }
         if user["role"] == "CPC" and hc and hc != user.get("high_court"):
             skipped += 1
             errors.append({"row": i, "error": f"Out of CPC scope (HC={hc})"})
@@ -418,7 +566,7 @@ async def _process_outcome_phase4_bulk(
         if not kpi_meta:
             skipped += 1
             errors.append({"row": i, "error": f"Unknown KPI {subject}/{kpi_id}"})
-            preview_rows.append({"row": i, "status": "error", "error": f"Unknown KPI {subject}/{kpi_id}"})
+            preview_rows.append({"row": i, "status": "error", "action": None, "error": f"Unknown KPI {subject}/{kpi_id}", "excel": excel, "template": None, "database": None, "data": None})
             continue
         value = parsed.get("value")
         outcome_type = kpi_meta.get("outcome_type", "Absolute")
@@ -445,7 +593,23 @@ async def _process_outcome_phase4_bulk(
             "computed_percent": None,
             "remarks": None,
         }
-        preview_rows.append({"row": i, "status": "ok", "data": row_data, "error": None})
+        template = {
+            "High Court": hc,
+            "Component": row_data.get("component") or "",
+            "Sub-Component": row_data.get("sub_component") or "",
+            "Subject": subject,
+            "KPI ID": kpi_id,
+            "Granularity": granularity,
+            "District": "",
+            "Value": value,
+            "Baseline": "",
+            "Remarks": "",
+        }
+        preview_rows.append({
+            "row": i, "status": "ok", "action": "update" if existing else "insert",
+            "data": row_data, "excel": excel, "template": template,
+            "database": _db_snapshot(existing, db_fields), "error": None,
+        })
 
         if dry_run:
             if existing:
@@ -467,4 +631,7 @@ async def _process_outcome_phase4_bulk(
             await audit_fn(user, "outcome", "bulk_create", str(res.inserted_id),
                            [{"field": "entry", "old": None, "new": serialize_fn(doc)}], hc, reporting_period)
 
-    return bulk_response(inserted, updated, skipped, errors, reporting_period, dry_run, preview_rows)
+    return bulk_response(
+        inserted, updated, skipped, errors, reporting_period, dry_run, preview_rows,
+        tracker="outcome", template_headers=OUTCOME_TEMPLATE_HEADERS, column_mappings=col_maps,
+    )

@@ -2,30 +2,10 @@ import React, { useRef, useState } from "react";
 import { api, formatApiError } from "@/lib/api";
 import { toast } from "sonner";
 import { FileArrowDown, UploadSimple } from "@phosphor-icons/react";
-
-function previewRowLabel(tracker, row) {
-  const d = row.data || {};
-  if (row.status === "error") return row.error || "Invalid row";
-  if (tracker === "physical") {
-    return `${d.high_court} · ${d.component} · ${d.indicator}${d.district ? ` · ${d.district}` : ""}`;
-  }
-  if (tracker === "financial") {
-    return `${d.high_court} · ${d.component}${d.district ? ` · ${d.district}` : ""}`;
-  }
-  const dist = d.district ? ` · ${d.district}` : "";
-  return `${d.subject || "—"} · ${d.kpi_id || "—"} · ${d.granularity || "—"}${dist}`;
-}
-
-function previewRowDetail(tracker, row) {
-  const d = row.data || {};
-  if (row.status === "error") return "";
-  if (tracker === "physical") return `Achieved: ${d.achieved ?? "—"} / Target: ${d.target ?? "—"}`;
-  if (tracker === "financial") return `Released: ${d.fund_released ?? "—"} · Utilised: ${d.fund_utilized ?? "—"}`;
-  return `Value: ${d.value ?? "—"}`;
-}
+import BulkMappingPreviewModal from "@/components/tracker/BulkMappingPreviewModal";
 
 /**
- * Shared bulk upload with dry-run preview and confirm step.
+ * Shared bulk upload with dry-run mapping popup (Stage 1 + Stage 2) and confirm.
  */
 export default function BulkUploadPanel({ tracker, period, canEdit, templateUrl, onComplete }) {
   const inputRef = useRef(null);
@@ -94,11 +74,12 @@ export default function BulkUploadPanel({ tracker, period, canEdit, templateUrl,
     setPreviewToken(null);
   }
 
-  const previewRows = preview?.rows || [];
-
   return (
     <div className="p-4 space-y-3 text-sm">
-      <p className="text-slate-500 text-xs">Upload Excel after selecting a reporting month. Preview validates rows before commit.</p>
+      <p className="text-slate-500 text-xs">
+        Upload Excel after selecting a reporting month. A mapping popup shows Stage 1 (Excel → template)
+        and Stage 2 (Excel/template → database) before you confirm.
+      </p>
       <a href={templateUrl} target="_blank" rel="noreferrer"
         className="w-full inline-flex items-center justify-center gap-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-sm uppercase tracking-wider text-xs">
         <FileArrowDown size={14} /> Download Excel template
@@ -108,64 +89,17 @@ export default function BulkUploadPanel({ tracker, period, canEdit, templateUrl,
         <input ref={inputRef} type="file" accept=".xlsx,.xls" disabled={!canEdit || busy || !period} onChange={onFileSelect} className="hidden" />
       </label>
 
-      {preview && (
-        <div className="border border-slate-200 rounded-sm p-3 space-y-2 bg-slate-50">
-          <div className="text-xs font-semibold text-slate-700">Preview (dry-run)</div>
-          <div className="grid grid-cols-2 gap-2 text-[11px]">
-            <span>Valid rows: <strong>{preview.summary?.valid ?? 0}</strong></span>
-            <span>Errors: <strong className="text-red-600">{preview.summary?.invalid ?? preview.skipped ?? 0}</strong></span>
-            <span>Would insert: <strong>{preview.summary?.would_insert ?? 0}</strong></span>
-            <span>Would update: <strong>{preview.summary?.would_update ?? 0}</strong></span>
-          </div>
-
-          {previewRows.length > 0 && (
-            <div className="max-h-40 overflow-y-auto border border-slate-200 rounded-sm bg-white">
-              <table className="w-full text-[10px]">
-                <thead className="bg-slate-100 sticky top-0">
-                  <tr>
-                    <th className="text-left px-2 py-1 font-medium">Row</th>
-                    <th className="text-left px-2 py-1 font-medium">Status</th>
-                    <th className="text-left px-2 py-1 font-medium">Details</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {previewRows.slice(0, 50).map((row, i) => (
-                    <tr key={i} className={row.status === "error" ? "bg-red-50 text-red-800" : "bg-emerald-50/60 text-slate-800"}>
-                      <td className="px-2 py-1 tabular-nums">{row.row}</td>
-                      <td className="px-2 py-1 uppercase tracking-wider">{row.status === "error" ? "Error" : "OK"}</td>
-                      <td className="px-2 py-1">
-                        <div>{previewRowLabel(tracker, row)}</div>
-                        {row.status !== "error" && (
-                          <div className="text-slate-500">{previewRowDetail(tracker, row)}</div>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {(preview.errors?.length > 0) && !previewRows.length && (
-            <ul className="text-[10px] text-red-700 max-h-24 overflow-y-auto">
-              {preview.errors.slice(0, 8).map((e, i) => (
-                <li key={i}>Row {e.row}: {e.error}</li>
-              ))}
-            </ul>
-          )}
-          <div className="flex gap-2 pt-1">
-            <button type="button" disabled={busy || !previewToken || (preview.summary?.valid ?? 0) === 0} onClick={confirmImport}
-              className="flex-1 bg-emerald-700 hover:bg-emerald-800 disabled:bg-slate-400 text-white px-3 py-1.5 rounded-sm text-xs uppercase tracking-wider">
-              Confirm import
-            </button>
-            <button type="button" onClick={cancelPreview}
-              className="px-3 py-1.5 border border-slate-300 rounded-sm text-xs uppercase tracking-wider">
-              Cancel
-            </button>
-          </div>
-          <p className="text-[10px] text-slate-500">Preview is cached for 30 minutes — confirm without re-uploading the file.</p>
-        </div>
-      )}
+      <BulkMappingPreviewModal
+        open={Boolean(preview)}
+        onOpenChange={(open) => { if (!open) cancelPreview(); }}
+        tracker={tracker}
+        period={period}
+        preview={preview}
+        busy={busy}
+        canConfirm={Boolean(previewToken) && (preview?.summary?.valid ?? 0) > 0}
+        onConfirm={confirmImport}
+        onCancel={cancelPreview}
+      />
     </div>
   );
 }

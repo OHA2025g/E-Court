@@ -35,3 +35,14 @@ test_reports/
 etl_output/
 *.swp
 *.swo
+
+# --- Excel / spreadsheet artefacts (source data + ETL + fixtures) ---
+*.xlsx
+*.xls
+*.xlsm
+
+# --- Local dumps / backups / test artefacts ---
+mongo_dump/
+pmis-backup-*.json
+frontend/test-results/
+playwright-report/

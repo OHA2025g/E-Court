@@ -263,12 +263,13 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
           width: 100%; max-width: none; margin: 0; overflow: visible;
         }
         .fyoy-header {
-          display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
-          margin-bottom: 10px;
+          display: flex; justify-content: space-between; align-items: center; gap: 16px;
+          margin-bottom: 10px; flex-wrap: nowrap;
         }
         .fyoy-title {
           margin: 0; font-family: Georgia, "Times New Roman", serif;
-          font-size: 22px; font-weight: 700; color: #000; line-height: 1.25; max-width: 560px;
+          font-size: 20px; font-weight: 700; color: #000; line-height: 1.2;
+          white-space: nowrap; max-width: none; flex: 1 1 auto; min-width: 0;
         }
         .fyoy-header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
         .fyoy-legend {

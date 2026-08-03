@@ -24,6 +24,9 @@ services:
     build:
       context: ./backend
     restart: unless-stopped
+    ports:
+      # Host access for local CRA (`yarn start` → REACT_APP_BACKEND_URL=http://localhost:8001)
+      - "8001:8001"
     env_file:
       - .env
     environment:
@@ -50,7 +53,8 @@ services:
       PASSWORD_MAX_AGE_DAYS: "90"
       ADMIN_IP_ALLOWLIST_ENABLED: ${ADMIN_IP_ALLOWLIST_ENABLED:-false}
       ADMIN_IP_ALLOWLIST: ${ADMIN_IP_ALLOWLIST:-}
-      REQUIRE_2FA_ROLES: Admin
+      REQUIRE_2FA_ROLES: ${REQUIRE_2FA_ROLES:-Admin}
+      DISABLE_2FA: ${DISABLE_2FA:-true}
       MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
       MISTRAL_MODEL: ${MISTRAL_MODEL:-mistral-small-latest}
       DASHBOARD_INSIGHTS_ENABLED: ${DASHBOARD_INSIGHTS_ENABLED:-false}

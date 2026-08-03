@@ -38,9 +38,25 @@ curl -sS https://ecourt.demoapi.agrayianailabs.com/api/health
 curl -sSI https://ecourt.demo.agrayianailabs.com/ | head -5
 ```
 
-### Auto-deploy from GitHub
+### Local-first workflow (auto-deploy OFF)
 
-Both services should have **GitHub auto-deploy enabled** (`source.autoDeploy: true`) on `main`. After a push to `main`, the panel should rebuild without a manual click. If a push does not appear within ~5 minutes, run `./deploy/easypanel/redeploy.sh`.
+Production **GitHub auto-deploy is disabled** so pushes to `main` do **not** rebuild the live site. Develop and test locally first; deploy only when you choose.
+
+```bash
+# Confirm / re-apply disconnect
+export EASYPANEL_EMAIL='...'
+export EASYPANEL_PASSWORD='...'
+./deploy/easypanel/disconnect-autodeploy.sh
+
+# Local app (API on :8001, UI on :5182 via compose — or CRA on :3000)
+docker compose up -d --build
+# or: cd frontend && yarn start   # uses frontend/.env → http://localhost:8001
+
+# When ready to ship to production (manual only)
+./deploy/easypanel/redeploy.sh both
+```
+
+`redeploy.sh` keeps auto-deploy **off** unless you explicitly set `EASYPANEL_ENABLE_AUTODEPLOY=1`.
 
 ### Manual webhook (panel UI)
 

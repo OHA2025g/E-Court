@@ -84,17 +84,30 @@ post("/api/rpc/services/app/updateSourceGithub", {
         "path": os.environ["SRC_PATH"],
     }
 })
-# updateSourceGithub may clear autoDeploy — re-enable when possible
-try:
-    post("/api/rpc/services/app/enableGithubDeploy", {
-        "json": {
-            "projectName": os.environ["PROJECT"],
-            "serviceName": os.environ["SERVICE"],
-        }
-    })
-    print(f"  source {os.environ['SERVICE']} → main ({os.environ['SRC_PATH']}) + autoDeploy")
-except Exception as e:
-    print(f"  source {os.environ['SERVICE']} → main ({os.environ['SRC_PATH']}) (autoDeploy warn: {e})")
+# Keep auto-deploy OFF by default (local-first workflow). Opt in with:
+#   EASYPANEL_ENABLE_AUTODEPLOY=1 ./deploy/easypanel/redeploy.sh …
+if os.environ.get("EASYPANEL_ENABLE_AUTODEPLOY", "").strip() in ("1", "true", "yes"):
+    try:
+        post("/api/rpc/services/app/enableGithubDeploy", {
+            "json": {
+                "projectName": os.environ["PROJECT"],
+                "serviceName": os.environ["SERVICE"],
+            }
+        })
+        print(f"  source {os.environ['SERVICE']} → main ({os.environ['SRC_PATH']}) + autoDeploy")
+    except Exception as e:
+        print(f"  source {os.environ['SERVICE']} → main ({os.environ['SRC_PATH']}) (autoDeploy warn: {e})")
+else:
+    try:
+        post("/api/rpc/services/app/disableGithubDeploy", {
+            "json": {
+                "projectName": os.environ["PROJECT"],
+                "serviceName": os.environ["SERVICE"],
+            }
+        })
+    except Exception:
+        pass
+    print(f"  source {os.environ['SERVICE']} → main ({os.environ['SRC_PATH']}) (autoDeploy off)")
 PY
 }
 

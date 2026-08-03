@@ -1,6 +1,6 @@
 """Bulk upload, init-period, and Excel template routes."""
 import io
-from typing import Callable, Optional
+from typing import Callable, Literal, Optional
 
 import xlsxwriter
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
@@ -15,6 +15,12 @@ from period_policy import assert_editable
 
 MAX_FILE_BYTES = 10 * 1024 * 1024
 
+TRACKER_COLLECTIONS = {
+    "physical": "physical_entries",
+    "financial": "financial_entries",
+    "outcome": "outcome_entries",
+}
+
 
 class InitPeriodIn(BaseModel):
     high_court: str
@@ -26,6 +32,13 @@ class OutcomeInitPeriodIn(BaseModel):
     high_court: str
     reporting_period: str
     subject: Optional[str] = None
+
+
+class FlushTrackerIn(BaseModel):
+    tracker: Literal["physical", "financial", "outcome"]
+    scope: Literal["period", "all"] = "period"
+    reporting_period: Optional[str] = None
+    confirm: str  # must equal tracker id, e.g. "physical"
 
 
 def register_bulk_routes(
@@ -142,6 +155,73 @@ def register_bulk_routes(
                        [{"field": "created", "old": None, "new": result["created"]}],
                        body.high_court, body.reporting_period)
         return result
+
+    @api.post("/bulk/flush")
+    async def bulk_flush_tracker(
+        body: FlushTrackerIn,
+        user: dict = Depends(require_fully_authenticated),
+    ):
+        """Admin-only: delete tracker entries for one period or the entire tracker."""
+        if user.get("role") != "Admin":
+            raise HTTPException(status_code=403, detail=ADMIN_ONLY_CREATE_DETAIL)
+        tracker = body.tracker.strip().lower()
+        if tracker not in TRACKER_COLLECTIONS:
+            raise HTTPException(status_code=400, detail="Invalid tracker")
+        if (body.confirm or "").strip().lower() != tracker:
+            raise HTTPException(
+                status_code=400,
+                detail=f'Type confirm="{tracker}" to flush this tracker',
+            )
+        if body.scope == "period":
+            if not body.reporting_period:
+                raise HTTPException(status_code=400, detail="reporting_period required when scope=period")
+            today = now_utc_fn().strftime("%Y-%m")
+            if body.reporting_period > today:
+                raise HTTPException(status_code=400, detail="Reporting month cannot be in the future")
+            query = {"reporting_period": body.reporting_period}
+        else:
+            query = {}
+
+        coll = TRACKER_COLLECTIONS[tracker]
+        before = await db[coll].count_documents(query)
+        res = await db[coll].delete_many(query)
+        deleted = int(res.deleted_count or 0)
+
+        # Drop any pending bulk preview cache for this tracker/period
+        preview_q = {"tracker": tracker}
+        if body.scope == "period" and body.reporting_period:
+            preview_q["reporting_period"] = body.reporting_period
+        await db.bulk_previews.delete_many(preview_q)
+
+        # Prevent startup seed_baseline from reloading seed_data.json after flush + restart
+        await db.settings.update_one(
+            {"key": "baseline_seed_done"},
+            {"$set": {"value": True}},
+            upsert=True,
+        )
+
+        await audit_fn(
+            user,
+            tracker,
+            "flush",
+            body.reporting_period or "all",
+            [
+                {"field": "scope", "old": None, "new": body.scope},
+                {"field": "deleted", "old": before, "new": deleted},
+                {"field": "collection", "old": None, "new": coll},
+            ],
+            None,
+            body.reporting_period if body.scope == "period" else None,
+        )
+        return {
+            "ok": True,
+            "tracker": tracker,
+            "collection": coll,
+            "scope": body.scope,
+            "reporting_period": body.reporting_period if body.scope == "period" else None,
+            "deleted": deleted,
+            "matched_before": before,
+        }
 
     @api.post("/physical/bulk")
     async def physical_bulk(

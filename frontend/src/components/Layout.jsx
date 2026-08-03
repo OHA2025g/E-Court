@@ -9,7 +9,7 @@ import {
   House, GridFour, CurrencyInr, Target, ChartBar,
   Database, ClipboardText, Notebook, PlugCharging, UsersThree,
   SignOut, Scales, UserCircle, FloppyDisk, PaperPlaneTilt, Clock, Scroll,
-  Moon, Sun, Globe, UploadSimple,
+  Moon, Sun, Globe, UploadSimple, ArrowsLeftRight,
 } from "@phosphor-icons/react";
 import NotificationBell from "@/components/NotificationBell";
 import SecurityPolicyBanner from "@/components/SecurityPolicyBanner";
@@ -27,6 +27,7 @@ const NAV = [
   { to: "/dpr", labelKey: "nav.dpr", icon: Notebook, test: TID.navDpr, roles: ["Admin","Viewer"] },
   { to: "/ijuris", labelKey: "nav.ijuris", icon: PlugCharging, test: TID.navIjuris, roles: ["Admin"] },
   { to: "/bulk-upload", labelKey: "nav.bulkUpload", icon: UploadSimple, test: TID.navBulkUpload, roles: ["Admin"] },
+  { to: "/etl-convert", labelKey: "nav.etlConvert", icon: ArrowsLeftRight, test: TID.navEtlConvert, roles: ["Admin"] },
   { to: "/users", labelKey: "nav.users", icon: UsersThree, test: TID.navUsers, roles: ["Admin"] },
   { to: "/backup", labelKey: "nav.backup", icon: FloppyDisk, test: "nav-backup", roles: ["Admin"] },
   { to: "/schedules", labelKey: "nav.schedules", icon: Clock, test: "nav-schedules", roles: ["Admin"] },

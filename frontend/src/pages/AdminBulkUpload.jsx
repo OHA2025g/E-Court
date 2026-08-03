@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { UploadSimple, FileXls, Info } from "@phosphor-icons/react";
+import { UploadSimple, FileXls, Info, Trash } from "@phosphor-icons/react";
 import Card from "@/components/Card";
 import BulkUploadPanel from "@/components/tracker/BulkUploadPanel";
 import { SelectField } from "@/pages/PhysicalTracker";
-import { api, BACKEND_URL } from "@/lib/api";
+import { api, BACKEND_URL, formatApiError } from "@/lib/api";
 import { TID } from "@/lib/testIds";
+import { toast } from "sonner";
 
 const TRACKERS = [
   {
@@ -42,6 +43,10 @@ export default function AdminBulkUpload() {
   const qc = useQueryClient();
   const [trackerId, setTrackerId] = useState("physical");
   const [period, setPeriod] = useState("");
+  const [flushScope, setFlushScope] = useState("period"); // period | all
+  const [flushConfirm, setFlushConfirm] = useState("");
+  const [flushBusy, setFlushBusy] = useState(false);
+  const [showFlush, setShowFlush] = useState(false);
 
   const periods = useQuery({
     queryKey: ["periods"],
@@ -58,7 +63,6 @@ export default function AdminBulkUpload() {
     [periods.data],
   );
 
-  // Default to latest period once loaded
   useEffect(() => {
     if (!period && periodOptions.length) {
       const preferred =
@@ -73,6 +77,39 @@ export default function AdminBulkUpload() {
     tracker.queryKeys.forEach((key) => {
       qc.invalidateQueries({ queryKey: key });
     });
+  }
+
+  async function handleFlush() {
+    if (flushConfirm.trim().toLowerCase() !== trackerId) {
+      toast.error(`Type "${trackerId}" to confirm flush`);
+      return;
+    }
+    if (flushScope === "period" && !period) {
+      toast.error("Select a reporting period first");
+      return;
+    }
+    setFlushBusy(true);
+    try {
+      const r = await api.post("/bulk/flush", {
+        tracker: trackerId,
+        scope: flushScope,
+        reporting_period: flushScope === "period" ? period : null,
+        confirm: trackerId,
+      });
+      const d = r.data;
+      toast.success(
+        flushScope === "period"
+          ? `Flushed ${d.deleted} ${tracker.label} row(s) for ${period}`
+          : `Flushed all ${tracker.label} data (${d.deleted} row(s))`,
+      );
+      setFlushConfirm("");
+      setShowFlush(false);
+      invalidateTracker();
+    } catch (err) {
+      toast.error(formatApiError(err.response?.data?.detail));
+    } finally {
+      setFlushBusy(false);
+    }
   }
 
   return (
@@ -97,7 +134,11 @@ export default function AdminBulkUpload() {
                   role="tab"
                   aria-selected={trackerId === t.id}
                   data-testid={`bulk-tab-${t.id}`}
-                  onClick={() => setTrackerId(t.id)}
+                  onClick={() => {
+                    setTrackerId(t.id);
+                    setFlushConfirm("");
+                    setShowFlush(false);
+                  }}
                   className={`px-3 py-2 rounded-sm text-xs uppercase tracking-wider border ${
                     trackerId === t.id
                       ? "bg-[#003B73] text-white border-[#003B73]"
@@ -150,6 +191,97 @@ export default function AdminBulkUpload() {
         />
       </Card>
 
+      <Card
+        title="Flush tracker data"
+        subtitle="Permanently delete entries for the selected tracker — use before a clean re-import"
+      >
+        <div className="p-4 space-y-3" data-testid={TID.bulkFlushPanel}>
+          {!showFlush ? (
+            <button
+              type="button"
+              data-testid={TID.bulkFlushOpenBtn}
+              onClick={() => setShowFlush(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-sm text-xs uppercase tracking-wider border border-red-300 text-red-700 bg-white hover:bg-red-50"
+            >
+              <Trash size={14} /> Flush all data…
+            </button>
+          ) : (
+            <div className="border border-red-200 bg-red-50/60 rounded-sm p-3 space-y-3">
+              <p className="text-xs text-red-800">
+                This cannot be undone. Choose whether to delete only the selected reporting month or
+                every period for <strong>{tracker.label}</strong>.
+              </p>
+              <div className="flex flex-wrap gap-3 text-xs">
+                <label className="inline-flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="flush-scope"
+                    checked={flushScope === "period"}
+                    onChange={() => setFlushScope("period")}
+                    data-testid="bulk-flush-scope-period"
+                  />
+                  This period only ({period || "—"})
+                </label>
+                <label className="inline-flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="flush-scope"
+                    checked={flushScope === "all"}
+                    onChange={() => setFlushScope("all")}
+                    data-testid="bulk-flush-scope-all"
+                  />
+                  All periods (entire tracker)
+                </label>
+              </div>
+              <label className="block text-xs">
+                <span className="text-slate-700">
+                  Type <code className="bg-white px-1 border border-red-200">{trackerId}</code> to confirm
+                </span>
+                <input
+                  type="text"
+                  value={flushConfirm}
+                  onChange={(e) => setFlushConfirm(e.target.value)}
+                  data-testid={TID.bulkFlushConfirmInput}
+                  className="mt-1 w-full max-w-xs border border-red-300 rounded-sm px-2 py-1.5 text-sm"
+                  placeholder={trackerId}
+                  autoComplete="off"
+                />
+              </label>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={flushBusy || flushConfirm.trim().toLowerCase() !== trackerId}
+                  onClick={handleFlush}
+                  data-testid={TID.bulkFlushCommitBtn}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-sm text-xs uppercase tracking-wider ${
+                    flushBusy || flushConfirm.trim().toLowerCase() !== trackerId
+                      ? "bg-slate-300 text-slate-500 cursor-not-allowed"
+                      : "bg-red-700 hover:bg-red-800 text-white"
+                  }`}
+                >
+                  <Trash size={14} />
+                  {flushBusy
+                    ? "Flushing…"
+                    : flushScope === "period"
+                      ? `Flush ${tracker.label} · ${period}`
+                      : `Flush all ${tracker.label} data`}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowFlush(false);
+                    setFlushConfirm("");
+                  }}
+                  className="px-4 py-2 rounded-sm text-xs uppercase tracking-wider border border-slate-300 bg-white hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </Card>
+
       <Card title="ETL & CLI (optional)">
         <div className="p-4 text-xs text-slate-600 space-y-2">
           <p className="flex items-center gap-2 font-medium text-slate-800">
@@ -171,6 +303,11 @@ export default function AdminBulkUpload() {
           <p className="text-slate-500 pt-1 flex items-center gap-2">
             <UploadSimple size={14} />
             This page uses the same Admin bulk API endpoints as those scripts.
+            For wide DoJ files with a visual 1:1 mapping review, use{" "}
+            <Link to="/etl-convert" className="text-[#003B73] hover:underline">
+              ETL Convert &amp; Map
+            </Link>
+            .
           </p>
         </div>
       </Card>

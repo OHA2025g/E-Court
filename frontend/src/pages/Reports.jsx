@@ -275,10 +275,10 @@ export default function Reports() {
           <TabsTrigger value="physical" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs">{t("reports.tabPhysical")}</TabsTrigger>
           <TabsTrigger value="financial" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs">{t("reports.tabFinancial")}</TabsTrigger>
           <TabsTrigger value="outcome" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs">{t("reports.tabOutcome")}</TabsTrigger>
-          <TabsTrigger value="demo-cwpf" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs max-w-[280px] whitespace-normal text-left leading-tight py-2">
+          <TabsTrigger value="demo-cwpf" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs whitespace-nowrap py-2">
             {t("reports.tabDemoCwpf")}
           </TabsTrigger>
-          <TabsTrigger value="demo-fin-yoy" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs max-w-[280px] whitespace-normal text-left leading-tight py-2">
+          <TabsTrigger value="demo-fin-yoy" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs whitespace-nowrap py-2">
             {t("reports.tabDemoFinYoy")}
           </TabsTrigger>
         </TabsList>

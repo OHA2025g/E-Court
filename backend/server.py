@@ -33,6 +33,7 @@ from dashboard_routes import register_dashboard_routes
 from dashboard_agg import compute_dashboard_summary
 from dashboard_prefs import register_dashboard_pref_routes
 from bulk_routes import register_bulk_routes
+from etl_convert_routes import register_etl_convert_routes
 from export_routes import register_export_routes
 from master_routes import register_master_routes
 from pmu_routes import register_pmu_routes
@@ -192,6 +193,9 @@ register_auth_routes(api)
 register_dashboard_routes(api, db, require_fully_authenticated, scope_filter, compute_rag, safe_div, STATE_TO_HC)
 register_dashboard_pref_routes(api, db, require_fully_authenticated, now_utc)
 register_bulk_routes(
+    api, db, require_fully_authenticated, audit, compute_rag, safe_div, serialize, now_utc, DEFAULT_RAG_THRESHOLDS,
+)
+register_etl_convert_routes(
     api, db, require_fully_authenticated, audit, compute_rag, safe_div, serialize, now_utc, DEFAULT_RAG_THRESHOLDS,
 )
 register_master_routes(
