@@ -137,7 +137,11 @@
     "aiInsightsSectionInsights": "अंतर्दृष्टि",
     "aiInsightsSectionRecommendations": "सिफारिशें",
     "aiInsightsSectionActionItems": "कार्य आइटम",
-    "aiInsightsSectionActionPlan": "कार्य योजना"
+    "aiInsightsSectionActionPlan": "कार्य योजना",
+    "highCourtFilter": "उच्च न्यायालय",
+    "allHighCourts": "सभी उच्च न्यायालय",
+    "componentFilter": "घटक",
+    "allComponents": "सभी घटक"
   },
   "submissions": {
     "slaTitle": "सबमिशन SLA",

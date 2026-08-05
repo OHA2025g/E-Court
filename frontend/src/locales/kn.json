@@ -36,7 +36,11 @@
   },
   "dashboard": {
     "narrativeTitle": "Executive narrative",
-    "narrativeSubtitle": "Summary from approved dashboard data"
+    "narrativeSubtitle": "Summary from approved dashboard data",
+    "highCourtFilter": "High Court",
+    "allHighCourts": "All High Courts",
+    "componentFilter": "Component",
+    "allComponents": "All Components"
   },
   "submissions": {
     "slaTitle": "ಸಲ್ಲಿಕೆ SLA",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api, BACKEND_URL } from "@/lib/api";
 import Card from "@/components/Card";
@@ -12,18 +12,19 @@ async function fetchPublicRagDelta(reportingPeriod, metric) {
   return r.json();
 }
 
-export default function RagDeltaWidget({ reportingPeriod, publicMode = false, embedData = null }) {
+export default function RagDeltaWidget({ reportingPeriod, highCourt = "", component = "", publicMode = false, embedData = null }) {
   const [metric, setMetric] = useState("physical");
+  const filterParams = useMemo(() => ({
+    ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
+    ...(highCourt ? { high_court: highCourt } : {}),
+    ...(component ? { component } : {}),
+    metric,
+  }), [reportingPeriod, highCourt, component, metric]);
   const { data: fetched, isLoading, isError } = useQuery({
-    queryKey: ["rag-delta", reportingPeriod, metric, publicMode],
+    queryKey: ["rag-delta", filterParams, publicMode],
     queryFn: () => publicMode
       ? fetchPublicRagDelta(reportingPeriod, metric)
-      : api.get("/dashboard/rag-delta", {
-          params: {
-            ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
-            metric,
-          },
-        }).then(r => r.data),
+      : api.get("/dashboard/rag-delta", { params: filterParams }).then(r => r.data),
     enabled: !!reportingPeriod && !(embedData && metric === "physical"),
   });
   const data = embedData && metric === "physical" ? embedData : fetched;

@@ -19,6 +19,7 @@ import {
   CurrencyInr,
   Gauge,
   Wallet,
+  Stack,
 } from "@phosphor-icons/react";
 import IndiaChoropleth from "@/components/IndiaChoropleth";
 import FinancialTrackerDashboardTab from "@/components/dashboard/FinancialTrackerDashboardTab";
@@ -71,6 +72,8 @@ export default function Dashboard() {
   const labels = useDashboardLabels();
   const [period, setPeriod] = useState("");
   const [periodReady, setPeriodReady] = useState(false);
+  const [highCourt, setHighCourt] = useState("");
+  const [component, setComponent] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
   const [accessibleRag] = useAccessibleRag();
   const cpcCourt = user?.role === "CPC" ? user?.high_court : null;
@@ -85,7 +88,13 @@ export default function Dashboard() {
     }
   }, [cpcCourt, activeTab]);
 
+  useEffect(() => {
+    if (cpcCourt) setHighCourt(cpcCourt);
+  }, [cpcCourt]);
+
   const periods = useQuery({ queryKey: ["periods"], queryFn: () => api.get("/master/periods").then(r => r.data) });
+  const hcs = useQuery({ queryKey: ["hcs"], queryFn: () => api.get("/master/high-courts").then(r => r.data) });
+  const comps = useQuery({ queryKey: ["comps"], queryFn: () => api.get("/master/components").then(r => r.data) });
   // Default once to baseline month so Viewer/Admin open on the gated national snapshot.
   useEffect(() => {
     if (periodReady || !periods.data) return;
@@ -93,29 +102,48 @@ export default function Dashboard() {
     setPeriod(baseline?.period || "");
     setPeriodReady(true);
   }, [periods.data, periodReady]);
+
+  const dashParams = useMemo(() => {
+    const params = {};
+    if (period) params.reporting_period = period;
+    if (highCourt) params.high_court = highCourt;
+    if (component) params.component = component;
+    return params;
+  }, [period, highCourt, component]);
+
   const summary = useQuery({
-    queryKey: ["dash-summary", period, cpcCourt],
-    queryFn: () => api.get("/dashboard/summary", { params: period ? { reporting_period: period } : {} }).then(r => r.data),
+    queryKey: ["dash-summary", dashParams, cpcCourt],
+    queryFn: () => api.get("/dashboard/summary", { params: dashParams }).then(r => r.data),
     enabled: periodReady,
   });
   const byComp = useQuery({
-    queryKey: ["dash-comp", period, cpcCourt],
-    queryFn: () => api.get("/dashboard/by-component", { params: period ? { reporting_period: period } : {} }).then(r => r.data),
+    queryKey: ["dash-comp", dashParams, cpcCourt],
+    queryFn: () => api.get("/dashboard/by-component", { params: dashParams }).then(r => r.data),
     enabled: periodReady,
   });
   const byHc = useQuery({
-    queryKey: ["dash-hc", period, cpcCourt],
-    queryFn: () => api.get("/dashboard/by-high-court", { params: period ? { reporting_period: period } : {} }).then(r => r.data),
+    queryKey: ["dash-hc", dashParams, cpcCourt],
+    queryFn: () => api.get("/dashboard/by-high-court", { params: dashParams }).then(r => r.data),
     enabled: !cpcCourt && periodReady,
   });
   const trend = useQuery({
-    queryKey: ["dash-trend", cpcCourt],
-    queryFn: () => api.get("/dashboard/trend").then(r => r.data),
+    queryKey: ["dash-trend", highCourt, component, cpcCourt],
+    queryFn: () => api.get("/dashboard/trend", {
+      params: {
+        ...(highCourt ? { high_court: highCourt } : {}),
+        ...(component ? { component } : {}),
+      },
+    }).then(r => r.data),
     enabled: !cpcCourt,
   });
 
   const s = summary.data;
   const ragData = s ? Object.entries(s.rag_physical || {}).map(([k, v]) => ({ name: k, value: v })) : [];
+
+  const cabinetBriefHref = useMemo(() => {
+    const qs = new URLSearchParams(dashParams).toString();
+    return `${BACKEND_URL}/api/export/cabinet-brief${qs ? `?${qs}` : ""}`;
+  }, [dashParams]);
 
   const unifiedHeader = (
     <div className="dashboard-unified-header dashboard-hero-pattern">
@@ -144,6 +172,42 @@ export default function Dashboard() {
           </span>
         )}
 
+        {!cpcCourt && (
+          <label className="dashboard-unified-period">
+            <Buildings size={14} aria-hidden="true" />
+            <span className="dashboard-unified-period-label">{labels.highCourtFilter}</span>
+            <select
+              data-testid={TID.highCourtSelect}
+              value={highCourt}
+              onChange={(e) => setHighCourt(e.target.value)}
+              className="dashboard-unified-select"
+              aria-label={labels.highCourtFilter}
+            >
+              <option value="">{labels.allHighCourts}</option>
+              {(hcs.data || []).map((hc) => (
+                <option key={hc.name || hc} value={hc.name || hc}>{hc.name || hc}</option>
+              ))}
+            </select>
+          </label>
+        )}
+
+        <label className="dashboard-unified-period">
+          <Stack size={14} aria-hidden="true" />
+          <span className="dashboard-unified-period-label">{labels.componentFilter}</span>
+          <select
+            data-testid={TID.componentSelect}
+            value={component}
+            onChange={(e) => setComponent(e.target.value)}
+            className="dashboard-unified-select"
+            aria-label={labels.componentFilter}
+          >
+            <option value="">{labels.allComponents}</option>
+            {(comps.data || []).map((c) => (
+              <option key={c.code || c.name || c} value={c.name || c}>{c.name || c}</option>
+            ))}
+          </select>
+        </label>
+
         <label className="dashboard-unified-period">
           <CalendarBlank size={14} aria-hidden="true" />
           <span className="dashboard-unified-period-label">{labels.reportingPeriod}</span>
@@ -164,7 +228,7 @@ export default function Dashboard() {
         {user?.role !== "CPC" && (
           <a
             data-testid="cabinet-brief-btn"
-            href={`${BACKEND_URL}/api/export/cabinet-brief${period ? `?reporting_period=${period}` : ""}`}
+            href={cabinetBriefHref}
             target="_blank" rel="noreferrer"
             className="dashboard-unified-cta"
           >
@@ -359,8 +423,8 @@ export default function Dashboard() {
 
         <TabsContent value="overview" className="mt-5 space-y-5">
           {kpiRow}
-          <RagDeltaWidget reportingPeriod={period} />
-          <DashboardAiInsights reportingPeriod={period} />
+          <RagDeltaWidget reportingPeriod={period} highCourt={highCourt} component={component} />
+          <DashboardAiInsights reportingPeriod={period} highCourt={highCourt} component={component} />
         </TabsContent>
 
         <TabsContent value="rag-trends" className="mt-5 space-y-5">
@@ -373,18 +437,18 @@ export default function Dashboard() {
         </TabsContent>
 
         <TabsContent value="geographic" className="mt-5 space-y-5">
-          <IndiaChoropleth reportingPeriod={period} />
-          <ComponentHcHeatmap reportingPeriod={period} />
+          <IndiaChoropleth reportingPeriod={period} highCourt={highCourt} component={component} />
+          <ComponentHcHeatmap reportingPeriod={period} highCourt={highCourt} component={component} />
         </TabsContent>
 
         <TabsContent value="performance" className="mt-5 space-y-5">
-          <ParetoChart reportingPeriod={period} />
+          <ParetoChart reportingPeriod={period} highCourt={highCourt} component={component} />
           {componentBars}
           {hcBars}
         </TabsContent>
 
         <TabsContent value="financial-tracker" className="mt-5">
-          <FinancialTrackerDashboardTab reportingPeriod={period} labels={labels} />
+          <FinancialTrackerDashboardTab reportingPeriod={period} highCourt={highCourt} component={component} labels={labels} />
         </TabsContent>
 
         <TabsContent value="component-table" className="mt-5">

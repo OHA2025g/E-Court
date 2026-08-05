@@ -50,6 +50,8 @@ export const TID = {
   hcChart: "hc-bar-chart",
   // common form
   periodSelect: "period-select",
+  highCourtSelect: "dashboard-high-court-select",
+  componentSelect: "dashboard-component-select",
   hcSelect: "hc-select",
   componentSelect: "component-select",
   indicatorSelect: "indicator-select",

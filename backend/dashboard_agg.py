@@ -617,6 +617,18 @@ async def compute_dashboard_summary(
     }
 
 
+def _match_value(extra_match: Optional[dict], key: str) -> Optional[Any]:
+    """Read a simple equality filter from flat or $and-merged match dicts."""
+    if not extra_match:
+        return None
+    if key in extra_match and not isinstance(extra_match[key], dict):
+        return extra_match[key]
+    for clause in extra_match.get("$and") or []:
+        if isinstance(clause, dict) and key in clause and not isinstance(clause[key], dict):
+            return clause[key]
+    return None
+
+
 async def compute_dashboard_by_component(
     db,
     scope_filter_fn: Callable,
@@ -645,8 +657,10 @@ async def compute_dashboard_by_component(
     ).to_list(100)
     pmap = {p["_id"]: p for p in phys}
     fmap = {f["_id"]: f for f in fin}
+    selected = _match_value(extra_match, "component")
+    components = [c for c in COMPONENTS if not selected or c["name"] == selected]
     rows = []
-    for c in COMPONENTS:
+    for c in components:
         name = c["name"]
         p = pmap.get(name, {"target": 0, "achieved": 0})
         f = fmap.get(name, {"allocated": 0, "target": 0, "released": 0, "utilized": 0})

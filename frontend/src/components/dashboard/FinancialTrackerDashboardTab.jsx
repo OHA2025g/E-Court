@@ -192,12 +192,15 @@ function UtilPctComponentHcChart({ rows, hcNames, utilPctLabel }) {
   );
 }
 
-export default function FinancialTrackerDashboardTab({ reportingPeriod, labels }) {
+export default function FinancialTrackerDashboardTab({ reportingPeriod, highCourt = "", component = "", labels }) {
+  const filterParams = {
+    ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
+    ...(highCourt ? { high_court: highCourt } : {}),
+    ...(component ? { component } : {}),
+  };
   const { data, isLoading } = useQuery({
-    queryKey: ["dash-financial-tracker", reportingPeriod],
-    queryFn: () => api.get("/dashboard/financial-tracker", {
-      params: reportingPeriod ? { reporting_period: reportingPeriod } : {},
-    }).then(r => r.data),
+    queryKey: ["dash-financial-tracker", filterParams],
+    queryFn: () => api.get("/dashboard/financial-tracker", { params: filterParams }).then(r => r.data),
   });
 
   const kpis = data?.kpis;

@@ -36,7 +36,11 @@
   },
   "dashboard": {
     "narrativeTitle": "تنفیذی خلاصہ",
-    "narrativeSubtitle": "منظور شدہ ڈیش بورڈ ڈیٹا سے خلاصہ"
+    "narrativeSubtitle": "منظور شدہ ڈیش بورڈ ڈیٹا سے خلاصہ",
+    "highCourtFilter": "High Court",
+    "allHighCourts": "All High Courts",
+    "componentFilter": "Component",
+    "allComponents": "All Components"
   },
   "submissions": {
     "slaTitle": "جمع کرانے کی SLA",

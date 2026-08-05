@@ -42,16 +42,18 @@ function cellTitle(rowKey, hc, cell) {
   return `${rowKey} · ${hc}: ${pct} (${cell.rag || "NA"})`;
 }
 
-export default function ComponentHcHeatmap({ reportingPeriod, publicMode = false, embedData = null }) {
+export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", component = "", publicMode = false, embedData = null }) {
   const [accessible] = useAccessibleRag();
   const [metric, setMetric] = useState("physical");
   const [hover, setHover] = useState(null);
 
   const { data: fetched, isLoading } = useQuery({
-    queryKey: ["heatmap", reportingPeriod, metric, publicMode],
+    queryKey: ["heatmap", reportingPeriod, highCourt, component, metric, publicMode],
     queryFn: () => api.get(`${publicMode ? "/public" : "/dashboard"}/heatmap`, {
       params: {
         ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
+        ...(highCourt ? { high_court: highCourt } : {}),
+        ...(component ? { component } : {}),
         metric,
       },
     }).then(r => r.data),

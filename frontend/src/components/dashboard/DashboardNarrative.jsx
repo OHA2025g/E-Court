@@ -12,18 +12,21 @@ const STATUS_BADGE = {
   draft: "bg-amber-100 text-amber-900 border-amber-300",
 };
 
-export function ExecutiveNarrativeSection({ reportingPeriod }) {
+export function ExecutiveNarrativeSection({ reportingPeriod, highCourt = "", component = "" }) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
   const isAdmin = user?.role === "Admin";
+  const filterParams = {
+    ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
+    ...(highCourt ? { high_court: highCourt } : {}),
+    ...(component ? { component } : {}),
+  };
 
   const narrative = useQuery({
-    queryKey: ["dash-narrative", reportingPeriod],
-    queryFn: () => api.get("/dashboard/narrative", {
-      params: reportingPeriod ? { reporting_period: reportingPeriod } : {},
-    }).then((r) => r.data),
+    queryKey: ["dash-narrative", filterParams],
+    queryFn: () => api.get("/dashboard/narrative", { params: filterParams }).then((r) => r.data),
   });
 
   const status = narrative.data?.review_status || "draft";

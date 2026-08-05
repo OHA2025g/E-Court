@@ -2,7 +2,7 @@
 import time
 from typing import Literal, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from dashboard_agg import (
     compute_dashboard_by_component,
@@ -17,7 +17,7 @@ from dashboard_agg import (
     compute_states_rag,
     compute_trend_with_milestones,
 )
-from period_policy import approved_match_filter
+from period_policy import approved_match_filter, merge_match
 from cache_layer import cache_get, cache_set
 from security import client_ip
 
@@ -28,6 +28,22 @@ _PUBLIC_CACHE_TTL = 60
 def _enforce_public_rate_limit(request: Request):
     from api_rate_limit import enforce_public_ip_rate_limit
     enforce_public_ip_rate_limit(client_ip(request))
+
+
+def _dimension_match(
+    user: dict,
+    high_court: Optional[str] = None,
+    component: Optional[str] = None,
+) -> dict:
+    """Optional High Court / Component filters for national dashboard views."""
+    if user and user.get("role") == "CPC" and user.get("high_court"):
+        high_court = user["high_court"]
+    match: dict = {}
+    if high_court:
+        match["high_court"] = high_court
+    if component:
+        match["component"] = component
+    return match
 
 
 def _dashboard_cache_key(route: str, user: dict, reporting_period: Optional[str], include_unapproved: bool, **extra) -> str:
@@ -59,98 +75,133 @@ def register_dashboard_routes(
     safe_div_fn,
     state_to_hc: dict,
 ):
-    async def _approval(user, reporting_period=None, include_unapproved=False):
-        return await approved_match_filter(db, reporting_period, include_unapproved, user)
+    async def _extra(
+        user,
+        reporting_period=None,
+        include_unapproved=False,
+        high_court=None,
+        component=None,
+    ):
+        return merge_match(
+            await approved_match_filter(db, reporting_period, include_unapproved, user),
+            _dimension_match(user, high_court, component),
+        )
+
+    def _cache_dims(high_court=None, component=None):
+        return {
+            "fhc": high_court or "_all",
+            "fcomp": component or "_all",
+        }
 
     @api.get("/dashboard/summary")
     async def dashboard_summary(
         reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        extra = await _approval(user, reporting_period, include_unapproved)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
         return await _cached_dashboard(
             "summary", user, reporting_period, include_unapproved,
             lambda: compute_dashboard_summary(
                 db, scope_filter_fn, compute_rag_fn, safe_div_fn, user, reporting_period, extra,
             ),
+            **_cache_dims(high_court, component),
         )
 
     @api.get("/dashboard/by-component")
     async def dashboard_by_component(
         reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        extra = await _approval(user, reporting_period, include_unapproved)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
         return await _cached_dashboard(
             "by-component", user, reporting_period, include_unapproved,
             lambda: compute_dashboard_by_component(
                 db, scope_filter_fn, safe_div_fn, user, reporting_period, extra,
             ),
+            **_cache_dims(high_court, component),
         )
 
     @api.get("/dashboard/financial-status-yoy")
     async def dashboard_financial_status_yoy(
         reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        extra = await _approval(user, reporting_period, include_unapproved)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
         return await _cached_dashboard(
             "financial-status-yoy", user, reporting_period, include_unapproved,
             lambda: compute_financial_status_yoy(
                 db, scope_filter_fn, safe_div_fn, user, reporting_period, extra,
             ),
+            **_cache_dims(high_court, component),
         )
 
     @api.get("/dashboard/by-high-court")
     async def dashboard_by_hc(
         reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        extra = await _approval(user, reporting_period, include_unapproved)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
         return await _cached_dashboard(
             "by-high-court", user, reporting_period, include_unapproved,
             lambda: compute_dashboard_by_hc(
                 db, scope_filter_fn, safe_div_fn, user, reporting_period, extra,
             ),
+            **_cache_dims(high_court, component),
         )
 
     @api.get("/dashboard/financial-tracker")
     async def dashboard_financial_tracker(
         reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        extra = await _approval(user, reporting_period, include_unapproved)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
         return await _cached_dashboard(
             "financial-tracker", user, reporting_period, include_unapproved,
             lambda: compute_financial_tracker_dashboard(
                 db, scope_filter_fn, safe_div_fn, user, reporting_period, extra,
             ),
+            **_cache_dims(high_court, component),
         )
 
     @api.get("/dashboard/trend")
     async def dashboard_trend(
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        extra = await _approval(user, None, include_unapproved)
+        extra = await _extra(user, None, include_unapproved, high_court, component)
         return await _cached_dashboard(
             "trend", user, None, include_unapproved,
             lambda: compute_trend_with_milestones(db, scope_filter_fn, safe_div_fn, user, extra),
+            **_cache_dims(high_court, component),
         )
 
     @api.get("/dashboard/rag-delta")
     async def dashboard_rag_delta(
         reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         metric: Literal["physical", "financial", "outcome"] = "physical",
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        extra = await _approval(user, reporting_period, include_unapproved)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
 
         async def _compute():
             result = await compute_rag_delta(
@@ -164,67 +215,76 @@ def register_dashboard_routes(
             return result
 
         return await _cached_dashboard(
-            "rag-delta", user, reporting_period, include_unapproved, _compute, metric=metric,
+            "rag-delta", user, reporting_period, include_unapproved, _compute,
+            metric=metric, **_cache_dims(high_court, component),
         )
 
     @api.get("/dashboard/heatmap")
     async def dashboard_heatmap(
         reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         metric: Literal["physical", "financial", "outcome"] = "physical",
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        extra = await _approval(user, reporting_period, include_unapproved)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
         return await _cached_dashboard(
             "heatmap", user, reporting_period, include_unapproved,
             lambda: compute_heatmap(
                 db, scope_filter_fn, compute_rag_fn, user, reporting_period, metric, extra,
             ),
-            metric=metric,
+            metric=metric, **_cache_dims(high_court, component),
         )
 
     @api.get("/dashboard/pareto-red-flags")
     async def dashboard_pareto(
         reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         metric: Literal["physical", "financial", "outcome"] = "physical",
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        extra = await _approval(user, reporting_period, include_unapproved)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
         return await _cached_dashboard(
             "pareto", user, reporting_period, include_unapproved,
             lambda: compute_pareto_red_flags(
                 db, scope_filter_fn, compute_rag_fn, user, reporting_period, metric, extra,
             ),
-            metric=metric,
+            metric=metric, **_cache_dims(high_court, component),
         )
 
     @api.get("/dashboard/states-rag")
     async def states_rag(
         reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         metric: Literal["physical", "financial", "outcome"] = "physical",
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        extra = await _approval(user, reporting_period, include_unapproved)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
         return await _cached_dashboard(
             "states-rag", user, reporting_period, include_unapproved,
             lambda: compute_states_rag(
                 db, state_to_hc, scope_filter_fn, compute_rag_fn,
                 user, reporting_period, metric, extra,
             ),
-            metric=metric,
+            metric=metric, **_cache_dims(high_court, component),
         )
 
     @api.get("/dashboard/narrative")
     async def dashboard_narrative(
         reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        from narrative import NARRATIVE_ENABLED, narrative_dashboard_payload
+        from narrative import narrative_dashboard_payload
 
-        extra = await _approval(user, reporting_period, include_unapproved)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
         summary = await compute_dashboard_summary(
             db, scope_filter_fn, compute_rag_fn, safe_div_fn, user, reporting_period, extra,
         )
@@ -233,13 +293,15 @@ def register_dashboard_routes(
     @api.get("/dashboard/ai-insights")
     async def dashboard_ai_insights(
         reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
         include_unapproved: bool = False,
         refresh: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
         from dashboard_insights import generate_insights_payload
 
-        extra = await _approval(user, reporting_period, include_unapproved)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
         summary = await compute_dashboard_summary(
             db, scope_filter_fn, compute_rag_fn, safe_div_fn, user, reporting_period, extra,
         )

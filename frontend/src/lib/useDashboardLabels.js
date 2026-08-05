@@ -7,6 +7,10 @@ export function useDashboardLabels() {
     () => ({
       reportingPeriod: t("dashboard.reportingPeriod"),
       allPeriods: t("dashboard.allPeriods"),
+      highCourtFilter: t("dashboard.highCourtFilter"),
+      allHighCourts: t("dashboard.allHighCourts"),
+      componentFilter: t("dashboard.componentFilter"),
+      allComponents: t("dashboard.allComponents"),
       cabinetBrief: t("dashboard.cabinetBrief"),
       physTargetSum: t("dashboard.physTargetSum"),
       physAchieved: t("dashboard.physAchieved"),

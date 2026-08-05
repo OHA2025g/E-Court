@@ -36,7 +36,7 @@ function metricLabel(metric) {
   return "Physical achievement";
 }
 
-export default function IndiaChoropleth({ reportingPeriod }) {
+export default function IndiaChoropleth({ reportingPeriod, highCourt = "", component = "" }) {
   const [metric, setMetric] = useState("physical");
   const [accessible] = useAccessibleRag();
   const thresholds = useQuery({
@@ -44,10 +44,12 @@ export default function IndiaChoropleth({ reportingPeriod }) {
     queryFn: () => api.get("/master/rag-thresholds").then(r => r.data),
   });
   const { data } = useQuery({
-    queryKey: ["states-rag", reportingPeriod, metric],
+    queryKey: ["states-rag", reportingPeriod, highCourt, component, metric],
     queryFn: () => api.get("/dashboard/states-rag", {
       params: {
         ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
+        ...(highCourt ? { high_court: highCourt } : {}),
+        ...(component ? { component } : {}),
         metric,
       },
     }).then(r => r.data),

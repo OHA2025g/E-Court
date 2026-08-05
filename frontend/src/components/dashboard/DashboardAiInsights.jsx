@@ -100,18 +100,21 @@ function SectionCard({ themeKey, title, children, testId }) {
   );
 }
 
-export default function DashboardAiInsights({ reportingPeriod }) {
+export default function DashboardAiInsights({ reportingPeriod, highCourt = "", component = "" }) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const qc = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const isAdmin = user?.role === "Admin";
+  const filterParams = {
+    ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
+    ...(highCourt ? { high_court: highCourt } : {}),
+    ...(component ? { component } : {}),
+  };
 
   const insights = useQuery({
-    queryKey: ["dash-ai-insights", reportingPeriod],
-    queryFn: () => api.get("/dashboard/ai-insights", {
-      params: reportingPeriod ? { reporting_period: reportingPeriod } : {},
-    }).then((r) => r.data),
+    queryKey: ["dash-ai-insights", filterParams],
+    queryFn: () => api.get("/dashboard/ai-insights", { params: filterParams }).then((r) => r.data),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -119,12 +122,9 @@ export default function DashboardAiInsights({ reportingPeriod }) {
     setRefreshing(true);
     try {
       await api.get("/dashboard/ai-insights", {
-        params: {
-          ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
-          refresh: true,
-        },
+        params: { ...filterParams, refresh: true },
       });
-      await qc.invalidateQueries({ queryKey: ["dash-ai-insights", reportingPeriod] });
+      await qc.invalidateQueries({ queryKey: ["dash-ai-insights", filterParams] });
       toast.success(t("dashboard.aiInsightsRefreshed"));
     } catch (e) {
       toast.error(e.response?.data?.detail || t("dashboard.aiInsightsError"));
@@ -173,7 +173,7 @@ export default function DashboardAiInsights({ reportingPeriod }) {
       )}
     >
       <div className="p-5 bg-gradient-to-b from-slate-50/80 to-white space-y-5">
-        <ExecutiveNarrativeSection reportingPeriod={reportingPeriod} />
+        <ExecutiveNarrativeSection reportingPeriod={reportingPeriod} highCourt={highCourt} component={component} />
 
         {insights.isLoading && <LoadingSkeleton />}
         {insights.isError && (

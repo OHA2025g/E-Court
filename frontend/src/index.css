@@ -531,7 +531,7 @@ table.dense-table tr:hover td { @apply bg-slate-50; }
 }
 .dashboard-unified-select {
   min-width: 9rem;
-  max-width: 12rem;
+  max-width: 16rem;
   padding: 0.5rem 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 9999px;

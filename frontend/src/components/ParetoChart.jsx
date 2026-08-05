@@ -8,14 +8,16 @@ import {
   CartesianGrid, Legend,
 } from "recharts";
 
-export default function ParetoChart({ reportingPeriod, publicMode = false, embedData = null }) {
+export default function ParetoChart({ reportingPeriod, highCourt = "", component = "", publicMode = false, embedData = null }) {
   const [accessible] = useAccessibleRag();
   const [metric, setMetric] = useState("physical");
   const { data: fetched, isLoading } = useQuery({
-    queryKey: ["pareto", reportingPeriod, metric, publicMode],
+    queryKey: ["pareto", reportingPeriod, highCourt, component, metric, publicMode],
     queryFn: () => api.get(`${publicMode ? "/public" : "/dashboard"}/pareto-red-flags`, {
       params: {
         ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
+        ...(highCourt ? { high_court: highCourt } : {}),
+        ...(component ? { component } : {}),
         metric,
       },
     }).then(r => r.data),
