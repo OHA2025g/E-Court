@@ -70,6 +70,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const labels = useDashboardLabels();
   const [period, setPeriod] = useState("");
+  const [periodReady, setPeriodReady] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [accessibleRag] = useAccessibleRag();
   const cpcCourt = user?.role === "CPC" ? user?.high_court : null;
@@ -85,12 +86,27 @@ export default function Dashboard() {
   }, [cpcCourt, activeTab]);
 
   const periods = useQuery({ queryKey: ["periods"], queryFn: () => api.get("/master/periods").then(r => r.data) });
-  const summary = useQuery({ queryKey: ["dash-summary", period, cpcCourt], queryFn: () => api.get("/dashboard/summary", { params: period ? { reporting_period: period } : {} }).then(r => r.data) });
-  const byComp = useQuery({ queryKey: ["dash-comp", period, cpcCourt], queryFn: () => api.get("/dashboard/by-component", { params: period ? { reporting_period: period } : {} }).then(r => r.data) });
+  // Default once to baseline month so Viewer/Admin open on the gated national snapshot.
+  useEffect(() => {
+    if (periodReady || !periods.data) return;
+    const baseline = periods.data.find((p) => p.is_baseline);
+    setPeriod(baseline?.period || "");
+    setPeriodReady(true);
+  }, [periods.data, periodReady]);
+  const summary = useQuery({
+    queryKey: ["dash-summary", period, cpcCourt],
+    queryFn: () => api.get("/dashboard/summary", { params: period ? { reporting_period: period } : {} }).then(r => r.data),
+    enabled: periodReady,
+  });
+  const byComp = useQuery({
+    queryKey: ["dash-comp", period, cpcCourt],
+    queryFn: () => api.get("/dashboard/by-component", { params: period ? { reporting_period: period } : {} }).then(r => r.data),
+    enabled: periodReady,
+  });
   const byHc = useQuery({
     queryKey: ["dash-hc", period, cpcCourt],
     queryFn: () => api.get("/dashboard/by-high-court", { params: period ? { reporting_period: period } : {} }).then(r => r.data),
-    enabled: !cpcCourt,
+    enabled: !cpcCourt && periodReady,
   });
   const trend = useQuery({
     queryKey: ["dash-trend", cpcCourt],

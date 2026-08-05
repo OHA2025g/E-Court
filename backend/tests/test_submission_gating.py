@@ -72,7 +72,7 @@ def test_submit_locks_edits(client):
     assert r2.status_code == 403
 
 
-def test_approved_match_filter_excludes_unapproved(client):
+def test_approved_match_filter_excludes_unapproved(client, viewer_credentials):
     _sync_db.settings.update_one(
         {"key": "workflow_settings"},
         {"$set": {"value": {"dashboard_require_approval": True, "submission_grace_days": 7, "sla_due_day": 10}}},
@@ -80,7 +80,8 @@ def test_approved_match_filter_excludes_unapproved(client):
     )
     period = "2025-05"
     _sync_db.submissions.delete_many({"reporting_period": period})
-    token = _admin_token(client)
+    email, password = viewer_credentials
+    token = extract_token(login(client, email, password))
     r = client.get(
         "/api/dashboard/summary",
         params={"reporting_period": period},
@@ -88,7 +89,8 @@ def test_approved_match_filter_excludes_unapproved(client):
     )
     assert r.status_code == 200
     summary = r.json()
-    assert summary.get("physical_total_target", 0) == 0 or summary.get("entry_count", 0) == 0
+    phys = summary.get("physical") or {}
+    assert (phys.get("target") or 0) == 0 and (phys.get("achieved") or 0) == 0
 
     _sync_db.submissions.insert_one({
         "high_court": "Allahabad",

@@ -146,9 +146,11 @@ async def approved_match_filter(
     # do not require national approval gating for their jurisdiction.
     if user and user.get("role") == "CPC" and user.get("high_court"):
         return {}
-    settings = await get_workflow_settings(db)
-    if user and user.get("role") == "Admin" and not settings.get("dashboard_require_approval"):
+    # Admins manage live tracker entry — always see entered data without waiting on
+    # national submission approval (Viewers still gated).
+    if user and user.get("role") == "Admin":
         return {}
+    settings = await get_workflow_settings(db)
 
     if not settings.get("dashboard_require_approval", True):
         return {}

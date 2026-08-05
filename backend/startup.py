@@ -11,9 +11,11 @@ from apscheduler.triggers.cron import CronTrigger
 from auth import ensure_auth_indexes, hash_password, verify_password
 from dashboard_prefs import ensure_dashboard_indexes
 from seed_constants import (
+    CLOUD_COMPUTING_COMPONENT,
     COMPONENT_INDICATORS,
     COMPONENTS,
     DEFAULT_RAG_THRESHOLDS,
+    DEFAULT_STORAGE_TYPE,
     DPR_DELIVERABLES,
     HIGH_COURTS,
     OUTCOME_SUBJECTS,
@@ -108,10 +110,123 @@ async def migrate_outcome_district_index(database):
     await coll.create_index(new_keys, unique=True)
 
 
+async def migrate_cloud_dashboard_visibility(db):
+    """Make Cloud Computing visible on the approval-gated national dashboard.
+
+    Tracker Cloud rows were often entered on a non-baseline month (e.g. 2026-07)
+    while the Viewer dashboard only includes baseline / Approved periods (2026-05).
+    Also convert absolute-₹ Cloud financials to ₹ crore to match other components.
+    """
+    baseline = next((p["period"] for p in REPORTING_PERIODS if p.get("is_baseline")), "2026-05")
+    rupee_floor = 1000.0  # crore values in this PMIS stay well below this
+
+    # 1) Normalise Cloud financial units (₹ → ₹ crore) when values look like absolute rupees
+    fin_fixed = 0
+    async for row in db.financial_entries.find({"component": CLOUD_COMPUTING_COMPONENT}):
+        updates = {}
+        for field in ("fund_released", "fund_utilized", "fund_target", "fund_allocated"):
+            val = row.get(field)
+            if isinstance(val, (int, float)) and abs(val) >= rupee_floor:
+                updates[field] = round(float(val) / 1e7, 4)
+        if updates:
+            released = updates.get("fund_released", row.get("fund_released"))
+            utilized = updates.get("fund_utilized", row.get("fund_utilized"))
+            if released not in (None, 0) and utilized is not None:
+                updates["utilisation_percent"] = round(100.0 * float(utilized) / float(released), 2)
+                updates["variance"] = round(float(released) - float(utilized), 4)
+            await db.financial_entries.update_one({"_id": row["_id"]}, {"$set": updates})
+            fin_fixed += 1
+
+    # 2) Mirror latest non-baseline Cloud physical + financial onto baseline when missing
+    phys_mirrored = 0
+    source_periods = await db.physical_entries.distinct(
+        "reporting_period",
+        {"component": CLOUD_COMPUTING_COMPONENT, "reporting_period": {"$ne": baseline}},
+    )
+    source_periods = sorted([p for p in source_periods if p], reverse=True)
+    if source_periods:
+        src = source_periods[0]
+        async for row in db.physical_entries.find(
+            {"component": CLOUD_COMPUTING_COMPONENT, "reporting_period": src}
+        ):
+            q = {
+                "high_court": row.get("high_court"),
+                "component": CLOUD_COMPUTING_COMPONENT,
+                "indicator": row.get("indicator"),
+                "reporting_period": baseline,
+                "district": row.get("district"),
+                "storage_type": row.get("storage_type") or DEFAULT_STORAGE_TYPE,
+            }
+            existing = await db.physical_entries.find_one(q)
+            payload = {k: v for k, v in row.items() if k != "_id"}
+            payload.update(q)
+            if existing:
+                await db.physical_entries.update_one(
+                    {"_id": existing["_id"]},
+                    {"$set": {
+                        "target": payload.get("target"),
+                        "achieved": payload.get("achieved"),
+                        "percent": payload.get("percent"),
+                        "rag": payload.get("rag"),
+                        "remarks": payload.get("remarks"),
+                        "uom": payload.get("uom"),
+                    }},
+                )
+            else:
+                await db.physical_entries.insert_one(payload)
+            phys_mirrored += 1
+
+    fin_mirrored = 0
+    fin_source_periods = await db.financial_entries.distinct(
+        "reporting_period",
+        {"component": CLOUD_COMPUTING_COMPONENT, "reporting_period": {"$ne": baseline}},
+    )
+    fin_source_periods = sorted([p for p in fin_source_periods if p], reverse=True)
+    if fin_source_periods:
+        src = fin_source_periods[0]
+        async for row in db.financial_entries.find(
+            {"component": CLOUD_COMPUTING_COMPONENT, "reporting_period": src}
+        ):
+            q = {
+                "high_court": row.get("high_court"),
+                "component": CLOUD_COMPUTING_COMPONENT,
+                "reporting_period": baseline,
+                "district": row.get("district"),
+            }
+            existing = await db.financial_entries.find_one(q)
+            payload = {k: v for k, v in row.items() if k != "_id"}
+            payload.update(q)
+            if existing:
+                await db.financial_entries.update_one(
+                    {"_id": existing["_id"]},
+                    {"$set": {
+                        "fund_target": payload.get("fund_target"),
+                        "fund_allocated": payload.get("fund_allocated"),
+                        "fund_released": payload.get("fund_released"),
+                        "fund_utilized": payload.get("fund_utilized"),
+                        "utilisation_percent": payload.get("utilisation_percent"),
+                        "variance": payload.get("variance"),
+                        "rag": payload.get("rag"),
+                        "remarks": payload.get("remarks"),
+                        "description": payload.get("description"),
+                    }},
+                )
+            else:
+                await db.financial_entries.insert_one(payload)
+            fin_mirrored += 1
+
+    if fin_fixed or phys_mirrored or fin_mirrored:
+        logger.info(
+            "Cloud dashboard migration: fin_unit_fixed=%d phys_mirrored=%d fin_mirrored=%d → baseline %s",
+            fin_fixed, phys_mirrored, fin_mirrored, baseline,
+        )
+
+
 async def ensure_indexes(db):
     await db.users.create_index("email", unique=True)
     await migrate_district_indexes(db)
     await migrate_outcome_district_index(db)
+    await migrate_cloud_dashboard_visibility(db)
     await db.bulk_previews.create_index("token", unique=True)
     await db.bulk_previews.create_index("expires_at", expireAfterSeconds=0)
     await db.audit_logs.create_index([("timestamp", -1)])
