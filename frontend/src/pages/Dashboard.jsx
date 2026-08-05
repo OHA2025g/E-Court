@@ -159,19 +159,6 @@ export default function Dashboard() {
       </p>
 
       <div className="dashboard-unified-toolbar">
-        {s?.physical?.percent != null && (
-          <span className="dashboard-hero-chip dashboard-unified-chip">
-            <Gauge size={14} />
-            {labels.physPercent} {fmtPct(s.physical.percent)}
-          </span>
-        )}
-        {s?.financial?.utilisation_percent != null && (
-          <span className="dashboard-hero-chip dashboard-unified-chip">
-            <CurrencyInr size={14} />
-            {labels.finPercent} {fmtPct(s.financial.utilisation_percent)}
-          </span>
-        )}
-
         {!cpcCourt && (
           <label className="dashboard-unified-period">
             <Buildings size={14} aria-hidden="true" />
