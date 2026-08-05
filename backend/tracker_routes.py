@@ -8,6 +8,7 @@ from rollup import (
     apply_district_filter,
     entry_query_key_financial,
     entry_query_key_physical,
+    resolve_storage_type,
 )
 from period_policy import assert_editable
 from cache_layer import cache_invalidate_prefix
@@ -27,6 +28,7 @@ class PhysicalEntryIn(BaseModel):
     indicator: str
     reporting_period: str
     district: Optional[str] = None
+    storage_type: Optional[str] = None
     target: Optional[float] = None
     achieved: Optional[float] = None
     remarks: Optional[str] = None
@@ -193,6 +195,7 @@ def register_tracker_routes(
     async def list_physical(
         high_court: Optional[str] = None, component: Optional[str] = None,
         reporting_period: Optional[str] = None, district: Optional[str] = None,
+        storage_type: Optional[str] = None,
         page: int = 1, page_size: int = 500,
         user: dict = Depends(require_fully_authenticated),
     ):
@@ -203,10 +206,12 @@ def register_tracker_routes(
             q["component"] = component
         if reporting_period:
             q["reporting_period"] = reporting_period
+        if storage_type:
+            q["storage_type"] = storage_type
         apply_district_filter(q, district)
         return await _paginated_list(
             "physical_entries", q,
-            [("high_court", 1), ("component", 1), ("indicator", 1)],
+            [("high_court", 1), ("component", 1), ("storage_type", 1), ("indicator", 1)],
             page, page_size,
         )
 
@@ -222,8 +227,13 @@ def register_tracker_routes(
         await assert_editable(db, body.high_court, body.reporting_period, user, now_utc_fn)
         if body.achieved is not None and body.achieved < 0:
             raise HTTPException(status_code=400, detail="Achieved cannot be negative")
+        try:
+            storage_type = resolve_storage_type(body.component, body.storage_type)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        payload = {**body.model_dump(), "storage_type": storage_type}
 
-        q = entry_query_key_physical(body.model_dump())
+        q = entry_query_key_physical(payload)
         existing = await db.physical_entries.find_one(q)
         assert_admin_can_create(user, existing)
         percent = safe_div_fn(body.achieved, body.target)
@@ -232,7 +242,8 @@ def register_tracker_routes(
         )
         rag = compute_rag_fn(percent, thresholds)
         doc = {
-            **q, "district": body.district, "target": body.target, "achieved": body.achieved,
+            **q, "district": body.district, "storage_type": storage_type,
+            "target": body.target, "achieved": body.achieved,
             "percent": percent, "rag": rag, "remarks": body.remarks,
             "updated_by": user["email"], "updated_at": now_utc_fn(),
         }
@@ -242,7 +253,7 @@ def register_tracker_routes(
                 doc["target"] = existing.get("target")
             changes = [
                 {"field": k, "old": existing.get(k), "new": doc.get(k)}
-                for k in ["target", "achieved", "remarks"] if existing.get(k) != doc.get(k)
+                for k in ["target", "achieved", "remarks", "storage_type"] if existing.get(k) != doc.get(k)
             ]
             await db.physical_entries.update_one({"_id": existing["_id"]}, {"$set": doc})
             await _invalidate_dashboard_cache()

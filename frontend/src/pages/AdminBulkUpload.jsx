@@ -16,7 +16,7 @@ const TRACKERS = [
     description: "Achieved / Target by High Court, component and indicator. Digitization pages must be in Crore Pages.",
     templateUrl: `${BACKEND_URL}/api/physical/bulk-template`,
     guidePath: "/physical",
-    headers: "High Court · Component · Sub-Component · District · Target · Achieved · Remarks",
+    headers: "High Court · Component · Sub-Component · Type of Storage · District · Target · Achieved · Remarks",
     queryKeys: [["physical"], ["physical-hc-period"]],
   },
   {

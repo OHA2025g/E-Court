@@ -27,16 +27,39 @@ OUTCOME_SEED_VERSION = 3
 
 
 async def migrate_district_indexes(database):
-    """Ensure district field exists and unique indexes include district."""
+    """Ensure district field exists and unique indexes include district (+ storage_type for physical)."""
+    from seed_constants import CLOUD_COMPUTING_COMPONENT, DEFAULT_STORAGE_TYPE
+
     await database.physical_entries.update_many(
         {"district": {"$exists": False}}, {"$set": {"district": None}}
+    )
+    # Cloud Computing: default existing rows to Block Storage
+    await database.physical_entries.update_many(
+        {
+            "component": CLOUD_COMPUTING_COMPONENT,
+            "$or": [
+                {"storage_type": {"$exists": False}},
+                {"storage_type": None},
+                {"storage_type": ""},
+            ],
+        },
+        {"$set": {"storage_type": DEFAULT_STORAGE_TYPE}},
+    )
+    # Non-cloud: explicit null so unique index is stable
+    await database.physical_entries.update_many(
+        {
+            "component": {"$ne": CLOUD_COMPUTING_COMPONENT},
+            "storage_type": {"$exists": False},
+        },
+        {"$set": {"storage_type": None}},
     )
     await database.financial_entries.update_many(
         {"district": {"$exists": False}}, {"$set": {"district": None}}
     )
     for coll, new_keys in [
         (database.physical_entries,
-         [("high_court", 1), ("component", 1), ("indicator", 1), ("reporting_period", 1), ("district", 1)]),
+         [("high_court", 1), ("component", 1), ("indicator", 1), ("reporting_period", 1),
+          ("district", 1), ("storage_type", 1)]),
         (database.financial_entries,
          [("high_court", 1), ("component", 1), ("reporting_period", 1), ("district", 1)]),
     ]:
@@ -46,7 +69,14 @@ async def migrate_district_indexes(database):
                 continue
             keys = idx.get("key", [])
             key_fields = [k[0] for k in keys]
-            if idx.get("unique") and "district" not in key_fields:
+            needs_rebuild = False
+            if coll is database.physical_entries:
+                # Drop any unique physical index that is not the storage_type-aware key
+                expected = {"high_court", "component", "indicator", "reporting_period", "district", "storage_type"}
+                needs_rebuild = idx.get("unique") and set(key_fields) != expected
+            else:
+                needs_rebuild = idx.get("unique") and "district" not in key_fields
+            if needs_rebuild:
                 try:
                     await coll.drop_index(idx_name)
                 except Exception:
@@ -125,7 +155,12 @@ async def seed_master(db):
         docs = []
         for comp, inds in COMPONENT_INDICATORS.items():
             for ind in inds:
-                unit = "Crore Pages" if "Cr." in ind else "PB" if "PB" in ind else "Percentage" if "%" in ind else "Count"
+                unit = (
+                    "Crore Pages" if "Cr." in ind
+                    else "GB / TB / PB" if ("GB" in ind or "TB" in ind or "PB" in ind)
+                    else "Percentage" if "%" in ind
+                    else "Count"
+                )
                 docs.append({"component": comp, "indicator": ind, "unit": unit, "data_type": "Float" if unit != "Count" else "Int"})
         if docs:
             await db.indicators.insert_many(docs)

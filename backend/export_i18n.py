@@ -51,12 +51,12 @@ def physical_headers(lang: str) -> list[str]:
     lang = lang if lang in SUPPORTED else "en"
     if lang == "en":
         return [
-            "High Court", "District", "Component", "Sub-Component", "Period", "Target",
+            "High Court", "District", "Component", "Sub-Component", "Type of Storage", "Period", "Target",
             "Achieved", "% Achieved", "RAG", "Remarks",
         ]
     return [
         _t("high_court", lang), _t("district", lang), _t("component", lang),
-        _t("sub_component", lang),
+        _t("sub_component", lang), "Type of Storage",
         _t("period", lang), "Target", "Achieved", "% Achieved", _t("rag", lang), _t("remarks", lang),
     ]
 

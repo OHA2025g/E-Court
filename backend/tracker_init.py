@@ -1,6 +1,8 @@
 """Initialize tracker rows from master data."""
 from typing import Callable, Optional
 
+from seed_constants import CLOUD_COMPUTING_COMPONENT, STORAGE_TYPE_OPTIONS
+
 
 async def init_physical_period(
     db,
@@ -21,32 +23,39 @@ async def init_physical_period(
     indicators = await db.indicators.find(ind_query, {"_id": 0}).to_list(5000)
     created, skipped = 0, 0
     for ind in indicators:
-        q = {
-            "high_court": high_court,
-            "component": ind["component"],
-            "indicator": ind["indicator"],
-            "reporting_period": reporting_period,
-            "district": None,
-        }
-        existing = await db.physical_entries.find_one(q)
-        if existing:
-            skipped += 1
-            continue
-        doc = {
-            **q,
-            "target": None,
-            "achieved": None,
-            "percent": None,
-            "rag": "NA",
-            "remarks": None,
-            "source": "template_init",
-            "created_by": user["email"],
-            "created_at": now_utc_fn(),
-            "updated_by": user["email"],
-            "updated_at": now_utc_fn(),
-        }
-        await db.physical_entries.insert_one(doc)
-        created += 1
+        storage_types = (
+            list(STORAGE_TYPE_OPTIONS)
+            if ind["component"] == CLOUD_COMPUTING_COMPONENT
+            else [None]
+        )
+        for storage_type in storage_types:
+            q = {
+                "high_court": high_court,
+                "component": ind["component"],
+                "indicator": ind["indicator"],
+                "reporting_period": reporting_period,
+                "district": None,
+                "storage_type": storage_type,
+            }
+            existing = await db.physical_entries.find_one(q)
+            if existing:
+                skipped += 1
+                continue
+            doc = {
+                **q,
+                "target": None,
+                "achieved": None,
+                "percent": None,
+                "rag": "NA",
+                "remarks": None,
+                "source": "template_init",
+                "created_by": user["email"],
+                "created_at": now_utc_fn(),
+                "updated_by": user["email"],
+                "updated_at": now_utc_fn(),
+            }
+            await db.physical_entries.insert_one(doc)
+            created += 1
     return {"created": created, "skipped": skipped, "high_court": high_court, "reporting_period": reporting_period}
 
 

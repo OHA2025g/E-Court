@@ -1,5 +1,28 @@
 """Roll up district-level tracker rows to HC/component aggregates for dashboards and reports."""
 
+from typing import Optional
+
+from seed_constants import (
+    CLOUD_COMPUTING_COMPONENT,
+    DEFAULT_STORAGE_TYPE,
+    STORAGE_TYPE_OPTIONS,
+)
+
+
+def resolve_storage_type(component: str, storage_type: Optional[str] = None) -> Optional[str]:
+    """Return storage_type for Cloud Computing rows; None for all other components."""
+    if component != CLOUD_COMPUTING_COMPONENT:
+        return None
+    st = (storage_type or "").strip()
+    if not st:
+        return DEFAULT_STORAGE_TYPE
+    if st not in STORAGE_TYPE_OPTIONS:
+        raise ValueError(
+            f"Invalid Type of Storage: {storage_type!r}. "
+            f"Allowed: {', '.join(STORAGE_TYPE_OPTIONS)}"
+        )
+    return st
+
 
 def physical_rollup_stages(extra_match: dict | None = None) -> list:
     """Pipeline stages: match → roll up by HC+component+indicator+period (ignore district)."""
@@ -166,13 +189,15 @@ def apply_district_filter(q: dict, district: str | None) -> dict:
 
 
 def entry_query_key_physical(body: dict) -> dict:
-    return {
+    q = {
         "high_court": body["high_court"],
         "component": body["component"],
         "indicator": body["indicator"],
         "reporting_period": body["reporting_period"],
         "district": body.get("district"),
+        "storage_type": resolve_storage_type(body.get("component") or "", body.get("storage_type")),
     }
+    return q
 
 
 def entry_query_key_financial(body: dict) -> dict:

@@ -22,6 +22,9 @@ import { unwrapTrackerResponse } from "@/lib/trackerApi";
 import TrackerPagination from "@/components/TrackerPagination";
 
 const PAGE_SIZE = 50;
+const CLOUD_COMPUTING_COMPONENT = "Cloud Computing & Storage";
+const STORAGE_TYPE_OPTIONS = ["NFS Storage", "Block Storage"];
+const DEFAULT_STORAGE_TYPE = "Block Storage";
 
 export default function PhysicalTracker() {
   const { user } = useAuth();
@@ -33,6 +36,7 @@ export default function PhysicalTracker() {
   const [districtFilter, setDistrictFilter] = useState("");
   const [component, setComponent] = useState("");
   const [indicator, setIndicator] = useState("");
+  const [storageType, setStorageType] = useState(DEFAULT_STORAGE_TYPE);
   const [target, setTarget] = useState("");
   const [achieved, setAchieved] = useState("");
   const [remarks, setRemarks] = useState("");
@@ -41,6 +45,8 @@ export default function PhysicalTracker() {
   const [initPromptDismissed, setInitPromptDismissed] = useState(false);
   const [commentsEntry, setCommentsEntry] = useState(null);
   const [page, setPage] = useState(1);
+
+  const isCloudComponent = component === CLOUD_COMPUTING_COMPONENT;
 
   const hcs = useQuery({ queryKey: ["hcs"], queryFn: () => api.get("/master/high-courts").then(r => r.data) });
   const comps = useQuery({ queryKey: ["comps"], queryFn: () => api.get("/master/components").then(r => r.data) });
@@ -82,6 +88,11 @@ export default function PhysicalTracker() {
   }, [anomalies.data]);
 
   useEffect(() => { setPage(1); }, [hc, component, period, districtFilter]);
+  useEffect(() => {
+    if (component !== CLOUD_COMPUTING_COMPONENT) {
+      setStorageType(DEFAULT_STORAGE_TYPE);
+    }
+  }, [component]);
   const initPromptKey = hc && period ? `pmis-init-prompt:${hc}:${period}` : null;
   const hcPeriodRows = useQuery({
     queryKey: ["physical", "hc-period", hc, period],
@@ -103,11 +114,15 @@ export default function PhysicalTracker() {
     if (f.component != null) setComponent(f.component);
     if (f.indicator != null) setIndicator(f.indicator);
     if (f.district != null) setDistrict(f.district);
+    if (f.storageType != null) setStorageType(f.storageType);
     if (f.target != null) setTarget(f.target);
     if (f.achieved != null) setAchieved(f.achieved);
     if (f.remarks != null) setRemarks(f.remarks);
   }, []);
-  const draftFields = useMemo(() => ({ component, indicator, district, target, achieved, remarks }), [component, indicator, district, target, achieved, remarks]);
+  const draftFields = useMemo(
+    () => ({ component, indicator, district, storageType, target, achieved, remarks }),
+    [component, indicator, district, storageType, target, achieved, remarks],
+  );
   const { showBanner, clearDraft, dismissBanner } = useTrackerDraft({
     userId: user?.email || user?.id, tracker: "physical", period, hc, fields: draftFields, setFields: setDraftFields,
   });
@@ -115,32 +130,39 @@ export default function PhysicalTracker() {
   useEffect(() => {
     if (!entryLookupItems.length || !hc || !component || !indicator || !period) return;
     const d = district || null;
+    const st = isCloudComponent ? (storageType || DEFAULT_STORAGE_TYPE) : null;
     const found = entryLookupItems.find(r =>
       r.high_court === hc && r.component === component &&
       r.indicator === indicator && r.reporting_period === period &&
-      (r.district || null) === d
+      (r.district || null) === d &&
+      (isCloudComponent ? (r.storage_type || DEFAULT_STORAGE_TYPE) === st : true)
     );
     if (found) {
       setTarget(found.target ?? "");
       setAchieved(found.achieved ?? "");
       setRemarks(found.remarks ?? "");
+      if (found.storage_type) setStorageType(found.storage_type);
     } else if (user?.role !== "Admin") {
       setTarget(""); setAchieved(""); setRemarks("");
     }
-  }, [entryLookupItems, hc, component, indicator, period, district, user?.role]);
+  }, [entryLookupItems, hc, component, indicator, period, district, storageType, isCloudComponent, user?.role]);
 
   const canAddEntry = user?.role === "Admin";
   const canEditTarget = user?.role === "Admin";
   const canEdit = user?.role !== "Viewer";
-  const formMandatoryReady = Boolean(hc && component && indicator && period);
+  const formMandatoryReady = Boolean(
+    hc && component && indicator && period && (!isCloudComponent || storageType),
+  );
   const selectedEntryExists = useMemo(() => {
     if (!formMandatoryReady) return false;
     const d = district || null;
+    const st = isCloudComponent ? (storageType || DEFAULT_STORAGE_TYPE) : null;
     return entryLookupItems.some((r) =>
       r.high_court === hc && r.component === component && r.indicator === indicator &&
-      r.reporting_period === period && (r.district || null) === d
+      r.reporting_period === period && (r.district || null) === d &&
+      (isCloudComponent ? (r.storage_type || DEFAULT_STORAGE_TYPE) === st : true)
     );
-  }, [entryLookupItems, formMandatoryReady, hc, component, indicator, period, district]);
+  }, [entryLookupItems, formMandatoryReady, hc, component, indicator, period, district, storageType, isCloudComponent]);
   const canSaveEntry = canEdit && (canAddEntry ? formMandatoryReady : formMandatoryReady && selectedEntryExists);
   const showInitPrompt = canAddEntry && hc && period && !initPromptDismissed &&
     hcPeriodCount === 0 && !hcPeriodRows.isLoading;
@@ -154,11 +176,16 @@ export default function PhysicalTracker() {
     const body = payload || {
       high_court: hc, component, indicator, reporting_period: period,
       district: district || null,
+      storage_type: isCloudComponent ? (storageType || DEFAULT_STORAGE_TYPE) : null,
       target: target === "" ? null : Number(target),
       achieved: achieved === "" ? null : Number(achieved),
       remarks: remarks || null,
     };
     if (!body.high_court || !body.component || !body.indicator || !body.reporting_period) {
+      toast.error(labels.selectRequired);
+      return;
+    }
+    if (body.component === CLOUD_COMPUTING_COMPONENT && !body.storage_type) {
       toast.error(labels.selectRequired);
       return;
     }
@@ -188,6 +215,9 @@ export default function PhysicalTracker() {
         indicator: row.indicator,
         reporting_period: row.reporting_period,
         district: row.district || null,
+        storage_type: row.component === CLOUD_COMPUTING_COMPONENT
+          ? (row.storage_type || DEFAULT_STORAGE_TYPE)
+          : null,
         target: row.target,
         achieved: row.achieved,
         remarks: row.remarks,
@@ -233,6 +263,7 @@ export default function PhysicalTracker() {
     { key: "high_court", label: labels.highCourt },
     { key: "district", label: labels.district, render: r => r.district || labels.hcLevel },
     { key: "component", label: labels.component },
+    { key: "storage_type", label: labels.typeOfStorage, render: r => r.storage_type || "—" },
     { key: "indicator", label: labels.indicator, render: (r) => (
       <span className="inline-flex items-center gap-1">
         {r.indicator}
@@ -305,6 +336,15 @@ export default function PhysicalTracker() {
               disabled={!hc} />
             <SelectField testid={TID.componentSelect} label={labels.component} value={component} onChange={(v) => { setComponent(v); setIndicator(""); }} options={(comps.data || []).map(c => c.name)} />
             <SelectField testid={TID.indicatorSelect} label={labels.indicator} value={indicator} onChange={setIndicator} options={(inds.data || []).map(i => i.indicator)} disabled={!component} />
+            {isCloudComponent && (
+              <SelectField
+                testid="storage-type-select"
+                label={labels.typeOfStorage}
+                value={storageType}
+                onChange={setStorageType}
+                options={STORAGE_TYPE_OPTIONS}
+              />
+            )}
             <NumberField testid={TID.targetInput} label={canEditTarget ? labels.target : labels.targetAdmin} value={target} onChange={setTarget} disabled={!canEditTarget} />
             <NumberField testid={TID.achievedInput} label={labels.achievedCumulative} value={achieved} onChange={setAchieved} disabled={!canEdit} />
             <div className="sm:col-span-2">
@@ -364,6 +404,9 @@ export default function PhysicalTracker() {
                 setIndicator(r.indicator);
                 setPeriod(r.reporting_period);
                 setDistrict(r.district || "");
+                if (r.component === CLOUD_COMPUTING_COMPONENT) {
+                  setStorageType(r.storage_type || DEFAULT_STORAGE_TYPE);
+                }
               }}
             />
             {!list.isLoading && listItems.length === 0 && (
@@ -379,7 +422,7 @@ export default function PhysicalTracker() {
         entryId={commentsEntry?.id}
         open={!!commentsEntry}
         onOpenChange={(open) => { if (!open) setCommentsEntry(null); }}
-        entryLabel={commentsEntry ? `${commentsEntry.high_court} · ${commentsEntry.component} · ${commentsEntry.indicator}` : ""}
+        entryLabel={commentsEntry ? `${commentsEntry.high_court} · ${commentsEntry.component}${commentsEntry.storage_type ? ` · ${commentsEntry.storage_type}` : ""} · ${commentsEntry.indicator}` : ""}
       />
     </div>
   );

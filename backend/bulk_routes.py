@@ -290,11 +290,11 @@ def register_bulk_routes(
         wb = xlsxwriter.Workbook(buf, {"in_memory": True})
         ws = wb.add_worksheet("PhysicalBulk")
         hf = wb.add_format({"bold": True, "bg_color": "#0A1128", "font_color": "white", "border": 1})
-        headers = ["High Court", "Component", "Sub-Component", "District", "Target", "Achieved", "Remarks"]
+        headers = ["High Court", "Component", "Sub-Component", "Type of Storage", "District", "Target", "Achieved", "Remarks"]
         for i, h in enumerate(headers):
             ws.write(0, i, h, hf)
         sample = [
-            ["Allahabad", "e-Sewa Kendras", "No of sites prepared (in Absolute Count)", "", 400, 250, "Sample row"],
+            ["Allahabad", "Cloud Computing & Storage", "Total centralised storage capacity (in GB / TB / PB)", "Block Storage", "", 10, 5, "Sample row"],
         ]
         for r, row in enumerate(sample, start=1):
             for c, v in enumerate(row):

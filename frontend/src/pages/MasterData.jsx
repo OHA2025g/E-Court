@@ -136,7 +136,7 @@ function ComponentDialog({ open, onOpenChange, item, onSaved }) {
     <SaveDialog open={open} onOpenChange={onOpenChange} title={labels.entityComponent} isEdit={isEdit} onSave={save} busy={busy}>
       <TextField label={labels.fieldCode} value={form.code} onChange={(v) => setForm(f => ({ ...f, code: v }))} disabled={isEdit} />
       <TextField label={labels.fieldName} value={form.name} onChange={(v) => setForm(f => ({ ...f, name: v }))} />
-      <SelectField label={labels.fieldUom} value={form.uom} onChange={(v) => setForm(f => ({ ...f, uom: v }))} options={["Count", "Percentage", "Crore Pages", "PB", "KWH", "Ratio", "Amount"]} />
+      <SelectField label={labels.fieldUom} value={form.uom} onChange={(v) => setForm(f => ({ ...f, uom: v }))} options={["Count", "Percentage", "Crore Pages", "GB", "TB", "PB", "GB / TB / PB", "KWH", "Ratio", "Amount"]} />
       <NumberField label={labels.fieldSequence} value={form.seq} onChange={(v) => setForm(f => ({ ...f, seq: v }))} />
     </SaveDialog>
   );
@@ -149,12 +149,21 @@ function IndicatorDialog({ open, onOpenChange, item, onSaved, components }) {
   const [busy, setBusy] = useState(false);
   React.useEffect(() => { setForm(item || { component: "", indicator: "", unit: "Count", data_type: "Int" }); }, [item, open]);
   async function save() {
+    if (!form.component?.trim() || !form.indicator?.trim()) {
+      toast.error("Component and sub-component are required");
+      return;
+    }
     setBusy(true);
     try {
+      const payload = {
+        ...form,
+        component: form.component.trim(),
+        indicator: form.indicator.trim(),
+      };
       if (isEdit) {
-        await api.put(`/master/indicators?original_indicator=${encodeURIComponent(item.indicator)}`, form);
+        await api.put(`/master/indicators?original_indicator=${encodeURIComponent(item.indicator)}`, payload);
       } else {
-        await api.post("/master/indicators", form);
+        await api.post("/master/indicators", payload);
       }
       toast.success(labels.saved); onSaved(); onOpenChange(false);
     } catch (e) { toast.error(formatApiError(e.response?.data?.detail)); }
@@ -164,7 +173,7 @@ function IndicatorDialog({ open, onOpenChange, item, onSaved, components }) {
     <SaveDialog open={open} onOpenChange={onOpenChange} title={labels.entityIndicator} isEdit={isEdit} onSave={save} busy={busy}>
       <SelectField label={labels.colComponent} value={form.component} onChange={(v) => setForm(f => ({ ...f, component: v }))} options={components.map(c => c.name)} disabled={isEdit} />
       <TextField label={labels.fieldIndicator} value={form.indicator} onChange={(v) => setForm(f => ({ ...f, indicator: v }))} />
-      <SelectField label={labels.colUnit} value={form.unit} onChange={(v) => setForm(f => ({ ...f, unit: v }))} options={["Count", "Percentage", "Crore Pages", "PB"]} />
+      <SelectField label={labels.colUnit} value={form.unit} onChange={(v) => setForm(f => ({ ...f, unit: v }))} options={["Count", "Percentage", "Crore Pages", "GB", "TB", "PB", "GB / TB / PB"]} />
       <SelectField label={labels.fieldDataType} value={form.data_type} onChange={(v) => setForm(f => ({ ...f, data_type: v }))} options={["Int", "Float"]} />
     </SaveDialog>
   );
@@ -548,7 +557,7 @@ export default function MasterData() {
           />
         </TabsContent>
 
-        <TabsContent value="ind" className="mt-4">
+        <TabsContent value="ind" className="mt-4" data-testid="master-sub-components">
           <CrudPanel
             title={labels.physicalIndicators} queryKey="m-ind" listEndpoint="/master/indicators"
             columns={[

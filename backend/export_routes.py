@@ -98,13 +98,16 @@ def register_export_routes(
                               component: Optional[str] = None,
                               reporting_period: Optional[str] = None,
                               district: Optional[str] = None,
+                              storage_type: Optional[str] = None,
                               user: dict = Depends(require_fully_authenticated)):
         _enforce_export_limit(user)
         lang = resolve_export_lang(request.headers.get("accept-language"))
         q = await _export_query(user, reporting_period, high_court, component, district)
+        if storage_type:
+            q["storage_type"] = storage_type
         items = await db.physical_entries.find(q).sort("high_court", 1).to_list(20000)
         rows = serialize_fn(items)
-        cols = ["high_court", "district", "component", "indicator", "reporting_period", "target",
+        cols = ["high_court", "district", "component", "indicator", "storage_type", "reporting_period", "target",
                 "achieved", "percent", "rag", "remarks"]
         headers = physical_headers(lang)
         if format == "xlsx":

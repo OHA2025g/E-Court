@@ -22,7 +22,7 @@ COMPONENTS = [
     {"code": "AHW", "name": "Additional Hardware — Phase I & II", "uom": "Count"},
     {"code": "NSC", "name": "ICT for Newly Set-Up Courts", "uom": "Count"},
     {"code": "S3W", "name": "HC & DC Website Migration — S3WaaS", "uom": "Count"},
-    {"code": "CCS", "name": "Cloud Computing & Storage", "uom": "PB"},
+    {"code": "CCS", "name": "Cloud Computing & Storage", "uom": "GB / TB / PB"},
     {"code": "ICT", "name": "ICT Training / Change Management", "uom": "Count"},
     {"code": "NST", "name": "NSTEP Expansion", "uom": "Count"},
     {"code": "SWD", "name": "Software Development", "uom": "Count"},
@@ -30,6 +30,11 @@ COMPONENTS = [
     {"code": "CON", "name": "Connectivity — Primary + Redundancy", "uom": "Count"},
     {"code": "EOF", "name": "e-Office for HCs & District Courts", "uom": "Count"},
 ]
+
+# Cloud Computing Physical Tracker — Type of Storage dimension
+CLOUD_COMPUTING_COMPONENT = "Cloud Computing & Storage"
+STORAGE_TYPE_OPTIONS = ("NFS Storage", "Block Storage")
+DEFAULT_STORAGE_TYPE = "Block Storage"
 
 # Map component → list of physical indicators
 COMPONENT_INDICATORS = {
@@ -94,7 +99,7 @@ COMPONENT_INDICATORS = {
         "No of visitors to the migrated District Court websites (in Absolute Count)",
     ],
     "Cloud Computing & Storage": [
-        "Total centralised storage capacity (in PB)",
+        "Total centralised storage capacity (in GB / TB / PB)",
     ],
     "ICT Training / Change Management": [
         "No of training programmes conducted (in Absolute Count)",

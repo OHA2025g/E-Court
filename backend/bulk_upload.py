@@ -5,9 +5,22 @@ from typing import Any, Callable, Optional
 import openpyxl
 from fastapi import HTTPException
 
-from rollup import entry_query_key_financial, entry_query_key_physical
+from rollup import entry_query_key_financial, entry_query_key_physical, resolve_storage_type
 from security import validate_upload_bytes
 from outcome_excel import parse_outcome_excel_rows
+from seed_constants import CLOUD_COMPUTING_COMPONENT, DEFAULT_STORAGE_TYPE
+
+PHYSICAL_TEMPLATE_HEADERS = [
+    "High Court", "Component", "Sub-Component", "Type of Storage", "District", "Target", "Achieved", "Remarks",
+]
+FINANCIAL_TEMPLATE_HEADERS = [
+    "High Court", "Component", "District", "Fund Released", "Fund Utilized", "Remarks",
+]
+OUTCOME_TEMPLATE_HEADERS = [
+    "High Court", "Component", "Sub-Component", "Subject", "KPI ID",
+    "Granularity", "District", "Value", "Baseline", "Remarks",
+]
+PREVIEW_ROW_LIMIT = 500
 
 PHYSICAL_TEMPLATE_HEADERS = [
     "High Court", "Component", "Sub-Component", "District", "Target", "Achieved", "Remarks",
@@ -20,7 +33,6 @@ OUTCOME_TEMPLATE_HEADERS = [
     "Granularity", "District", "Value", "Baseline", "Remarks",
 ]
 PREVIEW_ROW_LIMIT = 500
-
 
 def parse_excel_rows(raw: bytes, filename: str, ext: str) -> tuple[list, list[str], list[str]]:
     validate_upload_bytes(raw, ext)
@@ -133,6 +145,7 @@ async def process_physical_bulk(
     col_ach = col_idx(header_row, "achieved")
     col_rem = col_idx(header_row, "remarks")
     col_dist = col_idx(header_row, "district")
+    col_storage = col_idx_any(header_row, "type of storage", "storage type", "storage_type")
     if min(col_hc, col_comp, col_ind, col_ach) < 0:
         raise HTTPException(
             status_code=400,
@@ -143,13 +156,14 @@ async def process_physical_bulk(
         (display_headers[col_hc] if col_hc >= 0 else "High Court", "High Court", "identity"),
         (display_headers[col_comp] if col_comp >= 0 else "Component", "Component", "identity"),
         (display_headers[col_ind] if col_ind >= 0 else "Sub-Component", "Sub-Component", "alias: indicator"),
+        (display_headers[col_storage] if col_storage >= 0 else "Type of Storage", "Type of Storage", "Cloud Computing only"),
         (display_headers[col_dist] if col_dist >= 0 else "District", "District", "optional"),
         (display_headers[col_target] if col_target >= 0 else "Target", "Target", "Admin-only write"),
         (display_headers[col_ach] if col_ach >= 0 else "Achieved", "Achieved", "numeric"),
         (display_headers[col_rem] if col_rem >= 0 else "Remarks", "Remarks", "optional"),
     ])
-    interest = [c for c in (col_hc, col_comp, col_ind, col_dist, col_target, col_ach, col_rem) if c >= 0]
-    db_fields = ["high_court", "component", "indicator", "district", "target", "achieved", "remarks", "percent", "rag"]
+    interest = [c for c in (col_hc, col_comp, col_ind, col_storage, col_dist, col_target, col_ach, col_rem) if c >= 0]
+    db_fields = ["high_court", "component", "indicator", "storage_type", "district", "target", "achieved", "remarks", "percent", "rag"]
 
     inserted, updated, skipped, errors, preview_rows = 0, 0, 0, [], []
     for i, r in enumerate(rows[1:], start=2):
@@ -193,9 +207,24 @@ async def process_physical_bulk(
             except (ValueError, TypeError):
                 target_val = None
         remarks_val = str(r[col_rem]).strip() if (col_rem >= 0 and r[col_rem]) else None
+        raw_storage = None
+        if col_storage >= 0 and r[col_storage] not in (None, ""):
+            raw_storage = str(r[col_storage]).strip()
+        try:
+            storage_type = resolve_storage_type(comp, raw_storage)
+        except ValueError as e:
+            skipped += 1
+            errors.append({"row": i, "error": str(e)})
+            preview_rows.append({"row": i, "status": "error", "action": None, "error": str(e), "excel": excel, "template": None, "database": None, "data": None})
+            continue
+        if comp == CLOUD_COMPUTING_COMPONENT and not storage_type:
+            storage_type = DEFAULT_STORAGE_TYPE
 
-        q = {"high_court": hc, "component": comp, "indicator": ind,
-             "reporting_period": reporting_period, "district": district}
+        q = entry_query_key_physical({
+            "high_court": hc, "component": comp, "indicator": ind,
+            "reporting_period": reporting_period, "district": district,
+            "storage_type": storage_type,
+        })
         existing = await db.physical_entries.find_one(q)
         eff_target = target_val if (user["role"] == "Admin" and target_val is not None) else (existing.get("target") if existing else None)
         percent = safe_div_fn(ach_val, eff_target)
@@ -203,6 +232,7 @@ async def process_physical_bulk(
         row_data = {**q, "target": eff_target, "achieved": ach_val, "percent": percent, "rag": rag, "remarks": remarks_val}
         template = {
             "High Court": hc, "Component": comp, "Sub-Component": ind,
+            "Type of Storage": storage_type or "",
             "District": district or "", "Target": eff_target, "Achieved": ach_val,
             "Remarks": remarks_val or "",
         }

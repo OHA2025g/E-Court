@@ -14,7 +14,7 @@ Example:
   python scripts/import_physical_excel.py --write-bulk-xlsx --update-seed --load-api \\
       --api-url https://ecourt.demoapi.agrayianailabs.com \\
       --admin-email admin@pmis.gov.in --admin-password '...' \\
-      --period 2025-09
+      --period 2026-05
 """
 from __future__ import annotations
 
@@ -32,7 +32,9 @@ DEFAULT_XLSX = REPO_ROOT / "Physicial_Tracker_Data_for_Achieved_till_Sep-2025.xl
 DEFAULT_OUT = REPO_ROOT / "etl_output" / "physical_achieved_till_sep_2025_bulk.xlsx"
 SEED_PATH = ROOT / "seed_data.json"
 DEFAULT_SHEET = "Physical_Tracker"
-DEFAULT_PERIOD = "2025-09"
+# Baseline period so National Dashboard (approval-gated) includes physical KPIs
+# alongside financial Released/Utilised. Source label remains “till Sep 2025”.
+DEFAULT_PERIOD = "2026-05"
 
 sys.path.insert(0, str(ROOT))
 from physical_excel import (  # noqa: E402

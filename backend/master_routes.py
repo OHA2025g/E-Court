@@ -124,8 +124,14 @@ def register_master_routes(
 
     @api.post("/master/indicators")
     async def create_indicator(body: IndicatorIn, user: dict = Depends(require_role("Admin"))):
+        body.component = (body.component or "").strip()
+        body.indicator = (body.indicator or "").strip()
+        if not body.component or not body.indicator:
+            raise HTTPException(status_code=400, detail="Component and sub-component are required")
+        if not await db.components.find_one({"name": body.component}):
+            raise HTTPException(status_code=400, detail="Unknown component — add it under Components first")
         if await db.indicators.find_one({"component": body.component, "indicator": body.indicator}):
-            raise HTTPException(status_code=400, detail="Indicator already exists for this component")
+            raise HTTPException(status_code=400, detail="Sub-component already exists for this component")
         await db.indicators.insert_one(body.model_dump())
         await audit_fn(user, "master", "create_indicator", body.indicator,
                     [{"field": "indicator", "old": None, "new": body.model_dump()}])
@@ -137,10 +143,24 @@ def register_master_routes(
         existing = await db.indicators.find_one({"component": body.component, "indicator": original_indicator})
         if not existing:
             raise HTTPException(status_code=404, detail="Not found")
+        new_name = (body.indicator or "").strip()
+        if not new_name:
+            raise HTTPException(status_code=400, detail="Sub-component name is required")
+        body.indicator = new_name
+        if new_name != original_indicator:
+            clash = await db.indicators.find_one({"component": body.component, "indicator": new_name})
+            if clash:
+                raise HTTPException(status_code=400, detail="Sub-component already exists for this component")
         await db.indicators.update_one(
             {"component": body.component, "indicator": original_indicator},
             {"$set": body.model_dump()}
         )
+        # Keep Physical Tracker rows in sync when the sub-component is renamed
+        if new_name != original_indicator:
+            await db.physical_entries.update_many(
+                {"component": body.component, "indicator": original_indicator},
+                {"$set": {"indicator": new_name}},
+            )
         await audit_fn(user, "master", "update_indicator", body.indicator,
                     [{"field": "indicator", "old": {"indicator": original_indicator}, "new": body.model_dump()}])
         return {"ok": True}

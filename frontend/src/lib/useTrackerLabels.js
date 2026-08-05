@@ -21,6 +21,7 @@ export function useTrackerLabels() {
       reportingMonth: t("tracker.reportingMonth"),
       districtOptional: t("tracker.districtOptional"),
       tableFilter: t("tracker.tableFilter"),
+      typeOfStorage: t("tracker.typeOfStorage"),
       allDistricts: t("tracker.allDistricts"),
       hcLevelOnly: t("tracker.hcLevelOnly"),
       remarksOptional: t("tracker.remarksOptional"),
