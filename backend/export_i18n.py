@@ -52,12 +52,18 @@ def physical_headers(lang: str) -> list[str]:
     if lang == "en":
         return [
             "High Court", "District", "Component", "Sub-Component", "Type of Storage", "Period", "Target",
-            "Achieved", "% Achieved", "RAG", "Remarks",
+            "Achieved", "% Achieved",
+            "Target as per DPR", "Achieved as per e-Committee", "% Achieved as per e-Committee",
+            "Target as per CPC", "Achieved as per CPC", "% Achieved as per CPC",
+            "RAG", "Remarks",
         ]
     return [
         _t("high_court", lang), _t("district", lang), _t("component", lang),
         _t("sub_component", lang), "Type of Storage",
-        _t("period", lang), "Target", "Achieved", "% Achieved", _t("rag", lang), _t("remarks", lang),
+        _t("period", lang), "Target", "Achieved", "% Achieved",
+        "Target as per DPR", "Achieved as per e-Committee", "% Achieved as per e-Committee",
+        "Target as per CPC", "Achieved as per CPC", "% Achieved as per CPC",
+        _t("rag", lang), _t("remarks", lang),
     ]
 
 

@@ -146,6 +146,10 @@ async def process_physical_bulk(
     col_rem = col_idx(header_row, "remarks")
     col_dist = col_idx(header_row, "district")
     col_storage = col_idx_any(header_row, "type of storage", "storage type", "storage_type")
+    col_target_dpr = col_idx_any(header_row, "target as per dpr", "target_dpr")
+    col_ach_ec = col_idx_any(header_row, "achieved as per e-committee", "achieved as per ecommittee", "achieved_ecommittee")
+    col_target_cpc = col_idx_any(header_row, "target as per cpc", "target_cpc")
+    col_ach_cpc = col_idx_any(header_row, "achieved as per cpc", "achieved_cpc")
     if min(col_hc, col_comp, col_ind, col_ach) < 0:
         raise HTTPException(
             status_code=400,
@@ -220,16 +224,40 @@ async def process_physical_bulk(
         if comp == CLOUD_COMPUTING_COMPONENT and not storage_type:
             storage_type = DEFAULT_STORAGE_TYPE
 
+        def _opt_float(col):
+            if col < 0:
+                return None
+            v = r[col]
+            try:
+                return None if v in (None, "") else float(v)
+            except (ValueError, TypeError):
+                return None
+
+        is_esewa = comp == "e-Sewa Kendras"
+        target_dpr = _opt_float(col_target_dpr) if is_esewa else None
+        achieved_ecommittee = _opt_float(col_ach_ec) if is_esewa else None
+        target_cpc = _opt_float(col_target_cpc) if is_esewa else None
+        achieved_cpc = _opt_float(col_ach_cpc) if is_esewa else None
+
         q = entry_query_key_physical({
             "high_court": hc, "component": comp, "indicator": ind,
             "reporting_period": reporting_period, "district": district,
             "storage_type": storage_type,
         })
         existing = await db.physical_entries.find_one(q)
+        if user["role"] == "CPC" and existing and is_esewa:
+            target_dpr = existing.get("target_dpr")
         eff_target = target_val if (user["role"] == "Admin" and target_val is not None) else (existing.get("target") if existing else None)
         percent = safe_div_fn(ach_val, eff_target)
         rag = compute_rag_fn(percent, thresholds)
-        row_data = {**q, "target": eff_target, "achieved": ach_val, "percent": percent, "rag": rag, "remarks": remarks_val}
+        percent_ecommittee = safe_div_fn(achieved_ecommittee, target_dpr) if is_esewa else None
+        percent_cpc = safe_div_fn(achieved_cpc, target_cpc) if is_esewa else None
+        row_data = {
+            **q, "target": eff_target, "achieved": ach_val, "percent": percent, "rag": rag, "remarks": remarks_val,
+            "target_dpr": target_dpr, "achieved_ecommittee": achieved_ecommittee,
+            "target_cpc": target_cpc, "achieved_cpc": achieved_cpc,
+            "percent_ecommittee": percent_ecommittee, "percent_cpc": percent_cpc,
+        }
         template = {
             "High Court": hc, "Component": comp, "Sub-Component": ind,
             "Type of Storage": storage_type or "",

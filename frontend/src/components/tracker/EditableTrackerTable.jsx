@@ -199,7 +199,7 @@ export default function EditableTrackerTable({
       const patch = { ...row };
       if (rawValue === "" || rawValue == null) {
         patch[field] = null;
-      } else if (typeof row[field] === "number" || ["target", "achieved", "fund_released", "fund_utilized", "fund_target", "fund_allocated", "value", "baseline"].includes(field)) {
+      } else if (typeof row[field] === "number" || ["target", "achieved", "target_dpr", "achieved_ecommittee", "target_cpc", "achieved_cpc", "fund_released", "fund_utilized", "fund_target", "fund_allocated", "value", "baseline"].includes(field)) {
         patch[field] = Number(rawValue);
       } else {
         patch[field] = rawValue;

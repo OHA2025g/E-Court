@@ -23,6 +23,7 @@ import TrackerPagination from "@/components/TrackerPagination";
 
 const PAGE_SIZE = 50;
 const CLOUD_COMPUTING_COMPONENT = "Cloud Computing & Storage";
+const ESEWA_COMPONENT = "e-Sewa Kendras";
 const STORAGE_TYPE_OPTIONS = ["NFS Storage", "Block Storage"];
 const DEFAULT_STORAGE_TYPE = "Block Storage";
 
@@ -39,6 +40,10 @@ export default function PhysicalTracker() {
   const [storageType, setStorageType] = useState(DEFAULT_STORAGE_TYPE);
   const [target, setTarget] = useState("");
   const [achieved, setAchieved] = useState("");
+  const [targetDpr, setTargetDpr] = useState("");
+  const [achievedEcommittee, setAchievedEcommittee] = useState("");
+  const [targetCpc, setTargetCpc] = useState("");
+  const [achievedCpc, setAchievedCpc] = useState("");
   const [remarks, setRemarks] = useState("");
   const [saving, setSaving] = useState(false);
   const [initBusy, setInitBusy] = useState(false);
@@ -47,6 +52,7 @@ export default function PhysicalTracker() {
   const [page, setPage] = useState(1);
 
   const isCloudComponent = component === CLOUD_COMPUTING_COMPONENT;
+  const isEsewaComponent = component === ESEWA_COMPONENT;
 
   const hcs = useQuery({ queryKey: ["hcs"], queryFn: () => api.get("/master/high-courts").then(r => r.data) });
   const comps = useQuery({ queryKey: ["comps"], queryFn: () => api.get("/master/components").then(r => r.data) });
@@ -92,6 +98,12 @@ export default function PhysicalTracker() {
     if (component !== CLOUD_COMPUTING_COMPONENT) {
       setStorageType(DEFAULT_STORAGE_TYPE);
     }
+    if (component !== ESEWA_COMPONENT) {
+      setTargetDpr("");
+      setAchievedEcommittee("");
+      setTargetCpc("");
+      setAchievedCpc("");
+    }
   }, [component]);
   const initPromptKey = hc && period ? `pmis-init-prompt:${hc}:${period}` : null;
   const hcPeriodRows = useQuery({
@@ -117,11 +129,18 @@ export default function PhysicalTracker() {
     if (f.storageType != null) setStorageType(f.storageType);
     if (f.target != null) setTarget(f.target);
     if (f.achieved != null) setAchieved(f.achieved);
+    if (f.targetDpr != null) setTargetDpr(f.targetDpr);
+    if (f.achievedEcommittee != null) setAchievedEcommittee(f.achievedEcommittee);
+    if (f.targetCpc != null) setTargetCpc(f.targetCpc);
+    if (f.achievedCpc != null) setAchievedCpc(f.achievedCpc);
     if (f.remarks != null) setRemarks(f.remarks);
   }, []);
   const draftFields = useMemo(
-    () => ({ component, indicator, district, storageType, target, achieved, remarks }),
-    [component, indicator, district, storageType, target, achieved, remarks],
+    () => ({
+      component, indicator, district, storageType, target, achieved,
+      targetDpr, achievedEcommittee, targetCpc, achievedCpc, remarks,
+    }),
+    [component, indicator, district, storageType, target, achieved, targetDpr, achievedEcommittee, targetCpc, achievedCpc, remarks],
   );
   const { showBanner, clearDraft, dismissBanner } = useTrackerDraft({
     userId: user?.email || user?.id, tracker: "physical", period, hc, fields: draftFields, setFields: setDraftFields,
@@ -142,8 +161,15 @@ export default function PhysicalTracker() {
       setAchieved(found.achieved ?? "");
       setRemarks(found.remarks ?? "");
       if (found.storage_type) setStorageType(found.storage_type);
+      if (component === ESEWA_COMPONENT) {
+        setTargetDpr(found.target_dpr ?? "");
+        setAchievedEcommittee(found.achieved_ecommittee ?? "");
+        setTargetCpc(found.target_cpc ?? "");
+        setAchievedCpc(found.achieved_cpc ?? "");
+      }
     } else if (user?.role !== "Admin") {
       setTarget(""); setAchieved(""); setRemarks("");
+      setTargetDpr(""); setAchievedEcommittee(""); setTargetCpc(""); setAchievedCpc("");
     }
   }, [entryLookupItems, hc, component, indicator, period, district, storageType, isCloudComponent, user?.role]);
 
@@ -179,6 +205,10 @@ export default function PhysicalTracker() {
       storage_type: isCloudComponent ? (storageType || DEFAULT_STORAGE_TYPE) : null,
       target: target === "" ? null : Number(target),
       achieved: achieved === "" ? null : Number(achieved),
+      target_dpr: isEsewaComponent && targetDpr !== "" ? Number(targetDpr) : null,
+      achieved_ecommittee: isEsewaComponent && achievedEcommittee !== "" ? Number(achievedEcommittee) : null,
+      target_cpc: isEsewaComponent && targetCpc !== "" ? Number(targetCpc) : null,
+      achieved_cpc: isEsewaComponent && achievedCpc !== "" ? Number(achievedCpc) : null,
       remarks: remarks || null,
     };
     if (!body.high_court || !body.component || !body.indicator || !body.reporting_period) {
@@ -209,6 +239,7 @@ export default function PhysicalTracker() {
 
   async function saveRow(row) {
     try {
+      const isEsewa = row.component === ESEWA_COMPONENT;
       await save({
         high_court: row.high_court,
         component: row.component,
@@ -220,6 +251,10 @@ export default function PhysicalTracker() {
           : null,
         target: row.target,
         achieved: row.achieved,
+        target_dpr: isEsewa ? (row.target_dpr ?? null) : null,
+        achieved_ecommittee: isEsewa ? (row.achieved_ecommittee ?? null) : null,
+        target_cpc: isEsewa ? (row.target_cpc ?? null) : null,
+        achieved_cpc: isEsewa ? (row.achieved_cpc ?? null) : null,
         remarks: row.remarks,
       });
     } catch (e) {
@@ -259,33 +294,48 @@ export default function PhysicalTracker() {
 
   const ragColor = (r) => r >= 80 ? "GREEN" : r >= 65 ? "AMBER" : r != null ? "RED" : "NA";
 
-  const tableColumns = useMemo(() => [
-    { key: "high_court", label: labels.highCourt },
-    { key: "district", label: labels.district, render: r => r.district || labels.hcLevel },
-    { key: "component", label: labels.component },
-    { key: "storage_type", label: labels.typeOfStorage, render: r => r.storage_type || "—" },
-    { key: "indicator", label: labels.indicator, render: (r) => (
-      <span className="inline-flex items-center gap-1">
-        {r.indicator}
-        {anomalyKeys.has(`${r.high_court}|${r.component}|${r.indicator}`) && (
-          <span className="text-[9px] uppercase tracking-wider bg-violet-100 text-violet-800 px-1 rounded-sm" title={labels.anomalyBadge}>3σ</span>
-        )}
-      </span>
-    ) },
-    { key: "reporting_period", label: labels.period },
-    { key: "target", label: labels.target, align: "right", editable: canEditTarget, field: "target", inputType: "number", render: r => fmtNum(r.target, { digits: 0 }) },
-    { key: "achieved", label: labels.achieved, align: "right", editable: canEdit, field: "achieved", inputType: "number", render: r => fmtNum(r.achieved, { digits: 0 }) },
-    { key: "percent", label: labels.percent, align: "right", render: r => fmtPct(r.percent) },
-    { key: "rag", label: labels.rag, render: r => <RagBadge status={ragColor(r.percent)} /> },
-    { key: "remarks", label: labels.remarks, editable: canEdit, field: "remarks" },
-    {
-      key: "comments",
-      label: "",
-      render: (r) => (
-        <CommentsButton onClick={() => setCommentsEntry(r)} />
-      ),
-    },
-  ], [canEdit, canEditTarget, anomalyKeys, labels]);
+  const tableColumns = useMemo(() => {
+    const cols = [
+      { key: "high_court", label: labels.highCourt },
+      { key: "district", label: labels.district, render: r => r.district || labels.hcLevel },
+      { key: "component", label: labels.component },
+      { key: "storage_type", label: labels.typeOfStorage, render: r => r.storage_type || "—" },
+      { key: "indicator", label: labels.indicator, render: (r) => (
+        <span className="inline-flex items-center gap-1">
+          {r.indicator}
+          {anomalyKeys.has(`${r.high_court}|${r.component}|${r.indicator}`) && (
+            <span className="text-[9px] uppercase tracking-wider bg-violet-100 text-violet-800 px-1 rounded-sm" title={labels.anomalyBadge}>3σ</span>
+          )}
+        </span>
+      ) },
+      { key: "reporting_period", label: labels.period },
+      { key: "target", label: labels.target, align: "right", editable: canEditTarget, field: "target", inputType: "number", render: r => fmtNum(r.target, { digits: 0 }) },
+      { key: "achieved", label: labels.achieved, align: "right", editable: canEdit, field: "achieved", inputType: "number", render: r => fmtNum(r.achieved, { digits: 0 }) },
+      { key: "percent", label: labels.percent, align: "right", render: r => fmtPct(r.percent) },
+    ];
+    if (isEsewaComponent) {
+      cols.push(
+        { key: "target_dpr", label: labels.targetDpr, align: "right", editable: canEditTarget, field: "target_dpr", inputType: "number", render: r => fmtNum(r.target_dpr, { digits: 0 }) },
+        { key: "achieved_ecommittee", label: labels.achievedEcommittee, align: "right", editable: canEdit, field: "achieved_ecommittee", inputType: "number", render: r => fmtNum(r.achieved_ecommittee, { digits: 0 }) },
+        { key: "percent_ecommittee", label: labels.percentEcommittee, align: "right", render: r => fmtPct(r.percent_ecommittee) },
+        { key: "target_cpc", label: labels.targetCpc, align: "right", editable: canEdit, field: "target_cpc", inputType: "number", render: r => fmtNum(r.target_cpc, { digits: 0 }) },
+        { key: "achieved_cpc", label: labels.achievedCpc, align: "right", editable: canEdit, field: "achieved_cpc", inputType: "number", render: r => fmtNum(r.achieved_cpc, { digits: 0 }) },
+        { key: "percent_cpc", label: labels.percentCpc, align: "right", render: r => fmtPct(r.percent_cpc) },
+      );
+    }
+    cols.push(
+      { key: "rag", label: labels.rag, render: r => <RagBadge status={ragColor(r.percent)} /> },
+      { key: "remarks", label: labels.remarks, editable: canEdit, field: "remarks" },
+      {
+        key: "comments",
+        label: "",
+        render: (r) => (
+          <CommentsButton onClick={() => setCommentsEntry(r)} />
+        ),
+      },
+    );
+    return cols;
+  }, [canEdit, canEditTarget, anomalyKeys, labels, isEsewaComponent]);
 
   return (
     <div className="space-y-6" data-tour="physical-tracker">
@@ -296,7 +346,7 @@ export default function PhysicalTracker() {
           <span>{labels.draftRestored}</span>
           <span className="flex gap-2">
             <button type="button" onClick={dismissBanner} className="text-xs uppercase tracking-wider underline">{labels.keep}</button>
-            <button type="button" onClick={() => { clearDraft(); setTarget(""); setAchieved(""); setRemarks(""); }} className="text-xs uppercase tracking-wider underline">{labels.discard}</button>
+            <button type="button" onClick={() => { clearDraft(); setTarget(""); setAchieved(""); setRemarks(""); setTargetDpr(""); setAchievedEcommittee(""); setTargetCpc(""); setAchievedCpc(""); }} className="text-xs uppercase tracking-wider underline">{labels.discard}</button>
           </span>
         </div>
       )}
@@ -347,6 +397,14 @@ export default function PhysicalTracker() {
             )}
             <NumberField testid={TID.targetInput} label={canEditTarget ? labels.target : labels.targetAdmin} value={target} onChange={setTarget} disabled={!canEditTarget} />
             <NumberField testid={TID.achievedInput} label={labels.achievedCumulative} value={achieved} onChange={setAchieved} disabled={!canEdit} />
+            {isEsewaComponent && (
+              <>
+                <NumberField testid="target-dpr-input" label={labels.targetDpr} value={targetDpr} onChange={setTargetDpr} disabled={!canEditTarget} />
+                <NumberField testid="achieved-ecommittee-input" label={labels.achievedEcommittee} value={achievedEcommittee} onChange={setAchievedEcommittee} disabled={!canEdit} />
+                <NumberField testid="target-cpc-input" label={labels.targetCpc} value={targetCpc} onChange={setTargetCpc} disabled={!canEdit} />
+                <NumberField testid="achieved-cpc-input" label={labels.achievedCpc} value={achievedCpc} onChange={setAchievedCpc} disabled={!canEdit} />
+              </>
+            )}
             <div className="sm:col-span-2">
               <TextField testid={TID.remarksInput} label={labels.remarksOptional} value={remarks} onChange={setRemarks} disabled={!canEdit} />
             </div>
@@ -406,6 +464,12 @@ export default function PhysicalTracker() {
                 setDistrict(r.district || "");
                 if (r.component === CLOUD_COMPUTING_COMPONENT) {
                   setStorageType(r.storage_type || DEFAULT_STORAGE_TYPE);
+                }
+                if (r.component === ESEWA_COMPONENT) {
+                  setTargetDpr(r.target_dpr ?? "");
+                  setAchievedEcommittee(r.achieved_ecommittee ?? "");
+                  setTargetCpc(r.target_cpc ?? "");
+                  setAchievedCpc(r.achieved_cpc ?? "");
                 }
               }}
             />

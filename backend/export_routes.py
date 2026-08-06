@@ -133,7 +133,8 @@ def register_export_routes(
         items = await db.physical_entries.find(q).sort("high_court", 1).to_list(20000)
         rows = serialize_fn(items)
         cols = ["high_court", "district", "component", "indicator", "storage_type", "reporting_period", "target",
-                "achieved", "percent", "rag", "remarks"]
+                "achieved", "percent", "target_dpr", "achieved_ecommittee", "percent_ecommittee",
+                "target_cpc", "achieved_cpc", "percent_cpc", "rag", "remarks"]
         headers = physical_headers(lang)
         if format == "xlsx":
             data = _build_xlsx(rows, cols, headers)

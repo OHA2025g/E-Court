@@ -24,6 +24,10 @@ BULK_HEADERS = [
     "District",
     "Target",
     "Achieved",
+    "Target as per DPR",
+    "Achieved as per e-Committee",
+    "Target as per CPC",
+    "Achieved as per CPC",
     "Remarks",
 ]
 
@@ -126,6 +130,10 @@ def transform_physical_achieved_sep2025_rows(
             if esk_ach is None:
                 esk_ach = 0.0
             if include_zero_achieved or esk_ach != 0:
+                target_dpr = _num(row[5] if len(row) > 5 else None)
+                achieved_ecommittee = _num(row[6] if len(row) > 6 else None)
+                target_cpc = _num(row[8] if len(row) > 8 else None)
+                achieved_cpc = _num(row[9] if len(row) > 9 else None)
                 records.append({
                     "high_court": hc,
                     "component": COMPONENT_ESEWA,
@@ -133,6 +141,10 @@ def transform_physical_achieved_sep2025_rows(
                     "district": None,
                     "target": esk_target,
                     "achieved": esk_ach,
+                    "target_dpr": target_dpr,
+                    "achieved_ecommittee": achieved_ecommittee,
+                    "target_cpc": target_cpc,
+                    "achieved_cpc": achieved_cpc,
                     "remarks": remarks,
                     "source_row": r_i,
                     "measure": "esewa_kendras",
@@ -169,6 +181,10 @@ def records_to_bulk_rows(records: list[dict[str, Any]]) -> list[list[Any]]:
             r.get("district") or "",
             "" if r.get("target") is None else r["target"],
             "" if r.get("achieved") is None else r["achieved"],
+            "" if r.get("target_dpr") is None else r["target_dpr"],
+            "" if r.get("achieved_ecommittee") is None else r["achieved_ecommittee"],
+            "" if r.get("target_cpc") is None else r["target_cpc"],
+            "" if r.get("achieved_cpc") is None else r["achieved_cpc"],
             r.get("remarks") or "",
         ])
     return out

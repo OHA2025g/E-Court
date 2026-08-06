@@ -32,7 +32,15 @@ class PhysicalEntryIn(BaseModel):
     storage_type: Optional[str] = None
     target: Optional[float] = None
     achieved: Optional[float] = None
+    # e-Sewa Kendras only — ignored / cleared for other components
+    target_dpr: Optional[float] = None
+    achieved_ecommittee: Optional[float] = None
+    target_cpc: Optional[float] = None
+    achieved_cpc: Optional[float] = None
     remarks: Optional[str] = None
+
+
+ESEWA_COMPONENT = "e-Sewa Kendras"
 
 
 class FinancialEntryIn(BaseModel):
@@ -228,6 +236,14 @@ def register_tracker_routes(
         await assert_editable(db, body.high_court, body.reporting_period, user, now_utc_fn)
         if body.achieved is not None and body.achieved < 0:
             raise HTTPException(status_code=400, detail="Achieved cannot be negative")
+        for fld, label in (
+            (body.achieved_ecommittee, "Achieved as per e-Committee"),
+            (body.achieved_cpc, "Achieved as per CPC"),
+            (body.target_dpr, "Target as per DPR"),
+            (body.target_cpc, "Target as per CPC"),
+        ):
+            if fld is not None and fld < 0:
+                raise HTTPException(status_code=400, detail=f"{label} cannot be negative")
         try:
             storage_type = resolve_storage_type(body.component, body.storage_type)
         except ValueError as e:
@@ -242,19 +258,39 @@ def register_tracker_routes(
             "value", default_rag_thresholds
         )
         rag = compute_rag_fn(percent, thresholds)
+
+        is_esewa = body.component == ESEWA_COMPONENT
+        target_dpr = body.target_dpr if is_esewa else None
+        achieved_ecommittee = body.achieved_ecommittee if is_esewa else None
+        target_cpc = body.target_cpc if is_esewa else None
+        achieved_cpc = body.achieved_cpc if is_esewa else None
+        percent_ecommittee = safe_div_fn(achieved_ecommittee, target_dpr) if is_esewa else None
+        percent_cpc = safe_div_fn(achieved_cpc, target_cpc) if is_esewa else None
+
         doc = {
             **q, "district": body.district, "storage_type": storage_type,
             "target": body.target, "achieved": body.achieved,
             "percent": percent, "rag": rag, "remarks": body.remarks,
+            "target_dpr": target_dpr,
+            "achieved_ecommittee": achieved_ecommittee,
+            "target_cpc": target_cpc,
+            "achieved_cpc": achieved_cpc,
+            "percent_ecommittee": percent_ecommittee,
+            "percent_cpc": percent_cpc,
             "updated_by": user["email"], "updated_at": now_utc_fn(),
         }
 
         if existing:
             if user["role"] == "CPC":
                 doc["target"] = existing.get("target")
+                doc["target_dpr"] = existing.get("target_dpr")
             changes = [
                 {"field": k, "old": existing.get(k), "new": doc.get(k)}
-                for k in ["target", "achieved", "remarks", "storage_type"] if existing.get(k) != doc.get(k)
+                for k in [
+                    "target", "achieved", "remarks", "storage_type",
+                    "target_dpr", "achieved_ecommittee", "target_cpc", "achieved_cpc",
+                ]
+                if existing.get(k) != doc.get(k)
             ]
             await db.physical_entries.update_one({"_id": existing["_id"]}, {"$set": doc})
             await _invalidate_dashboard_cache()
