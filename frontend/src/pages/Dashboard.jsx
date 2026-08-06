@@ -37,6 +37,34 @@ import {
   CartesianGrid, Legend, PieChart, Pie, Cell,
 } from "recharts";
 
+function PerformancePctTooltip({ active, payload, label, nameKey = "component" }) {
+  if (!active || !payload?.length) return null;
+  const row = payload[0]?.payload || {};
+  const title = label || row[nameKey] || "—";
+  return (
+    <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs shadow-md max-w-xs">
+      <div className="font-semibold text-slate-800 mb-1.5">{title}</div>
+      {payload.map((entry) => {
+        const key = entry.dataKey;
+        const isPhys = key === "phys_percent";
+        const pct = entry.value;
+        const countLine = isPhys
+          ? `Achieved ${fmtNum(row.phys_achieved, { digits: 0 })} / Target ${fmtNum(row.phys_target, { digits: 0 })}`
+          : `Utilised ₹${fmtNum(row.fin_utilized)} Cr / Released ₹${fmtNum(row.fin_released)} Cr`;
+        return (
+          <div key={key} className="mb-1 last:mb-0">
+            <div className="flex items-center gap-1.5 text-slate-700">
+              <span className="inline-block h-2 w-2 rounded-sm shrink-0" style={{ background: entry.color || "#64748b" }} />
+              <span>{entry.name}: <span className="font-semibold tabular-nums">{fmtPct(pct)}</span></span>
+            </div>
+            <div className="pl-3.5 text-slate-500 tabular-nums">{countLine}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 const TAB_CONFIG = {
   overview: { icon: ChartPieSlice },
   "rag-trends": { icon: TrendUp },
@@ -279,7 +307,7 @@ export default function Dashboard() {
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
             <XAxis dataKey="component" stroke="#475569" fontSize={10} angle={-25} textAnchor="end" interval={0} height={80} />
             <YAxis stroke="#475569" fontSize={11} unit="%" />
-            <Tooltip />
+            <Tooltip content={<PerformancePctTooltip nameKey="component" />} />
             <Legend />
             <Bar dataKey="phys_percent" name={seriesLegendLabel("Physical %", "phys_percent", accessibleRag)} {...barSeriesProps("phys_percent", accessibleRag)} />
             <Bar dataKey="fin_percent" name={seriesLegendLabel("Financial %", "fin_percent", accessibleRag)} {...barSeriesProps("fin_percent", accessibleRag)} />
@@ -297,7 +325,7 @@ export default function Dashboard() {
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
             <XAxis dataKey="high_court" stroke="#475569" fontSize={10} angle={-35} textAnchor="end" interval={0} height={100} />
             <YAxis stroke="#475569" fontSize={11} unit="%" />
-            <Tooltip />
+            <Tooltip content={<PerformancePctTooltip nameKey="high_court" />} />
             <Legend />
             <Bar dataKey="phys_percent" name={seriesLegendLabel("Physical %", "phys_percent", accessibleRag)} {...barSeriesProps("phys_percent_hc", accessibleRag)} />
             <Bar dataKey="fin_percent" name={seriesLegendLabel("Financial %", "fin_percent", accessibleRag)} {...barSeriesProps("fin_percent_hc", accessibleRag)} />
