@@ -299,7 +299,13 @@ export default function PhysicalTracker() {
       { key: "high_court", label: labels.highCourt },
       { key: "district", label: labels.district, render: r => r.district || labels.hcLevel },
       { key: "component", label: labels.component },
-      { key: "storage_type", label: labels.typeOfStorage, render: r => r.storage_type || "—" },
+    ];
+    if (isCloudComponent) {
+      cols.push(
+        { key: "storage_type", label: labels.typeOfStorage, render: r => r.storage_type || "—" },
+      );
+    }
+    cols.push(
       { key: "indicator", label: labels.indicator, render: (r) => (
         <span className="inline-flex items-center gap-1">
           {r.indicator}
@@ -309,7 +315,7 @@ export default function PhysicalTracker() {
         </span>
       ) },
       { key: "reporting_period", label: labels.period },
-    ];
+    );
     if (!isEsewaComponent) {
       cols.push(
         { key: "target", label: labels.target, align: "right", editable: canEditTarget, field: "target", inputType: "number", render: r => fmtNum(r.target, { digits: 0 }) },
@@ -338,7 +344,7 @@ export default function PhysicalTracker() {
       },
     );
     return cols;
-  }, [canEdit, canEditTarget, anomalyKeys, labels, isEsewaComponent]);
+  }, [canEdit, canEditTarget, anomalyKeys, labels, isEsewaComponent, isCloudComponent]);
 
   return (
     <div className="space-y-6" data-tour="physical-tracker">
