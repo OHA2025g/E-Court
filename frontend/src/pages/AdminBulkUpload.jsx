@@ -303,11 +303,6 @@ export default function AdminBulkUpload() {
           <p className="text-slate-500 pt-1 flex items-center gap-2">
             <UploadSimple size={14} />
             This page uses the same Admin bulk API endpoints as those scripts.
-            For wide DoJ files with a visual 1:1 mapping review, use{" "}
-            <Link to="/etl-convert" className="text-[#003B73] hover:underline">
-              ETL Convert &amp; Map
-            </Link>
-            .
           </p>
         </div>
       </Card>

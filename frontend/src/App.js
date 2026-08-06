@@ -19,7 +19,6 @@ import UserManagement from "@/pages/UserManagement";
 import AccountSettings from "@/pages/AccountSettings";
 import AdminBackup from "@/pages/AdminBackup";
 import AdminBulkUpload from "@/pages/AdminBulkUpload";
-import EtlConvertPage from "@/pages/EtlConvertPage";
 import Submissions from "@/pages/Submissions";
 import Schedules from "@/pages/Schedules";
 import AppSelector from "@/pages/AppSelector";
@@ -151,7 +150,6 @@ export default function App() {
         <Route path="dpr" element={<RoleGuard allow={ADMIN_VIEWER}><DprDeliverables /></RoleGuard>} />
         <Route path="ijuris" element={<RoleGuard allow={ADMIN_ONLY}><IjurisIntegration /></RoleGuard>} />
         <Route path="bulk-upload" element={<RoleGuard allow={ADMIN_ONLY}><AdminBulkUpload /></RoleGuard>} />
-        <Route path="etl-convert" element={<RoleGuard allow={ADMIN_ONLY}><EtlConvertPage /></RoleGuard>} />
         <Route path="users" element={<RoleGuard allow={ADMIN_ONLY}><UserManagement /></RoleGuard>} />
         <Route path="backup" element={<RoleGuard allow={ADMIN_ONLY}><AdminBackup /></RoleGuard>} />
         <Route path="schedules" element={<RoleGuard allow={ADMIN_ONLY}><Schedules /></RoleGuard>} />
