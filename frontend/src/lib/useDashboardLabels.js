@@ -32,6 +32,7 @@ export function useDashboardLabels() {
       hcDrilldown: t("dashboard.hcDrilldown"),
       componentDrilldownTable: t("dashboard.componentDrilldownTable"),
       hcDrilldownTable: t("dashboard.hcDrilldownTable"),
+      downloadExcel: t("dashboard.downloadExcel"),
       noData: t("dashboard.noData"),
       colComponent: t("dashboard.colComponent"),
       colHighCourt: t("dashboard.colHighCourt"),

@@ -81,6 +81,7 @@
     "hcDrilldown": "उच्च न्यायालय विवरण",
     "componentDrilldownTable": "घटक विवरण तालिका",
     "hcDrilldownTable": "उच्च न्यायालय विवरण तालिका",
+    "downloadExcel": "एक्सेल डाउनलोड",
     "noData": "कोई डेटा नहीं",
     "colComponent": "घटक",
     "colHighCourt": "उच्च न्यायालय",

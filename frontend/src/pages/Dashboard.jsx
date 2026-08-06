@@ -7,6 +7,7 @@ import RagBadge from "@/components/RagBadge";
 import { TID } from "@/lib/testIds";
 import {
   FilePdf,
+  FileXls,
   CalendarBlank,
   ChartPieSlice,
   TrendUp,
@@ -171,6 +172,11 @@ export default function Dashboard() {
   const cabinetBriefHref = useMemo(() => {
     const qs = new URLSearchParams(dashParams).toString();
     return `${BACKEND_URL}/api/export/cabinet-brief${qs ? `?${qs}` : ""}`;
+  }, [dashParams]);
+
+  const hcTableExportHref = useMemo(() => {
+    const qs = new URLSearchParams(dashParams).toString();
+    return `${BACKEND_URL}/api/export/dashboard/high-court-table${qs ? `?${qs}` : ""}`;
   }, [dashParams]);
 
   const unifiedHeader = (
@@ -377,7 +383,21 @@ export default function Dashboard() {
   );
 
   const hcTable = (
-    <Card title={cpcCourt ? labels.hcDrilldownCpc : labels.hcDrilldown} elevated>
+    <Card
+      title={cpcCourt ? labels.hcDrilldownCpc : labels.hcDrilldown}
+      elevated
+      action={(
+        <a
+          data-testid={TID.dashboardHcExportXlsx}
+          href={hcTableExportHref}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-sm uppercase tracking-wider text-[11px]"
+        >
+          <FileXls size={14} /> {labels.downloadExcel}
+        </a>
+      )}
+    >
       <ScrollRegion className="overflow-x-auto max-h-[560px]" label={labels.hcDrilldownTable}>
         <table className="dense-table dashboard-table w-full" data-testid="dashboard-hc-table">
           <thead>

@@ -86,6 +86,7 @@
     "hcDrilldown": "High Court Drill-down",
     "componentDrilldownTable": "Component drill-down table",
     "hcDrilldownTable": "High court drill-down table",
+    "downloadExcel": "Download Excel",
     "noData": "No data",
     "colComponent": "Component",
     "colHighCourt": "High Court",

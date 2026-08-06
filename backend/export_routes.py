@@ -1,4 +1,5 @@
 """Export Routes."""
+from collections import defaultdict
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -22,6 +23,39 @@ from rollup import (
     apply_district_filter,
     financial_national_totals_stages,
 )
+
+
+def build_multi_sheet_xlsx(sheets: list) -> bytes:
+    """Build workbook with one or more sheets. Values are written as-is (exact numbers)."""
+    buf = io.BytesIO()
+    wb = xlsxwriter.Workbook(buf, {"in_memory": True})
+    hf = wb.add_format({"bold": True, "bg_color": "#0A1128", "font_color": "white", "border": 1})
+    bf = wb.add_format({"border": 1})
+    numf = wb.add_format({"border": 1, "num_format": "0.##########"})
+    for sheet in sheets:
+        name = (sheet.get("name") or "Sheet")[:31]
+        columns = sheet["columns"]
+        headers = sheet["headers"]
+        rows = sheet.get("rows") or []
+        ws = wb.add_worksheet(name)
+        for i, h in enumerate(headers):
+            ws.write(0, i, h, hf)
+        for r, row in enumerate(rows, start=1):
+            for c, key in enumerate(columns):
+                v = row.get(key)
+                if v is None:
+                    v = ""
+                if isinstance(v, bool):
+                    ws.write(r, c, v, bf)
+                elif isinstance(v, (int, float)) and not isinstance(v, bool):
+                    ws.write_number(r, c, float(v), numf)
+                else:
+                    ws.write(r, c, v, bf)
+        ws.set_column(0, max(len(columns) - 1, 0), 22)
+    wb.close()
+    buf.seek(0)
+    return buf.read()
+
 
 def register_export_routes(
     api: APIRouter,
@@ -55,22 +89,12 @@ def register_export_routes(
         return merge_match(q, extra)
 
     def _build_xlsx(rows: list, columns: list, headers: list) -> bytes:
-        buf = io.BytesIO()
-        wb = xlsxwriter.Workbook(buf, {"in_memory": True})
-        ws = wb.add_worksheet("Report")
-        hf = wb.add_format({"bold": True, "bg_color": "#0A1128", "font_color": "white", "border": 1})
-        bf = wb.add_format({"border": 1})
-        for i, h in enumerate(headers):
-            ws.write(0, i, h, hf)
-        for r, row in enumerate(rows, start=1):
-            for c, key in enumerate(columns):
-                v = row.get(key)
-                if v is None: v = ""
-                ws.write(r, c, v, bf)
-            ws.set_column(0, len(columns) - 1, 22)
-        wb.close()
-        buf.seek(0)
-        return buf.read()
+        return build_multi_sheet_xlsx([{
+            "name": "Report",
+            "rows": rows,
+            "columns": columns,
+            "headers": headers,
+        }])
 
     def _build_pdf(title: str, rows: list, columns: list, headers: list) -> bytes:
         buf = io.BytesIO()
@@ -169,6 +193,92 @@ def register_export_routes(
         data = _build_pdf("Outcome Tracker Report", rows, cols, headers)
         return StreamingResponse(io.BytesIO(data), media_type="application/pdf",
                                  headers={"Content-Disposition": "attachment; filename=outcome_report.pdf"})
+
+    @api.get("/export/dashboard/high-court-table")
+    async def export_high_court_table(
+        request: Request,
+        reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
+        user: dict = Depends(require_fully_authenticated),
+    ):
+        """Download High Court Table as Excel with exact entry values (not mean/% aggregates).
+
+        Sheets:
+        - HC_Summary: High Court totals for funds (exact sums from entries)
+        - Financial_Exact: every matching financial_entries row (exact Cr values)
+        - Physical_Exact: every matching physical_entries row (exact target/achieved counts)
+        """
+        _enforce_export_limit(user)
+        if user.get("role") == "CPC" and user.get("high_court"):
+            high_court = user["high_court"]
+        q = await _export_query(user, reporting_period, high_court, component)
+
+        fin_items = await db.financial_entries.find(q).sort([
+            ("high_court", 1), ("component", 1), ("district", 1),
+        ]).to_list(50000)
+        phys_items = await db.physical_entries.find(q).sort([
+            ("high_court", 1), ("component", 1), ("indicator", 1), ("district", 1),
+        ]).to_list(50000)
+        fin_rows = serialize_fn(fin_items)
+        phys_rows = serialize_fn(phys_items)
+
+        # Exact HC fund totals from entry values (no display rounding / no mean %).
+        hc_tot: dict[str, dict] = defaultdict(lambda: {"fin_released": 0.0, "fin_utilized": 0.0})
+        for row in fin_rows:
+            hc = row.get("high_court") or ""
+            if not hc:
+                continue
+            hc_tot[hc]["fin_released"] += float(row.get("fund_released") or 0)
+            hc_tot[hc]["fin_utilized"] += float(row.get("fund_utilized") or 0)
+        summary_rows = []
+        for hc in sorted(hc_tot.keys()):
+            released = hc_tot[hc]["fin_released"]
+            utilized = hc_tot[hc]["fin_utilized"]
+            summary_rows.append({
+                "high_court": hc,
+                "fin_released": released,
+                "fin_utilized": utilized,
+                "fin_percent": safe_div_fn(utilized, released),
+            })
+
+        data = build_multi_sheet_xlsx([
+            {
+                "name": "HC_Summary",
+                "columns": ["high_court", "fin_released", "fin_utilized", "fin_percent"],
+                "headers": [
+                    "High Court", "Funds Released(Cr)", "Funds Utilized(Cr)", "Util %",
+                ],
+                "rows": summary_rows,
+            },
+            {
+                "name": "Financial_Exact",
+                "columns": [
+                    "high_court", "district", "component", "reporting_period",
+                    "fund_target", "fund_allocated", "fund_released", "fund_utilized",
+                    "utilisation_percent", "variance", "rag", "remarks",
+                ],
+                "headers": financial_headers(resolve_export_lang(request.headers.get("accept-language"))),
+                "rows": fin_rows,
+            },
+            {
+                "name": "Physical_Exact",
+                "columns": [
+                    "high_court", "district", "component", "indicator", "storage_type",
+                    "reporting_period", "target", "achieved", "percent", "rag", "remarks",
+                ],
+                "headers": [
+                    "High Court", "District", "Component", "Indicator", "Type of Storage",
+                    "Period", "Target", "Achieved", "% Achieved", "RAG", "Remarks",
+                ],
+                "rows": phys_rows,
+            },
+        ])
+        return StreamingResponse(
+            io.BytesIO(data),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": "attachment; filename=high_court_table.xlsx"},
+        )
 
     # -------------------------------------------------------------------- CABINET BRIEF
     @api.get("/export/cabinet-brief")

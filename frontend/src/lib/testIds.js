@@ -45,6 +45,7 @@ export const TID = {
   periodSelect: "period-select",
   highCourtSelect: "dashboard-high-court-select",
   componentSelect: "dashboard-component-select",
+  dashboardHcExportXlsx: "dashboard-hc-export-xlsx",
   hcSelect: "hc-select",
   componentSelect: "component-select",
   indicatorSelect: "indicator-select",
