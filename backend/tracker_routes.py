@@ -1,6 +1,8 @@
 """Physical, Financial, and Outcome tracker CRUD routes."""
 from typing import Callable, Optional
 
+from bson import ObjectId
+from bson.errors import InvalidId
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
@@ -259,6 +261,14 @@ def register_tracker_routes(
         achieved_ecommittee = body.achieved_ecommittee if is_esewa else None
         target_cpc = body.target_cpc if is_esewa else None
         achieved_cpc = body.achieved_cpc if is_esewa else None
+        # Legacy iJuris / init payloads often omit DPR/CPC fields — do not wipe filled rows
+        if is_esewa and existing and all(
+            v is None for v in (target_dpr, achieved_ecommittee, target_cpc, achieved_cpc)
+        ):
+            target_dpr = existing.get("target_dpr")
+            achieved_ecommittee = existing.get("achieved_ecommittee")
+            target_cpc = existing.get("target_cpc")
+            achieved_cpc = existing.get("achieved_cpc")
         percent_ecommittee = safe_div_fn(achieved_ecommittee, target_dpr) if is_esewa else None
         percent_cpc = safe_div_fn(achieved_cpc, target_cpc) if is_esewa else None
         # e-Sewa uses DPR/e-Committee/CPC fields only — no cumulative Target/Achieved
@@ -312,6 +322,56 @@ def register_tracker_routes(
         if rag == "RED":
             await _notify_physical_red(body, rag, percent, is_new=True)
         return {"id": str(result.inserted_id)}
+
+    @api.delete("/physical/{entry_id}")
+    async def delete_physical(entry_id: str, user: dict = Depends(require_fully_authenticated)):
+        if user["role"] != "Admin":
+            raise HTTPException(status_code=403, detail="Admin only")
+        try:
+            oid = ObjectId(entry_id)
+        except (InvalidId, TypeError):
+            raise HTTPException(status_code=400, detail="Invalid entry id")
+        existing = await db.physical_entries.find_one({"_id": oid})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Entry not found")
+        await db.physical_entries.delete_one({"_id": oid})
+        await _invalidate_dashboard_cache()
+        await audit_fn(
+            user, "physical", "delete", entry_id,
+            [{"field": "entry", "old": serialize_fn(existing), "new": None}],
+            existing.get("high_court"), existing.get("reporting_period"),
+        )
+        return {"id": entry_id, "deleted": True}
+
+    @api.post("/physical/cleanup-empty-esewa")
+    async def cleanup_empty_esewa(user: dict = Depends(require_fully_authenticated)):
+        """Remove e-Sewa Kendras rows with no DPR/e-Committee/CPC (or legacy) values."""
+        if user["role"] != "Admin":
+            raise HTTPException(status_code=403, detail="Admin only")
+        q = {
+            "component": ESEWA_COMPONENT,
+            "$and": [
+                {"$or": [{"target_dpr": None}, {"target_dpr": {"$exists": False}}]},
+                {"$or": [{"achieved_ecommittee": None}, {"achieved_ecommittee": {"$exists": False}}]},
+                {"$or": [{"target_cpc": None}, {"target_cpc": {"$exists": False}}]},
+                {"$or": [{"achieved_cpc": None}, {"achieved_cpc": {"$exists": False}}]},
+                {"$or": [{"target": None}, {"target": {"$exists": False}}]},
+                {"$or": [{"achieved": None}, {"achieved": {"$exists": False}}]},
+            ],
+        }
+        empties = await db.physical_entries.find(q).to_list(2000)
+        deleted = 0
+        for doc in empties:
+            await db.physical_entries.delete_one({"_id": doc["_id"]})
+            await audit_fn(
+                user, "physical", "delete", str(doc["_id"]),
+                [{"field": "entry", "old": serialize_fn(doc), "new": None}],
+                doc.get("high_court"), doc.get("reporting_period"),
+            )
+            deleted += 1
+        if deleted:
+            await _invalidate_dashboard_cache()
+        return {"deleted": deleted, "component": ESEWA_COMPONENT}
 
     @api.get("/financial")
     async def list_financial(
