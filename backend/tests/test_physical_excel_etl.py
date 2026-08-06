@@ -35,8 +35,12 @@ def test_transform_physical_achieved_sep2025_rows():
         r for r in result["records"]
         if r["high_court"] == "Odisha" and r["component"] == "e-Sewa Kendras"
     )
-    assert esk["target"] == 181.0
-    assert esk["achieved"] == 197.0  # CPC achieved preferred
+    assert esk["target"] is None
+    assert esk["achieved"] is None
+    assert esk["target_dpr"] == 181.0
+    assert esk["achieved_ecommittee"] == 75.0
+    assert esk["target_cpc"] == 197.0
+    assert esk["achieved_cpc"] == 197.0
 
 
 def test_merge_into_physical_baseline():

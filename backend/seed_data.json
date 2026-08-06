@@ -11,8 +11,12 @@
    "high_court": "Allahabad",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 353.0,
-   "achieved": 111.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 353.0,
+   "achieved_ecommittee": 3.0,
+   "target_cpc": 173.0,
+   "achieved_cpc": 111.0
   },
   {
    "high_court": "Allahabad",
@@ -347,8 +351,12 @@
    "high_court": "Andhra Pradesh",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 169.0,
-   "achieved": 38.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 169.0,
+   "achieved_ecommittee": 38.0,
+   "target_cpc": 38.0,
+   "achieved_cpc": 38.0
   },
   {
    "high_court": "Andhra Pradesh",
@@ -683,8 +691,12 @@
    "high_court": "Bombay",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 577.0,
-   "achieved": 272.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 577.0,
+   "achieved_ecommittee": 0.0,
+   "target_cpc": 949.0,
+   "achieved_cpc": 272.0
   },
   {
    "high_court": "Bombay",
@@ -1019,8 +1031,12 @@
    "high_court": "Calcutta",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 132.0,
-   "achieved": 86.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 132.0,
+   "achieved_ecommittee": 11.0,
+   "target_cpc": 239.0,
+   "achieved_cpc": 86.0
   },
   {
    "high_court": "Calcutta",
@@ -1355,8 +1371,12 @@
    "high_court": "Chhattisgarh",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 107.0,
-   "achieved": 90.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 107.0,
+   "achieved_ecommittee": 23.0,
+   "target_cpc": 122.0,
+   "achieved_cpc": 90.0
   },
   {
    "high_court": "Chhattisgarh",
@@ -1691,8 +1711,12 @@
    "high_court": "Delhi",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 48.0,
-   "achieved": 27.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 48.0,
+   "achieved_ecommittee": 7.0,
+   "target_cpc": 27.0,
+   "achieved_cpc": 27.0
   },
   {
    "high_court": "Delhi",
@@ -2027,8 +2051,12 @@
    "high_court": "Gauhati – Arunachal Pradesh",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 132.0,
-   "achieved": 26.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 33.0,
+   "achieved_ecommittee": 3.0,
+   "target_cpc": 7.0,
+   "achieved_cpc": 7.0
   },
   {
    "high_court": "Gauhati – Arunachal Pradesh",
@@ -2363,8 +2391,12 @@
    "high_court": "Gauhati – Assam",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 99.0,
-   "achieved": 54.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 33.0,
+   "achieved_ecommittee": 2.0,
+   "target_cpc": 6.0,
+   "achieved_cpc": 6.0
   },
   {
    "high_court": "Gauhati – Assam",
@@ -2699,8 +2731,12 @@
    "high_court": "Gauhati – Mizoram",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 30.0,
-   "achieved": 10.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 33.0,
+   "achieved_ecommittee": 3.0,
+   "target_cpc": 7.0,
+   "achieved_cpc": 7.0
   },
   {
    "high_court": "Gauhati – Mizoram",
@@ -3371,8 +3407,12 @@
    "high_court": "Gujarat",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 392.0,
-   "achieved": 194.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 392.0,
+   "achieved_ecommittee": 195.0,
+   "target_cpc": 193.0,
+   "achieved_cpc": 194.0
   },
   {
    "high_court": "Gujarat",
@@ -3707,8 +3747,12 @@
    "high_court": "Himachal Pradesh",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 57.0,
-   "achieved": 22.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 57.0,
+   "achieved_ecommittee": 22.0,
+   "target_cpc": 39.0,
+   "achieved_cpc": 22.0
   },
   {
    "high_court": "Himachal Pradesh",
@@ -4043,8 +4087,12 @@
    "high_court": "Jammu & Kashmir",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 88.0,
-   "achieved": 19.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 88.0,
+   "achieved_ecommittee": 18.0,
+   "target_cpc": 28.0,
+   "achieved_cpc": 19.0
   },
   {
    "high_court": "Jammu & Kashmir",
@@ -4379,8 +4427,12 @@
    "high_court": "Jharkhand",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 54.0,
-   "achieved": 61.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 54.0,
+   "achieved_ecommittee": 40.0,
+   "target_cpc": 77.0,
+   "achieved_cpc": 61.0
   },
   {
    "high_court": "Jharkhand",
@@ -4715,8 +4767,12 @@
    "high_court": "Karnataka",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 234.0,
-   "achieved": 75.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 234.0,
+   "achieved_ecommittee": 5.0,
+   "target_cpc": 186.0,
+   "achieved_cpc": 75.0
   },
   {
    "high_court": "Karnataka",
@@ -5051,8 +5107,12 @@
    "high_court": "Kerala",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 179.0,
-   "achieved": 245.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 179.0,
+   "achieved_ecommittee": 45.0,
+   "target_cpc": 245.0,
+   "achieved_cpc": 245.0
   },
   {
    "high_court": "Kerala",
@@ -5387,8 +5447,12 @@
    "high_court": "Madhya Pradesh",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 258.0,
-   "achieved": 277.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 258.0,
+   "achieved_ecommittee": 187.0,
+   "target_cpc": 277.0,
+   "achieved_cpc": 277.0
   },
   {
    "high_court": "Madhya Pradesh",
@@ -5723,8 +5787,12 @@
    "high_court": "Madras",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 313.0,
-   "achieved": 17.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 313.0,
+   "achieved_ecommittee": 315.0,
+   "target_cpc": 17.0,
+   "achieved_cpc": 17.0
   },
   {
    "high_court": "Madras",
@@ -6059,8 +6127,12 @@
    "high_court": "Manipur",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 16.0,
-   "achieved": 20.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 16.0,
+   "achieved_ecommittee": 5.0,
+   "target_cpc": 22.0,
+   "achieved_cpc": 20.0
   },
   {
    "high_court": "Manipur",
@@ -6395,8 +6467,12 @@
    "high_court": "Meghalaya",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 12.0,
-   "achieved": 17.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 12.0,
+   "achieved_ecommittee": 10.0,
+   "target_cpc": 17.0,
+   "achieved_cpc": 17.0
   },
   {
    "high_court": "Meghalaya",
@@ -6731,8 +6807,12 @@
    "high_court": "Odisha",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 181.0,
-   "achieved": 197.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 181.0,
+   "achieved_ecommittee": 75.0,
+   "target_cpc": 197.0,
+   "achieved_cpc": 197.0
   },
   {
    "high_court": "Odisha",
@@ -7067,8 +7147,12 @@
    "high_court": "Patna",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 145.0,
-   "achieved": 155.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 145.0,
+   "achieved_ecommittee": 41.0,
+   "target_cpc": 163.0,
+   "achieved_cpc": 155.0
   },
   {
    "high_court": "Patna",
@@ -7403,8 +7487,12 @@
    "high_court": "Punjab & Haryana",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 172.0,
-   "achieved": 76.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 172.0,
+   "achieved_ecommittee": 36.0,
+   "target_cpc": 76.0,
+   "achieved_cpc": 76.0
   },
   {
    "high_court": "Punjab & Haryana",
@@ -7739,8 +7827,12 @@
    "high_court": "Rajasthan",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 374.0,
-   "achieved": 16.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 374.0,
+   "achieved_ecommittee": 18.0,
+   "target_cpc": 92.0,
+   "achieved_cpc": 16.0
   },
   {
    "high_court": "Rajasthan",
@@ -8075,8 +8167,12 @@
    "high_court": "Sikkim",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 10.0,
-   "achieved": 11.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 10.0,
+   "achieved_ecommittee": 1.0,
+   "target_cpc": 11.0,
+   "achieved_cpc": 11.0
   },
   {
    "high_court": "Sikkim",
@@ -8411,8 +8507,12 @@
    "high_court": "Telangana",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 124.0,
-   "achieved": 97.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 124.0,
+   "achieved_ecommittee": 99.0,
+   "target_cpc": 100.0,
+   "achieved_cpc": 97.0
   },
   {
    "high_court": "Telangana",
@@ -8747,8 +8847,12 @@
    "high_court": "Tripura",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 16.0,
-   "achieved": 16.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 16.0,
+   "achieved_ecommittee": 2.0,
+   "target_cpc": 16.0,
+   "achieved_cpc": 16.0
   },
   {
    "high_court": "Tripura",
@@ -9083,8 +9187,12 @@
    "high_court": "Uttarakhand",
    "component": "e-Sewa Kendras",
    "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
-   "target": 56.0,
-   "achieved": 71.0
+   "target": null,
+   "achieved": null,
+   "target_dpr": 56.0,
+   "achieved_ecommittee": 30.0,
+   "target_cpc": 73.0,
+   "achieved_cpc": 71.0
   },
   {
    "high_court": "Uttarakhand",
@@ -9407,6 +9515,28 @@
    "indicator": "No of Courts implemented e-office (Absolute Count)",
    "target": 13.0,
    "achieved": 5.0
+  },
+  {
+   "high_court": "Gauhati – Nagaland",
+   "component": "Digitisation of Court Records",
+   "indicator": "No of pages digitized (in Cr.)",
+   "target": 3.5889,
+   "achieved": 0.0,
+   "target_dpr": null,
+   "achieved_ecommittee": null,
+   "target_cpc": null,
+   "achieved_cpc": null
+  },
+  {
+   "high_court": "Gauhati – Nagaland",
+   "component": "e-Sewa Kendras",
+   "indicator": "No of e-sewa kendras in court complexes (in Absolute Count)",
+   "target": null,
+   "achieved": null,
+   "target_dpr": 33.0,
+   "achieved_ecommittee": 2.0,
+   "target_cpc": 6.0,
+   "achieved_cpc": 6.0
   }
  ],
  "financial_baseline": [

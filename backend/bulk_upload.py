@@ -247,11 +247,19 @@ async def process_physical_bulk(
         existing = await db.physical_entries.find_one(q)
         if user["role"] == "CPC" and existing and is_esewa:
             target_dpr = existing.get("target_dpr")
-        eff_target = target_val if (user["role"] == "Admin" and target_val is not None) else (existing.get("target") if existing else None)
-        percent = safe_div_fn(ach_val, eff_target)
+        if is_esewa:
+            # e-Sewa uses DPR/e-Committee/CPC only — clear cumulative Target/Achieved
+            eff_target = None
+            ach_val = None
+            percent_ecommittee = safe_div_fn(achieved_ecommittee, target_dpr)
+            percent_cpc = safe_div_fn(achieved_cpc, target_cpc)
+            percent = percent_ecommittee
+        else:
+            eff_target = target_val if (user["role"] == "Admin" and target_val is not None) else (existing.get("target") if existing else None)
+            percent = safe_div_fn(ach_val, eff_target)
+            percent_ecommittee = None
+            percent_cpc = None
         rag = compute_rag_fn(percent, thresholds)
-        percent_ecommittee = safe_div_fn(achieved_ecommittee, target_dpr) if is_esewa else None
-        percent_cpc = safe_div_fn(achieved_cpc, target_cpc) if is_esewa else None
         row_data = {
             **q, "target": eff_target, "achieved": ach_val, "percent": percent, "rag": rag, "remarks": remarks_val,
             "target_dpr": target_dpr, "achieved_ecommittee": achieved_ecommittee,

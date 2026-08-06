@@ -117,30 +117,23 @@ def transform_physical_achieved_sep2025_rows(
                     "measure": "digitization_pages",
                 })
 
-        # --- eSewa Kendras aggregate → kendras in court complexes ---
-        # Prefer DPR target + CPC achieved; fall back to eCommittee achieved.
-        esk_target = _num(row[5] if len(row) > 5 else None)
-        if esk_target is None:
-            esk_target = _num(row[8] if len(row) > 8 else None)
-        esk_ach = _num(row[9] if len(row) > 9 else None)
-        if esk_ach is None:
-            esk_ach = _num(row[6] if len(row) > 6 else None)
-
-        if esk_ach is not None or esk_target is not None:
-            if esk_ach is None:
-                esk_ach = 0.0
-            if include_zero_achieved or esk_ach != 0:
-                target_dpr = _num(row[5] if len(row) > 5 else None)
-                achieved_ecommittee = _num(row[6] if len(row) > 6 else None)
-                target_cpc = _num(row[8] if len(row) > 8 else None)
-                achieved_cpc = _num(row[9] if len(row) > 9 else None)
+        # --- eSewa Kendras → DPR / e-Committee / CPC (no cumulative Target/Achieved) ---
+        target_dpr = _num(row[5] if len(row) > 5 else None)
+        achieved_ecommittee = _num(row[6] if len(row) > 6 else None)
+        target_cpc = _num(row[8] if len(row) > 8 else None)
+        achieved_cpc = _num(row[9] if len(row) > 9 else None)
+        has_esewa = any(v is not None for v in (target_dpr, achieved_ecommittee, target_cpc, achieved_cpc))
+        if has_esewa:
+            if achieved_ecommittee is None and achieved_cpc is None:
+                achieved_ecommittee = 0.0
+            if include_zero_achieved or (achieved_ecommittee or 0) != 0 or (achieved_cpc or 0) != 0:
                 records.append({
                     "high_court": hc,
                     "component": COMPONENT_ESEWA,
                     "indicator": INDICATOR_ESEWA_IN_COMPLEXES,
                     "district": None,
-                    "target": esk_target,
-                    "achieved": esk_ach,
+                    "target": None,
+                    "achieved": None,
                     "target_dpr": target_dpr,
                     "achieved_ecommittee": achieved_ecommittee,
                     "target_cpc": target_cpc,
@@ -164,7 +157,10 @@ def transform_physical_achieved_sep2025_rows(
                 sum(r["achieved"] for r in records if r["measure"] == "digitization_pages"), 4
             ),
             "total_achieved_esewa": round(
-                sum(r["achieved"] for r in records if r["measure"] == "esewa_kendras"), 4
+                sum(
+                    (r.get("achieved_cpc") if r.get("achieved_cpc") is not None else r.get("achieved_ecommittee") or 0)
+                    for r in records if r["measure"] == "esewa_kendras"
+                ), 4
             ),
         },
         "issues": issues,
@@ -190,11 +186,16 @@ def records_to_bulk_rows(records: list[dict[str, Any]]) -> list[list[Any]]:
     return out
 
 
+_ESEWA_MERGE_FIELDS = (
+    "target", "achieved", "target_dpr", "achieved_ecommittee", "target_cpc", "achieved_cpc",
+)
+
+
 def merge_into_physical_baseline(
     baseline: list[dict[str, Any]],
     records: list[dict[str, Any]],
 ) -> tuple[list[dict[str, Any]], dict[str, int]]:
-    """Update target/achieved on matching (HC, component, indicator) seed rows."""
+    """Update target/achieved (and e-Sewa DPR/CPC fields) on matching seed rows."""
     by_key = {
         (r["high_court"], r["component"], r["indicator"]): dict(r)
         for r in baseline
@@ -205,12 +206,10 @@ def merge_into_physical_baseline(
         if key in by_key:
             existing = by_key[key]
             changed = False
-            if rec.get("target") is not None and existing.get("target") != rec["target"]:
-                existing["target"] = rec["target"]
-                changed = True
-            if rec.get("achieved") is not None and existing.get("achieved") != rec["achieved"]:
-                existing["achieved"] = rec["achieved"]
-                changed = True
+            for fld in _ESEWA_MERGE_FIELDS:
+                if fld in rec and existing.get(fld) != rec.get(fld):
+                    existing[fld] = rec.get(fld)
+                    changed = True
             if changed:
                 updated += 1
             else:
@@ -222,6 +221,10 @@ def merge_into_physical_baseline(
                 "indicator": rec["indicator"],
                 "target": rec.get("target"),
                 "achieved": rec.get("achieved"),
+                "target_dpr": rec.get("target_dpr"),
+                "achieved_ecommittee": rec.get("achieved_ecommittee"),
+                "target_cpc": rec.get("target_cpc"),
+                "achieved_cpc": rec.get("achieved_cpc"),
             }
             inserted += 1
     return list(by_key.values()), {"updated": updated, "inserted": inserted, "unchanged": unchanged}
