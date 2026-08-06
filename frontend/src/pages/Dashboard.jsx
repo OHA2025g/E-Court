@@ -383,7 +383,6 @@ export default function Dashboard() {
           <thead>
             <tr>
               <th>{labels.colHighCourt}</th>
-              <th className="dense-table-center">{labels.colPhysPct}</th>
               <th className="dense-table-center">{labels.colRelCr}</th>
               <th className="dense-table-center">{labels.colUtilCr}</th>
               <th className="dense-table-center">{labels.colUtilPct}</th>
@@ -393,11 +392,6 @@ export default function Dashboard() {
             {(byHc.data || []).map((r) => (
               <tr key={r.high_court}>
                 <td className="font-medium text-slate-700">{r.high_court}</td>
-                <td className="dense-table-center">
-                  <div className="flex justify-center">
-                    <RagBadge status={physRag(r.phys_percent)} label={fmtPct(r.phys_percent)} />
-                  </div>
-                </td>
                 <td className="dense-table-center">{fmtNum(r.fin_released)}</td>
                 <td className="dense-table-center">{fmtNum(r.fin_utilized)}</td>
                 <td className="dense-table-center">
