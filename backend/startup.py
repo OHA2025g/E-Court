@@ -138,7 +138,7 @@ async def migrate_cloud_dashboard_visibility(db):
             await db.financial_entries.update_one({"_id": row["_id"]}, {"$set": updates})
             fin_fixed += 1
 
-    # 2) Mirror latest non-baseline Cloud physical + financial onto baseline when missing
+    # 2) Move latest non-baseline Cloud physical onto baseline (no duplicate periods in tracker)
     phys_mirrored = 0
     source_periods = await db.physical_entries.distinct(
         "reporting_period",
@@ -175,6 +175,8 @@ async def migrate_cloud_dashboard_visibility(db):
                 )
             else:
                 await db.physical_entries.insert_one(payload)
+            # Drop the non-baseline copy so Physical Tracker does not show doubles
+            await db.physical_entries.delete_one({"_id": row["_id"]})
             phys_mirrored += 1
 
     fin_mirrored = 0

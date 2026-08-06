@@ -16,7 +16,7 @@ Reusable pipeline to load DoJ wide-format Physical Excel into PMIS `physical_ent
 | Item | Value |
 |------|--------|
 | Collection | `physical_entries` |
-| Period | `2025-09` (also merge into baseline `2026-05` / current months) |
+| Period | `2025-09` only (DoJ “till Sep 2025” — do not load into other months) |
 | Channel | Admin `POST /api/physical/bulk` |
 
 ### Field mapping
@@ -71,9 +71,7 @@ python scripts/import_physical_excel.py --write-bulk-xlsx --update-seed --load-a
   --admin-email admin@pmis.gov.in --admin-password 'Admin@PMIS2026' \
   --period 2025-09
 
-# Also populate baseline / current months for overall app views
-python scripts/import_physical_excel.py --load-api ... --period 2026-05
-python scripts/import_physical_excel.py --load-api ... --period 2026-07
+# Do not load the same DoJ sheet into 2026-05 / 2026-07 — that creates duplicate tracker rows.
 ```
 
 ## Reuse
