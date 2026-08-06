@@ -94,22 +94,28 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
-            <table className="dense-table w-full mt-4 text-xs">
+            <table className="dense-table w-full mt-4 text-xs table-fixed">
+              <colgroup>
+                <col className="w-[46%]" />
+                <col className="w-[18%]" />
+                <col className="w-[18%]" />
+                <col className="w-[18%]" />
+              </colgroup>
               <thead>
                 <tr>
                   <th>{isOutcome ? "Subject" : "Component"}</th>
-                  <th className="text-right">{isOutcome ? "Missing" : "Red count"}</th>
-                  <th className="text-right">% of total</th>
-                  <th className="text-right">Cumulative</th>
+                  <th className="dense-table-right">{isOutcome ? "Missing" : "Red count"}</th>
+                  <th className="dense-table-right">% of total</th>
+                  <th className="dense-table-right">Cumulative</th>
                 </tr>
               </thead>
               <tbody>
                 {series.map((r, i) => (
                   <tr key={r[xLabel]} className={i < cutoff ? "bg-red-50/50" : ""}>
                     <td>{r[xLabel]}</td>
-                    <td className="text-right">{r.red_count}</td>
-                    <td className="text-right">{r.pct_of_total}%</td>
-                    <td className="text-right">{r.cumulative_pct}%</td>
+                    <td className="dense-table-right">{r.red_count}</td>
+                    <td className="dense-table-right">{r.pct_of_total}%</td>
+                    <td className="dense-table-right">{r.cumulative_pct}%</td>
                   </tr>
                 ))}
               </tbody>

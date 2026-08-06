@@ -185,6 +185,10 @@ table.dense-table th.dense-table-center,
 table.dense-table td.dense-table-center {
   @apply text-center align-middle;
 }
+table.dense-table th.dense-table-right,
+table.dense-table td.dense-table-right {
+  @apply text-right align-middle;
+}
 table.dense-table tr:hover td { @apply bg-slate-50; }
 .tracker-sort-filter-th {
   vertical-align: top;
