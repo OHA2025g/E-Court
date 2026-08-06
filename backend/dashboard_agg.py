@@ -836,10 +836,9 @@ async def compute_dashboard_by_hc(
     for hc in hcs:
         hc_phys = pmap.get(hc, [])
         totals = physical_absolute_totals(hc_phys)
-        if totals["mixed_uom"]:
-            phys_pct = mean_achievement_percent(hc_phys, safe_div_fn)
-        else:
-            phys_pct = safe_div_fn(totals["achieved"], totals["target"])
+        # Always average per-indicator % at HC level. Ratio-of-sums mixes Count +
+        # Crore Pages + zero-target Cloud GB and produces absurd Achieved % (e.g. 50,000%).
+        phys_pct = mean_achievement_percent(hc_phys, safe_div_fn)
         f = fmap.get(hc, {"released": 0, "utilized": 0})
         rows.append({
             "high_court": hc,
@@ -850,6 +849,14 @@ async def compute_dashboard_by_hc(
             "fin_released": f["released"], "fin_utilized": f["utilized"],
             "fin_percent": safe_div_fn(f["utilized"], f["released"]),
         })
+    # Rank by physical achievement so drill-down surfaces leaders/laggards first.
+    rows.sort(
+        key=lambda r: (
+            r["phys_percent"] is None,
+            -(r["phys_percent"] if r["phys_percent"] is not None else 0),
+            r["high_court"] or "",
+        ),
+    )
     return rows
 
 

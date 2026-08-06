@@ -44,3 +44,30 @@ def test_single_uom_keeps_absolute_totals():
     assert totals["uom"] == "Count"
     # Homogeneous UOM uses ratio-of-sums (not distorted by zero-target outliers).
     assert _safe_div(totals["achieved"], totals["target"]) == 70.0
+
+
+def test_hc_style_mean_not_inflated_by_cloud_gb():
+    """Mirrors High Court drill-down rows that previously showed 50,000%+ Achieved %."""
+    rows = [
+        {"component": "Cloud Computing & Storage", "target": 0, "achieved": 1900},
+        {"component": "Digitisation of Court Records", "target": 3.5889, "achieved": 0},
+    ]
+    # Ratio-of-sums would be ~52941%; mean of indicators with target > 0 is 0%.
+    assert _safe_div(
+        sum(r["achieved"] for r in rows),
+        sum(r["target"] for r in rows),
+    ) > 1000
+    assert mean_achievement_percent(rows, _safe_div) == 0.0
+
+    rows2 = [
+        {"component": "Cloud Computing & Storage", "target": 0, "achieved": 7700},
+        {"component": "Digitisation of Court Records", "target": 277.3673, "achieved": 204.5787},
+        {"component": "e-Sewa Kendras", "target": 353, "achieved": 111},
+    ]
+    pct = mean_achievement_percent(rows2, _safe_div)
+    assert pct is not None and pct < 100
+    expected = round(
+        ((204.5787 / 277.3673) * 100 + (111 / 353) * 100) / 2,
+        2,
+    )
+    assert pct == expected
