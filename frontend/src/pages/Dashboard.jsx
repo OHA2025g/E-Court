@@ -444,7 +444,7 @@ export default function Dashboard() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList
           data-testid="dashboard-tabs"
-          className="dashboard-tab-list w-full justify-start h-auto"
+          className="dashboard-tab-list w-full h-auto"
         >
           {visibleTabs.map((tab) => {
             const Icon = TAB_CONFIG[tab]?.icon;
