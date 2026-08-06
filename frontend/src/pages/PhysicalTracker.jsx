@@ -203,8 +203,8 @@ export default function PhysicalTracker() {
       high_court: hc, component, indicator, reporting_period: period,
       district: district || null,
       storage_type: isCloudComponent ? (storageType || DEFAULT_STORAGE_TYPE) : null,
-      target: target === "" ? null : Number(target),
-      achieved: achieved === "" ? null : Number(achieved),
+      target: isEsewaComponent ? null : (target === "" ? null : Number(target)),
+      achieved: isEsewaComponent ? null : (achieved === "" ? null : Number(achieved)),
       target_dpr: isEsewaComponent && targetDpr !== "" ? Number(targetDpr) : null,
       achieved_ecommittee: isEsewaComponent && achievedEcommittee !== "" ? Number(achievedEcommittee) : null,
       target_cpc: isEsewaComponent && targetCpc !== "" ? Number(targetCpc) : null,
@@ -249,8 +249,8 @@ export default function PhysicalTracker() {
         storage_type: row.component === CLOUD_COMPUTING_COMPONENT
           ? (row.storage_type || DEFAULT_STORAGE_TYPE)
           : null,
-        target: row.target,
-        achieved: row.achieved,
+        target: isEsewa ? null : row.target,
+        achieved: isEsewa ? null : row.achieved,
         target_dpr: isEsewa ? (row.target_dpr ?? null) : null,
         achieved_ecommittee: isEsewa ? (row.achieved_ecommittee ?? null) : null,
         target_cpc: isEsewa ? (row.target_cpc ?? null) : null,
@@ -309,11 +309,14 @@ export default function PhysicalTracker() {
         </span>
       ) },
       { key: "reporting_period", label: labels.period },
-      { key: "target", label: labels.target, align: "right", editable: canEditTarget, field: "target", inputType: "number", render: r => fmtNum(r.target, { digits: 0 }) },
-      { key: "achieved", label: labels.achieved, align: "right", editable: canEdit, field: "achieved", inputType: "number", render: r => fmtNum(r.achieved, { digits: 0 }) },
-      { key: "percent", label: labels.percent, align: "right", render: r => fmtPct(r.percent) },
     ];
-    if (isEsewaComponent) {
+    if (!isEsewaComponent) {
+      cols.push(
+        { key: "target", label: labels.target, align: "right", editable: canEditTarget, field: "target", inputType: "number", render: r => fmtNum(r.target, { digits: 0 }) },
+        { key: "achieved", label: labels.achieved, align: "right", editable: canEdit, field: "achieved", inputType: "number", render: r => fmtNum(r.achieved, { digits: 0 }) },
+        { key: "percent", label: labels.percent, align: "right", render: r => fmtPct(r.percent) },
+      );
+    } else {
       cols.push(
         { key: "target_dpr", label: labels.targetDpr, align: "right", editable: canEditTarget, field: "target_dpr", inputType: "number", render: r => fmtNum(r.target_dpr, { digits: 0 }) },
         { key: "achieved_ecommittee", label: labels.achievedEcommittee, align: "right", editable: canEdit, field: "achieved_ecommittee", inputType: "number", render: r => fmtNum(r.achieved_ecommittee, { digits: 0 }) },
@@ -324,7 +327,7 @@ export default function PhysicalTracker() {
       );
     }
     cols.push(
-      { key: "rag", label: labels.rag, render: r => <RagBadge status={ragColor(r.percent)} /> },
+      { key: "rag", label: labels.rag, render: r => <RagBadge status={ragColor(isEsewaComponent ? r.percent_ecommittee : r.percent)} /> },
       { key: "remarks", label: labels.remarks, editable: canEdit, field: "remarks" },
       {
         key: "comments",
@@ -395,8 +398,12 @@ export default function PhysicalTracker() {
                 options={STORAGE_TYPE_OPTIONS}
               />
             )}
-            <NumberField testid={TID.targetInput} label={canEditTarget ? labels.target : labels.targetAdmin} value={target} onChange={setTarget} disabled={!canEditTarget} />
-            <NumberField testid={TID.achievedInput} label={labels.achievedCumulative} value={achieved} onChange={setAchieved} disabled={!canEdit} />
+            {!isEsewaComponent && (
+              <>
+                <NumberField testid={TID.targetInput} label={canEditTarget ? labels.target : labels.targetAdmin} value={target} onChange={setTarget} disabled={!canEditTarget} />
+                <NumberField testid={TID.achievedInput} label={labels.achievedCumulative} value={achieved} onChange={setAchieved} disabled={!canEdit} />
+              </>
+            )}
             {isEsewaComponent && (
               <>
                 <NumberField testid="target-dpr-input" label={labels.targetDpr} value={targetDpr} onChange={setTargetDpr} disabled={!canEditTarget} />

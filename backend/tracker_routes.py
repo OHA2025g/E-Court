@@ -253,11 +253,6 @@ def register_tracker_routes(
         q = entry_query_key_physical(payload)
         existing = await db.physical_entries.find_one(q)
         assert_admin_can_create(user, existing)
-        percent = safe_div_fn(body.achieved, body.target)
-        thresholds = (await db.settings.find_one({"key": "rag_thresholds"}) or {}).get(
-            "value", default_rag_thresholds
-        )
-        rag = compute_rag_fn(percent, thresholds)
 
         is_esewa = body.component == ESEWA_COMPONENT
         target_dpr = body.target_dpr if is_esewa else None
@@ -266,10 +261,18 @@ def register_tracker_routes(
         achieved_cpc = body.achieved_cpc if is_esewa else None
         percent_ecommittee = safe_div_fn(achieved_ecommittee, target_dpr) if is_esewa else None
         percent_cpc = safe_div_fn(achieved_cpc, target_cpc) if is_esewa else None
+        # e-Sewa uses DPR/e-Committee/CPC fields only — no cumulative Target/Achieved
+        target_val = None if is_esewa else body.target
+        achieved_val = None if is_esewa else body.achieved
+        percent = percent_ecommittee if is_esewa else safe_div_fn(achieved_val, target_val)
+        thresholds = (await db.settings.find_one({"key": "rag_thresholds"}) or {}).get(
+            "value", default_rag_thresholds
+        )
+        rag = compute_rag_fn(percent, thresholds)
 
         doc = {
             **q, "district": body.district, "storage_type": storage_type,
-            "target": body.target, "achieved": body.achieved,
+            "target": target_val, "achieved": achieved_val,
             "percent": percent, "rag": rag, "remarks": body.remarks,
             "target_dpr": target_dpr,
             "achieved_ecommittee": achieved_ecommittee,
