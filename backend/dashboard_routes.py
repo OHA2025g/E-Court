@@ -20,6 +20,7 @@ from dashboard_agg import (
 from period_policy import approved_match_filter, merge_match
 from cache_layer import cache_get, cache_set
 from security import client_ip
+from high_court_names import high_court_filter_value
 
 _public_cache: dict = {}
 _PUBLIC_CACHE_TTL = 60
@@ -40,14 +41,14 @@ def _dimension_match(
         high_court = user["high_court"]
     match: dict = {}
     if high_court:
-        match["high_court"] = high_court
+        match["high_court"] = high_court_filter_value(high_court)
     if component:
         match["component"] = component
     return match
 
 
 # Bump when dashboard aggregation semantics change so Redis does not serve stale KPIs.
-_DASHBOARD_CACHE_VER = "v4-phys-count-abs"
+_DASHBOARD_CACHE_VER = "v5-hc-dash-variants"
 
 
 def _dashboard_cache_key(route: str, user: dict, reporting_period: Optional[str], include_unapproved: bool, **extra) -> str:

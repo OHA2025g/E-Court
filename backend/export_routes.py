@@ -18,6 +18,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 
 from cabinet_brief import build_cabinet_brief_pdf
 from export_i18n import financial_headers, outcome_headers, physical_headers, resolve_export_lang, sla_headers
+from high_court_names import high_court_filter_value
 from period_policy import approved_match_filter, merge_match
 from rollup import (
     apply_district_filter,
@@ -77,7 +78,7 @@ def register_export_routes(
     async def _export_query(user, reporting_period, high_court, component, district=None, subject=None):
         q: dict = scope_filter_fn(user)
         if high_court:
-            q["high_court"] = high_court
+            q["high_court"] = high_court_filter_value(high_court)
         if component:
             q["component"] = component
         if subject:

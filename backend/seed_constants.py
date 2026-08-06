@@ -2,8 +2,8 @@
 
 HIGH_COURTS = [
     "Allahabad", "Andhra Pradesh", "Bombay", "Calcutta", "Chhattisgarh",
-    "Delhi", "Gauhati – Arunachal Pradesh", "Gauhati – Assam",
-    "Gauhati – Mizoram", "Gauhati - Nagaland", "Gujarat", "Himachal Pradesh",
+    "Delhi",     "Gauhati – Arunachal Pradesh", "Gauhati – Assam",
+    "Gauhati – Mizoram", "Gauhati – Nagaland", "Gujarat", "Himachal Pradesh",
     "Jammu & Kashmir", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
     "Madras", "Manipur", "Meghalaya", "Odisha", "Patna",
     "Punjab & Haryana", "Rajasthan", "Sikkim", "Telangana",

@@ -26,7 +26,7 @@ HC_ALIASES: dict[str, str] = {
     "gauhati (arunachal pradesh)": "Gauhati – Arunachal Pradesh",
     "gauhati (assam)": "Gauhati – Assam",
     "gauhati (mizoram)": "Gauhati – Mizoram",
-    "gauhati (nagaland)": "Gauhati - Nagaland",
+    "gauhati (nagaland)": "Gauhati – Nagaland",
     "gujarat": "Gujarat",
     "himachal pradesh": "Himachal Pradesh",
     "jammu & kashmir": "Jammu & Kashmir",

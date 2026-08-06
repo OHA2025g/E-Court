@@ -13,6 +13,7 @@ from rollup import (
 from period_policy import assert_editable
 from cache_layer import cache_invalidate_prefix
 from webhook_routes import enqueue_webhook
+from high_court_names import high_court_filter_value, high_court_names_equal
 
 ADMIN_ONLY_CREATE_DETAIL = "Only administrators can create new tracker entries"
 
@@ -201,7 +202,7 @@ def register_tracker_routes(
     ):
         q: dict = scope_filter_fn(user)
         if high_court:
-            q["high_court"] = high_court
+            q["high_court"] = high_court_filter_value(high_court)
         if component:
             q["component"] = component
         if reporting_period:
@@ -219,7 +220,7 @@ def register_tracker_routes(
     async def upsert_physical(body: PhysicalEntryIn, user: dict = Depends(require_fully_authenticated)):
         if user["role"] == "Viewer":
             raise HTTPException(status_code=403, detail="Read-only")
-        if user["role"] == "CPC" and body.high_court != user.get("high_court"):
+        if user["role"] == "CPC" and not high_court_names_equal(body.high_court, user.get("high_court")):
             raise HTTPException(status_code=403, detail="CPC limited to own High Court")
         today = now_utc_fn().strftime("%Y-%m")
         if body.reporting_period > today:
@@ -282,7 +283,7 @@ def register_tracker_routes(
     ):
         q: dict = scope_filter_fn(user)
         if high_court:
-            q["high_court"] = high_court
+            q["high_court"] = high_court_filter_value(high_court)
         if component:
             q["component"] = component
         if reporting_period:
@@ -296,7 +297,7 @@ def register_tracker_routes(
     async def upsert_financial(body: FinancialEntryIn, user: dict = Depends(require_fully_authenticated)):
         if user["role"] == "Viewer":
             raise HTTPException(status_code=403, detail="Read-only")
-        if user["role"] == "CPC" and body.high_court != user.get("high_court"):
+        if user["role"] == "CPC" and not high_court_names_equal(body.high_court, user.get("high_court")):
             raise HTTPException(status_code=403, detail="CPC limited to own High Court")
         today = now_utc_fn().strftime("%Y-%m")
         if body.reporting_period > today:
@@ -375,7 +376,7 @@ def register_tracker_routes(
     ):
         q: dict = scope_filter_fn(user)
         if high_court:
-            q["high_court"] = high_court
+            q["high_court"] = high_court_filter_value(high_court)
         if subject:
             q["subject"] = subject
         if reporting_period:
@@ -388,7 +389,7 @@ def register_tracker_routes(
     async def upsert_outcome(body: OutcomeEntryIn, user: dict = Depends(require_fully_authenticated)):
         if user["role"] == "Viewer":
             raise HTTPException(status_code=403, detail="Read-only")
-        if user["role"] == "CPC" and body.high_court and body.high_court != user.get("high_court"):
+        if user["role"] == "CPC" and body.high_court and not high_court_names_equal(body.high_court, user.get("high_court")):
             raise HTTPException(status_code=403, detail="CPC limited to own High Court")
         today = now_utc_fn().strftime("%Y-%m")
         if body.reporting_period > today:

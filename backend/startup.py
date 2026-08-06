@@ -21,6 +21,7 @@ from seed_constants import (
     OUTCOME_SUBJECTS,
     REPORTING_PERIODS,
 )
+from high_court_names import normalize_high_court_dashes
 from outcome_excel import build_kpi_master, outcome_seed_docs
 
 logger = logging.getLogger("pmis")
@@ -261,9 +262,48 @@ async def ensure_indexes(db):
     await ensure_dashboard_indexes(db)
 
 
+async def reconcile_high_court_dash_names(db):
+    """Rename master High Court rows so dash characters match HIGH_COURTS canon.
+
+    Does not rewrite tracker entry documents — query filters accept dash variants.
+    """
+    existing = await db.high_courts.find({}, {"_id": 0, "name": 1, "active": 1}).to_list(200)
+    by_norm = {}
+    for row in existing:
+        name = row.get("name") or ""
+        key = normalize_high_court_dashes(name, "-")
+        by_norm.setdefault(key, []).append(row)
+
+    for canonical in HIGH_COURTS:
+        key = normalize_high_court_dashes(canonical, "-")
+        rows = by_norm.get(key) or []
+        if not rows:
+            continue
+        # Prefer keeping a doc already on the canonical spelling.
+        keep = next((r for r in rows if r.get("name") == canonical), rows[0])
+        if keep.get("name") != canonical:
+            # Avoid unique-name collisions if canonical already exists somehow.
+            if await db.high_courts.find_one({"name": canonical}):
+                await db.high_courts.delete_one({"name": keep["name"]})
+            else:
+                await db.high_courts.update_one(
+                    {"name": keep["name"]},
+                    {"$set": {"name": canonical}},
+                )
+            logger.info("Renamed High Court master %r → %r", keep.get("name"), canonical)
+        for extra in rows:
+            if extra.get("name") in (keep.get("name"), canonical):
+                continue
+            await db.high_courts.delete_one({"name": extra["name"]})
+            logger.info("Removed duplicate High Court master %r", extra.get("name"))
+
+
 async def seed_master(db):
     if await db.high_courts.count_documents({}) == 0:
         await db.high_courts.insert_many([{"name": n, "active": True} for n in HIGH_COURTS])
+    else:
+        # Align dash characters in master HC names with canonical seed (en-dash).
+        await reconcile_high_court_dash_names(db)
     if await db.components.count_documents({}) == 0:
         await db.components.insert_many([{"seq": i + 1, **c} for i, c in enumerate(COMPONENTS)])
     if await db.indicators.count_documents({}) == 0:

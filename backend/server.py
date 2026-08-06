@@ -18,6 +18,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from starlette.middleware.cors import CORSMiddleware
 
 from seed_constants import DEFAULT_RAG_THRESHOLDS
+from high_court_names import high_court_filter_value
 from auth import (
     init_auth,
     register_auth_routes,
@@ -73,7 +74,7 @@ STATE_TO_HC = {
     "Dadra and Nagar Haveli and Daman and Diu": "Bombay",
     "West Bengal": "Calcutta", "Andaman & Nicobar": "Calcutta",
     "Chhattisgarh": "Chhattisgarh", "Delhi": "Delhi",
-    "Nagaland": "Gauhati - Nagaland", "Arunachal Pradesh": "Gauhati – Arunachal Pradesh",
+    "Nagaland": "Gauhati – Nagaland", "Arunachal Pradesh": "Gauhati – Arunachal Pradesh",
     "Assam": "Gauhati – Assam", "Mizoram": "Gauhati – Mizoram",
     "Gujarat": "Gujarat", "Himachal Pradesh": "Himachal Pradesh",
     "Jammu & Kashmir": "Jammu & Kashmir", "Ladakh": "Jammu & Kashmir",
@@ -136,7 +137,7 @@ def safe_div(a: Optional[float], b: Optional[float]) -> Optional[float]:
 def scope_filter(user: dict, high_court_field: str = "high_court") -> dict:
     """Return mongo filter ensuring CPC users only see their HC."""
     if user["role"] == "CPC" and user.get("high_court"):
-        return {high_court_field: user["high_court"]}
+        return {high_court_field: high_court_filter_value(user["high_court"])}
     return {}
 
 async def audit(user: dict, tracker: str, action: str, ref_id: Optional[str],

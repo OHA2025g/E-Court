@@ -25,6 +25,7 @@ const HC_COLUMN_LABEL = {
   "Gauhati – Arunachal Pradesh": "Gauhati·AP",
   "Gauhati – Assam": "Gauhati·AS",
   "Gauhati – Mizoram": "Gauhati·MZ",
+  "Gauhati – Nagaland": "Gauhati·NL",
   "Gauhati - Nagaland": "Gauhati·NL",
   "Punjab & Haryana": "P&H",
   "Andhra Pradesh": "Andhra Pr.",
