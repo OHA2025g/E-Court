@@ -21,6 +21,8 @@ import {
   Gauge,
   Wallet,
   Stack,
+  CaretUp,
+  CaretDown,
 } from "@phosphor-icons/react";
 import IndiaChoropleth from "@/components/IndiaChoropleth";
 import FinancialTrackerDashboardTab from "@/components/dashboard/FinancialTrackerDashboardTab";
@@ -96,6 +98,53 @@ function physRag(pct) {
   return "RED";
 }
 
+function compareSortValues(a, b) {
+  if (a == null && b == null) return 0;
+  if (a == null) return 1;
+  if (b == null) return -1;
+  if (typeof a === "number" && typeof b === "number") return a - b;
+  return String(a).localeCompare(String(b), undefined, { sensitivity: "base", numeric: true });
+}
+
+function sortTableRows(rows, key, dir) {
+  return [...rows].sort((a, b) => {
+    const cmp = compareSortValues(a[key], b[key]);
+    return dir === "asc" ? cmp : -cmp;
+  });
+}
+
+function DashboardSortTh({ label, columnKey, sort, onSort, align = "left", testId }) {
+  const active = sort.key === columnKey;
+  return (
+    <th className={align === "center" ? "dense-table-center" : undefined}>
+      <button
+        type="button"
+        data-testid={testId}
+        className={`dashboard-sort-th-btn ${align === "center" ? "is-center" : ""}`}
+        aria-label={`Sort by ${label}`}
+        onClick={() => onSort((prev) => ({
+          key: columnKey,
+          dir: prev.key === columnKey && prev.dir === "asc" ? "desc" : "asc",
+        }))}
+      >
+        <span>{label}</span>
+        <span className="dashboard-sort-carets" aria-hidden="true">
+          <CaretUp
+            size={10}
+            weight="bold"
+            className={active && sort.dir === "asc" ? "is-active" : ""}
+          />
+          <CaretDown
+            size={10}
+            weight="bold"
+            className={active && sort.dir === "desc" ? "is-active" : ""}
+          />
+        </span>
+      </button>
+    </th>
+  );
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
   const labels = useDashboardLabels();
@@ -104,6 +153,8 @@ export default function Dashboard() {
   const [highCourt, setHighCourt] = useState("");
   const [component, setComponent] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
+  const [compSort, setCompSort] = useState({ key: "component", dir: "asc" });
+  const [hcSort, setHcSort] = useState({ key: "high_court", dir: "asc" });
   const [accessibleRag] = useAccessibleRag();
   const cpcCourt = user?.role === "CPC" ? user?.high_court : null;
   const visibleTabs = useMemo(
@@ -168,6 +219,15 @@ export default function Dashboard() {
 
   const s = summary.data;
   const ragData = s ? Object.entries(s.rag_physical || {}).map(([k, v]) => ({ name: k, value: v })) : [];
+
+  const sortedCompRows = useMemo(
+    () => sortTableRows(byComp.data || [], compSort.key, compSort.dir),
+    [byComp.data, compSort],
+  );
+  const sortedHcRows = useMemo(
+    () => sortTableRows(byHc.data || [], hcSort.key, hcSort.dir),
+    [byHc.data, hcSort],
+  );
 
   const cabinetBriefHref = useMemo(() => {
     const qs = new URLSearchParams(dashParams).toString();
@@ -347,17 +407,17 @@ export default function Dashboard() {
         <table className="dense-table dashboard-table w-full" data-testid="dashboard-component-table">
           <thead>
             <tr>
-              <th>{labels.colComponent}</th>
-              <th className="dense-table-center">{labels.colPhysT}</th>
-              <th className="dense-table-center">{labels.colPhysA}</th>
-              <th className="dense-table-center">{labels.colPhysPct}</th>
-              <th className="dense-table-center">{labels.colRelCr}</th>
-              <th className="dense-table-center">{labels.colUtilCr}</th>
-              <th className="dense-table-center">{labels.colUtilPct}</th>
+              <DashboardSortTh label={labels.colComponent} columnKey="component" sort={compSort} onSort={setCompSort} testId="comp-sort-component" />
+              <DashboardSortTh label={labels.colPhysT} columnKey="phys_target" sort={compSort} onSort={setCompSort} align="center" testId="comp-sort-phys-target" />
+              <DashboardSortTh label={labels.colPhysA} columnKey="phys_achieved" sort={compSort} onSort={setCompSort} align="center" testId="comp-sort-phys-achieved" />
+              <DashboardSortTh label={labels.colPhysPct} columnKey="phys_percent" sort={compSort} onSort={setCompSort} align="center" testId="comp-sort-phys-pct" />
+              <DashboardSortTh label={labels.colRelCr} columnKey="fin_released" sort={compSort} onSort={setCompSort} align="center" testId="comp-sort-fin-released" />
+              <DashboardSortTh label={labels.colUtilCr} columnKey="fin_utilized" sort={compSort} onSort={setCompSort} align="center" testId="comp-sort-fin-utilized" />
+              <DashboardSortTh label={labels.colUtilPct} columnKey="fin_percent" sort={compSort} onSort={setCompSort} align="center" testId="comp-sort-fin-pct" />
             </tr>
           </thead>
           <tbody>
-            {(byComp.data || []).map((r) => (
+            {sortedCompRows.map((r) => (
               <tr key={r.component}>
                 <td className="font-medium text-slate-700">{r.component}</td>
                 <td className="dense-table-center">{fmtNum(r.phys_target, { digits: 0 })}</td>
@@ -402,14 +462,14 @@ export default function Dashboard() {
         <table className="dense-table dashboard-table w-full" data-testid="dashboard-hc-table">
           <thead>
             <tr>
-              <th>{labels.colHighCourt}</th>
-              <th className="dense-table-center">{labels.colRelCr}</th>
-              <th className="dense-table-center">{labels.colUtilCr}</th>
-              <th className="dense-table-center">{labels.colUtilPct}</th>
+              <DashboardSortTh label={labels.colHighCourt} columnKey="high_court" sort={hcSort} onSort={setHcSort} testId="hc-sort-high-court" />
+              <DashboardSortTh label={labels.colRelCr} columnKey="fin_released" sort={hcSort} onSort={setHcSort} align="center" testId="hc-sort-fin-released" />
+              <DashboardSortTh label={labels.colUtilCr} columnKey="fin_utilized" sort={hcSort} onSort={setHcSort} align="center" testId="hc-sort-fin-utilized" />
+              <DashboardSortTh label={labels.colUtilPct} columnKey="fin_percent" sort={hcSort} onSort={setHcSort} align="center" testId="hc-sort-fin-pct" />
             </tr>
           </thead>
           <tbody>
-            {(byHc.data || []).map((r) => (
+            {sortedHcRows.map((r) => (
               <tr key={r.high_court}>
                 <td className="font-medium text-slate-700">{r.high_court}</td>
                 <td className="dense-table-center">{fmtNum(r.fin_released)}</td>

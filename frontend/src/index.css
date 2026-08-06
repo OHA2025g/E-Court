@@ -617,6 +617,39 @@ table.dense-table.dashboard-table th {
   border-bottom: 0;
   font-weight: 600;
 }
+.dashboard-sort-th-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dashboard-sort-th-btn.is-center {
+  justify-content: center;
+}
+.dashboard-sort-th-btn:hover {
+  color: #fde68a;
+}
+.dashboard-sort-carets {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 0.65;
+  opacity: 0.55;
+}
+.dashboard-sort-carets .is-active {
+  opacity: 1;
+  color: #fde68a;
+}
 table.dense-table.dashboard-table tbody tr:nth-child(even) td {
   background: rgba(248, 250, 252, 0.85);
 }
