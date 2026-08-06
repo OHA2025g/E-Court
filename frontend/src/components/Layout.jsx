@@ -8,7 +8,7 @@ import { TID } from "@/lib/testIds";
 import {
   House, GridFour, CurrencyInr, Target, ChartBar,
   Database, ClipboardText, Notebook, PlugCharging, UsersThree,
-  SignOut, Scales, UserCircle, FloppyDisk, PaperPlaneTilt, Clock, Scroll,
+  SignOut, UserCircle, FloppyDisk, PaperPlaneTilt, Clock, Scroll,
   Moon, Sun, Globe, UploadSimple,
 } from "@phosphor-icons/react";
 import NotificationBell from "@/components/NotificationBell";
@@ -43,9 +43,11 @@ function Sidebar() {
     <aside data-testid={TID.sidebar} aria-label={t("nav.mainNav")} className="app-sidebar">
       <div className="app-sidebar-brand">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-lg shadow-amber-900/30">
-            <Scales size={22} weight="fill" className="text-white" />
-          </div>
+          <img
+            src="/ecourts-logo.png"
+            alt="eCourts India"
+            className="h-11 w-11 rounded-full object-cover shadow-lg shadow-black/30 ring-1 ring-white/20"
+          />
           <div>
             <div className="text-white font-display font-bold text-base leading-tight">{t("app.title")}</div>
             <div className="text-[10px] uppercase tracking-[0.22em] text-slate-400">{t("app.subtitle")}</div>

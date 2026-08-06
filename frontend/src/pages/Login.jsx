@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
 import { api, formatApiError, getApiErrorCode, BACKEND_URL } from "@/lib/api";
 import { TID } from "@/lib/testIds";
-import { Scales } from "@phosphor-icons/react";
 
 export default function Login() {
   const { t } = useTranslation();
@@ -76,8 +75,12 @@ export default function Login() {
     <div className="login-page grid grid-cols-1 md:grid-cols-2 bg-slate-100">
       <div className="hidden md:flex flex-col justify-between login-bg text-white p-12 h-full">
         <div>
-          <div className="flex items-center gap-2">
-            <Scales size={28} weight="fill" className="text-amber-300" />
+          <div className="flex items-center gap-3">
+            <img
+              src="/ecourts-logo.png"
+              alt="eCourts India"
+              className="h-12 w-12 rounded-full object-cover shadow-lg shadow-black/30 ring-1 ring-white/25"
+            />
             <span className="font-display font-bold text-xl">eCourts PMIS</span>
           </div>
           <div className="text-[10px] uppercase tracking-[0.3em] text-slate-300 mt-1">

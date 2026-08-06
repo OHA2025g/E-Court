@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { taskDashboardPath } from "@/lib/taskPermissions";
 import { useTaskLabels } from "@/lib/useTaskLabels";
-import { ListChecks, SquaresFour, Scales, ArrowRight } from "@phosphor-icons/react";
+import { ListChecks, SquaresFour, ArrowRight } from "@phosphor-icons/react";
 
 export default function AppSelector() {
   const { user, loading } = useAuth();
@@ -28,9 +28,11 @@ export default function AppSelector() {
   return (
     <div className="workspace-page dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex flex-col">
       <header className="border-b border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-6 py-4 flex items-center gap-3 shadow-sm">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#003B73] to-[#0284c7] shadow-md">
-          <Scales size={24} className="text-white" weight="duotone" />
-        </div>
+        <img
+          src="/ecourts-logo.png"
+          alt="eCourts India"
+          className="h-11 w-11 rounded-full object-cover shadow-md ring-1 ring-slate-200 dark:ring-slate-700"
+        />
         <div>
           <div className="font-display text-sm uppercase tracking-[0.18em] text-[#003B73] dark:text-sky-400 font-semibold">eCourts PMIS</div>
           <div className="text-xs text-slate-500">{l.appSelector.signedInAs(user.name, user.role)}</div>

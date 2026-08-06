@@ -21,7 +21,6 @@ import TrendChart from "@/components/TrendChart";
 import RagDeltaWidget from "@/components/RagDeltaWidget";
 import Card from "@/components/Card";
 import {
-  Scales,
   SignIn,
   ChartLineUp,
   CurrencyInr,
@@ -228,7 +227,7 @@ export default function PublicProgress() {
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <div className="public-hero-badge mb-3">
-                <Scales size={12} weight="fill" className="text-amber-300" />
+                <img src="/ecourts-logo.png" alt="" className="h-4 w-4 rounded-full object-cover" />
                 {t("public.subtitle")}
               </div>
               <h1 className="public-hero-title">{t("public.title")}</h1>
