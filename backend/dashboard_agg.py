@@ -27,6 +27,14 @@ from period_policy import merge_match
 # Component → unit of measure (Count, Crore Pages, GB / TB / PB, Percentage).
 COMPONENT_UOM = {c["name"]: c["uom"] for c in COMPONENTS}
 
+# Storage capacity and percentage indicators must not enter absolute target/achieved sums.
+NON_SUMMABLE_UOMS = frozenset({"GB / TB / PB", "Percentage"})
+PREFERRED_ABSOLUTE_UOM = "Count"
+
+
+def _row_uom(row: dict) -> str:
+    return COMPONENT_UOM.get(row.get("component"), "Unknown")
+
 
 def mean_achievement_percent(
     rows: list,
@@ -46,25 +54,70 @@ def mean_achievement_percent(
 
 
 def physical_absolute_totals(rows: list) -> dict:
-    """Sum target/achieved only when a single UOM is in scope.
+    """Sum target/achieved in a single display UOM for KPI cards.
 
-    Cross-UOM national sums (e.g. court counts + storage GB + crore pages) are
-    dimensionally meaningless and produce absurd headline percentages.
+    - Drops non-summable UOMs (Cloud GB/TB/PB, Percentage) so storage capacity
+      cannot inflate Phys Achieved.
+    - When Count and Crore Pages both exist, shows Count totals (primary UOM)
+      and sets mixed_uom=True so % stays mean-of-indicators, not ratio-of-sums.
     """
     active = [
         r for r in rows
         if (r.get("target") or 0) != 0 or (r.get("achieved") or 0) != 0
     ]
-    uoms = {COMPONENT_UOM.get(r.get("component"), "Unknown") for r in active}
-    if len(uoms) > 1:
-        return {"target": None, "achieved": None, "mixed_uom": True, "uom": None}
-    target = sum(float(r.get("target") or 0) for r in rows)
-    achieved = sum(float(r.get("achieved") or 0) for r in rows)
+    if not active:
+        return {
+            "target": 0.0,
+            "achieved": 0.0,
+            "mixed_uom": False,
+            "uom": None,
+            "absolute_scope": None,
+        }
+
+    all_uoms = {_row_uom(r) for r in active}
+    summable = [r for r in active if _row_uom(r) not in NON_SUMMABLE_UOMS]
+    summable_uoms = {_row_uom(r) for r in summable}
+
+    if not summable:
+        # Only storage/percentage in scope (e.g. Cloud filter) — show that UOM.
+        if len(all_uoms) == 1:
+            uom = next(iter(all_uoms))
+            return {
+                "target": sum(float(r.get("target") or 0) for r in active),
+                "achieved": sum(float(r.get("achieved") or 0) for r in active),
+                "mixed_uom": False,
+                "uom": uom,
+                "absolute_scope": uom,
+            }
+        return {
+            "target": None,
+            "achieved": None,
+            "mixed_uom": True,
+            "uom": None,
+            "absolute_scope": None,
+        }
+
+    if PREFERRED_ABSOLUTE_UOM in summable_uoms and len(summable_uoms) > 1:
+        scoped = [r for r in summable if _row_uom(r) == PREFERRED_ABSOLUTE_UOM]
+        scope = PREFERRED_ABSOLUTE_UOM
+    elif len(summable_uoms) == 1:
+        scope = next(iter(summable_uoms))
+        scoped = summable
+    else:
+        # Multiple non-Count summable UOMs — pick the UOM with the most rows.
+        by_uom: dict[str, list] = defaultdict(list)
+        for r in summable:
+            by_uom[_row_uom(r)].append(r)
+        scope = max(by_uom.keys(), key=lambda u: len(by_uom[u]))
+        scoped = by_uom[scope]
+
     return {
-        "target": target,
-        "achieved": achieved,
-        "mixed_uom": False,
-        "uom": next(iter(uoms)) if uoms else None,
+        "target": sum(float(r.get("target") or 0) for r in scoped),
+        "achieved": sum(float(r.get("achieved") or 0) for r in scoped),
+        # True whenever the underlying dataset spans more than the displayed UOM.
+        "mixed_uom": len(all_uoms) > 1,
+        "uom": scope,
+        "absolute_scope": scope,
     }
 
 
@@ -663,6 +716,7 @@ async def compute_dashboard_summary(
             "indicator_count": len(rolled_phys),
             "mixed_uom": phys_totals["mixed_uom"],
             "uom": phys_totals.get("uom"),
+            "absolute_scope": phys_totals.get("absolute_scope"),
         },
         "financial": {
             "target": f["target"], "released": f["released"], "utilized": f["utilized"],

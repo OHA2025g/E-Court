@@ -20,7 +20,8 @@ def test_mean_achievement_skips_zero_target_cloud_gb():
     assert pct == expected
 
 
-def test_mixed_uom_hides_absolute_totals():
+def test_mixed_uom_shows_count_absolute_totals():
+    """National KPI cards show Count totals instead of dashes when UOMs are mixed."""
     rows = [
         {"component": "e-Sewa Kendras", "target": 100, "achieved": 50},
         {"component": "Cloud Computing & Storage", "target": 0, "achieved": 1000},
@@ -28,8 +29,10 @@ def test_mixed_uom_hides_absolute_totals():
     ]
     totals = physical_absolute_totals(rows)
     assert totals["mixed_uom"] is True
-    assert totals["target"] is None
-    assert totals["achieved"] is None
+    assert totals["uom"] == "Count"
+    assert totals["absolute_scope"] == "Count"
+    assert totals["target"] == 100
+    assert totals["achieved"] == 50
 
 
 def test_single_uom_keeps_absolute_totals():
@@ -42,8 +45,18 @@ def test_single_uom_keeps_absolute_totals():
     assert totals["target"] == 100
     assert totals["achieved"] == 70
     assert totals["uom"] == "Count"
-    # Homogeneous UOM uses ratio-of-sums (not distorted by zero-target outliers).
     assert _safe_div(totals["achieved"], totals["target"]) == 70.0
+
+
+def test_cloud_only_shows_storage_totals():
+    rows = [
+        {"component": "Cloud Computing & Storage", "target": 0, "achieved": 1900},
+        {"component": "Cloud Computing & Storage", "target": 0, "achieved": 400},
+    ]
+    totals = physical_absolute_totals(rows)
+    assert totals["mixed_uom"] is False
+    assert totals["uom"] == "GB / TB / PB"
+    assert totals["achieved"] == 2300
 
 
 def test_hc_style_mean_not_inflated_by_cloud_gb():
@@ -52,7 +65,6 @@ def test_hc_style_mean_not_inflated_by_cloud_gb():
         {"component": "Cloud Computing & Storage", "target": 0, "achieved": 1900},
         {"component": "Digitisation of Court Records", "target": 3.5889, "achieved": 0},
     ]
-    # Ratio-of-sums would be ~52941%; mean of indicators with target > 0 is 0%.
     assert _safe_div(
         sum(r["achieved"] for r in rows),
         sum(r["target"] for r in rows),

@@ -71,6 +71,7 @@
     "indicatorsHint": "{{count}} संकेतक",
     "mixedUomHint": "मिश्रित इकाइयाँ — घटक से फ़िल्टर करें",
     "uomHint": "{{uom}}",
+    "absoluteScopeHint": "{{uom}} संकेतक (स्टोरेज छोड़कर)",
     "componentRowsHint": "{{count}} घटक-पंक्तियाँ",
     "varianceHint": "विचरण ₹{{value}} Cr",
     "ragDistribution": "RAG वितरण — भौतिक",

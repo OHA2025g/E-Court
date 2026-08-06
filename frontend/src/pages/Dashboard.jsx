@@ -112,7 +112,7 @@ export default function Dashboard() {
   }, [period, highCourt, component]);
 
   const summary = useQuery({
-    queryKey: ["dash-summary", dashParams, cpcCourt],
+    queryKey: ["dash-summary", "v4-count-abs", dashParams, cpcCourt],
     queryFn: () => api.get("/dashboard/summary", { params: dashParams }).then(r => r.data),
     enabled: periodReady,
   });
@@ -226,16 +226,16 @@ export default function Dashboard() {
     </div>
   );
 
-  const physMixed = Boolean(s?.physical?.mixed_uom);
-  const physHint = physMixed
-    ? labels.mixedUomHint
-    : s?.physical?.uom
-      ? `${labels.indicatorsHint(s?.physical?.indicator_count || 0)} · ${labels.uomHint(s.physical.uom)}`
-      : labels.indicatorsHint(s?.physical?.indicator_count || 0);
+  const physUom = s?.physical?.absolute_scope || s?.physical?.uom;
+  const physHint = physUom
+    ? (s?.physical?.mixed_uom
+      ? `${labels.absoluteScopeHint(physUom)} · ${labels.indicatorsHint(s?.physical?.indicator_count || 0)}`
+      : `${labels.indicatorsHint(s?.physical?.indicator_count || 0)} · ${labels.uomHint(physUom)}`)
+    : labels.indicatorsHint(s?.physical?.indicator_count || 0);
   const kpiRow = (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
       <KpiCard testId={TID.kpiPhysicalTarget} icon={Target} label={labels.physTargetSum} value={fmtNum(s?.physical?.target, { digits: 0 })} hint={physHint} accent="primary" />
-      <KpiCard testId={TID.kpiPhysicalAchieved} icon={CheckCircle} label={labels.physAchieved} value={fmtNum(s?.physical?.achieved, { digits: 0 })} hint={physMixed ? labels.mixedUomHint : undefined} accent="slate" />
+      <KpiCard testId={TID.kpiPhysicalAchieved} icon={CheckCircle} label={labels.physAchieved} value={fmtNum(s?.physical?.achieved, { digits: 0 })} hint={physHint} accent="slate" />
       <KpiCard testId={TID.kpiPhysicalPercent} icon={Gauge} label={labels.physPercent} value={fmtPct(s?.physical?.percent)} hint={labels.indicatorsHint(s?.physical?.indicator_count || 0)} accent={s?.physical?.percent >= 80 ? "green" : s?.physical?.percent >= 65 ? "amber" : "red"} />
       <KpiCard testId={TID.kpiFinReleased} icon={CurrencyInr} label={labels.finReleased} value={fmtNum(s?.financial?.released)} hint={labels.componentRowsHint(s?.financial?.component_count || 0)} accent="primary" />
       <KpiCard testId={TID.kpiFinUtilized} icon={CurrencyInr} label={labels.finUtilized} value={fmtNum(s?.financial?.utilized)} hint={labels.varianceHint(fmtNum(s?.financial?.variance))} accent="slate" />

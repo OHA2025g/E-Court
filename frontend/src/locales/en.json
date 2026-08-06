@@ -76,6 +76,7 @@
     "indicatorsHint": "{{count}} indicators",
     "mixedUomHint": "Mixed units — filter by component",
     "uomHint": "{{uom}}",
+    "absoluteScopeHint": "{{uom}} indicators (excl. storage)",
     "componentRowsHint": "{{count}} component-rows",
     "varianceHint": "Variance ₹{{value}} Cr",
     "ragDistribution": "RAG Distribution — Physical",

@@ -21,6 +21,7 @@ export function useDashboardLabels() {
       indicatorsHint: (n) => t("dashboard.indicatorsHint", { count: n }),
       mixedUomHint: t("dashboard.mixedUomHint"),
       uomHint: (uom) => t("dashboard.uomHint", { uom }),
+      absoluteScopeHint: (uom) => t("dashboard.absoluteScopeHint", { uom }),
       componentRowsHint: (n) => t("dashboard.componentRowsHint", { count: n }),
       varianceHint: (v) => t("dashboard.varianceHint", { value: v }),
       ragDistribution: t("dashboard.ragDistribution"),
