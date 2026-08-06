@@ -46,11 +46,19 @@ def _dimension_match(
     return match
 
 
+# Bump when dashboard aggregation semantics change so Redis does not serve stale KPIs.
+_DASHBOARD_CACHE_VER = "v2-phys-kpi"
+
+
 def _dashboard_cache_key(route: str, user: dict, reporting_period: Optional[str], include_unapproved: bool, **extra) -> str:
     role = user.get("role", "Viewer")
     hc = user.get("high_court") or "_all"
     period_key = reporting_period or "__all__"
-    parts = [f"dashboard:{route}:{period_key}", f"{role}:{hc}", f"ua{int(include_unapproved)}"]
+    parts = [
+        f"dashboard:{_DASHBOARD_CACHE_VER}:{route}:{period_key}",
+        f"{role}:{hc}",
+        f"ua{int(include_unapproved)}",
+    ]
     for k in sorted(extra):
         parts.append(f"{k}={extra[k]}")
     return ":".join(parts)

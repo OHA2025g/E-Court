@@ -1,4 +1,5 @@
 """Dashboard aggregation helpers for visualisation endpoints."""
+from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Optional
 
@@ -12,9 +13,6 @@ from rollup import (
     outcome_period_reported_stages,
     outcome_rollup_stages,
     physical_component_hc_stages,
-    physical_hc_rollup_stages,
-    physical_national_totals_stages,
-    physical_period_totals_stages,
     physical_rollup_stages,
 )
 from seed_constants import (
@@ -25,6 +23,49 @@ from seed_constants import (
     REPORTING_PERIODS,
 )
 from period_policy import merge_match
+
+# Component → unit of measure (Count, Crore Pages, GB / TB / PB, Percentage).
+COMPONENT_UOM = {c["name"]: c["uom"] for c in COMPONENTS}
+
+
+def mean_achievement_percent(
+    rows: list,
+    safe_div_fn: Callable,
+    target_key: str = "target",
+    achieved_key: str = "achieved",
+) -> Optional[float]:
+    """Equal-weight mean of row-level achievement % (skips rows with target ≤ 0)."""
+    pcts = []
+    for row in rows:
+        pct = safe_div_fn(row.get(achieved_key), row.get(target_key))
+        if pct is not None:
+            pcts.append(pct)
+    if not pcts:
+        return None
+    return round(sum(pcts) / len(pcts), 2)
+
+
+def physical_absolute_totals(rows: list) -> dict:
+    """Sum target/achieved only when a single UOM is in scope.
+
+    Cross-UOM national sums (e.g. court counts + storage GB + crore pages) are
+    dimensionally meaningless and produce absurd headline percentages.
+    """
+    active = [
+        r for r in rows
+        if (r.get("target") or 0) != 0 or (r.get("achieved") or 0) != 0
+    ]
+    uoms = {COMPONENT_UOM.get(r.get("component"), "Unknown") for r in active}
+    if len(uoms) > 1:
+        return {"target": None, "achieved": None, "mixed_uom": True, "uom": None}
+    target = sum(float(r.get("target") or 0) for r in rows)
+    achieved = sum(float(r.get("achieved") or 0) for r in rows)
+    return {
+        "target": target,
+        "achieved": achieved,
+        "mixed_uom": False,
+        "uom": next(iter(uoms)) if uoms else None,
+    }
 
 
 async def build_agg_match(
@@ -67,13 +108,23 @@ def resolve_period_pair(reporting_period: Optional[str] = None) -> Optional[tupl
 
 
 async def aggregate_hc_percent_physical(db, match: dict) -> dict[str, float]:
-    rows = await db.physical_entries.aggregate(physical_hc_rollup_stages(match)).to_list(100)
-    out = {}
+    """HC physical % = mean of per-indicator % (avoids mixed-UOM sum/sum distortion)."""
+    def _pct(achieved, target):
+        if achieved is None or target is None or not target:
+            return None
+        return round((float(achieved) / float(target)) * 100, 2)
+
+    rows = await db.physical_entries.aggregate(physical_rollup_stages(match)).to_list(50000)
+    by_hc: dict[str, list] = defaultdict(list)
     for r in rows:
-        t, a = r.get("t") or 0, r.get("a") or 0
-        if t:
-            out[r["_id"]] = round((a / t) * 100, 2)
-    return out
+        hc = r.get("high_court")
+        if hc:
+            by_hc[hc].append(r)
+    return {
+        hc: pct
+        for hc, hc_rows in by_hc.items()
+        if (pct := mean_achievement_percent(hc_rows, _pct)) is not None
+    }
 
 
 async def aggregate_hc_percent_financial(db, match: dict) -> dict[str, float]:
@@ -374,21 +425,24 @@ async def compute_trend_with_milestones(
     pmatch = await build_agg_match(db, scope_filter_fn, user, None, False, extra_match)
     fmatch = await build_agg_match(db, scope_filter_fn, user, None, False, extra_match)
     omatch = await build_agg_match(db, scope_filter_fn, user, None, False, extra_match)
-    phys = await db.physical_entries.aggregate(physical_period_totals_stages(pmatch)).to_list(100)
+    rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
     fin = await db.financial_entries.aggregate(financial_period_totals_stages(fmatch)).to_list(100)
     outcome = await db.outcome_entries.aggregate(outcome_period_reported_stages(omatch)).to_list(100)
-    pmap = {p["_id"]: p for p in phys}
+    pmap: dict[str, list] = defaultdict(list)
+    for row in rolled_phys:
+        per = row.get("reporting_period")
+        if per:
+            pmap[per].append(row)
     fmap = {f["_id"]: f for f in fin}
     omap = {o["_id"]: o for o in outcome}
     periods_sorted = sorted(set(list(pmap.keys()) + list(fmap.keys()) + list(omap.keys())))
     periods = []
     for per in periods_sorted:
-        p = pmap.get(per, {"target": 0, "achieved": 0})
         f = fmap.get(per, {"released": 0, "utilized": 0})
         o = omap.get(per, {"total": 0, "reported": 0})
         periods.append({
             "period": per,
-            "phys_percent": safe_div_fn(p["achieved"], p["target"]) or 0,
+            "phys_percent": mean_achievement_percent(pmap.get(per, []), safe_div_fn) or 0,
             "fin_percent": safe_div_fn(f["utilized"], f["released"]) or 0,
             "outcome_reported_pct": safe_div_fn(o["reported"], o["total"]) or 0,
         })
@@ -424,18 +478,20 @@ async def compute_public_progress(
         pmatch = merge_match(pmatch, extra_match)
         fmatch = merge_match(fmatch, extra_match)
 
-    phys = await db.physical_entries.aggregate(physical_national_totals_stages(pmatch)).to_list(1)
     fin = await db.financial_entries.aggregate(financial_national_totals_stages(fmatch)).to_list(1)
     rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
+    phys_totals = physical_absolute_totals(rolled_phys)
     thresholds = await fetch_rag_thresholds(db)
     rag_counts: dict[str, int] = {}
     for row in rolled_phys:
-        t, a = row.get("target") or 0, row.get("achieved") or 0
-        pct = round((a / t) * 100, 2) if t else None
+        pct = safe_div_fn(row.get("achieved"), row.get("target"))
         status = compute_rag_fn(pct, thresholds)
         rag_counts[status] = rag_counts.get(status, 0) + 1
 
-    p = phys[0] if phys else {"target": 0, "achieved": 0}
+    p = {
+        "target": phys_totals["target"] if phys_totals["target"] is not None else 0,
+        "achieved": phys_totals["achieved"] if phys_totals["achieved"] is not None else 0,
+    }
     f = fin[0] if fin else {"released": 0, "utilized": 0}
     omatch: dict = {}
     if reporting_period:
@@ -462,7 +518,10 @@ async def compute_public_progress(
             })
     outcome_hc_ranking.sort(key=lambda x: x["reporting_percent"] or 0, reverse=True)
 
-    phys_pct = safe_div_fn(p["achieved"], p["target"])
+    if phys_totals["mixed_uom"]:
+        phys_pct = mean_achievement_percent(rolled_phys, safe_div_fn)
+    else:
+        phys_pct = safe_div_fn(phys_totals["achieved"], phys_totals["target"])
     fin_pct = safe_div_fn(f["utilized"], f["released"])
 
     hc_pct = await aggregate_hc_percent_physical(db, pmatch)
@@ -561,14 +620,6 @@ async def compute_dashboard_summary(
     pmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
     fmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
 
-    phys = await db.physical_entries.aggregate(
-        physical_rollup_stages(pmatch) + [
-            {"$group": {"_id": None,
-                        "target": {"$sum": {"$ifNull": ["$target", 0]}},
-                        "achieved": {"$sum": {"$ifNull": ["$achieved", 0]}},
-                        "count": {"$sum": 1}}},
-        ]
-    ).to_list(1)
     fin = await db.financial_entries.aggregate(
         financial_rollup_stages(fmatch) + [
             {"$group": {"_id": None,
@@ -579,6 +630,12 @@ async def compute_dashboard_summary(
         ]
     ).to_list(1)
     rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
+    phys_totals = physical_absolute_totals(rolled_phys)
+    # Homogeneous UOM → ratio of sums; mixed UOMs → equal-weight mean of indicator %.
+    if phys_totals["mixed_uom"]:
+        phys_percent = mean_achievement_percent(rolled_phys, safe_div_fn)
+    else:
+        phys_percent = safe_div_fn(phys_totals["achieved"], phys_totals["target"])
     thresholds = await fetch_rag_thresholds(db)
     rag: dict = {}
     for row in rolled_phys:
@@ -592,7 +649,6 @@ async def compute_dashboard_summary(
         status = compute_rag_fn(pct, thresholds)
         rag_fin[status] = rag_fin.get(status, 0) + 1
 
-    p = phys[0] if phys else {"target": 0, "achieved": 0, "count": 0}
     f = fin[0] if fin else {"released": 0, "utilized": 0, "target": 0, "count": 0}
     omatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
     outcome_rows = await db.outcome_entries.aggregate(
@@ -601,9 +657,12 @@ async def compute_dashboard_summary(
     outcome_count = outcome_rows[0]["n"] if outcome_rows else 0
     return {
         "physical": {
-            "target": p["target"], "achieved": p["achieved"],
-            "percent": safe_div_fn(p["achieved"], p["target"]),
-            "indicator_count": p["count"],
+            "target": phys_totals["target"],
+            "achieved": phys_totals["achieved"],
+            "percent": phys_percent,
+            "indicator_count": len(rolled_phys),
+            "mixed_uom": phys_totals["mixed_uom"],
+            "uom": phys_totals.get("uom"),
         },
         "financial": {
             "target": f["target"], "released": f["released"], "utilized": f["utilized"],
@@ -639,13 +698,7 @@ async def compute_dashboard_by_component(
 ) -> list:
     pmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
     fmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
-    phys = await db.physical_entries.aggregate(
-        physical_rollup_stages(pmatch) + [
-            {"$group": {"_id": "$component",
-                        "target": {"$sum": {"$ifNull": ["$target", 0]}},
-                        "achieved": {"$sum": {"$ifNull": ["$achieved", 0]}}}},
-        ]
-    ).to_list(100)
+    rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
     fin = await db.financial_entries.aggregate(
         financial_rollup_stages(fmatch) + [
             {"$group": {"_id": "$component",
@@ -655,20 +708,29 @@ async def compute_dashboard_by_component(
                         "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}}}},
         ]
     ).to_list(100)
-    pmap = {p["_id"]: p for p in phys}
+    pmap: dict[str, list] = defaultdict(list)
+    for row in rolled_phys:
+        comp = row.get("component")
+        if comp:
+            pmap[comp].append(row)
     fmap = {f["_id"]: f for f in fin}
     selected = _match_value(extra_match, "component")
     components = [c for c in COMPONENTS if not selected or c["name"] == selected]
     rows = []
     for c in components:
         name = c["name"]
-        p = pmap.get(name, {"target": 0, "achieved": 0})
+        phys_rows = pmap.get(name, [])
+        # Single-component scope is always one UOM — absolute sums are valid here.
+        target = sum(float(r.get("target") or 0) for r in phys_rows)
+        achieved = sum(float(r.get("achieved") or 0) for r in phys_rows)
         f = fmap.get(name, {"allocated": 0, "target": 0, "released": 0, "utilized": 0})
         budget = f["allocated"] or f["target"] or f["released"] or 0
         rows.append({
             "component": name,
-            "phys_target": p["target"], "phys_achieved": p["achieved"],
-            "phys_percent": safe_div_fn(p["achieved"], p["target"]),
+            "phys_target": target,
+            "phys_achieved": achieved,
+            # One UOM per component — ratio of sums; null when target is 0 (e.g. Cloud GB).
+            "phys_percent": safe_div_fn(achieved, target if target else None),
             "fin_allocated": f["allocated"],
             "fin_target": f["target"],
             "fin_budget": budget,
@@ -761,19 +823,30 @@ async def compute_dashboard_by_hc(
 ) -> list:
     pmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
     fmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
-    phys = await db.physical_entries.aggregate(physical_hc_rollup_stages(pmatch)).to_list(100)
+    rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
     fin = await db.financial_entries.aggregate(financial_hc_rollup_stages(fmatch)).to_list(100)
-    pmap = {p["_id"]: {"target": p["t"], "achieved": p["a"]} for p in phys}
+    pmap: dict[str, list] = defaultdict(list)
+    for row in rolled_phys:
+        hc = row.get("high_court")
+        if hc:
+            pmap[hc].append(row)
     fmap = {f["_id"]: {"released": f["r"], "utilized": f["u"]} for f in fin}
     hcs = sorted(set(list(pmap.keys()) + list(fmap.keys())))
     rows = []
     for hc in hcs:
-        p = pmap.get(hc, {"target": 0, "achieved": 0})
+        hc_phys = pmap.get(hc, [])
+        totals = physical_absolute_totals(hc_phys)
+        if totals["mixed_uom"]:
+            phys_pct = mean_achievement_percent(hc_phys, safe_div_fn)
+        else:
+            phys_pct = safe_div_fn(totals["achieved"], totals["target"])
         f = fmap.get(hc, {"released": 0, "utilized": 0})
         rows.append({
             "high_court": hc,
-            "phys_target": p["target"], "phys_achieved": p["achieved"],
-            "phys_percent": safe_div_fn(p["achieved"], p["target"]),
+            "phys_target": totals["target"],
+            "phys_achieved": totals["achieved"],
+            "phys_percent": phys_pct,
+            "mixed_uom": totals["mixed_uom"],
             "fin_released": f["released"], "fin_utilized": f["utilized"],
             "fin_percent": safe_div_fn(f["utilized"], f["released"]),
         })

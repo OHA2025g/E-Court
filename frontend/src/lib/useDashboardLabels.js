@@ -19,6 +19,8 @@ export function useDashboardLabels() {
       finUtilized: t("dashboard.finUtilized"),
       finPercent: t("dashboard.finPercent"),
       indicatorsHint: (n) => t("dashboard.indicatorsHint", { count: n }),
+      mixedUomHint: t("dashboard.mixedUomHint"),
+      uomHint: (uom) => t("dashboard.uomHint", { uom }),
       componentRowsHint: (n) => t("dashboard.componentRowsHint", { count: n }),
       varianceHint: (v) => t("dashboard.varianceHint", { value: v }),
       ragDistribution: t("dashboard.ragDistribution"),
