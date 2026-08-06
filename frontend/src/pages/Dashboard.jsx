@@ -161,8 +161,10 @@ export default function Dashboard() {
       <div className="dashboard-unified-toolbar">
         {!cpcCourt && (
           <label className="dashboard-unified-period">
-            <Buildings size={14} aria-hidden="true" />
-            <span className="dashboard-unified-period-label">{labels.highCourtFilter}</span>
+            <span className="dashboard-unified-period-heading">
+              <Buildings size={14} aria-hidden="true" />
+              <span className="dashboard-unified-period-label">{labels.highCourtFilter}</span>
+            </span>
             <select
               data-testid={TID.highCourtSelect}
               value={highCourt}
@@ -179,8 +181,10 @@ export default function Dashboard() {
         )}
 
         <label className="dashboard-unified-period">
-          <Stack size={14} aria-hidden="true" />
-          <span className="dashboard-unified-period-label">{labels.componentFilter}</span>
+          <span className="dashboard-unified-period-heading">
+            <Stack size={14} aria-hidden="true" />
+            <span className="dashboard-unified-period-label">{labels.componentFilter}</span>
+          </span>
           <select
             data-testid={TID.componentSelect}
             value={component}
@@ -196,8 +200,10 @@ export default function Dashboard() {
         </label>
 
         <label className="dashboard-unified-period">
-          <CalendarBlank size={14} aria-hidden="true" />
-          <span className="dashboard-unified-period-label">{labels.reportingPeriod}</span>
+          <span className="dashboard-unified-period-heading">
+            <CalendarBlank size={14} aria-hidden="true" />
+            <span className="dashboard-unified-period-label">{labels.reportingPeriod}</span>
+          </span>
           <select
             data-testid={TID.periodSelect}
             value={period}
