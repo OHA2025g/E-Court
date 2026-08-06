@@ -32,9 +32,8 @@ DEFAULT_XLSX = REPO_ROOT / "Physicial_Tracker_Data_for_Achieved_till_Sep-2025.xl
 DEFAULT_OUT = REPO_ROOT / "etl_output" / "physical_achieved_till_sep_2025_bulk.xlsx"
 SEED_PATH = ROOT / "seed_data.json"
 DEFAULT_SHEET = "Physical_Tracker"
-# Baseline period so National Dashboard (approval-gated) includes physical KPIs
-# alongside financial Released/Utilised. Source label remains “till Sep 2025”.
-DEFAULT_PERIOD = "2026-05"
+# Source is “Physical Achieved till Sep 2025” — store under that reporting month.
+DEFAULT_PERIOD = "2025-09"
 
 sys.path.insert(0, str(ROOT))
 from physical_excel import (  # noqa: E402
