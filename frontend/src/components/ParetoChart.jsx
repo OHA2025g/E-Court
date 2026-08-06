@@ -5,8 +5,21 @@ import Card from "@/components/Card";
 import { barSeriesProps, lineSeriesProps, seriesLegendLabel, useAccessibleRag } from "@/lib/ragColors";
 import {
   ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, Tooltip,
-  CartesianGrid, Legend,
+  CartesianGrid, Legend, LabelList,
 } from "recharts";
+
+function ParetoTooltip({ active, payload, label, barLabel }) {
+  if (!active || !payload?.length) return null;
+  const row = payload[0]?.payload || {};
+  return (
+    <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs shadow-md">
+      <div className="font-semibold text-slate-800 mb-1.5">{label}</div>
+      <div className="text-slate-700">{barLabel}: <span className="font-semibold tabular-nums">{row.red_count ?? "—"}</span></div>
+      <div className="text-slate-700">% of total: <span className="font-semibold tabular-nums">{row.pct_of_total ?? "—"}%</span></div>
+      <div className="text-slate-700">Cumulative: <span className="font-semibold tabular-nums">{row.cumulative_pct ?? "—"}%</span></div>
+    </div>
+  );
+}
 
 export default function ParetoChart({ reportingPeriod, highCourt = "", component = "", publicMode = false, embedData = null }) {
   const [accessible] = useAccessibleRag();
@@ -27,12 +40,13 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
 
   const series = data?.series || [];
   const cutoff = data?.pareto_cutoff || 0;
+  const totalRed = data?.total_red_flags ?? series.reduce((s, r) => s + (r.red_count || 0), 0);
   const isOutcome = metric === "outcome";
   const isFinancial = metric === "financial";
   const xLabel = isOutcome ? "subject" : "component";
   const barLabel = isOutcome ? "Unreported KPIs" : isFinancial ? "Red components" : "Red indicators";
   const subtitle = cutoff
-    ? `Top ${cutoff} ${isOutcome ? "subject(s)" : "component(s)"} account for ≥80% of ${isOutcome ? "missing outcome values" : isFinancial ? "red financial components" : "red indicators"}`
+    ? `Top ${cutoff} ${isOutcome ? "subject(s)" : "component(s)"} account for ≥80% of ${isOutcome ? "missing outcome values" : isFinancial ? "red financial components" : "red indicators"} (${totalRed} total)`
     : isOutcome ? "Outcome KPIs without reported values" : isFinancial ? "Financial components at RED RAG" : "Physical indicators at RED RAG";
 
   return (
@@ -68,21 +82,29 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
           </div>
         ) : (
           <>
-            <div className="h-72">
+            <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={series} margin={{ top: 8, right: 16, left: 0, bottom: 60 }}>
+                <ComposedChart data={series} margin={{ top: 28, right: 20, left: 4, bottom: 60 }}>
                   <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
                   <XAxis dataKey={xLabel} stroke="#475569" fontSize={9} angle={-30} textAnchor="end" interval={0} height={70} />
                   <YAxis yAxisId="left" stroke="#475569" fontSize={11} label={{ value: barLabel, angle: -90, position: "insideLeft", fontSize: 10 }} />
                   <YAxis yAxisId="right" orientation="right" stroke="#475569" fontSize={11} domain={[0, 100]} unit="%" />
-                  <Tooltip />
+                  <Tooltip content={<ParetoTooltip barLabel={barLabel} />} />
                   <Legend />
                   <Bar
                     yAxisId="left"
                     dataKey="red_count"
                     name={seriesLegendLabel(barLabel, "red_count", accessible)}
                     {...barSeriesProps("red_count", accessible)}
-                  />
+                  >
+                    <LabelList
+                      dataKey="red_count"
+                      position="top"
+                      className="fill-slate-700"
+                      fontSize={11}
+                      fontWeight={600}
+                    />
+                  </Bar>
                   <Line
                     yAxisId="right"
                     type="monotone"
@@ -90,16 +112,25 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
                     name={seriesLegendLabel("Cumulative %", "cumulative_pct", accessible)}
                     dot
                     {...lineSeriesProps("cumulative_pct", accessible)}
-                  />
+                  >
+                    <LabelList
+                      dataKey="cumulative_pct"
+                      position="top"
+                      offset={12}
+                      className="fill-slate-600"
+                      fontSize={10}
+                      formatter={(v) => `${v}%`}
+                    />
+                  </Line>
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
             <table className="dense-table w-full mt-4 text-xs table-fixed">
               <colgroup>
-                <col className="w-[46%]" />
-                <col className="w-[18%]" />
-                <col className="w-[18%]" />
-                <col className="w-[18%]" />
+                <col className="w-[40%]" />
+                <col className="w-[20%]" />
+                <col className="w-[20%]" />
+                <col className="w-[20%]" />
               </colgroup>
               <thead>
                 <tr>
@@ -113,9 +144,9 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
                 {series.map((r, i) => (
                   <tr key={r[xLabel]} className={i < cutoff ? "bg-red-50/50" : ""}>
                     <td>{r[xLabel]}</td>
-                    <td className="dense-table-right">{r.red_count}</td>
-                    <td className="dense-table-right">{r.pct_of_total}%</td>
-                    <td className="dense-table-right">{r.cumulative_pct}%</td>
+                    <td className="dense-table-right tabular-nums font-medium">{r.red_count}</td>
+                    <td className="dense-table-right tabular-nums">{r.pct_of_total}% <span className="text-slate-500">({r.red_count})</span></td>
+                    <td className="dense-table-right tabular-nums">{r.cumulative_pct}%</td>
                   </tr>
                 ))}
               </tbody>
