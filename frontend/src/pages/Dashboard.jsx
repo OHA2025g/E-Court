@@ -53,7 +53,7 @@ function PerformancePctTooltip({ active, payload, label, nameKey = "component" }
         const pct = entry.value;
         const countLine = isPhys
           ? `Target ${fmtNum(row.phys_target, { digits: 0 })} / Achieved ${fmtNum(row.phys_achieved, { digits: 0 })}`
-          : `Utilised ₹${fmtNum(row.fin_utilized)} Cr / Released ₹${fmtNum(row.fin_released)} Cr`;
+          : `Released ₹${fmtNum(row.fin_released)} Cr / Utilised ₹${fmtNum(row.fin_utilized)} Cr`;
         return (
           <div key={key} className="mb-1 last:mb-0">
             <div className="flex items-center gap-1.5 text-slate-700">
