@@ -128,8 +128,8 @@ def physical_absolute_totals(rows: list) -> dict:
     ]
     if not active:
         return {
-            "target": 0.0,
-            "achieved": 0.0,
+            "target": None,
+            "achieved": None,
             "mixed_uom": False,
             "uom": None,
             "absolute_scope": None,
@@ -651,10 +651,10 @@ async def compute_public_progress(
         rag_counts[status] = rag_counts.get(status, 0) + 1
 
     p = {
-        "target": phys_totals["target"] if phys_totals["target"] is not None else 0,
-        "achieved": phys_totals["achieved"] if phys_totals["achieved"] is not None else 0,
+        "target": phys_totals["target"],
+        "achieved": phys_totals["achieved"],
     }
-    f = fin[0] if fin else {"released": 0, "utilized": 0}
+    f = fin[0] if fin else {"released": None, "utilized": None}
     omatch: dict = {}
     if reporting_period:
         omatch["reporting_period"] = reporting_period
@@ -817,12 +817,30 @@ async def compute_dashboard_summary(
         status = compute_rag_fn(pct, thresholds)
         rag_fin[status] = rag_fin.get(status, 0) + 1
 
-    f = fin[0] if fin else {"released": 0, "utilized": 0, "target": 0, "count": 0}
+    f = fin[0] if fin else None
     omatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
     outcome_rows = await db.outcome_entries.aggregate(
         outcome_rollup_stages(omatch) + [{"$count": "n"}]
     ).to_list(1)
     outcome_count = outcome_rows[0]["n"] if outcome_rows else 0
+    if f is None:
+        financial = {
+            "target": None,
+            "released": None,
+            "utilized": None,
+            "utilisation_percent": None,
+            "variance": None,
+            "component_count": 0,
+        }
+    else:
+        financial = {
+            "target": f["target"],
+            "released": f["released"],
+            "utilized": f["utilized"],
+            "utilisation_percent": safe_div_fn(f["utilized"], f["released"]),
+            "variance": round((f["released"] - f["utilized"]), 2),
+            "component_count": f["count"],
+        }
     return {
         "physical": {
             "target": phys_totals["target"],
@@ -833,12 +851,7 @@ async def compute_dashboard_summary(
             "uom": phys_totals.get("uom"),
             "absolute_scope": phys_totals.get("absolute_scope"),
         },
-        "financial": {
-            "target": f["target"], "released": f["released"], "utilized": f["utilized"],
-            "utilisation_percent": safe_div_fn(f["utilized"], f["released"]),
-            "variance": round((f["released"] - f["utilized"]), 2),
-            "component_count": f["count"],
-        },
+        "financial": financial,
         "rag_physical": rag,
         "rag_financial": rag_fin,
         "outcome": {"kpi_count": outcome_count},

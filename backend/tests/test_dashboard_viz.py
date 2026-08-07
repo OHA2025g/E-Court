@@ -256,4 +256,4 @@ def test_cpc_dashboard_summary_scoped_to_high_court(client):
     )
     assert viewer.status_code == 200
     viewer_phys = viewer.json().get("physical") or {}
-    assert viewer_phys.get("target", 0) == 0
+    assert not viewer_phys.get("target")

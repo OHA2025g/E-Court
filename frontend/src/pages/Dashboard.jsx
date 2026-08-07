@@ -349,13 +349,16 @@ export default function Dashboard() {
       ? `${labels.absoluteScopeHint(physUom)} · ${labels.indicatorsHint(s?.physical?.indicator_count || 0)}`
       : `${labels.indicatorsHint(s?.physical?.indicator_count || 0)} · ${labels.uomHint(physUom)}`)
     : labels.indicatorsHint(s?.physical?.indicator_count || 0);
+  const varianceHint = s?.financial?.variance == null
+    ? labels.varianceHint("NA")
+    : labels.varianceHint(fmtNum(s.financial.variance));
   const kpiRow = (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
       <KpiCard testId={TID.kpiPhysicalTarget} icon={Target} label={labels.physTargetSum} value={fmtNum(s?.physical?.target, { digits: 0 })} hint={physHint} accent="primary" />
       <KpiCard testId={TID.kpiPhysicalAchieved} icon={CheckCircle} label={labels.physAchieved} value={fmtNum(s?.physical?.achieved, { digits: 0 })} hint={physHint} accent="slate" />
       <KpiCard testId={TID.kpiPhysicalPercent} icon={Gauge} label={labels.physPercent} value={fmtPct(s?.physical?.percent)} hint={labels.indicatorsHint(s?.physical?.indicator_count || 0)} accent={s?.physical?.percent >= 80 ? "green" : s?.physical?.percent >= 65 ? "amber" : "red"} />
       <KpiCard testId={TID.kpiFinReleased} icon={CurrencyInr} label={labels.finReleased} value={fmtNum(s?.financial?.released)} hint={labels.componentRowsHint(s?.financial?.component_count || 0)} accent="primary" />
-      <KpiCard testId={TID.kpiFinUtilized} icon={CurrencyInr} label={labels.finUtilized} value={fmtNum(s?.financial?.utilized)} hint={labels.varianceHint(fmtNum(s?.financial?.variance))} accent="slate" />
+      <KpiCard testId={TID.kpiFinUtilized} icon={CurrencyInr} label={labels.finUtilized} value={fmtNum(s?.financial?.utilized)} hint={varianceHint} accent="slate" />
       <KpiCard testId={TID.kpiFinPercent} icon={TrendUp} label={labels.finPercent} value={fmtPct(s?.financial?.utilisation_percent)} accent={s?.financial?.utilisation_percent >= 80 ? "green" : s?.financial?.utilisation_percent >= 65 ? "amber" : "red"} />
     </div>
   );

@@ -26,6 +26,22 @@ def test_mean_achievement_skips_zero_target_cloud_gb():
     assert pct == expected
 
 
+def test_empty_absolute_totals_are_null():
+    totals = physical_absolute_totals([])
+    assert totals["target"] is None
+    assert totals["achieved"] is None
+    assert totals["uom"] is None
+
+
+def test_all_zero_rows_absolute_totals_are_null():
+    totals = physical_absolute_totals([
+        {"component": "e-Sewa Kendras", "target": 0, "achieved": 0},
+        {"component": "Paperless Courts", "target": None, "achieved": None},
+    ])
+    assert totals["target"] is None
+    assert totals["achieved"] is None
+
+
 def test_mixed_uom_shows_count_absolute_totals():
     """National KPI cards show Count totals instead of dashes when UOMs are mixed."""
     rows = [
