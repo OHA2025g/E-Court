@@ -878,6 +878,7 @@ async def compute_dashboard_by_component(
             "component": name,
             "phys_target": target,
             "phys_achieved": achieved,
+            "phys_uom": c.get("uom"),
             "phys_percent": physical_percent_with_relative_fallback(
                 phys_rows, safe_div_fn, sum_ratio=True,
             ),
@@ -991,6 +992,8 @@ async def compute_dashboard_by_hc(
     relative_pcts = (
         {} if target_pcts else relative_achieved_percent_by_hc(pmap)
     )
+    selected_comp = _match_value(extra_match, "component")
+    selected_uom = COMPONENT_UOM.get(selected_comp) if selected_comp else None
     rows = []
     for hc in hcs:
         hc_phys = pmap.get(hc, [])
@@ -1000,11 +1003,14 @@ async def compute_dashboard_by_hc(
         if phys_pct is None:
             phys_pct = relative_pcts.get(hc)
         f = fmap.get(hc, {"released": 0, "utilized": 0})
+        # Prefer scoped component UOM; else homogeneous absolute scope (e.g. Cloud-only filter).
+        phys_uom = selected_uom or (None if totals.get("mixed_uom") else totals.get("uom"))
         rows.append({
             "high_court": hc,
             "phys_target": totals["target"],
             "phys_achieved": totals["achieved"],
             "phys_percent": phys_pct,
+            "phys_uom": phys_uom,
             "mixed_uom": totals["mixed_uom"],
             "fin_released": f["released"], "fin_utilized": f["utilized"],
             "fin_percent": safe_div_fn(f["utilized"], f["released"]),

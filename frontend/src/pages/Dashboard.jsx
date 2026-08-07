@@ -40,18 +40,14 @@ import {
   CartesianGrid, Legend, PieChart, Pie, Cell,
 } from "recharts";
 
-const CLOUD_COMPUTING_COMPONENT = "Cloud Computing & Storage";
-
-function isCloudPhysicalRow(row, selectedComponent) {
-  const name = row?.component || selectedComponent || "";
-  return name === CLOUD_COMPUTING_COMPONENT;
-}
-
 function PerformancePctTooltip({ active, payload, label, nameKey = "component", selectedComponent = "" }) {
   if (!active || !payload?.length) return null;
   const row = payload[0]?.payload || {};
   const title = label || row[nameKey] || "—";
-  const cloudPhys = isCloudPhysicalRow(row, selectedComponent);
+  const componentName = row.component || selectedComponent || "";
+  const isCloud = componentName === "Cloud Computing & Storage"
+    || row.phys_uom === "GB / TB / PB"
+    || row.phys_uom === "GB";
   return (
     <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs shadow-md max-w-xs">
       <div className="font-semibold text-slate-800 mb-1.5">{title}</div>
@@ -59,15 +55,13 @@ function PerformancePctTooltip({ active, payload, label, nameKey = "component", 
         const key = entry.dataKey;
         const isPhys = key === "phys_percent";
         const pct = entry.value;
-        let countLine;
-        if (!isPhys) {
-          countLine = `Released ₹${fmtNum(row.fin_released)} Cr / Utilised ₹${fmtNum(row.fin_utilized)} Cr`;
-        } else if (cloudPhys) {
-          // Cloud capacity has no meaningful target — show achieved storage only.
-          countLine = `Achieved ${fmtNum(row.phys_achieved, { digits: 0 })} GB`;
-        } else {
-          countLine = `Target ${fmtNum(row.phys_target, { digits: 0 })} / Achieved ${fmtNum(row.phys_achieved, { digits: 0 })}`;
-        }
+        const target = fmtNum(row.phys_target, { digits: 0 });
+        const achieved = fmtNum(row.phys_achieved, { digits: 0 });
+        const countLine = isPhys
+          ? (isCloud
+            ? `Target ${target} GB / Achieved ${achieved} GB`
+            : `Target ${target} / Achieved ${achieved}`)
+          : `Released ₹${fmtNum(row.fin_released)} Cr / Utilised ₹${fmtNum(row.fin_utilized)} Cr`;
         return (
           <div key={key} className="mb-1 last:mb-0">
             <div className="flex items-center gap-1.5 text-slate-700">
