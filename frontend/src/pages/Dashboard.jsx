@@ -52,7 +52,7 @@ function PerformancePctTooltip({ active, payload, label, nameKey = "component" }
         const isPhys = key === "phys_percent";
         const pct = entry.value;
         const countLine = isPhys
-          ? `Achieved ${fmtNum(row.phys_achieved, { digits: 0 })} / Target ${fmtNum(row.phys_target, { digits: 0 })}`
+          ? `Target ${fmtNum(row.phys_target, { digits: 0 })} / Achieved ${fmtNum(row.phys_achieved, { digits: 0 })}`
           : `Utilised ₹${fmtNum(row.fin_utilized)} Cr / Released ₹${fmtNum(row.fin_released)} Cr`;
         return (
           <div key={key} className="mb-1 last:mb-0">
