@@ -385,14 +385,14 @@ export default function Dashboard() {
 
   const ragDonut = (
     <Card title={labels.ragDistribution} testId={TID.ragDonut} elevated>
-      <div className="h-[28rem] p-3 flex flex-col">
+      <div className="px-2 pb-2 pt-0 flex flex-col">
         {ragData.length === 0 ? (
-          <div className="h-full grid-bg flex items-center justify-center text-sm text-slate-400">{labels.noData}</div>
+          <div className="h-64 grid-bg flex items-center justify-center text-sm text-slate-400">{labels.noData}</div>
         ) : (
           <>
-            <div className="relative flex-1 min-h-0">
+            <div className="relative h-[300px] shrink-0">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart margin={{ top: 12, right: 36, bottom: 12, left: 36 }}>
+                <PieChart margin={{ top: 8, right: 28, bottom: 8, left: 28 }}>
                   <Pie
                     data={ragData}
                     dataKey="value"
@@ -429,7 +429,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 pt-2" data-testid="rag-donut-legend">
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 pt-0.5" data-testid="rag-donut-legend">
               {ragData.map((d) => (
                 <div key={d.name} className="inline-flex items-center gap-1.5 text-sm text-slate-700">
                   <span
