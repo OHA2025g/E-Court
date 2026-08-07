@@ -3,7 +3,7 @@ import { ArrowsLeftRight, Database, FileXls, WarningCircle } from "@phosphor-ico
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 function fmt(v) {
-  if (v == null || v === "") return "—";
+  if (v == null || v === "") return "NA";
   if (typeof v === "object") return JSON.stringify(v);
   return String(v);
 }
