@@ -39,6 +39,28 @@ def test_heatmap(client, viewer_session):
     data = r.json()
     assert len(data["components"]) == 17
     assert len(data["cells"]) >= 17
+    sample = next((c for c in data["cells"] if c.get("rag") != "NA"), None)
+    if sample:
+        assert "target" in sample
+        assert "achieved" in sample
+        assert "uom" in sample
+
+
+def test_heatmap_financial_counts(client, viewer_session):
+    token = viewer_session["token"]
+    r = client.get(
+        "/api/dashboard/heatmap",
+        headers=auth_headers(token),
+        params={"metric": "financial"},
+    )
+    assert r.status_code == 200
+    data = r.json()
+    assert data["metric"] == "financial"
+    sample = next((c for c in data["cells"] if c.get("rag") != "NA"), None)
+    if sample:
+        assert "released" in sample
+        assert "utilized" in sample
+        assert sample.get("uom") == "₹ Cr"
 
 
 def test_heatmap_outcome(client, viewer_session):

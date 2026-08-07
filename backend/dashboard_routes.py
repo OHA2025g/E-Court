@@ -48,7 +48,7 @@ def _dimension_match(
 
 
 # Bump when dashboard aggregation semantics change so Redis does not serve stale KPIs.
-_DASHBOARD_CACHE_VER = "v9-cloud-gb-tooltip"
+_DASHBOARD_CACHE_VER = "v10-heatmap-counts"
 
 
 def _dashboard_cache_key(route: str, user: dict, reporting_period: Optional[str], include_unapproved: bool, **extra) -> str:
@@ -341,7 +341,7 @@ def register_dashboard_routes(
         _enforce_public_rate_limit(request)
         from auth import enforce_api_token_rate_limit_for_request
         await enforce_api_token_rate_limit_for_request(request)
-        cache_key = f"public:progress:{reporting_period or '__all__'}"
+        cache_key = f"public:progress:v2-heatmap-counts:{reporting_period or '__all__'}"
         redis_cached = cache_get(cache_key)
         if redis_cached:
             return redis_cached

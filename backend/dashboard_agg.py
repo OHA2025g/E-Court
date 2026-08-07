@@ -404,7 +404,13 @@ async def compute_heatmap(
             pct = round((util / rel) * 100, 2) if rel else None
             comp = r["_id"]["component"]
             hc = r["_id"]["high_court"]
-            cell_map[(comp, hc)] = {"percent": pct, "rag": compute_rag_fn(pct, thresholds)}
+            cell_map[(comp, hc)] = {
+                "percent": pct,
+                "rag": compute_rag_fn(pct, thresholds),
+                "released": round(float(rel), 4),
+                "utilized": round(float(util), 4),
+                "uom": "₹ Cr",
+            }
         row_keys = components
         row_field = "component"
     elif metric == "outcome":
@@ -418,7 +424,13 @@ async def compute_heatmap(
                 st["reported"] += 1
         for (subj, hc), st in stats.items():
             pct = round((st["reported"] / st["total"]) * 100, 2) if st["total"] else None
-            cell_map[(subj, hc)] = {"percent": pct, "rag": compute_rag_fn(pct, thresholds)}
+            cell_map[(subj, hc)] = {
+                "percent": pct,
+                "rag": compute_rag_fn(pct, thresholds),
+                "reported": st["reported"],
+                "total": st["total"],
+                "uom": "KPIs",
+            }
         row_keys = subjects
         row_field = "subject"
     else:
@@ -440,7 +452,13 @@ async def compute_heatmap(
                 pct = round(100.0 * a / peak_by_comp[comp], 2)
             else:
                 pct = None
-            cell_map[(comp, hc)] = {"percent": pct, "rag": compute_rag_fn(pct, thresholds)}
+            cell_map[(comp, hc)] = {
+                "percent": pct,
+                "rag": compute_rag_fn(pct, thresholds),
+                "target": round(t, 4),
+                "achieved": round(a, 4),
+                "uom": COMPONENT_UOM.get(comp),
+            }
         row_keys = components
         row_field = "component"
 
@@ -451,11 +469,14 @@ async def compute_heatmap(
             cell = {
                 row_field: row_key,
                 "high_court": hc,
-                "percent": info["percent"],
-                "rag": info["rag"],
+                "percent": info.get("percent"),
+                "rag": info.get("rag", "NA"),
             }
             if row_field == "component":
                 cell["component"] = row_key
+            for key in ("target", "achieved", "released", "utilized", "reported", "total", "uom"):
+                if key in info:
+                    cell[key] = info[key]
             cells.append(cell)
     result = {
         "high_courts": hcs,

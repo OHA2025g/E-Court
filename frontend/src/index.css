@@ -1100,6 +1100,12 @@ table.dense-table.dashboard-table tbody tr:hover td {
 .heatmap-hint {
   font-size: 11px;
   color: #94a3b8;
+  max-width: min(100%, 42rem);
+  text-align: right;
+}
+.heatmap-hint.is-detail {
+  color: #334155;
+  font-weight: 500;
 }
 .heatmap-loading {
   padding: 2.5rem 1rem;

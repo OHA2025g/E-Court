@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { api, fmtNum } from "@/lib/api";
 import Card from "@/components/Card";
 import ScrollRegion from "@/components/ui/ScrollRegion";
 import { formatRagLegendLabel, useAccessibleRag } from "@/lib/ragColors";
@@ -38,9 +38,42 @@ function hcColumnLabel(hc) {
   return HC_COLUMN_LABEL[hc] || hc;
 }
 
-function cellTitle(rowKey, hc, cell) {
-  const pct = cell.percent != null ? `${Number(cell.percent).toFixed(1)}%` : "No data";
-  return `${rowKey} · ${hc}: ${pct} (${cell.rag || "NA"})`;
+function physUnitSuffix(uom) {
+  if (!uom || uom === "Count") return "";
+  if (uom === "GB / TB / PB") return " GB";
+  return ` ${uom}`;
+}
+
+function cellDetail(rowKey, hc, cell, metric) {
+  const rag = cell?.rag || "NA";
+  const head = `${rowKey} · ${hc}`;
+  const hasCounts = (
+    cell?.target != null
+    || cell?.achieved != null
+    || cell?.released != null
+    || cell?.utilized != null
+    || cell?.total != null
+  );
+  if (!hasCounts && cell?.percent == null && rag === "NA") {
+    return `${head}: No data (NA)`;
+  }
+
+  if (metric === "financial") {
+    return `${head}: Released ₹${fmtNum(cell.released)} Cr / Utilised ₹${fmtNum(cell.utilized)} Cr (${rag})`;
+  }
+  if (metric === "outcome") {
+    const reported = cell.reported ?? 0;
+    const total = cell.total ?? 0;
+    return `${head}: Reported ${reported} / ${total} KPIs (${rag})`;
+  }
+
+  const digits = (!cell.uom || cell.uom === "Count") ? 0 : 2;
+  const t = fmtNum(cell.target, { digits });
+  const a = fmtNum(cell.achieved, { digits });
+  if (cell.uom === "GB / TB / PB") {
+    return `${head}: Target ${t} GB / Achieved ${a} GB (${rag})`;
+  }
+  return `${head}: Target ${t} / Achieved ${a}${physUnitSuffix(cell.uom)} (${rag})`;
 }
 
 export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", component = "", publicMode = false, embedData = null }) {
@@ -49,7 +82,7 @@ export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", co
   const [hover, setHover] = useState(null);
 
   const { data: fetched, isLoading } = useQuery({
-    queryKey: ["heatmap", reportingPeriod, highCourt, component, metric, publicMode],
+    queryKey: ["heatmap", "v2-counts", reportingPeriod, highCourt, component, metric, publicMode],
     queryFn: () => api.get(`${publicMode ? "/public" : "/dashboard"}/heatmap`, {
       params: {
         ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
@@ -82,12 +115,15 @@ export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", co
     ? "Outcome Subject × High Court Heatmap"
     : "Component × High Court Heatmap";
   const subtitle = metric === "outcome"
-    ? "RAG by outcome reporting coverage (% KPIs with values) per subject and High Court"
+    ? "RAG by outcome reporting coverage (KPI counts) per subject and High Court"
     : "RAG status by component and High Court jurisdiction";
 
   const clearHover = useCallback(() => setHover(null), []);
 
   const cellCount = (data?.cells || []).length;
+  const hoverDetail = hover
+    ? cellDetail(hover.rowKey, hover.hc, hover.cell || { rag: "NA" }, metric)
+    : null;
 
   return (
     <Card
@@ -148,6 +184,7 @@ export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", co
                       const cell = cellMap.get(`${rowKey}|${hc}`) || { rag: "NA" };
                       const rag = cell.rag || "NA";
                       const isActive = hover?.rowKey === rowKey && hover?.hc === hc;
+                      const detail = cellDetail(rowKey, hc, cell, metric);
                       return (
                         <td key={hc} className="heatmap-td">
                           <button
@@ -157,10 +194,10 @@ export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", co
                               RAG_CLASS[rag] || RAG_CLASS.NA,
                               isActive ? "is-active" : "",
                             ].join(" ")}
-                            title={cellTitle(rowKey, hc, cell)}
-                            aria-label={cellTitle(rowKey, hc, cell)}
-                            onMouseEnter={() => setHover({ rowKey, hc })}
-                            onFocus={() => setHover({ rowKey, hc })}
+                            title={detail}
+                            aria-label={detail}
+                            onMouseEnter={() => setHover({ rowKey, hc, cell })}
+                            onFocus={() => setHover({ rowKey, hc, cell })}
                             onBlur={clearHover}
                           />
                         </td>
@@ -182,11 +219,14 @@ export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", co
               </span>
             ))}
           </div>
-          {cellCount > 0 && (
-            <div className="heatmap-hint">
-              {cellCount.toLocaleString()} cells · hover for details
-            </div>
-          )}
+          <div
+            className={`heatmap-hint${hoverDetail ? " is-detail" : ""}`}
+            data-testid="heatmap-hover-detail"
+          >
+            {hoverDetail || (cellCount > 0
+              ? `${cellCount.toLocaleString()} cells · hover for Target / Achieved or Released / Utilised`
+              : null)}
+          </div>
         </footer>
       </div>
     </Card>
