@@ -6,7 +6,7 @@ from typing import Optional
 
 from fastapi import HTTPException
 
-from seed_constants import REPORTING_PERIODS
+from seed_constants import CLOUD_CUMULATIVE_PERIOD, REPORTING_PERIODS
 
 DEFAULT_GRACE_DAYS = 7
 DEFAULT_SLA_DUE_DAY = 10
@@ -37,6 +37,18 @@ async def save_workflow_settings(db, value: dict) -> dict:
 
 def baseline_periods() -> set[str]:
     return {p["period"] for p in REPORTING_PERIODS if p.get("is_baseline")}
+
+
+def dashboard_open_periods() -> set[str]:
+    """Periods always visible on national dashboard without submission approval.
+
+    Includes baseline months plus fixed cumulative snapshots (DoJ physical till
+    Sep 2025, Cloud Sep 2023 – Mar 2026).
+    """
+    open_periods = set(baseline_periods())
+    open_periods.add(CLOUD_CUMULATIVE_PERIOD)
+    open_periods.add("2025-09")  # Physical Achieved till Sep 2025
+    return open_periods
 
 
 def period_end_date(period: str) -> datetime:
@@ -156,14 +168,14 @@ async def approved_match_filter(
         return {}
 
     pairs = await approved_hc_period_pairs(db, reporting_period)
-    bl = baseline_periods()
+    open_periods = dashboard_open_periods()
     or_clauses = []
     for hc, period in pairs:
         or_clauses.append({"high_court": hc, "reporting_period": period})
-    if reporting_period and reporting_period in bl:
+    if reporting_period and reporting_period in open_periods:
         or_clauses.append({"reporting_period": reporting_period})
     elif not reporting_period:
-        for bp in bl:
+        for bp in open_periods:
             or_clauses.append({"reporting_period": bp})
 
     if not or_clauses:
