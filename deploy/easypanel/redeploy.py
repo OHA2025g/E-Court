@@ -69,7 +69,11 @@ def _request(
             raw = resp.read().decode("utf-8", "replace")
             if not raw.strip():
                 return {}
-            return json.loads(raw, strict=False)
+            try:
+                return json.loads(raw, strict=False)
+            except json.JSONDecodeError:
+                # Deploy webhook returns plain text "Deploying..."
+                return raw.strip()
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", "replace")[:800]
         raise PanelError(f"{method} {path} → HTTP {exc.code}: {body}") from exc
