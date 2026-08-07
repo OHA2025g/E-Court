@@ -116,6 +116,28 @@ trigger() {
   local dtoken
   dtoken="$(deploy_token "$svc" "$panel_token")"
   echo "→ Deploying $svc …"
+  # Webhook is reliable; also kick forceRebuild (often times out while still starting).
+  PANEL_TOKEN="$panel_token" SERVICE="$svc" python3 - <<'PY' >/dev/null 2>&1 || true
+import json, os, urllib.request
+payload = {"json": {
+    "projectName": os.environ["PROJECT"],
+    "serviceName": os.environ["SERVICE"],
+    "forceRebuild": True,
+}}
+req = urllib.request.Request(
+    os.environ["PANEL_URL"] + "/api/rpc/services/app/deployService",
+    data=json.dumps(payload).encode(),
+    headers={
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + os.environ["PANEL_TOKEN"],
+    },
+    method="POST",
+)
+try:
+    urllib.request.urlopen(req, timeout=8).read()
+except Exception:
+    pass
+PY
   curl -sS -m 30 "$PANEL_URL/api/deploy/$dtoken" || true
   echo
 }

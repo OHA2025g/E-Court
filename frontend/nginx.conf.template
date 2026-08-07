@@ -5,13 +5,6 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-    add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
-    # CSP_CONNECT_SRC: set CSP_API_ORIGIN at container start when API is on another host
-    # e.g. CSP_API_ORIGIN=https://ecourt.demoapi.agrayianailabs.com
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' ${CSP_CONNECT_SRC} https://us.i.posthog.com; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'self';" always;
     # Enable when TLS terminates at this nginx instance:
     # add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
@@ -25,7 +18,33 @@ server {
         proxy_read_timeout 300s;
     }
 
+    # Hashed CRA assets can be cached long-term.
+    location /static/ {
+        expires 30d;
+        add_header Cache-Control "public, max-age=2592000, immutable" always;
+        try_files $uri =404;
+    }
+
+    # index.html / SPA shell must not be cached, or browsers keep old JS after deploy.
+    # Note: nginx does not inherit server-level add_header into locations that set their own.
+    location = /index.html {
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+        # CSP_CONNECT_SRC: set CSP_API_ORIGIN at container start when API is on another host
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' ${CSP_CONNECT_SRC} https://us.i.posthog.com; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'self';" always;
+        add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0" always;
+        try_files $uri =404;
+    }
+
     location / {
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' ${CSP_CONNECT_SRC} https://us.i.posthog.com; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'self';" always;
+        add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0" always;
         try_files $uri $uri/ /index.html;
     }
 }
