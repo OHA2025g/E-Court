@@ -12,26 +12,42 @@ Panel: [Easypanel on 31.97.207.166](http://31.97.207.166:3000)
 
 ## Deploy / rebuild (recommended)
 
-### Known issue
+### Known issues (fixed in `redeploy.py`)
 
-Easypanel **Deploy** button / `services.app.deployService` RPC often **hangs or returns an empty reply**. That does not mean Git is wrong — use the **deploy webhook** instead.
+| Failure mode | What happened | Fix in script |
+|---|---|---|
+| Double trigger | Webhook **and** `deployService` fired together → Docker builder overload / HTTP 429 | **Single** webhook trigger only |
+| Parallel FE+BE | Frontend and backend rebuilt at once → hangs / timeouts | **Sequential** deploys with cooldown |
+| Stale token | `Deploying...` but commit SHA never moved | Refresh deploy token before each webhook |
+| No verification | Script exited while build was still queued | Poll until service commit matches GitHub `main` |
+| Stale Docker layers | Frontend JS bundle unchanged after locale-only commits | Bump `CACHEBUST` env on frontend |
+
+Do **not** mash Deploy in the panel UI while the script is running — that queues competing builds.
 
 ### One-command redeploy
 
 ```bash
 export EASYPANEL_EMAIL='your-panel-login@example.com'
 export EASYPANEL_PASSWORD='...'
-chmod +x deploy/easypanel/redeploy.sh
-./deploy/easypanel/redeploy.sh both      # or: frontend | backend
+chmod +x deploy/easypanel/redeploy.sh deploy/easypanel/redeploy.py
+./deploy/easypanel/redeploy.sh both      # or: frontend | backend | status
 ```
 
 The script:
 
 1. Logs into the panel API  
-2. Pins each service source to GitHub `main` (`/frontend/` or `/backend/`)  
-3. Triggers `GET /api/deploy/<service-token>` (reliable path)
+2. Confirms GitHub source is `OHA2025g/E-Court@main` (`/frontend/` or `/backend/`)  
+3. Refreshes the deploy webhook token  
+4. Triggers **one** `GET /api/deploy/<token>` per service (sequential)  
+5. Waits until the deployed commit SHA matches GitHub `main` (default 15 min/service)
 
-Wait **3–5 minutes** for Docker rebuild, then verify:
+```bash
+./deploy/easypanel/redeploy.py status          # compare panel SHAs vs GitHub
+./deploy/easypanel/redeploy.py frontend --no-wait
+./deploy/easypanel/redeploy.py both --timeout 1200
+```
+
+Verify after success:
 
 ```bash
 curl -sS https://ecourt.demoapi.agrayianailabs.com/api/health
@@ -56,7 +72,7 @@ docker compose up -d --build
 ./deploy/easypanel/redeploy.sh both
 ```
 
-`redeploy.sh` keeps auto-deploy **off** unless you explicitly set `EASYPANEL_ENABLE_AUTODEPLOY=1`.
+`redeploy.py` keeps auto-deploy **off** unless you explicitly set `EASYPANEL_ENABLE_AUTODEPLOY=1`.
 
 ### Manual webhook (panel UI)
 
@@ -66,7 +82,7 @@ Easypanel → service → **Deploy** / **Webhooks**: open the deploy URL (or cop
 http://31.97.207.166:3000/api/deploy/<service-deploy-token>
 ```
 
-A `200` body of `Deploying...` means the rebuild started.
+A `200` body of `Deploying...` means the rebuild started. Prefer `./redeploy.sh` so the SHA is verified.
 
 ---
 
