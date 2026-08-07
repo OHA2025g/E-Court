@@ -308,7 +308,7 @@ export default function PhysicalTracker() {
     ];
     if (isCloudComponent) {
       cols.push(
-        { key: "storage_type", label: labels.typeOfStorage, render: r => r.storage_type || "—" },
+        { key: "storage_type", label: labels.typeOfStorage, render: r => r.storage_type || "NA" },
       );
     }
     cols.push(

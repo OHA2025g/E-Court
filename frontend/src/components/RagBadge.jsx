@@ -50,7 +50,7 @@ export default function RagBadge({ status, className, label }) {
     >
       <RagIndicator status={s} accessible={accessible} />
       {accessible && <span className="mr-0.5 font-mono text-[10px]">{s === "GREEN" ? "●" : s === "AMBER" ? "▲" : s === "RED" ? "■" : "○"}</span>}
-      {label ?? (s === "NA" ? "—" : s)}
+      {label ?? (s === "NA" ? "NA" : s)}
     </span>
   );
 }

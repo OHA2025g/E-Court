@@ -20,7 +20,7 @@ function EditableCell({ value, onSave, type = "text", disabled, className = "" }
   }, [value, editing]);
 
   if (disabled) {
-    return <span className={className}>{value ?? "—"}</span>;
+    return <span className={className}>{value ?? "NA"}</span>;
   }
 
   async function commit() {
@@ -39,7 +39,7 @@ function EditableCell({ value, onSave, type = "text", disabled, className = "" }
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.key === "Enter" && setEditing(true)}
       >
-        {value ?? "—"}
+        {value ?? "NA"}
       </span>
     );
   }
@@ -260,7 +260,7 @@ export default function EditableTrackerTable({
                   ) : col.render ? (
                     col.render(row)
                   ) : (
-                    row[col.key] ?? "—"
+                    row[col.key] ?? "NA"
                   )}
                   {savingId === row.id && col.editable && (
                     <span className="ml-1 text-[9px] text-slate-400">…</span>

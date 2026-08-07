@@ -324,11 +324,11 @@ export default function OutcomeTracker() {
     { key: "high_court", label: labels.highCourt },
     { key: "component", label: labels.component, render: (r) => {
       const meta = (allKpis.data || []).find((k) => k.subject === r.subject && k.kpi_id === r.kpi_id);
-      return r.component || meta?.component || "—";
+      return r.component || meta?.component || "NA";
     } },
     { key: "sub_component", label: labels.subComponent, render: (r) => {
       const meta = (allKpis.data || []).find((k) => k.subject === r.subject && k.kpi_id === r.kpi_id);
-      const label = r.sub_component || r.subject || meta?.sub_component || meta?.subject || "—";
+      const label = r.sub_component || r.subject || meta?.sub_component || meta?.subject || "NA";
       return (
       <span className="inline-flex items-center gap-1">
         {label}
@@ -339,10 +339,10 @@ export default function OutcomeTracker() {
     ); } },
     { key: "kpi", label: labels.kpi, render: (r) => {
       const meta = (allKpis.data || []).find((k) => k.subject === r.subject && k.kpi_id === r.kpi_id);
-      return r.kpi || meta?.kpi || "—";
+      return r.kpi || meta?.kpi || "NA";
     } },
     { key: "granularity", label: labels.granularity },
-    { key: "district", label: labels.district, render: r => r.district || (r.granularity === "District" ? "—" : "") },
+    { key: "district", label: labels.district, render: r => r.district || (r.granularity === "District" ? "NA" : "") },
     { key: "outcome_type", label: labels.type },
     { key: "periodicity", label: labels.periodicity },
     { key: "baseline", label: labels.baseline, align: "right", editable: canEdit, field: "baseline", inputType: "number", render: r => fmtNum(r.baseline) },

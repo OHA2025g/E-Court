@@ -49,19 +49,19 @@ export function getApiErrorCode(detail) {
 }
 
 export function fmtNum(n, opts = {}) {
-  if (n === null || n === undefined || n === "") return "—";
+  if (n === null || n === undefined || n === "") return "NA";
   const v = Number(n);
   if (Number.isNaN(v)) return n;
   return v.toLocaleString("en-IN", { maximumFractionDigits: opts.digits ?? 2 });
 }
 
 export function fmtPct(n) {
-  if (n === null || n === undefined || n === "") return "—";
+  if (n === null || n === undefined || n === "") return "NA";
   return `${Number(n).toFixed(2)}%`;
 }
 
 export function ragLabel(r) {
-  if (!r || r === "NA") return "—";
+  if (!r || r === "NA") return "NA";
   return r;
 }
 

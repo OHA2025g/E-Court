@@ -363,7 +363,7 @@ export default function FinancialTracker() {
       align: "right",
       render: (r) => {
         const row = pfmsMap[r.component];
-        if (!row) return "—";
+        if (!row) return "NA";
         if (row.flagged) {
           return <span className="text-amber-700 font-medium" title={labels.treasuryVariance}>{fmtNum(row.variance)}</span>;
         }
@@ -372,7 +372,7 @@ export default function FinancialTracker() {
       sortValue: (r) => pfmsMap[r.component]?.variance ?? null,
       filterValue: (r) => {
         const row = pfmsMap[r.component];
-        if (!row) return "—";
+        if (!row) return "NA";
         return fmtNum(row.variance);
       },
       sortType: "number",
