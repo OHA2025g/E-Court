@@ -40,10 +40,18 @@ import {
   CartesianGrid, Legend, PieChart, Pie, Cell,
 } from "recharts";
 
-function PerformancePctTooltip({ active, payload, label, nameKey = "component" }) {
+const CLOUD_COMPUTING_COMPONENT = "Cloud Computing & Storage";
+
+function isCloudPhysicalRow(row, selectedComponent) {
+  const name = row?.component || selectedComponent || "";
+  return name === CLOUD_COMPUTING_COMPONENT;
+}
+
+function PerformancePctTooltip({ active, payload, label, nameKey = "component", selectedComponent = "" }) {
   if (!active || !payload?.length) return null;
   const row = payload[0]?.payload || {};
   const title = label || row[nameKey] || "—";
+  const cloudPhys = isCloudPhysicalRow(row, selectedComponent);
   return (
     <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs shadow-md max-w-xs">
       <div className="font-semibold text-slate-800 mb-1.5">{title}</div>
@@ -51,9 +59,15 @@ function PerformancePctTooltip({ active, payload, label, nameKey = "component" }
         const key = entry.dataKey;
         const isPhys = key === "phys_percent";
         const pct = entry.value;
-        const countLine = isPhys
-          ? `Target ${fmtNum(row.phys_target, { digits: 0 })} / Achieved ${fmtNum(row.phys_achieved, { digits: 0 })}`
-          : `Released ₹${fmtNum(row.fin_released)} Cr / Utilised ₹${fmtNum(row.fin_utilized)} Cr`;
+        let countLine;
+        if (!isPhys) {
+          countLine = `Released ₹${fmtNum(row.fin_released)} Cr / Utilised ₹${fmtNum(row.fin_utilized)} Cr`;
+        } else if (cloudPhys) {
+          // Cloud capacity has no meaningful target — show achieved storage only.
+          countLine = `Achieved ${fmtNum(row.phys_achieved, { digits: 0 })} GB`;
+        } else {
+          countLine = `Target ${fmtNum(row.phys_target, { digits: 0 })} / Achieved ${fmtNum(row.phys_achieved, { digits: 0 })}`;
+        }
         return (
           <div key={key} className="mb-1 last:mb-0">
             <div className="flex items-center gap-1.5 text-slate-700">
@@ -373,7 +387,7 @@ export default function Dashboard() {
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
             <XAxis dataKey="component" stroke="#475569" fontSize={10} angle={-25} textAnchor="end" interval={0} height={80} />
             <YAxis stroke="#475569" fontSize={11} unit="%" />
-            <Tooltip content={<PerformancePctTooltip nameKey="component" />} />
+            <Tooltip content={<PerformancePctTooltip nameKey="component" selectedComponent={component} />} />
             <Legend />
             <Bar dataKey="phys_percent" name={seriesLegendLabel("Physical %", "phys_percent", accessibleRag)} {...barSeriesProps("phys_percent", accessibleRag)} />
             <Bar dataKey="fin_percent" name={seriesLegendLabel("Financial %", "fin_percent", accessibleRag)} {...barSeriesProps("fin_percent", accessibleRag)} />
@@ -391,7 +405,7 @@ export default function Dashboard() {
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
             <XAxis dataKey="high_court" stroke="#475569" fontSize={10} angle={-35} textAnchor="end" interval={0} height={100} />
             <YAxis stroke="#475569" fontSize={11} unit="%" />
-            <Tooltip content={<PerformancePctTooltip nameKey="high_court" />} />
+            <Tooltip content={<PerformancePctTooltip nameKey="high_court" selectedComponent={component} />} />
             <Legend />
             <Bar dataKey="phys_percent" name={seriesLegendLabel("Physical %", "phys_percent", accessibleRag)} {...barSeriesProps("phys_percent_hc", accessibleRag)} />
             <Bar dataKey="fin_percent" name={seriesLegendLabel("Financial %", "fin_percent", accessibleRag)} {...barSeriesProps("fin_percent_hc", accessibleRag)} />
