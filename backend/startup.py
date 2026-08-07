@@ -216,6 +216,8 @@ async def migrate_cloud_dashboard_visibility(db):
                 )
             else:
                 await db.financial_entries.insert_one(payload)
+            # Drop non-baseline copy so Financial Tracker does not show Cloud doubles
+            await db.financial_entries.delete_one({"_id": row["_id"]})
             fin_mirrored += 1
 
     if fin_fixed or phys_mirrored or fin_mirrored:

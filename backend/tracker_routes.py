@@ -466,6 +466,53 @@ def register_tracker_routes(
             await _notify_financial_red(body, rag, utilisation, is_new=True)
         return {"id": str(result.inserted_id), "warning": warning}
 
+    @api.delete("/financial/{entry_id}")
+    async def delete_financial(entry_id: str, user: dict = Depends(require_fully_authenticated)):
+        if user["role"] != "Admin":
+            raise HTTPException(status_code=403, detail="Admin only")
+        try:
+            oid = ObjectId(entry_id)
+        except (InvalidId, TypeError):
+            raise HTTPException(status_code=400, detail="Invalid entry id")
+        existing = await db.financial_entries.find_one({"_id": oid})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Entry not found")
+        await db.financial_entries.delete_one({"_id": oid})
+        await _invalidate_dashboard_cache()
+        await audit_fn(
+            user, "financial", "delete", entry_id,
+            [{"field": "entry", "old": serialize_fn(existing), "new": None}],
+            existing.get("high_court"), existing.get("reporting_period"),
+        )
+        return {"id": entry_id, "deleted": True}
+
+    @api.post("/financial/cleanup-empty")
+    async def cleanup_empty_financial(user: dict = Depends(require_fully_authenticated)):
+        """Remove financial rows with no target/allocated/released/utilised values."""
+        if user["role"] != "Admin":
+            raise HTTPException(status_code=403, detail="Admin only")
+        q = {
+            "$and": [
+                {"$or": [{"fund_target": None}, {"fund_target": {"$exists": False}}]},
+                {"$or": [{"fund_allocated": None}, {"fund_allocated": {"$exists": False}}]},
+                {"$or": [{"fund_released": None}, {"fund_released": {"$exists": False}}]},
+                {"$or": [{"fund_utilized": None}, {"fund_utilized": {"$exists": False}}]},
+            ],
+        }
+        empties = await db.financial_entries.find(q).to_list(5000)
+        deleted = 0
+        for doc in empties:
+            await db.financial_entries.delete_one({"_id": doc["_id"]})
+            await audit_fn(
+                user, "financial", "delete", str(doc["_id"]),
+                [{"field": "entry", "old": serialize_fn(doc), "new": None}],
+                doc.get("high_court"), doc.get("reporting_period"),
+            )
+            deleted += 1
+        if deleted:
+            await _invalidate_dashboard_cache()
+        return {"deleted": deleted}
+
     @api.get("/outcome")
     async def list_outcome(
         high_court: Optional[str] = None, subject: Optional[str] = None,
