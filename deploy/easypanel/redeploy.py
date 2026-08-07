@@ -296,8 +296,14 @@ def deploy_service(token: str, service: str, *, wanted_sha: str, wait: bool, tim
 
     deadline = time.time() + timeout_s
     last = before
+    # Re-read GitHub tip during poll — a push mid-deploy should not fail the wait.
+    tip = wanted_sha
     while time.time() < deadline:
         time.sleep(12)
+        try:
+            tip = github_main_sha()
+        except Exception:
+            pass
         try:
             info = inspect(token, service)
         except PanelError as exc:
@@ -307,10 +313,15 @@ def deploy_service(token: str, service: str, *, wanted_sha: str, wait: bool, tim
         if sha != last:
             print(f"  SHA {sha[:12]}")
             last = sha
-        if sha.startswith(wanted_sha[:7]) or wanted_sha.startswith(sha[:7]):
+        if (
+            sha.startswith(wanted_sha[:7])
+            or wanted_sha.startswith(sha[:7])
+            or sha.startswith(tip[:7])
+            or tip.startswith(sha[:7])
+        ):
             print(f"  ✓ {service} deployed {sha[:12]}")
             return True
-    print(f"  ✗ timed out waiting for {service} → {wanted_sha[:12]} (last {last[:12]})")
+    print(f"  ✗ timed out waiting for {service} → {tip[:12]} (last {last[:12]})")
     return False
 
 
