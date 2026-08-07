@@ -36,6 +36,27 @@ def _row_uom(row: dict) -> str:
     return COMPONENT_UOM.get(row.get("component"), "Unknown")
 
 
+def relative_achieved_percent_by_hc(
+    by_hc: dict[str, list],
+    achieved_key: str = "achieved",
+) -> dict[str, float]:
+    """When targets are missing (e.g. Cloud GB capacity), scale each HC vs max achieved.
+
+    Max High Court → 100%; others proportional. Returns {} if nothing positive.
+    """
+    hc_achieved: dict[str, float] = {}
+    for hc, rows in by_hc.items():
+        total = sum(float(r.get(achieved_key) or 0) for r in rows)
+        if total > 0:
+            hc_achieved[hc] = total
+    if not hc_achieved:
+        return {}
+    peak = max(hc_achieved.values())
+    if peak <= 0:
+        return {}
+    return {hc: round(100.0 * val / peak, 2) for hc, val in hc_achieved.items()}
+
+
 def mean_achievement_percent(
     rows: list,
     safe_div_fn: Callable,
@@ -161,7 +182,10 @@ def resolve_period_pair(reporting_period: Optional[str] = None) -> Optional[tupl
 
 
 async def aggregate_hc_percent_physical(db, match: dict) -> dict[str, float]:
-    """HC physical % = mean of per-indicator % (avoids mixed-UOM sum/sum distortion)."""
+    """HC physical % = mean of per-indicator % (avoids mixed-UOM sum/sum distortion).
+
+    Falls back to relative-vs-max achieved when targets are absent (Cloud storage GB).
+    """
     def _pct(achieved, target):
         if achieved is None or target is None or not target:
             return None
@@ -173,11 +197,14 @@ async def aggregate_hc_percent_physical(db, match: dict) -> dict[str, float]:
         hc = r.get("high_court")
         if hc:
             by_hc[hc].append(r)
-    return {
+    out = {
         hc: pct
         for hc, hc_rows in by_hc.items()
         if (pct := mean_achievement_percent(hc_rows, _pct)) is not None
     }
+    if out:
+        return out
+    return relative_achieved_percent_by_hc(by_hc)
 
 
 async def aggregate_hc_percent_financial(db, match: dict) -> dict[str, float]:
@@ -356,11 +383,23 @@ async def compute_heatmap(
         row_field = "subject"
     else:
         rows = await db.physical_entries.aggregate(physical_component_hc_stages(match)).to_list(500)
+        # Per-component peak achieved for target-less rows (Cloud GB capacity)
+        peak_by_comp: dict[str, float] = defaultdict(float)
         for r in rows:
-            t, a = r.get("t") or 0, r.get("a") or 0
-            pct = round((a / t) * 100, 2) if t else None
+            comp = r["_id"]["component"]
+            a = float(r.get("a") or 0)
+            if a > peak_by_comp[comp]:
+                peak_by_comp[comp] = a
+        for r in rows:
+            t, a = float(r.get("t") or 0), float(r.get("a") or 0)
             comp = r["_id"]["component"]
             hc = r["_id"]["high_court"]
+            if t:
+                pct = round((a / t) * 100, 2)
+            elif a > 0 and peak_by_comp.get(comp):
+                pct = round(100.0 * a / peak_by_comp[comp], 2)
+            else:
+                pct = None
             cell_map[(comp, hc)] = {"percent": pct, "rag": compute_rag_fn(pct, thresholds)}
         row_keys = components
         row_field = "component"
@@ -886,13 +925,23 @@ async def compute_dashboard_by_hc(
             pmap[hc].append(row)
     fmap = {f["_id"]: {"released": f["r"], "utilized": f["u"]} for f in fin}
     hcs = sorted(set(list(pmap.keys()) + list(fmap.keys())))
+    target_pcts = {
+        hc: mean_achievement_percent(pmap.get(hc, []), safe_div_fn)
+        for hc in hcs
+        if pmap.get(hc)
+    }
+    target_pcts = {hc: pct for hc, pct in target_pcts.items() if pct is not None}
+    relative_pcts = (
+        {} if target_pcts else relative_achieved_percent_by_hc(pmap)
+    )
     rows = []
     for hc in hcs:
         hc_phys = pmap.get(hc, [])
         totals = physical_absolute_totals(hc_phys)
-        # Always average per-indicator % at HC level. Ratio-of-sums mixes Count +
-        # Crore Pages + zero-target Cloud GB and produces absurd Achieved % (e.g. 50,000%).
-        phys_pct = mean_achievement_percent(hc_phys, safe_div_fn)
+        # Prefer target-based mean %; fall back to relative-vs-max for Cloud GB (no targets).
+        phys_pct = target_pcts.get(hc)
+        if phys_pct is None:
+            phys_pct = relative_pcts.get(hc)
         f = fmap.get(hc, {"released": 0, "utilized": 0})
         rows.append({
             "high_court": hc,

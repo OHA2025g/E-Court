@@ -1,5 +1,9 @@
 """Physical KPI aggregation must not mix incompatible UOMs into one sum/sum %."""
-from dashboard_agg import mean_achievement_percent, physical_absolute_totals
+from dashboard_agg import (
+    mean_achievement_percent,
+    physical_absolute_totals,
+    relative_achieved_percent_by_hc,
+)
 
 
 def _safe_div(a, b):
@@ -83,3 +87,15 @@ def test_hc_style_mean_not_inflated_by_cloud_gb():
         2,
     )
     assert pct == expected
+
+
+def test_relative_achieved_percent_by_hc_for_cloud_without_targets():
+    by_hc = {
+        "Allahabad": [{"achieved": 7700, "target": None}],
+        "Bombay": [{"achieved": 19700, "target": None}],
+        "Empty": [{"achieved": 0, "target": None}],
+    }
+    out = relative_achieved_percent_by_hc(by_hc)
+    assert out["Bombay"] == 100.0
+    assert out["Allahabad"] == round(7700 / 19700 * 100, 2)
+    assert "Empty" not in out
