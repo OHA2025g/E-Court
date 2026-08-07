@@ -34,11 +34,13 @@ import DashboardAiInsights from "@/components/dashboard/DashboardAiInsights";
 import ScrollRegion from "@/components/ui/ScrollRegion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useDashboardLabels } from "@/lib/useDashboardLabels";
-import { ragCellProps, formatRagLegendLabel, barSeriesProps, seriesLegendLabel, useAccessibleRag } from "@/lib/ragColors";
+import { RAG_COLORS, ragCellProps, formatRagLegendLabel, barSeriesProps, seriesLegendLabel, useAccessibleRag } from "@/lib/ragColors";
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip,
   CartesianGrid, Legend, PieChart, Pie, Cell,
 } from "recharts";
+
+const RAG_ORDER = ["GREEN", "AMBER", "RED", "NA"];
 
 function PerformancePctTooltip({ active, payload, label, nameKey = "component", selectedComponent = "" }) {
   if (!active || !payload?.length) return null;
@@ -226,7 +228,14 @@ export default function Dashboard() {
   });
 
   const s = summary.data;
-  const ragData = s ? Object.entries(s.rag_physical || {}).map(([k, v]) => ({ name: k, value: v })) : [];
+  const ragData = useMemo(() => {
+    if (!s) return [];
+    const counts = s.rag_physical || {};
+    return RAG_ORDER
+      .map((name) => ({ name, value: Number(counts[name]) || 0 }))
+      .filter((d) => d.value > 0);
+  }, [s]);
+  const ragTotal = useMemo(() => ragData.reduce((sum, d) => sum + d.value, 0), [ragData]);
 
   const sortedCompRows = useMemo(
     () => sortTableRows(byComp.data || [], compSort.key, compSort.dir),
@@ -353,21 +362,62 @@ export default function Dashboard() {
 
   const ragDonut = (
     <Card title={labels.ragDistribution} testId={TID.ragDonut} elevated>
-      <div className="h-72 p-3">
+      <div className="h-72 p-3 flex flex-col">
         {ragData.length === 0 ? (
           <div className="h-full grid-bg flex items-center justify-center text-sm text-slate-400">{labels.noData}</div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie data={ragData} dataKey="value" nameKey="name" outerRadius={90} innerRadius={50} paddingAngle={2}>
-                {ragData.map((d) => (
-                  <Cell key={d.name} {...ragCellProps(d.name, accessibleRag)} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value, name) => [value, formatRagLegendLabel(name, accessibleRag)]} />
-              <Legend formatter={(value) => formatRagLegendLabel(value, accessibleRag)} />
-            </PieChart>
-          </ResponsiveContainer>
+          <>
+            <div className="relative flex-1 min-h-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={ragData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={78}
+                    innerRadius={46}
+                    paddingAngle={2}
+                    stroke="#fff"
+                    strokeWidth={2}
+                    isAnimationActive={false}
+                  >
+                    {ragData.map((d) => (
+                      <Cell key={d.name} {...ragCellProps(d.name, accessibleRag)} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value, name) => [
+                      `${value} (${ragTotal ? Math.round((value / ragTotal) * 100) : 0}%)`,
+                      formatRagLegendLabel(name, accessibleRag),
+                    ]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="text-center px-2">
+                  <div className="font-display text-xl font-bold text-slate-800 tabular-nums leading-tight" data-testid="rag-donut-total">
+                    {ragTotal}
+                  </div>
+                  <div className="text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">Total</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 pt-1" data-testid="rag-donut-legend">
+              {ragData.map((d) => (
+                <div key={d.name} className="inline-flex items-center gap-1.5 text-xs text-slate-700">
+                  <span
+                    className="inline-block w-2.5 h-2.5 rounded-sm shrink-0 border border-slate-200"
+                    style={{ background: RAG_COLORS[d.name] || RAG_COLORS.NA }}
+                    aria-hidden="true"
+                  />
+                  <span>{formatRagLegendLabel(d.name, accessibleRag)}</span>
+                  <span className="font-semibold tabular-nums text-slate-900">{d.value}</span>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </Card>
