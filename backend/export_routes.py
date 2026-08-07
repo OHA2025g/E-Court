@@ -5,7 +5,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel
 
-from seed_constants import DEFAULT_RAG_THRESHOLDS
+from seed_constants import COMPONENTS, DEFAULT_RAG_THRESHOLDS
 import io
 from typing import Literal, Optional
 
@@ -280,6 +280,115 @@ def register_export_routes(
             io.BytesIO(data),
             media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             headers={"Content-Disposition": "attachment; filename=high_court_table.xlsx"},
+        )
+
+    @api.get("/export/dashboard/component-table")
+    async def export_component_table(
+        request: Request,
+        reporting_period: Optional[str] = None,
+        high_court: Optional[str] = None,
+        component: Optional[str] = None,
+        user: dict = Depends(require_fully_authenticated),
+    ):
+        """Download Component Table as Excel with exact entry values (not mean/% aggregates).
+
+        Sheets:
+        - Component_Summary: per-component totals from exact entry sums
+        - Financial_Exact: every matching financial_entries row (exact Cr values)
+        - Physical_Exact: every matching physical_entries row (exact target/achieved counts)
+        """
+        _enforce_export_limit(user)
+        if user.get("role") == "CPC" and user.get("high_court"):
+            high_court = user["high_court"]
+        q = await _export_query(user, reporting_period, high_court, component)
+
+        fin_items = await db.financial_entries.find(q).sort([
+            ("component", 1), ("high_court", 1), ("district", 1),
+        ]).to_list(50000)
+        phys_items = await db.physical_entries.find(q).sort([
+            ("component", 1), ("high_court", 1), ("indicator", 1), ("district", 1),
+        ]).to_list(50000)
+        fin_rows = serialize_fn(fin_items)
+        phys_rows = serialize_fn(phys_items)
+
+        component_uom = {c["name"]: c.get("uom") for c in COMPONENTS}
+
+        comp_tot: dict[str, dict] = defaultdict(lambda: {
+            "phys_target": 0.0,
+            "phys_achieved": 0.0,
+            "fin_released": 0.0,
+            "fin_utilized": 0.0,
+        })
+        for row in phys_rows:
+            comp = row.get("component") or ""
+            if not comp:
+                continue
+            comp_tot[comp]["phys_target"] += float(row.get("target") or 0)
+            comp_tot[comp]["phys_achieved"] += float(row.get("achieved") or 0)
+        for row in fin_rows:
+            comp = row.get("component") or ""
+            if not comp:
+                continue
+            comp_tot[comp]["fin_released"] += float(row.get("fund_released") or 0)
+            comp_tot[comp]["fin_utilized"] += float(row.get("fund_utilized") or 0)
+
+        summary_rows = []
+        for comp in sorted(comp_tot.keys()):
+            t = comp_tot[comp]["phys_target"]
+            a = comp_tot[comp]["phys_achieved"]
+            released = comp_tot[comp]["fin_released"]
+            utilized = comp_tot[comp]["fin_utilized"]
+            summary_rows.append({
+                "component": comp,
+                "uom": component_uom.get(comp) or "",
+                "phys_target": t,
+                "phys_achieved": a,
+                "phys_percent": safe_div_fn(a, t),
+                "fin_released": released,
+                "fin_utilized": utilized,
+                "fin_percent": safe_div_fn(utilized, released),
+            })
+
+        data = build_multi_sheet_xlsx([
+            {
+                "name": "Component_Summary",
+                "columns": [
+                    "component", "uom", "phys_target", "phys_achieved", "phys_percent",
+                    "fin_released", "fin_utilized", "fin_percent",
+                ],
+                "headers": [
+                    "Component", "Unit", "Phys Target", "Phys Achieved", "Phys %",
+                    "Funds Released(Cr)", "Funds Utilized(Cr)", "Util %",
+                ],
+                "rows": summary_rows,
+            },
+            {
+                "name": "Financial_Exact",
+                "columns": [
+                    "high_court", "district", "component", "reporting_period",
+                    "fund_target", "fund_allocated", "fund_released", "fund_utilized",
+                    "utilisation_percent", "variance", "rag", "remarks",
+                ],
+                "headers": financial_headers(resolve_export_lang(request.headers.get("accept-language"))),
+                "rows": fin_rows,
+            },
+            {
+                "name": "Physical_Exact",
+                "columns": [
+                    "high_court", "district", "component", "indicator", "storage_type",
+                    "reporting_period", "target", "achieved", "percent", "rag", "remarks",
+                ],
+                "headers": [
+                    "High Court", "District", "Component", "Indicator", "Type of Storage",
+                    "Period", "Target", "Achieved", "% Achieved", "RAG", "Remarks",
+                ],
+                "rows": phys_rows,
+            },
+        ])
+        return StreamingResponse(
+            io.BytesIO(data),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": "attachment; filename=component_table.xlsx"},
         )
 
     # -------------------------------------------------------------------- CABINET BRIEF

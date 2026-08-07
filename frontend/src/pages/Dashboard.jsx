@@ -256,6 +256,11 @@ export default function Dashboard() {
     return `${BACKEND_URL}/api/export/dashboard/high-court-table${qs ? `?${qs}` : ""}`;
   }, [dashParams]);
 
+  const componentTableExportHref = useMemo(() => {
+    const qs = new URLSearchParams(dashParams).toString();
+    return `${BACKEND_URL}/api/export/dashboard/component-table${qs ? `?${qs}` : ""}`;
+  }, [dashParams]);
+
   const unifiedHeader = (
     <div className="dashboard-unified-header dashboard-hero-pattern">
       {cpcCourt && (
@@ -485,7 +490,21 @@ export default function Dashboard() {
   );
 
   const componentTable = (
-    <Card title={labels.componentDrilldown} elevated>
+    <Card
+      title={labels.componentDrilldown}
+      elevated
+      action={(
+        <a
+          data-testid={TID.dashboardCompExportXlsx}
+          href={componentTableExportHref}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-sm uppercase tracking-wider text-[11px]"
+        >
+          <FileXls size={14} /> {labels.downloadExcel}
+        </a>
+      )}
+    >
       <ScrollRegion className="overflow-x-auto max-h-[560px]" label={labels.componentDrilldownTable}>
         <table className="dense-table dashboard-table w-full" data-testid="dashboard-component-table">
           <thead>
