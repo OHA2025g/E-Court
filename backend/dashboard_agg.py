@@ -74,6 +74,46 @@ def mean_achievement_percent(
     return round(sum(pcts) / len(pcts), 2)
 
 
+def group_rows_by_hc(rows: list, hc_key: str = "high_court") -> dict[str, list]:
+    by_hc: dict[str, list] = defaultdict(list)
+    for row in rows:
+        hc = row.get(hc_key)
+        if hc:
+            by_hc[hc].append(row)
+    return by_hc
+
+
+def mean_relative_achieved_percent(
+    rows: list,
+    achieved_key: str = "achieved",
+) -> Optional[float]:
+    """National/component rollup when targets are missing: mean of HC relative %."""
+    rel = relative_achieved_percent_by_hc(group_rows_by_hc(rows), achieved_key=achieved_key)
+    if not rel:
+        return None
+    return round(sum(rel.values()) / len(rel), 2)
+
+
+def physical_percent_with_relative_fallback(
+    rows: list,
+    safe_div_fn: Callable,
+    *,
+    sum_ratio: bool = False,
+    target_key: str = "target",
+    achieved_key: str = "achieved",
+) -> Optional[float]:
+    """Prefer target-based %; fall back to mean relative-vs-max HC achieved (Cloud GB)."""
+    if sum_ratio:
+        target = sum(float(r.get(target_key) or 0) for r in rows)
+        achieved = sum(float(r.get(achieved_key) or 0) for r in rows)
+        pct = safe_div_fn(achieved, target if target else None)
+    else:
+        pct = mean_achievement_percent(rows, safe_div_fn, target_key, achieved_key)
+    if pct is not None:
+        return pct
+    return mean_relative_achieved_percent(rows, achieved_key=achieved_key)
+
+
 def physical_absolute_totals(rows: list) -> dict:
     """Sum target/achieved in a single display UOM for KPI cards.
 
@@ -460,13 +500,22 @@ async def compute_pareto_red_flags(
             component_red[comp] = component_red.get(comp, 0) + 1
     else:
         rolled = await db.physical_entries.aggregate(physical_rollup_stages(match)).to_list(50000)
+        by_comp: dict[str, list] = defaultdict(list)
         for r in rolled:
-            t, a = r.get("target") or 0, r.get("achieved") or 0
-            pct = round((a / t) * 100, 2) if t else None
-            if compute_rag_fn(pct, thresholds) != "RED":
+            by_comp[r.get("component") or "Unknown"].append(r)
+        for comp, rows in by_comp.items():
+            has_targets = any(float(r.get("target") or 0) > 0 for r in rows)
+            if has_targets:
+                for r in rows:
+                    t, a = r.get("target") or 0, r.get("achieved") or 0
+                    pct = round((a / t) * 100, 2) if t else None
+                    if compute_rag_fn(pct, thresholds) == "RED":
+                        component_red[comp] = component_red.get(comp, 0) + 1
                 continue
-            comp = r.get("component") or "Unknown"
-            component_red[comp] = component_red.get(comp, 0) + 1
+            # Cloud-style capacity with no targets — count RED High Courts vs peak HC.
+            for pct in relative_achieved_percent_by_hc(group_rows_by_hc(rows)).values():
+                if compute_rag_fn(pct, thresholds) == "RED":
+                    component_red[comp] = component_red.get(comp, 0) + 1
     rows = sorted(component_red.items(), key=lambda x: x[1], reverse=True)
     total = sum(c for _, c in rows)
     cumulative = 0
@@ -724,14 +773,20 @@ async def compute_dashboard_summary(
     rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
     phys_totals = physical_absolute_totals(rolled_phys)
     # Homogeneous UOM → ratio of sums; mixed UOMs → equal-weight mean of indicator %.
+    # Cloud GB (target 0) → mean of relative-vs-max HC achievement.
     if phys_totals["mixed_uom"]:
-        phys_percent = mean_achievement_percent(rolled_phys, safe_div_fn)
+        phys_percent = physical_percent_with_relative_fallback(rolled_phys, safe_div_fn)
     else:
         phys_percent = safe_div_fn(phys_totals["achieved"], phys_totals["target"])
+        if phys_percent is None:
+            phys_percent = mean_relative_achieved_percent(rolled_phys)
     thresholds = await fetch_rag_thresholds(db)
+    relative_hc = relative_achieved_percent_by_hc(group_rows_by_hc(rolled_phys))
     rag: dict = {}
     for row in rolled_phys:
         pct = safe_div_fn(row.get("achieved"), row.get("target"))
+        if pct is None:
+            pct = relative_hc.get(row.get("high_court"))
         status = compute_rag_fn(pct, thresholds)
         rag[status] = rag.get(status, 0) + 1
     rolled_fin = await db.financial_entries.aggregate(financial_rollup_stages(fmatch)).to_list(5000)
@@ -814,6 +869,7 @@ async def compute_dashboard_by_component(
         name = c["name"]
         phys_rows = pmap.get(name, [])
         # Single-component scope is always one UOM — absolute sums are valid here.
+        # Cloud GB has achieved with no targets → mean relative-vs-max HC %.
         target = sum(float(r.get("target") or 0) for r in phys_rows)
         achieved = sum(float(r.get("achieved") or 0) for r in phys_rows)
         f = fmap.get(name, {"allocated": 0, "target": 0, "released": 0, "utilized": 0})
@@ -822,8 +878,9 @@ async def compute_dashboard_by_component(
             "component": name,
             "phys_target": target,
             "phys_achieved": achieved,
-            # One UOM per component — ratio of sums; null when target is 0 (e.g. Cloud GB).
-            "phys_percent": safe_div_fn(achieved, target if target else None),
+            "phys_percent": physical_percent_with_relative_fallback(
+                phys_rows, safe_div_fn, sum_ratio=True,
+            ),
             "fin_allocated": f["allocated"],
             "fin_target": f["target"],
             "fin_budget": budget,

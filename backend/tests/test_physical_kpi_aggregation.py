@@ -1,7 +1,9 @@
 """Physical KPI aggregation must not mix incompatible UOMs into one sum/sum %."""
 from dashboard_agg import (
     mean_achievement_percent,
+    mean_relative_achieved_percent,
     physical_absolute_totals,
+    physical_percent_with_relative_fallback,
     relative_achieved_percent_by_hc,
 )
 
@@ -99,3 +101,25 @@ def test_relative_achieved_percent_by_hc_for_cloud_without_targets():
     assert out["Bombay"] == 100.0
     assert out["Allahabad"] == round(7700 / 19700 * 100, 2)
     assert "Empty" not in out
+
+
+def test_component_phys_percent_falls_back_when_cloud_has_no_targets():
+    """Performance chart by-component must not leave Physical % blank for Cloud GB."""
+    rows = [
+        {"high_court": "Allahabad", "target": 0, "achieved": 7700},
+        {"high_court": "Bombay", "target": 0, "achieved": 19700},
+        {"high_court": "Calcutta", "target": 0, "achieved": 9850},
+    ]
+    assert _safe_div(sum(r["achieved"] for r in rows), 0) is None
+    pct = physical_percent_with_relative_fallback(rows, _safe_div, sum_ratio=True)
+    expected = mean_relative_achieved_percent(rows)
+    assert pct == expected
+    assert pct is not None and 0 < pct <= 100
+
+
+def test_sum_ratio_still_used_when_targets_exist():
+    rows = [
+        {"high_court": "A", "target": 100, "achieved": 40},
+        {"high_court": "B", "target": 100, "achieved": 60},
+    ]
+    assert physical_percent_with_relative_fallback(rows, _safe_div, sum_ratio=True) == 50.0
