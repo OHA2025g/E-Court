@@ -160,9 +160,14 @@ OUTCOME_SUBJECT_MAP = {
 
 DEFAULT_RAG_THRESHOLDS = {"green_min": 80.0, "amber_min": 65.0}
 
-# Reporting months: Sep 2025 physical snapshot + baseline + monthly from Jun 2026
+# Cloud Computing cumulative window (physical + financial Cloud rows)
+CLOUD_CUMULATIVE_PERIOD = "2026-03"
+CLOUD_CUMULATIVE_PERIOD_LABEL = "Sep 2023 – Mar 2026"
+
+# Reporting months: Sep 2025 physical snapshot + Cloud window + baseline + monthly from Jun 2026
 REPORTING_PERIODS = [
     {"period": "2025-09", "label": "Physical Achieved till Sep 2025", "is_baseline": False},
+    {"period": CLOUD_CUMULATIVE_PERIOD, "label": CLOUD_CUMULATIVE_PERIOD_LABEL, "is_baseline": False},
     {"period": "2026-05", "label": "Baseline — cum. to May 2026 (Released/Utilised/Physical)", "is_baseline": True},
     {"period": "2026-06", "label": "June 2026", "is_baseline": False},
     {"period": "2026-07", "label": "July 2026", "is_baseline": False},

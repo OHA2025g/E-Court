@@ -12,6 +12,7 @@ from auth import ensure_auth_indexes, hash_password, verify_password
 from dashboard_prefs import ensure_dashboard_indexes
 from seed_constants import (
     CLOUD_COMPUTING_COMPONENT,
+    CLOUD_CUMULATIVE_PERIOD,
     COMPONENT_INDICATORS,
     COMPONENTS,
     DEFAULT_RAG_THRESHOLDS,
@@ -138,11 +139,15 @@ async def migrate_cloud_dashboard_visibility(db):
             await db.financial_entries.update_one({"_id": row["_id"]}, {"$set": updates})
             fin_fixed += 1
 
-    # 2) Move latest non-baseline Cloud physical onto baseline (no duplicate periods in tracker)
+    # 2) Move latest non-baseline Cloud physical onto baseline (no duplicate periods in tracker).
+    # Keep the dedicated Cloud cumulative window (Sep 2023 – Mar 2026) untouched.
     phys_mirrored = 0
     source_periods = await db.physical_entries.distinct(
         "reporting_period",
-        {"component": CLOUD_COMPUTING_COMPONENT, "reporting_period": {"$ne": baseline}},
+        {
+            "component": CLOUD_COMPUTING_COMPONENT,
+            "reporting_period": {"$nin": [baseline, CLOUD_CUMULATIVE_PERIOD]},
+        },
     )
     source_periods = sorted([p for p in source_periods if p], reverse=True)
     if source_periods:
@@ -182,7 +187,10 @@ async def migrate_cloud_dashboard_visibility(db):
     fin_mirrored = 0
     fin_source_periods = await db.financial_entries.distinct(
         "reporting_period",
-        {"component": CLOUD_COMPUTING_COMPONENT, "reporting_period": {"$ne": baseline}},
+        {
+            "component": CLOUD_COMPUTING_COMPONENT,
+            "reporting_period": {"$nin": [baseline, CLOUD_CUMULATIVE_PERIOD]},
+        },
     )
     fin_source_periods = sorted([p for p in fin_source_periods if p], reverse=True)
     if fin_source_periods:
@@ -227,11 +235,89 @@ async def migrate_cloud_dashboard_visibility(db):
         )
 
 
+async def migrate_cloud_to_cumulative_period(db):
+    """Move all Cloud Computing tracker rows onto Sep 2023 – Mar 2026 (2026-03)."""
+    target = CLOUD_CUMULATIVE_PERIOD
+    moved_phys = moved_fin = 0
+
+    async for row in db.physical_entries.find(
+        {"component": CLOUD_COMPUTING_COMPONENT, "reporting_period": {"$ne": target}}
+    ):
+        q = {
+            "high_court": row.get("high_court"),
+            "component": CLOUD_COMPUTING_COMPONENT,
+            "indicator": row.get("indicator"),
+            "reporting_period": target,
+            "district": row.get("district"),
+            "storage_type": row.get("storage_type") or DEFAULT_STORAGE_TYPE,
+        }
+        existing = await db.physical_entries.find_one(q)
+        if existing:
+            await db.physical_entries.update_one(
+                {"_id": existing["_id"]},
+                {"$set": {
+                    "target": row.get("target"),
+                    "achieved": row.get("achieved"),
+                    "percent": row.get("percent"),
+                    "rag": row.get("rag"),
+                    "remarks": row.get("remarks"),
+                    "uom": row.get("uom"),
+                }},
+            )
+            await db.physical_entries.delete_one({"_id": row["_id"]})
+        else:
+            await db.physical_entries.update_one(
+                {"_id": row["_id"]},
+                {"$set": {"reporting_period": target}},
+            )
+        moved_phys += 1
+
+    async for row in db.financial_entries.find(
+        {"component": CLOUD_COMPUTING_COMPONENT, "reporting_period": {"$ne": target}}
+    ):
+        q = {
+            "high_court": row.get("high_court"),
+            "component": CLOUD_COMPUTING_COMPONENT,
+            "reporting_period": target,
+            "district": row.get("district"),
+        }
+        existing = await db.financial_entries.find_one(q)
+        if existing:
+            await db.financial_entries.update_one(
+                {"_id": existing["_id"]},
+                {"$set": {
+                    "fund_target": row.get("fund_target"),
+                    "fund_allocated": row.get("fund_allocated"),
+                    "fund_released": row.get("fund_released"),
+                    "fund_utilized": row.get("fund_utilized"),
+                    "utilisation_percent": row.get("utilisation_percent"),
+                    "variance": row.get("variance"),
+                    "rag": row.get("rag"),
+                    "remarks": row.get("remarks"),
+                    "description": row.get("description"),
+                }},
+            )
+            await db.financial_entries.delete_one({"_id": row["_id"]})
+        else:
+            await db.financial_entries.update_one(
+                {"_id": row["_id"]},
+                {"$set": {"reporting_period": target}},
+            )
+        moved_fin += 1
+
+    if moved_phys or moved_fin:
+        logger.info(
+            "Cloud cumulative period migration: physical=%d financial=%d → %s",
+            moved_phys, moved_fin, target,
+        )
+
+
 async def ensure_indexes(db):
     await db.users.create_index("email", unique=True)
     await migrate_district_indexes(db)
     await migrate_outcome_district_index(db)
     await migrate_cloud_dashboard_visibility(db)
+    await migrate_cloud_to_cumulative_period(db)
     await db.bulk_previews.create_index("token", unique=True)
     await db.bulk_previews.create_index("expires_at", expireAfterSeconds=0)
     await db.audit_logs.create_index([("timestamp", -1)])
