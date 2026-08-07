@@ -72,8 +72,11 @@ export default function PhysicalTracker() {
     };
     if (districtFilter === "__hc__") p.district = "__hc__";
     else if (districtFilter) p.district = districtFilter;
+    if (component === CLOUD_COMPUTING_COMPONENT && storageType) {
+      p.storage_type = storageType;
+    }
     return p;
-  }, [hc, component, period, districtFilter, page]);
+  }, [hc, component, period, districtFilter, storageType, page]);
   const list = useQuery({
     queryKey: ["physical", listParams],
     queryFn: () => api.get("/physical", { params: listParams }).then((r) => unwrapTrackerResponse(r.data)),
@@ -93,7 +96,7 @@ export default function PhysicalTracker() {
     return s;
   }, [anomalies.data]);
 
-  useEffect(() => { setPage(1); }, [hc, component, period, districtFilter]);
+  useEffect(() => { setPage(1); }, [hc, component, period, districtFilter, storageType]);
   useEffect(() => {
     if (component !== CLOUD_COMPUTING_COMPONENT) {
       setStorageType(DEFAULT_STORAGE_TYPE);
@@ -288,6 +291,9 @@ export default function PhysicalTracker() {
     if (period) params.set("reporting_period", period);
     if (districtFilter === "__hc__") params.set("district", "__hc__");
     else if (districtFilter) params.set("district", districtFilter);
+    if (component === CLOUD_COMPUTING_COMPONENT && storageType) {
+      params.set("storage_type", storageType);
+    }
     params.set("format", fmt);
     return `${BACKEND_URL}/api/export/physical?${params.toString()}`;
   }
