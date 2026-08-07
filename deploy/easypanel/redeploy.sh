@@ -114,6 +114,30 @@ PY
 trigger() {
   local svc="$1" panel_token="$2"
   local dtoken
+  # Refresh webhook token — stale tokens often report Deploying… without pulling latest main.
+  PANEL_TOKEN="$panel_token" SERVICE="$svc" python3 - <<'PY' >/dev/null 2>&1 || true
+import json, os, urllib.request
+payload = {"projectName": os.environ["PROJECT"], "serviceName": os.environ["SERVICE"]}
+for path in (
+    "/api/refreshAppDeployToken",
+    "/api/rpc/services/app/refreshDeployToken",
+):
+    try:
+        body = payload if path.startswith("/api/refresh") else {"json": payload}
+        req = urllib.request.Request(
+            os.environ["PANEL_URL"] + path,
+            data=json.dumps(body).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + os.environ["PANEL_TOKEN"],
+            },
+            method="POST",
+        )
+        urllib.request.urlopen(req, timeout=15).read()
+        break
+    except Exception:
+        pass
+PY
   dtoken="$(deploy_token "$svc" "$panel_token")"
   echo "→ Deploying $svc …"
   # Webhook is reliable; also kick forceRebuild (often times out while still starting).
