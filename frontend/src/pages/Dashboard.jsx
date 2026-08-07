@@ -363,7 +363,7 @@ export default function Dashboard() {
   const ragSliceLabel = ({ cx, cy, midAngle, outerRadius, value }) => {
     if (value == null || value <= 0) return null;
     const RADIAN = Math.PI / 180;
-    const radius = outerRadius + 18;
+    const radius = outerRadius + 22;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
     return (
@@ -373,7 +373,7 @@ export default function Dashboard() {
         fill="#0f172a"
         textAnchor={x > cx ? "start" : "end"}
         dominantBaseline="central"
-        className="text-[11px] font-semibold tabular-nums"
+        className="text-sm font-semibold tabular-nums"
       >
         {value}
       </text>
@@ -382,22 +382,22 @@ export default function Dashboard() {
 
   const ragDonut = (
     <Card title={labels.ragDistribution} testId={TID.ragDonut} elevated>
-      <div className="h-72 p-3 flex flex-col">
+      <div className="h-[28rem] p-3 flex flex-col">
         {ragData.length === 0 ? (
           <div className="h-full grid-bg flex items-center justify-center text-sm text-slate-400">{labels.noData}</div>
         ) : (
           <>
             <div className="relative flex-1 min-h-0">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart margin={{ top: 8, right: 28, bottom: 8, left: 28 }}>
+                <PieChart margin={{ top: 12, right: 36, bottom: 12, left: 36 }}>
                   <Pie
                     data={ragData}
                     dataKey="value"
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    outerRadius={70}
-                    innerRadius={42}
+                    outerRadius={118}
+                    innerRadius={72}
                     paddingAngle={2}
                     stroke="#fff"
                     strokeWidth={2}
@@ -417,20 +417,20 @@ export default function Dashboard() {
                   />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 flex items-center justify-center pointer-events-none">
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 flex items-center justify-center pointer-events-none">
                 <div className="text-center px-1">
-                  <div className="font-display text-xl font-bold text-slate-800 tabular-nums leading-tight" data-testid="rag-donut-total">
+                  <div className="font-display text-3xl font-bold text-slate-800 tabular-nums leading-tight" data-testid="rag-donut-total">
                     {ragTotal}
                   </div>
-                  <div className="text-[10px] uppercase tracking-wider text-slate-500 mt-0.5">Total</div>
+                  <div className="text-[11px] uppercase tracking-wider text-slate-500 mt-0.5">Total</div>
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 pt-1" data-testid="rag-donut-legend">
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 pt-2" data-testid="rag-donut-legend">
               {ragData.map((d) => (
-                <div key={d.name} className="inline-flex items-center gap-1.5 text-xs text-slate-700">
+                <div key={d.name} className="inline-flex items-center gap-1.5 text-sm text-slate-700">
                   <span
-                    className="inline-block w-2.5 h-2.5 rounded-sm shrink-0 border border-slate-200"
+                    className="inline-block w-3 h-3 rounded-sm shrink-0 border border-slate-200"
                     style={{ background: RAG_COLORS[d.name] || RAG_COLORS.NA }}
                     aria-hidden="true"
                   />
