@@ -130,14 +130,31 @@ def map_component(raw: Any) -> Optional[str]:
     return COMPONENT_ALIASES.get(key)
 
 
-def rupees_to_crore(value: Any, decimals: int = 4) -> Optional[float]:
+def rupees_to_crore(value: Any, decimals: Optional[int] = 4) -> Optional[float]:
+    """Convert absolute ₹ to ₹ crore.
+
+    Pass ``decimals=None`` to keep full float precision (preferred for KPI
+    source amounts that will be summed before display rounding).
+    """
     if value is None or value == "":
         return None
     try:
         amt = float(value)
     except (TypeError, ValueError):
         return None
-    return round(amt / RUPEES_PER_CRORE, decimals)
+    crore = amt / RUPEES_PER_CRORE
+    if decimals is None:
+        return crore
+    return round(crore, decimals)
+
+
+def crore_to_rupees(value: Any) -> Optional[float]:
+    if value is None or value == "":
+        return None
+    try:
+        return float(value) * RUPEES_PER_CRORE
+    except (TypeError, ValueError):
+        return None
 
 
 def extract_wide_header_map(header_row: Iterable[Any]) -> dict[int, str]:

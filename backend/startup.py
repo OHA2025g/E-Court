@@ -122,20 +122,23 @@ async def migrate_cloud_dashboard_visibility(db):
     baseline = next((p["period"] for p in REPORTING_PERIODS if p.get("is_baseline")), "2026-05")
     rupee_floor = 1000.0  # crore values in this PMIS stay well below this
 
-    # 1) Normalise Cloud financial units (₹ → ₹ crore) when values look like absolute rupees
+    # 1) Normalise Cloud financial units (₹ → ₹ crore) when values look like absolute rupees.
+    # Keep full precision (no 4dp truncation) and persist exact ₹ alongside crore fields.
     fin_fixed = 0
     async for row in db.financial_entries.find({"component": CLOUD_COMPUTING_COMPONENT}):
         updates = {}
         for field in ("fund_released", "fund_utilized", "fund_target", "fund_allocated"):
             val = row.get(field)
             if isinstance(val, (int, float)) and abs(val) >= rupee_floor:
-                updates[field] = round(float(val) / 1e7, 4)
+                rupees = float(val)
+                updates[field] = rupees / 1e7
+                updates[f"{field}_rupees"] = rupees
         if updates:
             released = updates.get("fund_released", row.get("fund_released"))
             utilized = updates.get("fund_utilized", row.get("fund_utilized"))
             if released not in (None, 0) and utilized is not None:
                 updates["utilisation_percent"] = round(100.0 * float(utilized) / float(released), 2)
-                updates["variance"] = round(float(released) - float(utilized), 4)
+                updates["variance"] = float(released) - float(utilized)
             await db.financial_entries.update_one({"_id": row["_id"]}, {"$set": updates})
             fin_fixed += 1
 
@@ -312,12 +315,94 @@ async def migrate_cloud_to_cumulative_period(db):
         )
 
 
+async def restore_cloud_financial_actuals_from_audits(db):
+    """Restore Cloud funds from create-audit absolute ₹ (undo post-entry edits / 4dp crore loss).
+
+    NICSI PI amounts were entered in rupees, then truncated to 4dp crore and in some
+    cases overwritten (e.g. Bombay copied to Calcutta). KPI totals must sum the
+    original rupee actuals, then convert to crore once.
+    """
+    # high_court → (released_rupees, utilized_rupees) from earliest rupee-scale create
+    by_hc: dict[str, tuple[float, float]] = {}
+    async for log in db.audit_logs.find(
+        {
+            "tracker": "financial",
+            "action": "create",
+            "changes.new.component": CLOUD_COMPUTING_COMPONENT,
+        }
+    ).sort("timestamp", 1):
+        entry = None
+        for change in log.get("changes") or []:
+            if change.get("field") == "entry" and isinstance(change.get("new"), dict):
+                entry = change["new"]
+                break
+        if not entry:
+            continue
+        hc = entry.get("high_court")
+        if not hc or hc in by_hc:
+            continue
+        released = entry.get("fund_released")
+        utilized = entry.get("fund_utilized")
+        if not isinstance(released, (int, float)):
+            continue
+        # Prefer absolute-₹ creates; skip dummy crore seed rows (< ₹1000).
+        if abs(float(released)) < 1000 and abs(float(utilized or 0)) < 1000:
+            continue
+        by_hc[hc] = (float(released), float(utilized or 0))
+
+    if not by_hc:
+        return
+
+    restored = 0
+    async for row in db.financial_entries.find({"component": CLOUD_COMPUTING_COMPONENT}):
+        hc = row.get("high_court")
+        if hc not in by_hc:
+            continue
+        rel_r, util_r = by_hc[hc]
+        # If create stored crore already, expand to rupees.
+        if abs(rel_r) < 1000 and abs(util_r) < 1000:
+            rel_r *= 1e7
+            util_r *= 1e7
+        rel_cr = rel_r / 1e7
+        util_cr = util_r / 1e7
+        same_rupees = (
+            row.get("fund_released_rupees") == rel_r
+            and row.get("fund_utilized_rupees") == util_r
+        )
+        same_crore = (
+            abs(float(row.get("fund_released") or 0) - rel_cr) < 1e-12
+            and abs(float(row.get("fund_utilized") or 0) - util_cr) < 1e-12
+        )
+        if same_rupees and same_crore:
+            continue
+        utilisation = round(100.0 * util_cr / rel_cr, 2) if rel_cr else None
+        await db.financial_entries.update_one(
+            {"_id": row["_id"]},
+            {"$set": {
+                "fund_released_rupees": rel_r,
+                "fund_utilized_rupees": util_r,
+                "fund_released": rel_cr,
+                "fund_utilized": util_cr,
+                "utilisation_percent": utilisation,
+                "variance": rel_cr - util_cr,
+            }},
+        )
+        restored += 1
+
+    if restored:
+        logger.info(
+            "Cloud financial actuals restored from create audits: %d rows across %d HCs",
+            restored, len(by_hc),
+        )
+
+
 async def ensure_indexes(db):
     await db.users.create_index("email", unique=True)
     await migrate_district_indexes(db)
     await migrate_outcome_district_index(db)
     await migrate_cloud_dashboard_visibility(db)
     await migrate_cloud_to_cumulative_period(db)
+    await restore_cloud_financial_actuals_from_audits(db)
     await db.bulk_previews.create_index("token", unique=True)
     await db.bulk_previews.create_index("expires_at", expireAfterSeconds=0)
     await db.audit_logs.create_index([("timestamp", -1)])

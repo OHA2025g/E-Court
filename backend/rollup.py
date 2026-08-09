@@ -135,19 +135,49 @@ def financial_national_totals_stages(extra_match: dict | None = None) -> list:
     ]
 
 
+def _amount_as_rupees_expr(crore_field: str, rupees_field: str) -> dict:
+    """Prefer exact *_rupees; else treat values ≥1000 as ₹, otherwise ₹ crore → ₹."""
+    return {
+        "$cond": [
+            {"$ne": [{"$ifNull": [f"${rupees_field}", None]}, None]},
+            {"$toDouble": {"$ifNull": [f"${rupees_field}", 0]}},
+            {
+                "$cond": [
+                    {"$gte": [{"$abs": {"$ifNull": [f"${crore_field}", 0]}}, 1000]},
+                    {"$toDouble": {"$ifNull": [f"${crore_field}", 0]}},
+                    {"$multiply": [{"$toDouble": {"$ifNull": [f"${crore_field}", 0]}}, 10_000_000]},
+                ]
+            },
+        ]
+    }
+
+
 def financial_exact_totals_stages(extra_match: dict | None = None) -> list:
-    """Sum raw financial_entries amounts (no intermediate per-HC/component rounding)."""
+    """Sum money in absolute ₹ first, then convert once to ₹ crore.
+
+    Avoids round-then-sum drift from per-row crore truncation (e.g. 4dp).
+    """
     stages = []
     if extra_match:
         stages.append({"$match": extra_match})
     stages.append({
         "$group": {
             "_id": None,
-            "target": {"$sum": {"$ifNull": ["$fund_target", 0]}},
-            "allocated": {"$sum": {"$ifNull": ["$fund_allocated", 0]}},
-            "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-            "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
+            "target_rupees": {"$sum": _amount_as_rupees_expr("fund_target", "fund_target_rupees")},
+            "allocated_rupees": {"$sum": _amount_as_rupees_expr("fund_allocated", "fund_allocated_rupees")},
+            "released_rupees": {"$sum": _amount_as_rupees_expr("fund_released", "fund_released_rupees")},
+            "utilized_rupees": {"$sum": _amount_as_rupees_expr("fund_utilized", "fund_utilized_rupees")},
             "count": {"$sum": 1},
+        },
+    })
+    stages.append({
+        "$project": {
+            "_id": 0,
+            "target": {"$divide": ["$target_rupees", 10_000_000]},
+            "allocated": {"$divide": ["$allocated_rupees", 10_000_000]},
+            "released": {"$divide": ["$released_rupees", 10_000_000]},
+            "utilized": {"$divide": ["$utilized_rupees", 10_000_000]},
+            "count": 1,
         },
     })
     return stages

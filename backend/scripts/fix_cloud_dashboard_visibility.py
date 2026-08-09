@@ -23,13 +23,15 @@ def fix_db(uri: str, db_name: str = "pmis_ecourts") -> None:
         for field in ("fund_released", "fund_utilized", "fund_target", "fund_allocated"):
             val = row.get(field)
             if isinstance(val, (int, float)) and abs(val) >= RUPEE_FLOOR:
-                updates[field] = round(float(val) / 1e7, 4)
+                rupees = float(val)
+                updates[field] = rupees / 1e7
+                updates[f"{field}_rupees"] = rupees
         if updates:
             released = updates.get("fund_released", row.get("fund_released"))
             utilized = updates.get("fund_utilized", row.get("fund_utilized"))
             if released not in (None, 0) and utilized is not None:
                 updates["utilisation_percent"] = round(100.0 * float(utilized) / float(released), 2)
-                updates["variance"] = round(float(released) - float(utilized), 4)
+                updates["variance"] = float(released) - float(utilized)
             db.financial_entries.update_one({"_id": row["_id"]}, {"$set": updates})
             fin_fixed += 1
 

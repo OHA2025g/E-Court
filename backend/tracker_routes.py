@@ -410,10 +410,31 @@ def register_tracker_routes(
         if body.fund_released is not None and body.fund_utilized is not None and body.fund_utilized > body.fund_released:
             warning = "Funds utilised exceed funds released"
 
-        utilisation = safe_div_fn(body.fund_utilized, body.fund_released)
+        # Absolute ₹ inputs (≥1000) are stored as exact *_rupees and converted to crore
+        # without intermediate 4dp truncation so national KPIs can sum actuals first.
+        rupee_floor = 1000.0
+        released_rupees = allocated_rupees = target_rupees = utilized_rupees = None
+        fund_released = body.fund_released
+        fund_utilized = body.fund_utilized
+        fund_target = body.fund_target
+        fund_allocated = body.fund_allocated
+        if fund_released is not None and abs(float(fund_released)) >= rupee_floor:
+            released_rupees = float(fund_released)
+            fund_released = released_rupees / 1e7
+        if fund_utilized is not None and abs(float(fund_utilized)) >= rupee_floor:
+            utilized_rupees = float(fund_utilized)
+            fund_utilized = utilized_rupees / 1e7
+        if fund_target is not None and abs(float(fund_target)) >= rupee_floor:
+            target_rupees = float(fund_target)
+            fund_target = target_rupees / 1e7
+        if fund_allocated is not None and abs(float(fund_allocated)) >= rupee_floor:
+            allocated_rupees = float(fund_allocated)
+            fund_allocated = allocated_rupees / 1e7
+
+        utilisation = safe_div_fn(fund_utilized, fund_released)
         variance = None
-        if body.fund_released is not None and body.fund_utilized is not None:
-            variance = round(body.fund_released - body.fund_utilized, 2)
+        if fund_released is not None and fund_utilized is not None:
+            variance = float(fund_released) - float(fund_utilized)
         thresholds = (await db.settings.find_one({"key": "rag_thresholds"}) or {}).get(
             "value", default_rag_thresholds
         )
@@ -423,9 +444,15 @@ def register_tracker_routes(
         existing = await db.financial_entries.find_one(q)
         assert_admin_can_create(user, existing)
         if user["role"] == "CPC" and existing:
-            body.fund_target = existing.get("fund_target")
-            body.fund_allocated = existing.get("fund_allocated")
-            body.fund_released = existing.get("fund_released")
+            fund_target = existing.get("fund_target")
+            fund_allocated = existing.get("fund_allocated")
+            fund_released = existing.get("fund_released")
+            target_rupees = existing.get("fund_target_rupees")
+            allocated_rupees = existing.get("fund_allocated_rupees")
+            released_rupees = existing.get("fund_released_rupees")
+            body.fund_target = fund_target
+            body.fund_allocated = fund_allocated
+            body.fund_released = fund_released
         description = body.description
         if description is None and existing:
             description = existing.get("description")
@@ -434,12 +461,20 @@ def register_tracker_routes(
             description = comp.get("description") if comp else None
         doc = {
             **q, "district": body.district,
-            "description": description, "fund_target": body.fund_target,
-            "fund_allocated": body.fund_allocated, "fund_released": body.fund_released,
-            "fund_utilized": body.fund_utilized, "utilisation_percent": utilisation,
+            "description": description, "fund_target": fund_target,
+            "fund_allocated": fund_allocated, "fund_released": fund_released,
+            "fund_utilized": fund_utilized, "utilisation_percent": utilisation,
             "variance": variance, "rag": rag, "remarks": body.remarks,
             "updated_by": user["email"], "updated_at": now_utc_fn(),
         }
+        if released_rupees is not None:
+            doc["fund_released_rupees"] = released_rupees
+        if utilized_rupees is not None:
+            doc["fund_utilized_rupees"] = utilized_rupees
+        if target_rupees is not None:
+            doc["fund_target_rupees"] = target_rupees
+        if allocated_rupees is not None:
+            doc["fund_allocated_rupees"] = allocated_rupees
         if existing:
             change_fields = ["fund_utilized", "remarks"] if user["role"] == "CPC" else [
                 "fund_released", "fund_utilized", "remarks",

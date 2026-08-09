@@ -1123,13 +1123,13 @@ async def compute_financial_tracker_dashboard(
         ]
     ).to_list(100)
 
-    # Chart series keep 4dp (storage precision) — not 2dp — so bar sums stay aligned with KPIs.
+    # Chart series keep full stored precision so bar sums stay aligned with KPIs.
     hc_released = [
-        {"high_court": r["_id"], "label": _short_hc(r["_id"]), "released": round(float(r["released"]), 4)}
+        {"high_court": r["_id"], "label": _short_hc(r["_id"]), "released": float(r["released"])}
         for r in hc_rows if r.get("released")
     ]
     hc_utilized = [
-        {"high_court": r["_id"], "label": _short_hc(r["_id"]), "utilized": round(float(r["utilized"]), 4)}
+        {"high_court": r["_id"], "label": _short_hc(r["_id"]), "utilized": float(r["utilized"])}
         for r in hc_rows if r.get("utilized")
     ]
 
@@ -1146,14 +1146,14 @@ async def compute_financial_tracker_dashboard(
         if hc not in top_hcs:
             continue
         comp_by_hc.setdefault(hc, {"high_court": hc, "label": _short_hc(hc)})
-        comp_by_hc[hc][comp] = round(rel, 4)
+        comp_by_hc[hc][comp] = rel
         util_pct_rows.setdefault(comp, {"component": comp})
         util_pct_rows[comp][hc] = safe_div_fn(util, rel)
         hc_comp_util.setdefault(hc, {"high_court": hc, "label": _short_hc(hc)})
-        hc_comp_util[hc][comp] = round(util, 4)
+        hc_comp_util[hc][comp] = util
 
     component_utilization = [
-        {"component": r["_id"], "utilized": round(float(r["utilized"]), 4)}
+        {"component": r["_id"], "utilized": float(r["utilized"])}
         for r in comp_totals if r.get("utilized")
     ]
 
