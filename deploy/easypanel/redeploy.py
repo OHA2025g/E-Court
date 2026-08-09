@@ -103,13 +103,31 @@ def login(email: str, password: str) -> str:
         raise PanelError(f"Unexpected login response: {data!r}")
 
 
+def _local_head_sha() -> str:
+    import subprocess
+
+    return subprocess.check_output(
+        ["git", "rev-parse", "HEAD"],
+        cwd=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        text=True,
+    ).strip()
+
+
 def github_main_sha() -> str:
     req = urllib.request.Request(
         f"https://api.github.com/repos/{OWNER}/{REPO}/commits/{REF}",
         headers={"Accept": "application/vnd.github+json", "User-Agent": "ecourts-redeploy"},
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.load(resp)["sha"]
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            return json.load(resp)["sha"]
+    except urllib.error.HTTPError as exc:
+        # Unauthenticated GitHub API often 403s mid-deploy; local HEAD is the tip we pushed.
+        if exc.code in (403, 429):
+            sha = _local_head_sha()
+            print(f"  GitHub API {exc.code}; using local HEAD {sha[:12]}")
+            return sha
+        raise
 
 
 def inspect(token: str, service: str) -> dict:
