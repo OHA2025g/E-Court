@@ -52,7 +52,14 @@ export function fmtNum(n, opts = {}) {
   if (n === null || n === undefined || n === "") return "NA";
   const v = Number(n);
   if (Number.isNaN(v)) return n;
-  return v.toLocaleString("en-IN", { maximumFractionDigits: opts.digits ?? 2 });
+  // Round once from the full-precision value for display (never sum pre-rounded parts).
+  const digits = opts.digits ?? 2;
+  const factor = 10 ** digits;
+  const rounded = Math.round((v + Number.EPSILON) * factor) / factor;
+  return rounded.toLocaleString("en-IN", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: digits,
+  });
 }
 
 export function fmtPct(n) {

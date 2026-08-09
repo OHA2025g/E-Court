@@ -362,8 +362,8 @@ export default function Dashboard() {
       <KpiCard testId={TID.kpiPhysicalTarget} icon={Target} label={labels.physTargetSum} value={fmtNum(s?.physical?.target, { digits: 0 })} hint={physHint} accent="primary" />
       <KpiCard testId={TID.kpiPhysicalAchieved} icon={CheckCircle} label={labels.physAchieved} value={fmtNum(s?.physical?.achieved, { digits: 0 })} hint={physHint} accent="slate" />
       <KpiCard testId={TID.kpiPhysicalPercent} icon={Gauge} label={labels.physPercent} value={fmtPct(s?.physical?.percent)} hint={labels.indicatorsHint(s?.physical?.indicator_count || 0)} accent={s?.physical?.percent >= 80 ? "green" : s?.physical?.percent >= 65 ? "amber" : "red"} />
-      <KpiCard testId={TID.kpiFinReleased} icon={CurrencyInr} label={labels.finReleased} value={fmtNum(s?.financial?.released)} hint={labels.componentRowsHint(s?.financial?.component_count || 0)} accent="primary" />
-      <KpiCard testId={TID.kpiFinUtilized} icon={CurrencyInr} label={labels.finUtilized} value={fmtNum(s?.financial?.utilized)} hint={varianceHint} accent="slate" />
+      <KpiCard testId={TID.kpiFinReleased} icon={CurrencyInr} label={labels.finReleased} value={fmtNum(s?.financial?.released, { digits: 2 })} hint={labels.componentRowsHint(s?.financial?.component_count || 0)} accent="primary" />
+      <KpiCard testId={TID.kpiFinUtilized} icon={CurrencyInr} label={labels.finUtilized} value={fmtNum(s?.financial?.utilized, { digits: 2 })} hint={varianceHint} accent="slate" />
       <KpiCard testId={TID.kpiFinPercent} icon={TrendUp} label={labels.finPercent} value={fmtPct(s?.financial?.utilisation_percent)} accent={s?.financial?.utilisation_percent >= 80 ? "green" : s?.financial?.utilisation_percent >= 65 ? "amber" : "red"} />
     </div>
   );

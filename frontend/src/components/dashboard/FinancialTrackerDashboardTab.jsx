@@ -236,28 +236,28 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
           testId="ft-kpi-target"
           icon={Target}
           label={labels.ftTarget}
-          value={fmtNum(kpis?.target)}
+          value={fmtNum(kpis?.target, { digits: 2 })}
           accent="primary"
         />
         <KpiCard
           testId="ft-kpi-allocated"
           icon={Wallet}
           label={labels.ftAllocated}
-          value={fmtNum(kpis?.allocated)}
+          value={fmtNum(kpis?.allocated, { digits: 2 })}
           accent="amber"
         />
         <KpiCard
           testId="ft-kpi-released"
           icon={CurrencyInr}
           label={labels.ftReleased}
-          value={fmtNum(kpis?.released)}
+          value={fmtNum(kpis?.released, { digits: 2 })}
           accent="green"
         />
         <KpiCard
           testId="ft-kpi-utilized"
           icon={CurrencyInr}
           label={labels.ftUtilized}
-          value={fmtNum(kpis?.utilized)}
+          value={fmtNum(kpis?.utilized, { digits: 2 })}
           hint={labels.ftUtilPctHint(fmtPct(kpis?.utilisation_percent))}
           accent="slate"
         />

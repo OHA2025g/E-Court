@@ -5,6 +5,7 @@ from typing import Any, Callable, Optional
 
 from rollup import (
     financial_component_hc_stages,
+    financial_exact_totals_stages,
     financial_hc_rollup_stages,
     financial_national_totals_stages,
     financial_period_totals_stages,
@@ -783,13 +784,7 @@ async def compute_dashboard_summary(
     fmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
 
     fin = await db.financial_entries.aggregate(
-        financial_rollup_stages(fmatch) + [
-            {"$group": {"_id": None,
-                        "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-                        "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
-                        "target": {"$sum": {"$ifNull": ["$fund_target", 0]}},
-                        "count": {"$sum": 1}}},
-        ]
+        financial_exact_totals_stages(fmatch)
     ).to_list(1)
     rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
     phys_totals = physical_absolute_totals(rolled_phys)
@@ -1076,21 +1071,25 @@ async def compute_financial_tracker_dashboard(
     reporting_period: Optional[str],
     extra_match: Optional[dict] = None,
 ) -> dict:
-    """Aggregates for the Financial Tracker dashboard tab (KPIs + charts)."""
+    """Aggregates for the Financial Tracker dashboard tab (KPIs + charts).
+
+    KPI totals sum raw ``financial_entries`` amounts first (full stored precision),
+    then utilisation % is derived from those exact sums. Display rounding happens
+    in the UI — never by summing already-rounded HC/component subtotals.
+    """
     fmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
 
     totals = await db.financial_entries.aggregate(
-        financial_rollup_stages(fmatch) + [
-            {"$group": {
-                "_id": None,
-                "target": {"$sum": {"$ifNull": ["$fund_target", 0]}},
-                "allocated": {"$sum": {"$ifNull": ["$fund_allocated", 0]}},
-                "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-                "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
-            }},
-        ]
+        financial_exact_totals_stages(fmatch)
     ).to_list(1)
-    t = totals[0] if totals else {"target": 0, "allocated": 0, "released": 0, "utilized": 0}
+    t = totals[0] if totals else {
+        "target": 0, "allocated": 0, "released": 0, "utilized": 0, "count": 0,
+    }
+    # Keep full precision for KPIs (do not round before returning).
+    released_exact = float(t.get("released") or 0)
+    utilized_exact = float(t.get("utilized") or 0)
+    target_exact = float(t.get("target") or 0)
+    allocated_exact = float(t.get("allocated") or 0)
 
     hc_rows = await db.financial_entries.aggregate(
         financial_rollup_stages(fmatch) + [
@@ -1124,12 +1123,13 @@ async def compute_financial_tracker_dashboard(
         ]
     ).to_list(100)
 
+    # Chart series keep 4dp (storage precision) — not 2dp — so bar sums stay aligned with KPIs.
     hc_released = [
-        {"high_court": r["_id"], "label": _short_hc(r["_id"]), "released": round(r["released"], 2)}
+        {"high_court": r["_id"], "label": _short_hc(r["_id"]), "released": round(float(r["released"]), 4)}
         for r in hc_rows if r.get("released")
     ]
     hc_utilized = [
-        {"high_court": r["_id"], "label": _short_hc(r["_id"]), "utilized": round(r["utilized"], 2)}
+        {"high_court": r["_id"], "label": _short_hc(r["_id"]), "utilized": round(float(r["utilized"]), 4)}
         for r in hc_rows if r.get("utilized")
     ]
 
@@ -1141,19 +1141,19 @@ async def compute_financial_tracker_dashboard(
     for row in comp_hc_rows:
         comp = row["_id"]["component"]
         hc = row["_id"]["high_court"]
-        rel = row.get("released") or 0
-        util = row.get("utilized") or 0
+        rel = float(row.get("released") or 0)
+        util = float(row.get("utilized") or 0)
         if hc not in top_hcs:
             continue
         comp_by_hc.setdefault(hc, {"high_court": hc, "label": _short_hc(hc)})
-        comp_by_hc[hc][comp] = round(rel, 2)
+        comp_by_hc[hc][comp] = round(rel, 4)
         util_pct_rows.setdefault(comp, {"component": comp})
         util_pct_rows[comp][hc] = safe_div_fn(util, rel)
         hc_comp_util.setdefault(hc, {"high_court": hc, "label": _short_hc(hc)})
-        hc_comp_util[hc][comp] = round(util, 2)
+        hc_comp_util[hc][comp] = round(util, 4)
 
     component_utilization = [
-        {"component": r["_id"], "utilized": round(r["utilized"], 2)}
+        {"component": r["_id"], "utilized": round(float(r["utilized"]), 4)}
         for r in comp_totals if r.get("utilized")
     ]
 
@@ -1204,11 +1204,11 @@ async def compute_financial_tracker_dashboard(
 
     return {
         "kpis": {
-            "target": round(t["target"], 2),
-            "allocated": round(t["allocated"], 2),
-            "released": round(t["released"], 2),
-            "utilized": round(t["utilized"], 2),
-            "utilisation_percent": safe_div_fn(t["utilized"], t["released"]),
+            "target": target_exact,
+            "allocated": allocated_exact,
+            "released": released_exact,
+            "utilized": utilized_exact,
+            "utilisation_percent": safe_div_fn(utilized_exact, released_exact),
         },
         "hc_released": hc_released,
         "hc_utilized": hc_utilized,

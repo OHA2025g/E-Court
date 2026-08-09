@@ -135,6 +135,24 @@ def financial_national_totals_stages(extra_match: dict | None = None) -> list:
     ]
 
 
+def financial_exact_totals_stages(extra_match: dict | None = None) -> list:
+    """Sum raw financial_entries amounts (no intermediate per-HC/component rounding)."""
+    stages = []
+    if extra_match:
+        stages.append({"$match": extra_match})
+    stages.append({
+        "$group": {
+            "_id": None,
+            "target": {"$sum": {"$ifNull": ["$fund_target", 0]}},
+            "allocated": {"$sum": {"$ifNull": ["$fund_allocated", 0]}},
+            "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
+            "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
+            "count": {"$sum": 1},
+        },
+    })
+    return stages
+
+
 def physical_period_totals_stages(extra_match: dict | None = None) -> list:
     return physical_rollup_stages(extra_match) + [
         {"$group": {
