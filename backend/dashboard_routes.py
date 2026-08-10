@@ -48,7 +48,7 @@ def _dimension_match(
 
 
 # Bump when dashboard aggregation semantics change so Redis does not serve stale KPIs.
-_DASHBOARD_CACHE_VER = "v19-yoy-all-periods-baseline-restore"
+_DASHBOARD_CACHE_VER = "v20-tracker-dedupe-after-restore"
 
 
 def _dashboard_cache_key(route: str, user: dict, reporting_period: Optional[str], include_unapproved: bool, **extra) -> str:

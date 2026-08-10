@@ -23,7 +23,10 @@ from seed_constants import (
     REPORTING_PERIODS,
     RETIRED_REPORTING_PERIODS,
 )
-from high_court_names import normalize_high_court_dashes
+from high_court_names import (
+    high_court_filter_value,
+    normalize_high_court_dashes,
+)
 from outcome_excel import build_kpi_master, outcome_seed_docs
 
 logger = logging.getLogger("pmis")
@@ -399,7 +402,10 @@ async def restore_cloud_financial_actuals_from_audits(db):
 
 FINANCIAL_BASELINE_RESTORE_KEY = "zeroed_financial_baseline_restored_v1"
 PHYSICAL_BASELINE_RESTORE_KEY = "zeroed_physical_baseline_restored_v1"
+TRACKER_DEDUPE_AFTER_RESTORE_KEY = "tracker_dedupe_after_baseline_restore_v1"
 BASELINE_RESTORE_PERIOD = "2026-05"
+# DoJ physical snapshot month — keep this; drop seed mirrors on 2026-05.
+PHYSICAL_DOJ_PERIOD = "2025-09"
 
 
 def _numeric_or_zero(value) -> float:
@@ -442,6 +448,9 @@ async def restore_zeroed_financial_baseline_from_seed(
     after amounts were wiped. seed_baseline will not re-run once baseline_seed_done
     is set, so e-Sewa / Digitisation stay at 0 on YoY All-periods until restored.
     Cloud Computing is skipped — live NICSI / audit-restored actuals take precedence.
+
+    Lookups are dash-insensitive so ASCII / en-dash Gauhati benches do not create
+    parallel unique-index rows.
     """
     done = await db.settings.find_one({"key": FINANCIAL_BASELINE_RESTORE_KEY})
     if done and done.get("value"):
@@ -466,7 +475,8 @@ async def restore_zeroed_financial_baseline_from_seed(
             continue
         if not _seed_has_financial_signal(raw):
             continue
-        hc = normalize_high_court_dashes(raw.get("high_court") or "")
+        hc_raw = raw.get("high_court") or ""
+        hc = normalize_high_court_dashes(hc_raw)
         if not hc:
             continue
 
@@ -475,6 +485,7 @@ async def restore_zeroed_financial_baseline_from_seed(
         util_pct = safe_div_fn(util, rel)
         variance = (rel - util) if (rel is not None and util is not None) else None
         payload = {
+            "high_court": hc,
             "description": raw.get("description"),
             "fund_target": raw.get("fund_target"),
             "fund_allocated": raw.get("fund_allocated"),
@@ -487,7 +498,7 @@ async def restore_zeroed_financial_baseline_from_seed(
         }
 
         candidates = await db.financial_entries.find(
-            {"high_court": hc, "component": component}
+            {"high_court": high_court_filter_value(hc_raw), "component": component}
         ).to_list(50)
         preferred = next(
             (r for r in candidates if r.get("reporting_period") == BASELINE_RESTORE_PERIOD),
@@ -506,9 +517,9 @@ async def restore_zeroed_financial_baseline_from_seed(
             continue
 
         await db.financial_entries.insert_one({
-            "high_court": hc,
             "component": component,
             "reporting_period": BASELINE_RESTORE_PERIOD,
+            "district": None,
             **payload,
             "created_by": "system",
             "created_at": now_utc_fn(),
@@ -533,7 +544,11 @@ async def restore_zeroed_physical_baseline_from_seed(
     compute_rag_fn: Callable,
     safe_div_fn: Callable,
 ):
-    """Re-apply seed physical amounts onto zeroed live rows (non-Cloud)."""
+    """Update zeroed physical rows in place from seed (non-Cloud). Never insert.
+
+    Inserting onto 2026-05 previously duplicated DoJ 2025-09 tracker rows when
+    All periods was selected. Only fill amounts on existing shells.
+    """
     done = await db.settings.find_one({"key": PHYSICAL_BASELINE_RESTORE_KEY})
     if done and done.get("value"):
         return
@@ -549,7 +564,6 @@ async def restore_zeroed_physical_baseline_from_seed(
 
     thresholds = DEFAULT_RAG_THRESHOLDS
     updated = 0
-    inserted = 0
 
     for raw in baseline:
         component = raw.get("component")
@@ -558,7 +572,8 @@ async def restore_zeroed_physical_baseline_from_seed(
             continue
         if not _seed_has_physical_signal(raw):
             continue
-        hc = normalize_high_court_dashes(raw.get("high_court") or "")
+        hc_raw = raw.get("high_court") or ""
+        hc = normalize_high_court_dashes(hc_raw)
         if not hc:
             continue
 
@@ -566,6 +581,7 @@ async def restore_zeroed_physical_baseline_from_seed(
         achieved = raw.get("achieved")
         percent = safe_div_fn(achieved, target)
         payload = {
+            "high_court": hc,
             "target": target,
             "achieved": achieved,
             "percent": percent,
@@ -575,51 +591,117 @@ async def restore_zeroed_physical_baseline_from_seed(
 
         candidates = await db.physical_entries.find(
             {
-                "high_court": hc,
+                "high_court": high_court_filter_value(hc_raw),
                 "component": component,
                 "indicator": indicator,
                 "$or": [{"district": None}, {"district": {"$exists": False}}],
             }
         ).to_list(50)
-        # Prefer DoJ physical snapshot month (2025-09), then seed baseline month.
-        sep = next((r for r in candidates if r.get("reporting_period") == "2025-09"), None)
+        if not candidates:
+            continue
+        # Prefer DoJ physical snapshot month (2025-09), then any zeroed shell.
+        sep = next((r for r in candidates if r.get("reporting_period") == PHYSICAL_DOJ_PERIOD), None)
         preferred = next(
             (r for r in candidates if r.get("reporting_period") == BASELINE_RESTORE_PERIOD),
             None,
         )
-        target_row = sep or preferred or (candidates[0] if candidates else None)
-
-        if target_row is not None:
-            if not _physical_amounts_zeroed(target_row):
-                continue
-            await db.physical_entries.update_one(
-                {"_id": target_row["_id"]},
-                {"$set": payload},
-            )
-            updated += 1
+        target_row = sep or preferred or candidates[0]
+        if not _physical_amounts_zeroed(target_row):
             continue
-
-        await db.physical_entries.insert_one({
-            "high_court": hc,
-            "component": component,
-            "indicator": indicator,
-            "reporting_period": BASELINE_RESTORE_PERIOD,
-            "district": None,
-            **payload,
-            "created_by": "system",
-            "created_at": now_utc_fn(),
-        })
-        inserted += 1
+        await db.physical_entries.update_one(
+            {"_id": target_row["_id"]},
+            {"$set": payload},
+        )
+        updated += 1
 
     await db.settings.update_one(
         {"key": PHYSICAL_BASELINE_RESTORE_KEY},
         {"$set": {"value": True}},
         upsert=True,
     )
-    if updated or inserted:
+    if updated:
+        logger.info("Zeroed physical baseline restored from seed: updated=%d", updated)
+
+
+def _financial_signal_score(row: dict) -> float:
+    return (
+        abs(_numeric_or_zero(row.get("fund_allocated")))
+        + abs(_numeric_or_zero(row.get("fund_target")))
+        + abs(_numeric_or_zero(row.get("fund_released")))
+        + abs(_numeric_or_zero(row.get("fund_utilized")))
+    )
+
+
+async def dedupe_tracker_entries_after_baseline_restore(db):
+    """Remove seed-mirror physical rows and dash-variant financial duplicates.
+
+    Physical: drop non-Cloud 2026-05 rows left by the insert-capable restore
+    (DoJ physical stays on 2025-09; Cloud stays on CLOUD_CUMULATIVE_PERIOD).
+    Financial: collapse ASCII/en-dash Gauhati parallel keys for the same period.
+    """
+    done = await db.settings.find_one({"key": TRACKER_DEDUPE_AFTER_RESTORE_KEY})
+    if done and done.get("value"):
+        return
+
+    phys_res = await db.physical_entries.delete_many(
+        {
+            "reporting_period": BASELINE_RESTORE_PERIOD,
+            "component": {"$ne": CLOUD_COMPUTING_COMPONENT},
+        }
+    )
+    phys_deleted = int(phys_res.deleted_count or 0)
+
+    fin_deleted = 0
+    groups: dict[tuple, list] = {}
+    async for row in db.financial_entries.find({}):
+        hc_key = normalize_high_court_dashes(row.get("high_court") or "", "-") or ""
+        key = (
+            hc_key,
+            row.get("component") or "",
+            row.get("reporting_period") or "",
+            row.get("district"),
+        )
+        groups.setdefault(key, []).append(row)
+
+    for rows in groups.values():
+        if len(rows) < 2:
+            # Still canonicalize dash spelling on survivors.
+            row = rows[0]
+            canonical = normalize_high_court_dashes(row.get("high_court") or "")
+            if canonical and row.get("high_court") != canonical:
+                await db.financial_entries.update_one(
+                    {"_id": row["_id"]},
+                    {"$set": {"high_court": canonical}},
+                )
+            continue
+        rows_sorted = sorted(
+            rows,
+            key=lambda r: (
+                _financial_signal_score(r),
+                1 if "–" in str(r.get("high_court") or "") else 0,
+            ),
+            reverse=True,
+        )
+        keep = rows_sorted[0]
+        canonical = normalize_high_court_dashes(keep.get("high_court") or "")
+        if canonical and keep.get("high_court") != canonical:
+            await db.financial_entries.update_one(
+                {"_id": keep["_id"]},
+                {"$set": {"high_court": canonical}},
+            )
+        for drop in rows_sorted[1:]:
+            await db.financial_entries.delete_one({"_id": drop["_id"]})
+            fin_deleted += 1
+
+    await db.settings.update_one(
+        {"key": TRACKER_DEDUPE_AFTER_RESTORE_KEY},
+        {"$set": {"value": True}},
+        upsert=True,
+    )
+    if phys_deleted or fin_deleted:
         logger.info(
-            "Zeroed physical baseline restored from seed: updated=%d inserted=%d",
-            updated, inserted,
+            "Tracker dedupe after baseline restore: physical_deleted=%d financial_deleted=%d",
+            phys_deleted, fin_deleted,
         )
 
 
@@ -1183,6 +1265,7 @@ async def run_startup(
     await restore_zeroed_physical_baseline_from_seed(
         db, now_utc_fn, compute_rag_fn, safe_div_fn,
     )
+    await dedupe_tracker_entries_after_baseline_restore(db)
     await seed_dpr(db, now_utc_fn)
     await seed_pmu_tasks(db, now_utc_fn)
     await seed_tm_tasks(db, now_utc_fn)
