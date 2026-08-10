@@ -23,6 +23,7 @@ const METRICS = [
 ];
 
 function findStateInfo(states, geoName) {
+  if (!states || typeof states !== "object" || Array.isArray(states)) return null;
   if (states[geoName]) return states[geoName];
   const lower = geoName.toLowerCase();
   for (const k of Object.keys(states)) {
@@ -61,6 +62,9 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
   const label = metricLabel(metric);
   const detail = hover ? mapHoverDetail(hover, metric, label) : null;
   const counts = hover ? mapHoverCounts(hover, metric) : null;
+  const scopedStates = Object.values(states).filter((s) => s && s.in_scope !== false);
+  const hasRagData = scopedStates.some((s) => s.rag && s.rag !== "NA");
+  const mapLoaded = data !== undefined;
 
   const onMapMouseMove = useCallback((e) => {
     setHover((prev) => {
@@ -100,6 +104,18 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
           onMouseMove={onMapMouseMove}
           onMouseLeave={() => setHover(null)}
         >
+          {mapLoaded && !hasRagData && (
+            <div
+              className="mb-3 rounded-sm border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900"
+              data-testid="india-map-empty-state"
+              role="status"
+            >
+              No {label.toLowerCase()} RAG data for the current filters. Try{" "}
+              <span className="font-semibold">All periods</span>
+              {" "}or a period with tracker data (e.g. Physical Achieved till Sep 2025 /
+              Sep 2023 – Mar 2026).
+            </div>
+          )}
           <ComposableMap
             projection={INDIA_MAP_PROJECTION}
             projectionConfig={INDIA_MAP_PROJECTION_CONFIG}
@@ -109,11 +125,11 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
             data-testid="india-choropleth"
           >
             <Geographies geography={INDIA_TOPO_URL}>
-              {({ geographies }) => geographies.map(geo => {
+              {({ geographies }) => (geographies || []).map(geo => {
                 const stateName = geo.properties.ST_NM || geo.properties.NAME_1 || geo.properties.name || "";
                 const info = findStateInfo(states, stateName);
                 const rag = info?.in_scope === false ? "NA" : (info?.rag || "NA");
-                const fill = RAG_COLORS[rag];
+                const fill = RAG_COLORS[rag] || RAG_COLORS.NA;
                 const strokeStyle = choroplethStrokeProps(rag, accessible);
                 return (
                   <Geography
@@ -133,7 +149,7 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
                       const rect = parent?.getBoundingClientRect?.() || e.currentTarget.getBoundingClientRect();
                       setHover({
                         name: stateName,
-                        ...info,
+                        ...(info || {}),
                         rag,
                         x: e.clientX - rect.left + 12,
                         y: e.clientY - rect.top + 12,
@@ -166,7 +182,7 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
                     {label}:{" "}
                     {hover.percent != null ? `${Number(hover.percent).toFixed(1)}%` : "No data"}
                     {" · "}
-                    <span className="font-semibold" style={{ color: RAG_COLORS[hover.rag] }}>
+                    <span className="font-semibold" style={{ color: RAG_COLORS[hover.rag] || RAG_COLORS.NA }}>
                       {accessible && RAG_SYMBOLS[hover.rag] ? `${RAG_SYMBOLS[hover.rag]} ` : ""}
                       {hover.rag}
                     </span>

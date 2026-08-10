@@ -179,6 +179,16 @@ export default function Dashboard() {
     if (cpcCourt) setHighCourt(cpcCourt);
   }, [cpcCourt]);
 
+  const onDashboardTabChange = (tab) => {
+    setActiveTab(tab);
+    // Keep Geographic / other tall tabs visible after switching from a scrolled Overview.
+    requestAnimationFrame(() => {
+      document
+        .querySelector('[data-testid="dashboard-tabs"]')
+        ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    });
+  };
+
   const periods = useQuery({ queryKey: ["periods"], queryFn: () => api.get("/master/periods").then(r => r.data) });
   const hcs = useQuery({ queryKey: ["hcs"], queryFn: () => api.get("/master/high-courts").then(r => r.data) });
   const comps = useQuery({ queryKey: ["comps"], queryFn: () => api.get("/master/components").then(r => r.data) });
@@ -573,7 +583,7 @@ export default function Dashboard() {
     <div data-testid={TID.dashboard} className="dashboard-shell">
       {unifiedHeader}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={activeTab} onValueChange={onDashboardTabChange} className="w-full">
         <TabsList
           data-testid="dashboard-tabs"
           className="dashboard-tab-list w-full h-auto"

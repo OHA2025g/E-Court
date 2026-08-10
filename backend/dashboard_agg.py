@@ -871,13 +871,21 @@ async def compute_dashboard_summary(
             "component_count": 0,
         }
     else:
+        released = f.get("released")
+        utilized = f.get("utilized")
+        # Null-preserving financial totals: only compute variance when both sides exist.
+        variance = (
+            round(float(released) - float(utilized), 2)
+            if released is not None and utilized is not None
+            else None
+        )
         financial = {
-            "target": f["target"],
-            "released": f["released"],
-            "utilized": f["utilized"],
-            "utilisation_percent": safe_div_fn(f["utilized"], f["released"]),
-            "variance": round((f["released"] - f["utilized"]), 2),
-            "component_count": f["count"],
+            "target": f.get("target"),
+            "released": released,
+            "utilized": utilized,
+            "utilisation_percent": safe_div_fn(utilized, released),
+            "variance": variance,
+            "component_count": f.get("count") or 0,
         }
     return {
         "physical": {

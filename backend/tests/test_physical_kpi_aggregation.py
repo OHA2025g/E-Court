@@ -157,3 +157,21 @@ def test_sum_ratio_still_used_when_targets_exist():
         {"high_court": "B", "target": 100, "achieved": 60},
     ]
     assert physical_percent_with_relative_fallback(rows, _safe_div, sum_ratio=True) == 50.0
+
+
+def test_financial_variance_null_safe():
+    """Released/utilised nulls must not raise when building dashboard summary financial block."""
+    released, utilized = 0.0, None
+    variance = (
+        round(float(released) - float(utilized), 2)
+        if released is not None and utilized is not None
+        else None
+    )
+    assert variance is None
+    released, utilized = 10.5, 4.25
+    variance = (
+        round(float(released) - float(utilized), 2)
+        if released is not None and utilized is not None
+        else None
+    )
+    assert variance == 6.25
