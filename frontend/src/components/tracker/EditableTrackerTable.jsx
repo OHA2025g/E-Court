@@ -11,16 +11,17 @@ import {
 /**
  * Inline-editable table cell — saves on blur/Enter.
  */
-function EditableCell({ value, onSave, type = "text", disabled, className = "" }) {
+function EditableCell({ value, display, onSave, type = "text", disabled, className = "" }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value ?? "");
+  const shown = display != null ? display : (value ?? "NA");
 
   React.useEffect(() => {
     if (!editing) setDraft(value ?? "");
   }, [value, editing]);
 
   if (disabled) {
-    return <span className={className}>{value ?? "NA"}</span>;
+    return <span className={className}>{shown}</span>;
   }
 
   async function commit() {
@@ -39,7 +40,7 @@ function EditableCell({ value, onSave, type = "text", disabled, className = "" }
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.key === "Enter" && setEditing(true)}
       >
-        {value ?? "NA"}
+        {shown}
       </span>
     );
   }
@@ -252,10 +253,11 @@ export default function EditableTrackerTable({
                 <td key={col.key} className={col.align === "right" ? "text-right" : ""}>
                   {col.editable && canEdit ? (
                     <EditableCell
-                      value={col.render ? col.render(row) : row[col.key]}
+                      value={col.editValue ? col.editValue(row) : row[col.field || col.key]}
+                      display={col.render ? col.render(row) : undefined}
                       type={col.inputType || "text"}
                       disabled={col.editable === "admin" && !canEdit}
-                      onSave={(v) => saveField(row, col.field || col.key, v)}
+                      onSave={(v) => saveField(row, (col.getField ? col.getField(row) : null) || col.field || col.key, v)}
                     />
                   ) : col.render ? (
                     col.render(row)

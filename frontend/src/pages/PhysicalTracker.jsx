@@ -324,9 +324,42 @@ export default function PhysicalTracker() {
     );
     if (!isEsewaComponent) {
       cols.push(
-        { key: "target", label: labels.target, align: "right", editable: canEditTarget, field: "target", inputType: "number", render: r => fmtNum(r.target, { digits: 0 }) },
-        { key: "achieved", label: labels.achieved, align: "right", editable: canEdit, field: "achieved", inputType: "number", render: r => fmtNum(r.achieved, { digits: 0 }) },
-        { key: "percent", label: labels.percent, align: "right", render: r => fmtPct(r.percent) },
+        {
+          key: "target",
+          label: labels.target,
+          align: "right",
+          editable: canEditTarget,
+          field: "target",
+          inputType: "number",
+          getField: (r) => (r.component === ESEWA_COMPONENT ? "target_cpc" : "target"),
+          editValue: (r) => (r.component === ESEWA_COMPONENT ? r.target_cpc : r.target),
+          render: (r) => fmtNum(
+            r.component === ESEWA_COMPONENT ? r.target_cpc : r.target,
+            { digits: 0 },
+          ),
+        },
+        {
+          key: "achieved",
+          label: labels.achieved,
+          align: "right",
+          editable: canEdit,
+          field: "achieved",
+          inputType: "number",
+          getField: (r) => (r.component === ESEWA_COMPONENT ? "achieved_cpc" : "achieved"),
+          editValue: (r) => (r.component === ESEWA_COMPONENT ? r.achieved_cpc : r.achieved),
+          render: (r) => fmtNum(
+            r.component === ESEWA_COMPONENT ? r.achieved_cpc : r.achieved,
+            { digits: 0 },
+          ),
+        },
+        {
+          key: "percent",
+          label: labels.percent,
+          align: "right",
+          render: (r) => fmtPct(
+            r.component === ESEWA_COMPONENT ? r.percent_cpc : r.percent,
+          ),
+        },
       );
     } else {
       cols.push(
@@ -339,7 +372,19 @@ export default function PhysicalTracker() {
       );
     }
     cols.push(
-      { key: "rag", label: labels.rag, render: r => <RagBadge status={ragColor(isEsewaComponent ? r.percent_ecommittee : r.percent)} /> },
+      {
+        key: "rag",
+        label: labels.rag,
+        render: (r) => (
+          <RagBadge
+            status={ragColor(
+              isEsewaComponent
+                ? r.percent_ecommittee
+                : (r.component === ESEWA_COMPONENT ? r.percent_cpc : r.percent),
+            )}
+          />
+        ),
+      },
       { key: "remarks", label: labels.remarks, editable: canEdit, field: "remarks" },
       {
         key: "comments",
