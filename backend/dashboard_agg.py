@@ -994,11 +994,11 @@ async def compute_financial_status_yoy(
     reporting_period: Optional[str],
     extra_match: Optional[dict] = None,
 ) -> dict:
-    """Component × FY financial status for the DoJ-style Year-on-Year demo report.
+    """Component × FY financial status for the DoJ-style Year-on-Year report.
 
     PMIS stores cumulative fund fields per reporting period (not native FY splits).
-    Mapping used for the demo layout:
-      - cost_estimation ← fund_allocated (fallback fund_target)
+    Mapping used for the layout:
+      - cost_estimation ← fund_allocated (fallback fund_target, then Released)
       - FY 2023-24 expenditure ← fund_utilized (DoJ utilised 2023–24 + baseline util)
       - FY 2024-25 released ← fund_released (DoJ released 2024–27 cumulative load)
       - other FY cells ← 0 (provisional / not yet split in tracker)
@@ -1029,7 +1029,7 @@ async def compute_financial_status_yoy(
         fy2627_exp = 0.0
         grand_rel = fy2324_rel + fy2425_rel + fy2526_rel + fy2627_rel
         grand_exp = fy2324_exp + fy2425_exp + fy2526_exp + fy2627_exp
-        # Demo data often has Released/Utilised without Allocated — fall back so cost column is not blank.
+        # Tracker often has Released/Utilised without Allocated — fall back so cost is not blank.
         if not cost and grand_rel:
             cost = grand_rel
         exp_pct = safe_div_fn(grand_exp, cost if cost else None)

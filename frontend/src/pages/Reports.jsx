@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { api, fmtNum, fmtPct, BACKEND_URL, formatApiError } from "@/lib/api";
@@ -207,27 +207,21 @@ export default function Reports() {
   const isDemoFinYoy = activeTab === "demo-fin-yoy";
   const isDemoReport = isDemoCwpf || isDemoFinYoy;
   const periodLabel = useMemo(() => {
+    if (!period) return t("common.allPeriods");
     const match = (periods.data || []).find((p) => p.period === period);
     return match?.label || period || "";
-  }, [periods.data, period]);
+  }, [periods.data, period, t]);
 
-  // Demo reports: use the cumulative loaded period (Sep 2023 – Mar 2026), not empty
-  // monthly shells like August 2026 that only exist as calendar placeholders.
-  useEffect(() => {
-    if (!isDemoReport || !periods.data?.length) return;
-    const list = periods.data;
-    const codes = new Set(list.map((p) => String(p.period)));
-    const preferred = codes.has("2026-03")
-      ? "2026-03"
-      : (codes.has("2025-09") ? "2025-09" : (list[0]?.period || ""));
-    if (!preferred) return;
-    const current = String(period || "");
-    // Empty selection or monthly shells after the cumulative Mar-2026 load → switch to preferred.
-    const needsPreferred = !current || (current > "2026-03" && current !== preferred);
-    if (needsPreferred && current !== preferred) {
-      setPeriod(preferred);
+  // DoJ-style reports need loaded tracker rollups — calendar months (e.g. Aug 2026) are often empty.
+  // When opening these tabs, default to All periods (same as national dashboard).
+  const onReportTabChange = (tab) => {
+    const enteringDoj = tab === "demo-cwpf" || tab === "demo-fin-yoy";
+    const leavingOther = activeTab !== "demo-cwpf" && activeTab !== "demo-fin-yoy";
+    setActiveTab(tab);
+    if (enteringDoj && leavingOther) {
+      setPeriod("");
     }
-  }, [isDemoReport, period, periods.data]);
+  };
 
   return (
     <div data-testid={TID.reportsRoot} className="space-y-6">
@@ -272,7 +266,7 @@ export default function Reports() {
         </div>
       </Card>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={activeTab} onValueChange={onReportTabChange} className="w-full">
         <TabsList className="bg-transparent border-b border-slate-200 w-full justify-start rounded-none p-0 flex-wrap h-auto">
           <TabsTrigger value="physical" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs">{t("reports.tabPhysical")}</TabsTrigger>
           <TabsTrigger value="financial" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-[#003B73] data-[state=active]:text-[#003B73] data-[state=inactive]:text-slate-600 uppercase tracking-wider text-xs">{t("reports.tabFinancial")}</TabsTrigger>

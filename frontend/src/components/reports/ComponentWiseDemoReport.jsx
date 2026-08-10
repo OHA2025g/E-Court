@@ -45,58 +45,68 @@ function fmtPhysAch(pct, target) {
   return `${Math.round(Number(pct))}%`;
 }
 
+function enrichRows(rows) {
+  return (rows || []).map((r) => {
+    const budget = r.fin_budget ?? r.fin_allocated ?? r.fin_released ?? 0;
+    const utilized = r.fin_utilized ?? 0;
+    const expPct =
+      r.fin_exp_percent != null
+        ? r.fin_exp_percent
+        : budget
+          ? Math.round((utilized / budget) * 10000) / 100
+          : r.fin_percent;
+    return {
+      ...r,
+      budget,
+      utilized,
+      expPct,
+      rag: reportRag(expPct),
+    };
+  });
+}
+
+function rowsHaveFigures(rows) {
+  return (rows || []).some(
+    (r) => (Number(r.budget) || 0) > 0 || (Number(r.utilized) || 0) > 0 || (Number(r.phys_target) || 0) > 0,
+  );
+}
+
 /**
- * Pixel-faithful "Demo Component Wise Physical & Financial Report"
- * styled like the DoJ Overall Component Wise Physical & Financial Report.
+ * DoJ-style Component Wise Physical & Financial Report from live tracker rollups.
  */
 export default function ComponentWiseDemoReport({ period, periodLabel }) {
   const printRef = useRef(null);
   const { user } = useAuth();
   const isAdmin = user?.role === "Admin";
 
-  const { data: rows = [], isLoading, isError } = useQuery({
-    queryKey: ["demo-cwpf-report", period, isAdmin],
-    queryFn: () =>
-      api
-        .get("/dashboard/by-component", {
-          params: {
-            reporting_period: period || undefined,
-            // Admin: include ETL / unapproved periods so demo report shows loaded tracker data
-            include_unapproved: isAdmin ? true : undefined,
-          },
-        })
-        .then((r) => r.data),
+  const fetchParams = (reportingPeriod) => ({
+    ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
+    include_unapproved: isAdmin ? true : undefined,
   });
 
-  const enriched = useMemo(() => {
-    return (rows || []).map((r) => {
-      const budget = r.fin_budget ?? r.fin_allocated ?? r.fin_released ?? 0;
-      const utilized = r.fin_utilized ?? 0;
-      const expPct =
-        r.fin_exp_percent != null
-          ? r.fin_exp_percent
-          : budget
-            ? Math.round((utilized / budget) * 10000) / 100
-            : r.fin_percent;
-      return {
-        ...r,
-        budget,
-        utilized,
-        expPct,
-        rag: reportRag(expPct),
-      };
-    });
-  }, [rows]);
+  const primary = useQuery({
+    queryKey: ["cwpf-report", period, isAdmin],
+    queryFn: () =>
+      api.get("/dashboard/by-component", { params: fetchParams(period || undefined) }).then((r) => r.data),
+  });
 
-  const hasData = useMemo(
-    () => enriched.some((r) => (
-      (Number(r.budget) || 0) > 0
-      || (Number(r.utilized) || 0) > 0
-      || (Number(r.phys_target) || 0) > 0
-      || (Number(r.phys_achieved) || 0) > 0
-    )),
-    [enriched],
-  );
+  const primaryEnriched = useMemo(() => enrichRows(primary.data), [primary.data]);
+  const primaryEmpty = primary.isSuccess && !rowsHaveFigures(primaryEnriched);
+
+  // Empty calendar months (e.g. Aug 2026) → fall back to All periods tracker load.
+  const fallback = useQuery({
+    queryKey: ["cwpf-report", "all-periods", isAdmin],
+    queryFn: () =>
+      api.get("/dashboard/by-component", { params: fetchParams(undefined) }).then((r) => r.data),
+    enabled: Boolean(period) && primaryEmpty,
+  });
+
+  const fallbackEnriched = useMemo(() => enrichRows(fallback.data), [fallback.data]);
+  const usingFallback = Boolean(period) && primaryEmpty && rowsHaveFigures(fallbackEnriched);
+  const enriched = usingFallback ? fallbackEnriched : primaryEnriched;
+  const isLoading = primary.isLoading || (Boolean(period) && primaryEmpty && fallback.isLoading);
+  const isError = primary.isError || (usingFallback && fallback.isError);
+  const hasData = rowsHaveFigures(enriched);
 
   const totals = useMemo(() => {
     const budget = enriched.reduce((s, r) => s + (Number(r.budget) || 0), 0);
@@ -104,7 +114,9 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
     return { budget, utilized };
   }, [enriched]);
 
-  const asOnLabel = periodLabel || period || "selected period";
+  const asOnLabel = usingFallback
+    ? "All periods"
+    : (periodLabel || period || "All periods");
 
   function handlePrint() {
     window.print();
@@ -129,7 +141,7 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `demo-component-wise-physical-financial-${period || "all"}.csv`;
+    a.download = `component-wise-physical-financial-${usingFallback ? "all" : (period || "all")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -149,7 +161,7 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
         <header className="cwpf-header">
           <div className="cwpf-header-spacer" />
           <h1 className="cwpf-title">
-            Demo Component Wise Physical &amp; Financial Report
+            Component Wise Physical &amp; Financial Report
             <span className="cwpf-title-asof"> as on {asOnLabel}</span>
           </h1>
           <DojEmblem />
@@ -159,10 +171,19 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
         {isLoading && <div className="cwpf-status">Loading report…</div>}
         {isError && <div className="cwpf-status error">Unable to load component-wise data.</div>}
 
+        {!isLoading && !isError && usingFallback && (
+          <div className="cwpf-status warn no-print" role="status">
+            No physical/financial figures for <span className="font-semibold">{periodLabel || period}</span>
+            {" "}— showing <span className="font-semibold">All periods</span> from loaded tracker data.
+          </div>
+        )}
+
         {!isLoading && !isError && !hasData && (
           <div className="cwpf-status warn no-print">
-            No physical/financial figures for this period. Choose a reporting period with loaded
-            tracker data (e.g. Sep 2023 – Mar 2026 or Physical Achieved till Sep 2025).
+            No physical/financial figures for the selected filters. Choose{" "}
+            <span className="font-semibold">All periods</span>,{" "}
+            <span className="font-semibold">Physical Achieved till Sep 2025</span>, or{" "}
+            <span className="font-semibold">Sep 2023 – Mar 2026</span>.
           </div>
         )}
 

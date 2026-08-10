@@ -34,34 +34,58 @@ function fmtPctWhole(n) {
   return `${Math.round(Number(n))}%`;
 }
 
+function mapYoyRows(data) {
+  return (data?.rows || []).map((r) => ({
+    ...r,
+    rag: yoyRag(r.exp_percent_of_allocated),
+  }));
+}
+
+function yoyHasFigures(rows) {
+  return (rows || []).some(
+    (r) =>
+      (Number(r.cost_estimation) || 0) > 0
+      || (Number(r.grand_released) || 0) > 0
+      || (Number(r.grand_expenditure) || 0) > 0,
+  );
+}
+
 /**
- * Pixel-faithful "Demo Financial Status of 24 Components – Year on Year"
- * (uses the system's 17 BRD components; FY cells mapped from tracker fund fields).
+ * DoJ-style Financial Status Year-on-Year report from live tracker fund fields.
  */
 export default function FinancialYoyDemoReport({ period, periodLabel }) {
   const printRef = useRef(null);
   const { user } = useAuth();
   const isAdmin = user?.role === "Admin";
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["demo-fin-yoy-report", period, isAdmin],
-    queryFn: () =>
-      api
-        .get("/dashboard/financial-status-yoy", {
-          params: {
-            reporting_period: period || undefined,
-            include_unapproved: isAdmin ? true : undefined,
-          },
-        })
-        .then((r) => r.data),
+  const fetchParams = (reportingPeriod) => ({
+    ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
+    include_unapproved: isAdmin ? true : undefined,
   });
 
-  const rows = useMemo(() => {
-    return (data?.rows || []).map((r) => ({
-      ...r,
-      rag: yoyRag(r.exp_percent_of_allocated),
-    }));
-  }, [data]);
+  const primary = useQuery({
+    queryKey: ["fin-yoy-report", period, isAdmin],
+    queryFn: () =>
+      api.get("/dashboard/financial-status-yoy", { params: fetchParams(period || undefined) }).then((r) => r.data),
+  });
+
+  const primaryRows = useMemo(() => mapYoyRows(primary.data), [primary.data]);
+  const primaryEmpty = primary.isSuccess && !yoyHasFigures(primaryRows);
+
+  const fallback = useQuery({
+    queryKey: ["fin-yoy-report", "all-periods", isAdmin],
+    queryFn: () =>
+      api.get("/dashboard/financial-status-yoy", { params: fetchParams(undefined) }).then((r) => r.data),
+    enabled: Boolean(period) && primaryEmpty,
+  });
+
+  const fallbackRows = useMemo(() => mapYoyRows(fallback.data), [fallback.data]);
+  const usingFallback = Boolean(period) && primaryEmpty && yoyHasFigures(fallbackRows);
+  const data = usingFallback ? fallback.data : primary.data;
+  const rows = usingFallback ? fallbackRows : primaryRows;
+  const isLoading = primary.isLoading || (Boolean(period) && primaryEmpty && fallback.isLoading);
+  const isError = primary.isError || (usingFallback && fallback.isError);
+  const hasData = yoyHasFigures(rows);
 
   const totals = useMemo(() => {
     const sum = (key) => rows.reduce((s, r) => s + (Number(r[key]) || 0), 0);
@@ -82,11 +106,6 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
       exp_percent_of_allocated: cost ? Math.round((grandExp / cost) * 10000) / 100 : null,
     };
   }, [rows]);
-
-  const hasData = useMemo(
-    () => rows.some((r) => (Number(r.cost_estimation) || 0) > 0 || (Number(r.grand_released) || 0) > 0 || (Number(r.grand_expenditure) || 0) > 0),
-    [rows],
-  );
 
   function handlePrint() {
     window.print();
@@ -131,7 +150,7 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `demo-financial-status-yoy-${period || "all"}.csv`;
+    a.download = `financial-status-yoy-${usingFallback ? "all" : (period || "all")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -149,23 +168,32 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
 
       <div className="fyoy-sheet" ref={printRef}>
         <header className="fyoy-header">
-          <h1 className="fyoy-title">Demo Financial Status of 24 Components – Year on Year</h1>
+          <h1 className="fyoy-title">Financial Status of Components – Year on Year</h1>
           <div className="fyoy-header-right">
             <DojEmblem />
           </div>
         </header>
 
-        {periodLabel || period ? (
-          <p className="fyoy-period no-print">Reporting period: {periodLabel || period}</p>
-        ) : null}
+        <p className="fyoy-period no-print">
+          Reporting period: {usingFallback ? "All periods" : (periodLabel || period || "All periods")}
+        </p>
 
         {isLoading && <div className="fyoy-status">Loading report…</div>}
         {isError && <div className="fyoy-status error">Unable to load year-on-year financial data.</div>}
 
+        {!isLoading && !isError && usingFallback && (
+          <div className="fyoy-status warn no-print" role="status">
+            No financial figures for <span className="font-semibold">{periodLabel || period}</span>
+            {" "}— showing <span className="font-semibold">All periods</span> from loaded tracker data.
+          </div>
+        )}
+
         {!isLoading && !isError && !hasData && (
           <div className="fyoy-status warn no-print">
-            No financial figures for this period. Choose a reporting period with loaded tracker
-            data (e.g. Sep 2023 – Mar 2026 or Physical Achieved till Sep 2025).
+            No financial figures for the selected filters. Choose{" "}
+            <span className="font-semibold">All periods</span>,{" "}
+            <span className="font-semibold">Physical Achieved till Sep 2025</span>, or{" "}
+            <span className="font-semibold">Sep 2023 – Mar 2026</span>.
           </div>
         )}
 
@@ -244,7 +272,7 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
         <p className="fyoy-footnote no-print">
           {data?.mapping_note ||
             "Amounts ₹ Cr. Row colour by expenditure % of allocated (Green ≥50%, Amber 20–50%, Red <20%)."}
-          {" "}System has {rows.length} BRD components (demo title retains DoJ “24 Components” wording).
+          {" "}Figures are based on live PMIS tracker data ({rows.length} BRD components).
         </p>
       </div>
 
