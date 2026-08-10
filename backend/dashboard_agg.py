@@ -286,6 +286,41 @@ async def compute_states_rag(
     else:
         hc_pct = await aggregate_hc_percent_physical(db, match)
     thresholds = await fetch_rag_thresholds(db)
+
+    # Absolute counts for map tooltips (same detail style as component×HC heatmap).
+    hc_detail: dict[str, dict] = {}
+    if metric == "financial":
+        fin_rows = await db.financial_entries.aggregate(financial_hc_rollup_stages(match)).to_list(100)
+        for r in fin_rows:
+            hc_detail[r["_id"]] = {
+                "released": float(r.get("r") or 0),
+                "utilized": float(r.get("u") or 0),
+                "uom": "₹ Cr",
+            }
+    elif metric == "outcome":
+        out_rows = await db.outcome_entries.aggregate(outcome_hc_rollup_stages(match)).to_list(100)
+        for r in out_rows:
+            hc_detail[r["_id"]] = {
+                "reported": int(r.get("reported") or 0),
+                "total": int(r.get("total") or 0),
+                "uom": "KPIs",
+            }
+    else:
+        phys_rows = await db.physical_entries.aggregate(physical_rollup_stages(match)).to_list(50000)
+        by_hc: dict[str, list] = defaultdict(list)
+        for r in phys_rows:
+            hc = r.get("high_court")
+            if hc:
+                by_hc[hc].append(r)
+        for hc, rows in by_hc.items():
+            totals = physical_absolute_totals(rows)
+            hc_detail[hc] = {
+                "target": totals.get("target"),
+                "achieved": totals.get("achieved"),
+                "uom": totals.get("uom"),
+                "mixed_uom": bool(totals.get("mixed_uom")),
+            }
+
     user_hc = user.get("high_court") if user.get("role") == "CPC" else None
     out = {}
     for state, hc in state_to_hc.items():
@@ -293,12 +328,14 @@ async def compute_states_rag(
             out[state] = {"high_court": hc, "percent": None, "rag": "NA", "in_scope": False}
             continue
         pct = hc_pct.get(hc)
-        out[state] = {
+        payload = {
             "high_court": hc,
             "percent": pct,
             "rag": compute_rag_fn(pct, thresholds),
             "in_scope": True,
         }
+        payload.update(hc_detail.get(hc) or {})
+        out[state] = payload
     return out
 
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import {
   INDIA_MAP_COMPACT_DIMENSIONS,
@@ -6,6 +6,7 @@ import {
   INDIA_MAP_PROJECTION,
   INDIA_MAP_STYLE,
 } from "@/lib/indiaMapConfig";
+import { mapHoverCounts, mapHoverDetail } from "@/lib/mapHoverDetail";
 import {
   RAG_COLORS,
   RAG_SYMBOLS,
@@ -52,7 +53,26 @@ export default function PublicIndiaChoropleth({
     return states;
   }, [metric, states, statesFinancial, statesOutcome]);
 
-  const metricLabel = metric === "financial" ? "Utilisation" : metric === "outcome" ? "Reporting" : "Physical";
+  const metricLabel = metric === "financial"
+    ? "Financial utilisation"
+    : metric === "outcome"
+      ? "Outcome reporting coverage"
+      : "Physical achievement";
+
+  const detail = hover ? mapHoverDetail(hover, metric, metricLabel) : null;
+  const counts = hover ? mapHoverCounts(hover, metric) : null;
+
+  const onMapMouseMove = useCallback((e) => {
+    setHover((prev) => {
+      if (!prev) return prev;
+      const rect = e.currentTarget.getBoundingClientRect();
+      return {
+        ...prev,
+        x: e.clientX - rect.left + 12,
+        y: e.clientY - rect.top + 12,
+      };
+    });
+  }, []);
 
   return (
     <div>
@@ -69,7 +89,11 @@ export default function PublicIndiaChoropleth({
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
-        <div className="lg:col-span-3 bg-white rounded-xl relative overflow-visible border border-slate-200/80 shadow-inner shadow-slate-100/80 p-2 pt-3">
+        <div
+          className="lg:col-span-3 bg-white rounded-xl relative overflow-visible border border-slate-200/80 shadow-inner shadow-slate-100/80 p-2 pt-3"
+          onMouseMove={onMapMouseMove}
+          onMouseLeave={() => setHover(null)}
+        >
           <ComposableMap
             projection={INDIA_MAP_PROJECTION}
             projectionConfig={INDIA_MAP_COMPACT_PROJECTION_CONFIG}
@@ -97,25 +121,53 @@ export default function PublicIndiaChoropleth({
                       hover: { outline: "none", fill: "#1E40AF", cursor: "pointer" },
                       pressed: { outline: "none" },
                     }}
-                    onMouseEnter={() => setHover({ name: stateName, ...info, rag })}
-                    onMouseLeave={() => setHover(null)}
+                    onMouseEnter={(e) => {
+                      const parent = e.currentTarget.ownerSVGElement?.parentElement;
+                      const rect = parent?.getBoundingClientRect?.() || e.currentTarget.getBoundingClientRect();
+                      setHover({
+                        name: stateName,
+                        ...info,
+                        rag,
+                        x: e.clientX - rect.left + 12,
+                        y: e.clientY - rect.top + 12,
+                      });
+                    }}
                   />
                 );
               })}
             </Geographies>
           </ComposableMap>
           {hover && (
-            <div className="absolute bottom-4 left-4 bg-[#0A1128]/95 backdrop-blur-sm text-white px-4 py-3 rounded-xl text-xs shadow-xl pointer-events-none border border-white/10">
-              <div className="font-semibold">{hover.name}</div>
-              <div className="text-slate-300 text-[11px]">High Court: {hover.high_court || "—"}</div>
-              <div className="text-slate-300 text-[11px]">
-                {metricLabel}: {hover.percent != null ? `${hover.percent.toFixed(1)}%` : "No data for this HC"} ·
-                <span className="ml-1 font-semibold" style={{ color: RAG_COLORS[hover.rag] }}>
-                  {accessible && RAG_SYMBOLS[hover.rag] ? `${RAG_SYMBOLS[hover.rag]} ` : ""}{hover.rag}
+            <div
+              className="absolute z-20 max-w-xs pointer-events-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs shadow-xl"
+              style={{ left: hover.x, top: hover.y }}
+              data-testid="public-india-map-tooltip"
+              role="tooltip"
+            >
+              <div className="font-semibold text-slate-900">{hover.name}</div>
+              <div className="text-slate-500 text-[11px] mt-0.5">
+                High Court: <span className="text-[#003B73] font-medium">{hover.high_court || "—"}</span>
+              </div>
+              {counts && (
+                <div className="text-slate-800 text-[11px] mt-1.5 leading-snug font-medium">{counts}</div>
+              )}
+              <div className="text-slate-600 text-[11px] mt-1">
+                {metricLabel}:{" "}
+                {hover.percent != null ? `${Number(hover.percent).toFixed(1)}%` : "No data"}
+                {" · "}
+                <span className="font-semibold" style={{ color: RAG_COLORS[hover.rag] }}>
+                  {accessible && RAG_SYMBOLS[hover.rag] ? `${RAG_SYMBOLS[hover.rag]} ` : ""}
+                  {hover.rag}
                 </span>
               </div>
             </div>
           )}
+          <div
+            className={`mt-2 mx-1 mb-1 text-[11px] px-2 py-1.5 rounded-lg border ${detail ? "border-[#003B73]/30 bg-[#003B73]/5 text-slate-800" : "border-slate-200 bg-slate-50 text-slate-500"}`}
+            data-testid="public-india-map-hover-detail"
+          >
+            {detail || "Hover a state for Target / Achieved or Released / Utilised (same detail as heatmap)"}
+          </div>
         </div>
         <div className="text-xs space-y-3 self-start p-4 rounded-xl bg-slate-50 border border-slate-200/80">
           <div className="font-semibold uppercase tracking-wider text-[10px] text-slate-600">Legend</div>
