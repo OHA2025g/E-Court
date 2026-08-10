@@ -9,6 +9,9 @@ from seed_constants import (
     STORAGE_TYPE_OPTIONS,
 )
 
+# e-Sewa stores dual targets (DPR / CPC); dashboards use Target & Achieved as per CPC.
+ESEWA_COMPONENT = "e-Sewa Kendras"
+
 
 def resolve_storage_type(component: str, storage_type: Optional[str] = None) -> Optional[str]:
     """Return storage_type for Cloud Computing rows; None for all other components."""
@@ -23,6 +26,33 @@ def resolve_storage_type(component: str, storage_type: Optional[str] = None) -> 
             f"Allowed: {', '.join(STORAGE_TYPE_OPTIONS)}"
         )
     return st
+
+
+def _esewa_cpc_as_target_achieved_stage() -> dict:
+    """Map e-Sewa Kendras CPC fields onto target/achieved for dashboard rollups.
+
+    Tracker keeps Target DPR / Achieved eCommittee / Target CPC / Achieved CPC
+    separately with main target/achieved often null; national/component views use
+    Target as per CPC and Achieved as per CPC (fall back to main fields if CPC unset).
+    """
+    return {
+        "$addFields": {
+            "target": {
+                "$cond": [
+                    {"$eq": ["$component", ESEWA_COMPONENT]},
+                    {"$ifNull": ["$target_cpc", "$target"]},
+                    "$target",
+                ]
+            },
+            "achieved": {
+                "$cond": [
+                    {"$eq": ["$component", ESEWA_COMPONENT]},
+                    {"$ifNull": ["$achieved_cpc", "$achieved"]},
+                    "$achieved",
+                ]
+            },
+        }
+    }
 
 
 def sum_nullable(values) -> Optional[float]:
@@ -69,6 +99,7 @@ def physical_rollup_stages(extra_match: dict | None = None) -> list:
     stages = []
     if extra_match:
         stages.append({"$match": extra_match})
+    stages.append(_esewa_cpc_as_target_achieved_stage())
     stages.extend([
         {"$group": {
             "_id": {
@@ -127,6 +158,7 @@ def physical_hc_rollup_stages(extra_match: dict | None = None) -> list:
     stages = []
     if extra_match:
         stages.append({"$match": extra_match})
+    stages.append(_esewa_cpc_as_target_achieved_stage())
     stages.extend([
         {"$group": {
             "_id": "$high_court",

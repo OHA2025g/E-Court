@@ -30,6 +30,31 @@ def _cleanup_physical(period: str):
     })
 
 
+def test_esewa_rollup_uses_cpc_target_achieved():
+    period = _period()
+    _cleanup_physical(period)
+    now = datetime.now(timezone.utc)
+    base = {
+        "high_court": HC, "component": COMPONENT, "indicator": INDICATOR,
+        "reporting_period": period, "percent": None, "rag": "NA", "remarks": None,
+        "created_by": "test", "created_at": now, "updated_by": "test", "updated_at": now,
+        "target": None, "achieved": None,
+        "target_dpr": 100, "achieved_ecommittee": 10,
+    }
+    _sync_db.physical_entries.insert_many([
+        {**base, "district": DIST_A, "target_cpc": 40, "achieved_cpc": 30},
+        {**base, "district": DIST_B, "target_cpc": 60, "achieved_cpc": 40},
+    ])
+    try:
+        rolled = list(_sync_db.physical_entries.aggregate(
+            physical_national_totals_stages({"high_court": HC, "reporting_period": period})
+        ))
+        assert rolled[0]["target"] == 100
+        assert rolled[0]["achieved"] == 70
+    finally:
+        _cleanup_physical(period)
+
+
 def test_national_totals_rollup_sums_districts():
     period = _period()
     _cleanup_physical(period)
