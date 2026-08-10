@@ -207,19 +207,22 @@ export default function Reports() {
   const isDemoFinYoy = activeTab === "demo-fin-yoy";
   const isDemoReport = isDemoCwpf || isDemoFinYoy;
   const periodLabel = useMemo(() => {
-    if (!period) return t("common.allPeriods");
+    if (!period) return t("dashboard.allPeriods");
     const match = (periods.data || []).find((p) => p.period === period);
     return match?.label || period || "";
   }, [periods.data, period, t]);
 
-  // DoJ-style reports need loaded tracker rollups — calendar months (e.g. Aug 2026) are often empty.
-  // When opening these tabs, default to All periods (same as national dashboard).
+  // DoJ-style reports need loaded tracker rollups — empty calendar months (e.g. Aug 2026) have no figures.
+  // Prefer Sep 2023 – Mar 2026 (2026-03), then Physical till Sep 2025, else All periods.
   const onReportTabChange = (tab) => {
     const enteringDoj = tab === "demo-cwpf" || tab === "demo-fin-yoy";
     const leavingOther = activeTab !== "demo-cwpf" && activeTab !== "demo-fin-yoy";
     setActiveTab(tab);
     if (enteringDoj && leavingOther) {
-      setPeriod("");
+      const codes = new Set((periods.data || []).map((p) => String(p.period)));
+      if (codes.has("2026-03")) setPeriod("2026-03");
+      else if (codes.has("2025-09")) setPeriod("2025-09");
+      else setPeriod("");
     }
   };
 
