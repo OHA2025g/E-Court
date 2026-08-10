@@ -182,11 +182,10 @@ export default function Dashboard() {
   const periods = useQuery({ queryKey: ["periods"], queryFn: () => api.get("/master/periods").then(r => r.data) });
   const hcs = useQuery({ queryKey: ["hcs"], queryFn: () => api.get("/master/high-courts").then(r => r.data) });
   const comps = useQuery({ queryKey: ["comps"], queryFn: () => api.get("/master/components").then(r => r.data) });
-  // Default once to baseline month so Viewer/Admin open on the gated national snapshot.
+  // Default once to All periods (baseline May 2026 is no longer a filter option).
   useEffect(() => {
     if (periodReady || !periods.data) return;
-    const baseline = periods.data.find((p) => p.is_baseline);
-    setPeriod(baseline?.period || "");
+    setPeriod("");
     setPeriodReady(true);
   }, [periods.data, periodReady]);
 

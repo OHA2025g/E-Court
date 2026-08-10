@@ -21,6 +21,7 @@ from seed_constants import (
     HIGH_COURTS,
     OUTCOME_SUBJECTS,
     REPORTING_PERIODS,
+    RETIRED_REPORTING_PERIODS,
 )
 from high_court_names import normalize_high_court_dashes
 from outcome_excel import build_kpi_master, outcome_seed_docs
@@ -506,6 +507,9 @@ async def seed_master(db):
                 {"$set": {"label": row["label"], "is_baseline": row.get("is_baseline", False)}},
                 upsert=True,
             )
+    # Drop retired periods so they no longer appear in Reporting Period filters.
+    if RETIRED_REPORTING_PERIODS:
+        await db.reporting_periods.delete_many({"period": {"$in": list(RETIRED_REPORTING_PERIODS)}})
     if await db.settings.count_documents({"key": "rag_thresholds"}) == 0:
         await db.settings.insert_one({"key": "rag_thresholds", "value": DEFAULT_RAG_THRESHOLDS})
     if await db.settings.count_documents({"key": "admin_ip_allowlist"}) == 0:

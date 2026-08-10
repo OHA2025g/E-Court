@@ -56,8 +56,7 @@ export default function OutcomeTracker() {
   const periods = useQuery({ queryKey: ["periods"], queryFn: () => api.get("/master/periods").then(r => r.data) });
   useEffect(() => {
     if (!period && periods.data?.length) {
-      const baseline = periods.data.find((p) => p.is_baseline);
-      setPeriod(baseline?.period || periods.data[0].period);
+      setPeriod(periods.data[0].period);
     }
   }, [period, periods.data]);
   const districts = useQuery({

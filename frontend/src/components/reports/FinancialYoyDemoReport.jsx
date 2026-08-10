@@ -165,7 +165,7 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
         {!isLoading && !isError && !hasData && (
           <div className="fyoy-status warn no-print">
             No financial figures for this period. Select the baseline period
-            (“Baseline — cum. to May 2026”) or another period with loaded tracker data.
+            Select a reporting period with loaded tracker data.
           </div>
         )}
 

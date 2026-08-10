@@ -43,11 +43,13 @@ def dashboard_open_periods() -> set[str]:
     """Periods always visible on national dashboard without submission approval.
 
     Includes baseline months plus fixed cumulative snapshots (DoJ physical till
-    Sep 2025, Cloud Sep 2023 – Mar 2026).
+    Sep 2025, Cloud Sep 2023 – Mar 2026). Former May 2026 baseline stays open
+    for residual rows even though it is no longer a selectable filter option.
     """
     open_periods = set(baseline_periods())
     open_periods.add(CLOUD_CUMULATIVE_PERIOD)
     open_periods.add("2025-09")  # Physical Achieved till Sep 2025
+    open_periods.add("2026-05")  # retired baseline month
     return open_periods
 
 
