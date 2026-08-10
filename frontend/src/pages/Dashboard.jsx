@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api, fmtNum, fmtPct, BACKEND_URL } from "@/lib/api";
-import { formatPhysAmount, formatPhysTargetAchieved } from "@/lib/physFormat";
+import { formatPhysAmountLabel, formatPhysTargetAchieved } from "@/lib/physFormat";
 import { useAuth } from "@/lib/auth";
 import Card, { KpiCard } from "@/components/Card";
 import RagBadge from "@/components/RagBadge";
@@ -355,9 +355,9 @@ export default function Dashboard() {
   );
 
   const physUom = s?.physical?.absolute_scope || s?.physical?.uom;
-  // Digitization scope → Cr pages (e.g. 3,108.77), never absolute *1e7 page counts.
-  const physTargetDisp = formatPhysAmount(s?.physical?.target, physUom).text;
-  const physAchievedDisp = formatPhysAmount(s?.physical?.achieved, physUom).text;
+  // Digitization → Cr pages; Cloud capacity (stored GB) → TB.
+  const physTargetDisp = formatPhysAmountLabel(s?.physical?.target, physUom);
+  const physAchievedDisp = formatPhysAmountLabel(s?.physical?.achieved, physUom);
   const kpiRow = (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
       <KpiCard testId={TID.kpiPhysicalTarget} icon={Target} label={labels.physTargetSum} value={physTargetDisp} accent="primary" />
@@ -502,8 +502,8 @@ export default function Dashboard() {
             {sortedCompRows.map((r) => (
               <tr key={r.component}>
                 <td className="font-medium text-slate-700">{r.component}</td>
-                <td className="dense-table-center">{formatPhysAmount(r.phys_target, r.phys_uom).text}</td>
-                <td className="dense-table-center">{formatPhysAmount(r.phys_achieved, r.phys_uom).text}</td>
+                <td className="dense-table-center">{formatPhysAmountLabel(r.phys_target, r.phys_uom)}</td>
+                <td className="dense-table-center">{formatPhysAmountLabel(r.phys_achieved, r.phys_uom)}</td>
                 <td className="dense-table-center">
                   <div className="flex justify-center">
                     <RagBadge status={physRag(r.phys_percent)} label={fmtPct(r.phys_percent)} />
