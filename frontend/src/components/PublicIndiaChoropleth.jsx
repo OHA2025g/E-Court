@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import {
   INDIA_MAP_COMPACT_DIMENSIONS,
@@ -15,6 +15,13 @@ import {
   ragLegendLabels,
   useAccessibleRag,
 } from "@/lib/ragColors";
+
+/** Must run sync in the handler — e.currentTarget is null inside setState updaters. */
+function pointerInMap(mapEl, clientX, clientY) {
+  if (!mapEl) return null;
+  const rect = mapEl.getBoundingClientRect();
+  return { x: clientX - rect.left + 12, y: clientY - rect.top + 12 };
+}
 
 const INDIA_TOPO_URL = process.env.PUBLIC_URL
   ? `${process.env.PUBLIC_URL}/geo/india-states.geojson`
@@ -45,6 +52,7 @@ export default function PublicIndiaChoropleth({
   const [accessible] = useAccessibleRag();
   const [metric, setMetric] = useState("physical");
   const [hover, setHover] = useState(null);
+  const mapShellRef = useRef(null);
   const legend = useMemo(() => ragLegendLabels(), []);
 
   const activeStates = useMemo(() => {
@@ -63,15 +71,9 @@ export default function PublicIndiaChoropleth({
   const counts = hover ? mapHoverCounts(hover, metric) : null;
 
   const onMapMouseMove = useCallback((e) => {
-    setHover((prev) => {
-      if (!prev) return prev;
-      const rect = e.currentTarget.getBoundingClientRect();
-      return {
-        ...prev,
-        x: e.clientX - rect.left + 12,
-        y: e.clientY - rect.top + 12,
-      };
-    });
+    const pos = pointerInMap(mapShellRef.current, e.clientX, e.clientY);
+    if (!pos) return;
+    setHover((prev) => (prev ? { ...prev, ...pos } : prev));
   }, []);
 
   return (
@@ -90,6 +92,7 @@ export default function PublicIndiaChoropleth({
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
         <div
+          ref={mapShellRef}
           className="lg:col-span-3 bg-white rounded-xl relative overflow-visible border border-slate-200/80 shadow-inner shadow-slate-100/80 p-2 pt-3"
           onMouseMove={onMapMouseMove}
           onMouseLeave={() => setHover(null)}
@@ -122,14 +125,13 @@ export default function PublicIndiaChoropleth({
                       pressed: { outline: "none" },
                     }}
                     onMouseEnter={(e) => {
-                      const parent = e.currentTarget.ownerSVGElement?.parentElement;
-                      const rect = parent?.getBoundingClientRect?.() || e.currentTarget.getBoundingClientRect();
+                      const pos = pointerInMap(mapShellRef.current, e.clientX, e.clientY);
+                      if (!pos) return;
                       setHover({
                         name: stateName,
                         ...info,
                         rag,
-                        x: e.clientX - rect.left + 12,
-                        y: e.clientY - rect.top + 12,
+                        ...pos,
                       });
                     }}
                   />

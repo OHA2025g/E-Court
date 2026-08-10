@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { api } from "@/lib/api";
@@ -11,6 +11,13 @@ import {
 } from "@/lib/indiaMapConfig";
 import { mapHoverCounts, mapHoverDetail } from "@/lib/mapHoverDetail";
 import { RAG_COLORS, RAG_SYMBOLS, choroplethStrokeProps, ragLegendLabels, useAccessibleRag } from "@/lib/ragColors";
+
+/** Read pointer offset vs map shell. Must run sync in the handler — e.currentTarget is null inside setState updaters. */
+function pointerInMap(mapEl, clientX, clientY) {
+  if (!mapEl) return null;
+  const rect = mapEl.getBoundingClientRect();
+  return { x: clientX - rect.left + 12, y: clientY - rect.top + 12 };
+}
 
 const INDIA_TOPO_URL = process.env.PUBLIC_URL
   ? `${process.env.PUBLIC_URL}/geo/india-states.geojson`
@@ -90,6 +97,7 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
   const usingFallback = Boolean(reportingPeriod) && primaryEmpty && statesHaveRag(fallback.data);
   const data = usingFallback ? fallback.data : primary.data;
   const [hover, setHover] = useState(null);
+  const mapShellRef = useRef(null);
   const states = data || {};
   const legend = ragLegendLabels(thresholds.data);
   const label = metricLabel(metric);
@@ -99,15 +107,9 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
   const mapLoaded = primary.isSuccess || fallback.isSuccess;
 
   const onMapMouseMove = useCallback((e) => {
-    setHover((prev) => {
-      if (!prev) return prev;
-      const rect = e.currentTarget.getBoundingClientRect();
-      return {
-        ...prev,
-        x: e.clientX - rect.left + 12,
-        y: e.clientY - rect.top + 12,
-      };
-    });
+    const pos = pointerInMap(mapShellRef.current, e.clientX, e.clientY);
+    if (!pos) return;
+    setHover((prev) => (prev ? { ...prev, ...pos } : prev));
   }, []);
 
   return (
@@ -133,6 +135,7 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
     >
       <div className="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4">
         <div
+          ref={mapShellRef}
           className="lg:col-span-3 bg-white rounded-sm relative overflow-visible pt-1 min-h-[320px]"
           onMouseMove={onMapMouseMove}
           onMouseLeave={() => setHover(null)}
@@ -199,14 +202,13 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
                         pressed: { outline: "none" },
                       }}
                       onMouseEnter={(e) => {
-                        const parent = e.currentTarget.ownerSVGElement?.parentElement;
-                        const rect = parent?.getBoundingClientRect?.() || e.currentTarget.getBoundingClientRect();
+                        const pos = pointerInMap(mapShellRef.current, e.clientX, e.clientY);
+                        if (!pos) return;
                         setHover({
                           name: stateName,
                           ...(info || {}),
                           rag,
-                          x: e.clientX - rect.left + 12,
-                          y: e.clientY - rect.top + 12,
+                          ...pos,
                         });
                       }}
                     />
