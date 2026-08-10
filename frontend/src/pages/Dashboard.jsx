@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api, fmtNum, fmtPct, BACKEND_URL } from "@/lib/api";
+import { formatPhysAmount, formatPhysTargetAchieved, displayPhysUom } from "@/lib/physFormat";
 import { useAuth } from "@/lib/auth";
 import Card, { KpiCard } from "@/components/Card";
 import RagBadge from "@/components/RagBadge";
@@ -47,9 +48,9 @@ function PerformancePctTooltip({ active, payload, label, nameKey = "component", 
   const row = payload[0]?.payload || {};
   const title = label || row[nameKey] || "—";
   const componentName = row.component || selectedComponent || "";
-  const isCloud = componentName === "Cloud Computing & Storage"
-    || row.phys_uom === "GB / TB / PB"
-    || row.phys_uom === "GB";
+  const physUom = row.phys_uom
+    || (componentName === "Cloud Computing & Storage" ? "GB / TB / PB" : undefined)
+    || (componentName === "Digitisation of Court Records" ? "Crore Pages" : undefined);
   return (
     <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs shadow-md max-w-xs">
       <div className="font-semibold text-slate-800 mb-1.5">{title}</div>
@@ -57,12 +58,8 @@ function PerformancePctTooltip({ active, payload, label, nameKey = "component", 
         const key = entry.dataKey;
         const isPhys = key === "phys_percent";
         const pct = entry.value;
-        const target = fmtNum(row.phys_target, { digits: 0 });
-        const achieved = fmtNum(row.phys_achieved, { digits: 0 });
         const countLine = isPhys
-          ? (isCloud
-            ? `Target ${target} GB / Achieved ${achieved} GB`
-            : `Target ${target} / Achieved ${achieved}`)
+          ? formatPhysTargetAchieved(row.phys_target, row.phys_achieved, physUom)
           : `Released ₹${fmtNum(row.fin_released)} Cr / Utilised ₹${fmtNum(row.fin_utilized)} Cr`;
         return (
           <div key={key} className="mb-1 last:mb-0">
@@ -349,18 +346,21 @@ export default function Dashboard() {
   );
 
   const physUom = s?.physical?.absolute_scope || s?.physical?.uom;
-  const physHint = physUom
+  const physUomLabel = displayPhysUom(physUom);
+  const physHint = physUomLabel
     ? (s?.physical?.mixed_uom
-      ? `${labels.absoluteScopeHint(physUom)} · ${labels.indicatorsHint(s?.physical?.indicator_count || 0)}`
-      : `${labels.indicatorsHint(s?.physical?.indicator_count || 0)} · ${labels.uomHint(physUom)}`)
+      ? `${labels.absoluteScopeHint(physUomLabel)} · ${labels.indicatorsHint(s?.physical?.indicator_count || 0)}`
+      : `${labels.indicatorsHint(s?.physical?.indicator_count || 0)} · ${labels.uomHint(physUomLabel)}`)
     : labels.indicatorsHint(s?.physical?.indicator_count || 0);
+  const physTargetDisp = formatPhysAmount(s?.physical?.target, physUom).text;
+  const physAchievedDisp = formatPhysAmount(s?.physical?.achieved, physUom).text;
   const varianceHint = s?.financial?.variance == null
     ? labels.varianceHint("NA")
     : labels.varianceHint(fmtNum(s.financial.variance));
   const kpiRow = (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-      <KpiCard testId={TID.kpiPhysicalTarget} icon={Target} label={labels.physTargetSum} value={fmtNum(s?.physical?.target, { digits: 0 })} hint={physHint} accent="primary" />
-      <KpiCard testId={TID.kpiPhysicalAchieved} icon={CheckCircle} label={labels.physAchieved} value={fmtNum(s?.physical?.achieved, { digits: 0 })} hint={physHint} accent="slate" />
+      <KpiCard testId={TID.kpiPhysicalTarget} icon={Target} label={labels.physTargetSum} value={physTargetDisp} hint={physHint} accent="primary" />
+      <KpiCard testId={TID.kpiPhysicalAchieved} icon={CheckCircle} label={labels.physAchieved} value={physAchievedDisp} hint={physHint} accent="slate" />
       <KpiCard testId={TID.kpiPhysicalPercent} icon={Gauge} label={labels.physPercent} value={fmtPct(s?.physical?.percent)} hint={labels.indicatorsHint(s?.physical?.indicator_count || 0)} accent={s?.physical?.percent >= 80 ? "green" : s?.physical?.percent >= 65 ? "amber" : "red"} />
       <KpiCard testId={TID.kpiFinReleased} icon={CurrencyInr} label={labels.finReleased} value={fmtNum(s?.financial?.released, { digits: 2 })} hint={labels.componentRowsHint(s?.financial?.component_count || 0)} accent="primary" />
       <KpiCard testId={TID.kpiFinUtilized} icon={CurrencyInr} label={labels.finUtilized} value={fmtNum(s?.financial?.utilized, { digits: 2 })} hint={varianceHint} accent="slate" />
@@ -522,8 +522,8 @@ export default function Dashboard() {
             {sortedCompRows.map((r) => (
               <tr key={r.component}>
                 <td className="font-medium text-slate-700">{r.component}</td>
-                <td className="dense-table-center">{fmtNum(r.phys_target, { digits: 0 })}</td>
-                <td className="dense-table-center">{fmtNum(r.phys_achieved, { digits: 0 })}</td>
+                <td className="dense-table-center">{formatPhysAmount(r.phys_target, r.phys_uom).text}</td>
+                <td className="dense-table-center">{formatPhysAmount(r.phys_achieved, r.phys_uom).text}</td>
                 <td className="dense-table-center">
                   <div className="flex justify-center">
                     <RagBadge status={physRag(r.phys_percent)} label={fmtPct(r.phys_percent)} />

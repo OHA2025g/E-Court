@@ -4,6 +4,7 @@ import { api, fmtNum } from "@/lib/api";
 import Card from "@/components/Card";
 import ScrollRegion from "@/components/ui/ScrollRegion";
 import { formatRagLegendLabel, useAccessibleRag } from "@/lib/ragColors";
+import { formatPhysTargetAchieved } from "@/lib/physFormat";
 
 const METRICS = [
   { id: "physical", label: "Physical" },
@@ -38,12 +39,6 @@ function hcColumnLabel(hc) {
   return HC_COLUMN_LABEL[hc] || hc;
 }
 
-function physUnitSuffix(uom) {
-  if (!uom || uom === "Count") return "";
-  if (uom === "GB / TB / PB") return " GB";
-  return ` ${uom}`;
-}
-
 function cellDetail(rowKey, hc, cell, metric) {
   const rag = cell?.rag || "NA";
   const head = `${rowKey} · ${hc}`;
@@ -67,13 +62,8 @@ function cellDetail(rowKey, hc, cell, metric) {
     return `${head}: Reported ${reported} / ${total} KPIs (${rag})`;
   }
 
-  const digits = (!cell.uom || cell.uom === "Count") ? 0 : 2;
-  const t = fmtNum(cell.target, { digits });
-  const a = fmtNum(cell.achieved, { digits });
-  if (cell.uom === "GB / TB / PB") {
-    return `${head}: Target ${t} GB / Achieved ${a} GB (${rag})`;
-  }
-  return `${head}: Target ${t} / Achieved ${a}${physUnitSuffix(cell.uom)} (${rag})`;
+  // Physical: never show "Crore" (reserved for ₹ Cr on Financial). Digitization → absolute pages.
+  return `${head}: ${formatPhysTargetAchieved(cell.target, cell.achieved, cell.uom)} (${rag})`;
 }
 
 export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", component = "", publicMode = false, embedData = null }) {
