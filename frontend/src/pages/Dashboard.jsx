@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api, fmtNum, fmtPct, BACKEND_URL } from "@/lib/api";
-import { formatPhysAmount, formatPhysTargetAchieved, displayPhysUom } from "@/lib/physFormat";
+import { formatPhysAmount, formatPhysTargetAchieved } from "@/lib/physFormat";
 import { useAuth } from "@/lib/auth";
 import Card, { KpiCard } from "@/components/Card";
 import RagBadge from "@/components/RagBadge";
@@ -346,25 +346,16 @@ export default function Dashboard() {
   );
 
   const physUom = s?.physical?.absolute_scope || s?.physical?.uom;
-  const physUomLabel = displayPhysUom(physUom);
-  const physHint = physUomLabel
-    ? (s?.physical?.mixed_uom
-      ? `${labels.absoluteScopeHint(physUomLabel)} · ${labels.indicatorsHint(s?.physical?.indicator_count || 0)}`
-      : `${labels.indicatorsHint(s?.physical?.indicator_count || 0)} · ${labels.uomHint(physUomLabel)}`)
-    : labels.indicatorsHint(s?.physical?.indicator_count || 0);
   // Digitization scope → Cr pages (e.g. 3,108.77), never absolute *1e7 page counts.
   const physTargetDisp = formatPhysAmount(s?.physical?.target, physUom).text;
   const physAchievedDisp = formatPhysAmount(s?.physical?.achieved, physUom).text;
-  const varianceHint = s?.financial?.variance == null
-    ? labels.varianceHint("NA")
-    : labels.varianceHint(fmtNum(s.financial.variance));
   const kpiRow = (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-      <KpiCard testId={TID.kpiPhysicalTarget} icon={Target} label={labels.physTargetSum} value={physTargetDisp} hint={physHint} accent="primary" />
-      <KpiCard testId={TID.kpiPhysicalAchieved} icon={CheckCircle} label={labels.physAchieved} value={physAchievedDisp} hint={physHint} accent="slate" />
-      <KpiCard testId={TID.kpiPhysicalPercent} icon={Gauge} label={labels.physPercent} value={fmtPct(s?.physical?.percent)} hint={labels.indicatorsHint(s?.physical?.indicator_count || 0)} accent={s?.physical?.percent >= 80 ? "green" : s?.physical?.percent >= 65 ? "amber" : "red"} />
-      <KpiCard testId={TID.kpiFinReleased} icon={CurrencyInr} label={labels.finReleased} value={fmtNum(s?.financial?.released, { digits: 2 })} hint={labels.componentRowsHint(s?.financial?.component_count || 0)} accent="primary" />
-      <KpiCard testId={TID.kpiFinUtilized} icon={CurrencyInr} label={labels.finUtilized} value={fmtNum(s?.financial?.utilized, { digits: 2 })} hint={varianceHint} accent="slate" />
+      <KpiCard testId={TID.kpiPhysicalTarget} icon={Target} label={labels.physTargetSum} value={physTargetDisp} accent="primary" />
+      <KpiCard testId={TID.kpiPhysicalAchieved} icon={CheckCircle} label={labels.physAchieved} value={physAchievedDisp} accent="slate" />
+      <KpiCard testId={TID.kpiPhysicalPercent} icon={Gauge} label={labels.physPercent} value={fmtPct(s?.physical?.percent)} accent={s?.physical?.percent >= 80 ? "green" : s?.physical?.percent >= 65 ? "amber" : "red"} />
+      <KpiCard testId={TID.kpiFinReleased} icon={CurrencyInr} label={labels.finReleased} value={fmtNum(s?.financial?.released, { digits: 2 })} accent="primary" />
+      <KpiCard testId={TID.kpiFinUtilized} icon={CurrencyInr} label={labels.finUtilized} value={fmtNum(s?.financial?.utilized, { digits: 2 })} accent="slate" />
       <KpiCard testId={TID.kpiFinPercent} icon={TrendUp} label={labels.finPercent} value={fmtPct(s?.financial?.utilisation_percent)} accent={s?.financial?.utilisation_percent >= 80 ? "green" : s?.financial?.utilisation_percent >= 65 ? "amber" : "red"} />
     </div>
   );
