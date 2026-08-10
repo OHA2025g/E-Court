@@ -359,26 +359,6 @@ export default function Dashboard() {
     </div>
   );
 
-  const ragSliceLabel = ({ cx, cy, midAngle, outerRadius, value }) => {
-    if (value == null || value <= 0) return null;
-    const RADIAN = Math.PI / 180;
-    const radius = outerRadius + 22;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="#0f172a"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-        className="text-sm font-semibold tabular-nums"
-      >
-        {value}
-      </text>
-    );
-  };
-
   const ragDonut = (
     <Card title={labels.ragDistribution} testId={TID.ragDonut} elevated>
       <div className="px-2 pb-2 pt-0 flex flex-col">
@@ -388,7 +368,7 @@ export default function Dashboard() {
           <>
             <div className="relative h-[300px] shrink-0">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart margin={{ top: 8, right: 28, bottom: 8, left: 28 }}>
+                <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
                   <Pie
                     data={ragData}
                     dataKey="value"
@@ -400,8 +380,7 @@ export default function Dashboard() {
                     paddingAngle={2}
                     stroke="#fff"
                     strokeWidth={2}
-                    label={ragSliceLabel}
-                    labelLine={{ stroke: "#94a3b8", strokeWidth: 1 }}
+                    label={false}
                     isAnimationActive={false}
                   >
                     {ragData.map((d) => (

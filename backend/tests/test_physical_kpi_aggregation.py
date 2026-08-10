@@ -14,6 +14,15 @@ def _safe_div(a, b):
     return round((a / b) * 100, 2)
 
 
+def test_sum_nullable_preserves_explicit_zero():
+    from rollup import sum_nullable
+    assert sum_nullable([]) is None
+    assert sum_nullable([None, None]) is None
+    assert sum_nullable([0, None]) == 0
+    assert sum_nullable([0]) == 0
+    assert sum_nullable([10, None, 5]) == 15
+
+
 def test_mean_achievement_skips_zero_target_cloud_gb():
     rows = [
         {"component": "e-Sewa Kendras", "target": 4199, "achieved": 2236},
@@ -33,13 +42,22 @@ def test_empty_absolute_totals_are_null():
     assert totals["uom"] is None
 
 
-def test_all_zero_rows_absolute_totals_are_null():
+def test_all_null_rows_absolute_totals_are_null():
     totals = physical_absolute_totals([
-        {"component": "e-Sewa Kendras", "target": 0, "achieved": 0},
+        {"component": "e-Sewa Kendras", "target": None, "achieved": None},
         {"component": "Paperless Courts", "target": None, "achieved": None},
     ])
     assert totals["target"] is None
     assert totals["achieved"] is None
+
+
+def test_explicit_zeros_kept_in_absolute_totals():
+    totals = physical_absolute_totals([
+        {"component": "e-Sewa Kendras", "target": 0, "achieved": 0},
+    ])
+    assert totals["target"] == 0
+    assert totals["achieved"] == 0
+    assert totals["uom"] == "Count"
 
 
 def test_mixed_uom_shows_count_absolute_totals():

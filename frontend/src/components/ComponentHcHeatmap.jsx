@@ -57,12 +57,10 @@ function cellDetail(rowKey, hc, cell, metric) {
     return `${head}: Released ₹${fmtNum(cell.released)} Cr / Utilised ₹${fmtNum(cell.utilized)} Cr (${rag})`;
   }
   if (metric === "outcome") {
-    const reported = cell.reported ?? 0;
-    const total = cell.total ?? 0;
-    return `${head}: Reported ${reported} / ${total} KPIs (${rag})`;
+    return `${head}: Reported ${fmtNum(cell.reported, { digits: 0 })} / ${fmtNum(cell.total, { digits: 0 })} KPIs (${rag})`;
   }
 
-  // Physical: never show "Crore" (reserved for ₹ Cr on Financial). Digitization → absolute pages.
+  // Physical: Digitization shown as Cr pages (not ₹ Cr).
   return `${head}: ${formatPhysTargetAchieved(cell.target, cell.achieved, cell.uom)} (${rag})`;
 }
 

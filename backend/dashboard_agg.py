@@ -15,6 +15,7 @@ from rollup import (
     outcome_rollup_stages,
     physical_component_hc_stages,
     physical_rollup_stages,
+    sum_nullable,
 )
 from seed_constants import (
     COMPONENTS,
@@ -125,7 +126,7 @@ def physical_absolute_totals(rows: list) -> dict:
     """
     active = [
         r for r in rows
-        if (r.get("target") or 0) != 0 or (r.get("achieved") or 0) != 0
+        if r.get("target") is not None or r.get("achieved") is not None
     ]
     if not active:
         return {
@@ -145,8 +146,8 @@ def physical_absolute_totals(rows: list) -> dict:
         if len(all_uoms) == 1:
             uom = next(iter(all_uoms))
             return {
-                "target": sum(float(r.get("target") or 0) for r in active),
-                "achieved": sum(float(r.get("achieved") or 0) for r in active),
+                "target": sum_nullable(r.get("target") for r in active),
+                "achieved": sum_nullable(r.get("achieved") for r in active),
                 "mixed_uom": False,
                 "uom": uom,
                 "absolute_scope": uom,
@@ -174,8 +175,8 @@ def physical_absolute_totals(rows: list) -> dict:
         scoped = by_uom[scope]
 
     return {
-        "target": sum(float(r.get("target") or 0) for r in scoped),
-        "achieved": sum(float(r.get("achieved") or 0) for r in scoped),
+        "target": sum_nullable(r.get("target") for r in scoped),
+        "achieved": sum_nullable(r.get("achieved") for r in scoped),
         # True whenever the underlying dataset spans more than the displayed UOM.
         "mixed_uom": len(all_uoms) > 1,
         "uom": scope,
@@ -293,8 +294,8 @@ async def compute_states_rag(
         fin_rows = await db.financial_entries.aggregate(financial_hc_rollup_stages(match)).to_list(100)
         for r in fin_rows:
             hc_detail[r["_id"]] = {
-                "released": float(r.get("r") or 0),
-                "utilized": float(r.get("u") or 0),
+                "released": None if r.get("r") is None else float(r.get("r")),
+                "utilized": None if r.get("u") is None else float(r.get("u")),
                 "uom": "₹ Cr",
             }
     elif metric == "outcome":
@@ -438,15 +439,18 @@ async def compute_heatmap(
     if metric == "financial":
         rows = await db.financial_entries.aggregate(financial_component_hc_stages(match)).to_list(500)
         for r in rows:
-            rel, util = r.get("r") or 0, r.get("u") or 0
-            pct = round((util / rel) * 100, 2) if rel else None
+            rel, util = r.get("r"), r.get("u")
+            if rel is not None and util is not None and float(rel):
+                pct = round((float(util) / float(rel)) * 100, 2)
+            else:
+                pct = None
             comp = r["_id"]["component"]
             hc = r["_id"]["high_court"]
             cell_map[(comp, hc)] = {
                 "percent": pct,
                 "rag": compute_rag_fn(pct, thresholds),
-                "released": round(float(rel), 4),
-                "utilized": round(float(util), 4),
+                "released": None if rel is None else round(float(rel), 4),
+                "utilized": None if util is None else round(float(util), 4),
                 "uom": "₹ Cr",
             }
         row_keys = components
@@ -477,24 +481,26 @@ async def compute_heatmap(
         peak_by_comp: dict[str, float] = defaultdict(float)
         for r in rows:
             comp = r["_id"]["component"]
-            a = float(r.get("a") or 0)
-            if a > peak_by_comp[comp]:
-                peak_by_comp[comp] = a
+            a = r.get("a")
+            if a is not None and float(a) > peak_by_comp[comp]:
+                peak_by_comp[comp] = float(a)
         for r in rows:
-            t, a = float(r.get("t") or 0), float(r.get("a") or 0)
+            t, a = r.get("t"), r.get("a")
             comp = r["_id"]["component"]
             hc = r["_id"]["high_court"]
-            if t:
-                pct = round((a / t) * 100, 2)
-            elif a > 0 and peak_by_comp.get(comp):
-                pct = round(100.0 * a / peak_by_comp[comp], 2)
+            t_f = None if t is None else float(t)
+            a_f = None if a is None else float(a)
+            if t_f:
+                pct = round((a_f or 0) / t_f * 100, 2)
+            elif a_f is not None and a_f > 0 and peak_by_comp.get(comp):
+                pct = round(100.0 * a_f / peak_by_comp[comp], 2)
             else:
                 pct = None
             cell_map[(comp, hc)] = {
                 "percent": pct,
                 "rag": compute_rag_fn(pct, thresholds),
-                "target": round(t, 4),
-                "achieved": round(a, 4),
+                "target": None if t_f is None else round(t_f, 4),
+                "achieved": None if a_f is None else round(a_f, 4),
                 "uom": COMPONENT_UOM.get(comp),
             }
         row_keys = components
@@ -638,13 +644,13 @@ async def compute_trend_with_milestones(
     periods_sorted = sorted(set(list(pmap.keys()) + list(fmap.keys()) + list(omap.keys())))
     periods = []
     for per in periods_sorted:
-        f = fmap.get(per, {"released": 0, "utilized": 0})
+        f = fmap.get(per, {"released": None, "utilized": None})
         o = omap.get(per, {"total": 0, "reported": 0})
         periods.append({
             "period": per,
-            "phys_percent": mean_achievement_percent(pmap.get(per, []), safe_div_fn) or 0,
-            "fin_percent": safe_div_fn(f["utilized"], f["released"]) or 0,
-            "outcome_reported_pct": safe_div_fn(o["reported"], o["total"]) or 0,
+            "phys_percent": mean_achievement_percent(pmap.get(per, []), safe_div_fn),
+            "fin_percent": safe_div_fn(f.get("utilized"), f.get("released")),
+            "outcome_reported_pct": safe_div_fn(o.get("reported"), o.get("total")),
         })
 
     dpr_docs = await db.dpr_deliverables.find().to_list(100)
@@ -913,21 +919,25 @@ async def compute_dashboard_by_component(
     pmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
     fmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
     rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
-    fin = await db.financial_entries.aggregate(
-        financial_rollup_stages(fmatch) + [
-            {"$group": {"_id": "$component",
-                        "allocated": {"$sum": {"$ifNull": ["$fund_allocated", 0]}},
-                        "target": {"$sum": {"$ifNull": ["$fund_target", 0]}},
-                        "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-                        "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}}}},
-        ]
-    ).to_list(100)
+    fin_rolled = await db.financial_entries.aggregate(financial_rollup_stages(fmatch)).to_list(50000)
     pmap: dict[str, list] = defaultdict(list)
     for row in rolled_phys:
         comp = row.get("component")
         if comp:
             pmap[comp].append(row)
-    fmap = {f["_id"]: f for f in fin}
+    fmap: dict[str, dict] = {}
+    fin_by_comp: dict[str, list] = defaultdict(list)
+    for row in fin_rolled:
+        comp = row.get("component")
+        if comp:
+            fin_by_comp[comp].append(row)
+    for name, rows in fin_by_comp.items():
+        fmap[name] = {
+            "allocated": sum_nullable(r.get("fund_allocated") for r in rows),
+            "target": sum_nullable(r.get("fund_target") for r in rows),
+            "released": sum_nullable(r.get("fund_released") for r in rows),
+            "utilized": sum_nullable(r.get("fund_utilized") for r in rows),
+        }
     selected = _match_value(extra_match, "component")
     components = [c for c in COMPONENTS if not selected or c["name"] == selected]
     rows = []
@@ -936,10 +946,20 @@ async def compute_dashboard_by_component(
         phys_rows = pmap.get(name, [])
         # Single-component scope is always one UOM — absolute sums are valid here.
         # Cloud GB has achieved with no targets → mean relative-vs-max HC %.
-        target = sum(float(r.get("target") or 0) for r in phys_rows)
-        achieved = sum(float(r.get("achieved") or 0) for r in phys_rows)
-        f = fmap.get(name, {"allocated": 0, "target": 0, "released": 0, "utilized": 0})
-        budget = f["allocated"] or f["target"] or f["released"] or 0
+        target = sum_nullable(r.get("target") for r in phys_rows)
+        achieved = sum_nullable(r.get("achieved") for r in phys_rows)
+        f = fmap.get(name)
+        if not f:
+            fin_allocated = fin_target = fin_released = fin_utilized = None
+            budget = None
+        else:
+            fin_allocated = f.get("allocated")
+            fin_target = f.get("target")
+            fin_released = f.get("released")
+            fin_utilized = f.get("utilized")
+            budget = fin_allocated if fin_allocated not in (None, 0) else (
+                fin_target if fin_target not in (None, 0) else fin_released
+            )
         rows.append({
             "component": name,
             "phys_target": target,
@@ -948,12 +968,12 @@ async def compute_dashboard_by_component(
             "phys_percent": physical_percent_with_relative_fallback(
                 phys_rows, safe_div_fn, sum_ratio=True,
             ),
-            "fin_allocated": f["allocated"],
-            "fin_target": f["target"],
+            "fin_allocated": fin_allocated,
+            "fin_target": fin_target,
             "fin_budget": budget,
-            "fin_released": f["released"], "fin_utilized": f["utilized"],
-            "fin_percent": safe_div_fn(f["utilized"], f["released"]),
-            "fin_exp_percent": safe_div_fn(f["utilized"], budget if budget else None),
+            "fin_released": fin_released, "fin_utilized": fin_utilized,
+            "fin_percent": safe_div_fn(fin_utilized, fin_released),
+            "fin_exp_percent": safe_div_fn(fin_utilized, budget if budget else None),
         })
     return rows
 
@@ -1068,7 +1088,7 @@ async def compute_dashboard_by_hc(
         phys_pct = target_pcts.get(hc)
         if phys_pct is None:
             phys_pct = relative_pcts.get(hc)
-        f = fmap.get(hc, {"released": 0, "utilized": 0})
+        f = fmap.get(hc, {"released": None, "utilized": None})
         # Prefer scoped component UOM; else homogeneous absolute scope (e.g. Cloud-only filter).
         phys_uom = selected_uom or (None if totals.get("mixed_uom") else totals.get("uom"))
         rows.append({
@@ -1120,54 +1140,69 @@ async def compute_financial_tracker_dashboard(
         financial_exact_totals_stages(fmatch)
     ).to_list(1)
     t = totals[0] if totals else {
-        "target": 0, "allocated": 0, "released": 0, "utilized": 0, "count": 0,
+        "target": None, "allocated": None, "released": None, "utilized": None, "count": 0,
     }
-    # Keep full precision for KPIs (do not round before returning).
-    released_exact = float(t.get("released") or 0)
-    utilized_exact = float(t.get("utilized") or 0)
-    target_exact = float(t.get("target") or 0)
-    allocated_exact = float(t.get("allocated") or 0)
 
-    hc_rows = await db.financial_entries.aggregate(
-        financial_rollup_stages(fmatch) + [
-            {"$group": {
-                "_id": "$high_court",
-                "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-                "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
-            }},
-            {"$sort": {"released": -1}},
-        ]
-    ).to_list(100)
+    def _exact(key: str) -> Optional[float]:
+        val = t.get(key)
+        return None if val is None else float(val)
 
-    comp_hc_rows = await db.financial_entries.aggregate(
-        financial_rollup_stages(fmatch) + [
-            {"$group": {
-                "_id": {"component": "$component", "high_court": "$high_court"},
-                "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-                "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
-            }},
-        ]
-    ).to_list(5000)
+    released_exact = _exact("released")
+    utilized_exact = _exact("utilized")
+    target_exact = _exact("target")
+    allocated_exact = _exact("allocated")
 
-    comp_totals = await db.financial_entries.aggregate(
-        financial_rollup_stages(fmatch) + [
-            {"$group": {
-                "_id": "$component",
-                "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-                "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
-            }},
-            {"$sort": {"utilized": -1}},
-        ]
-    ).to_list(100)
+    fin_rolled = await db.financial_entries.aggregate(financial_rollup_stages(fmatch)).to_list(50000)
+    hc_acc: dict[str, dict] = defaultdict(lambda: {"released": [], "utilized": []})
+    comp_acc: dict[str, dict] = defaultdict(lambda: {"released": [], "utilized": []})
+    comp_hc_rows = []
+    for row in fin_rolled:
+        hc = row.get("high_court")
+        comp = row.get("component")
+        if hc:
+            hc_acc[hc]["released"].append(row.get("fund_released"))
+            hc_acc[hc]["utilized"].append(row.get("fund_utilized"))
+        if comp:
+            comp_acc[comp]["released"].append(row.get("fund_released"))
+            comp_acc[comp]["utilized"].append(row.get("fund_utilized"))
+        if hc and comp:
+            comp_hc_rows.append({
+                "_id": {"component": comp, "high_court": hc},
+                "released": row.get("fund_released"),
+                "utilized": row.get("fund_utilized"),
+            })
+
+    hc_rows = sorted(
+        (
+            {
+                "_id": hc,
+                "released": sum_nullable(vals["released"]),
+                "utilized": sum_nullable(vals["utilized"]),
+            }
+            for hc, vals in hc_acc.items()
+        ),
+        key=lambda r: (r["released"] is None, -(r["released"] or 0)),
+    )
+    comp_totals = sorted(
+        (
+            {
+                "_id": comp,
+                "released": sum_nullable(vals["released"]),
+                "utilized": sum_nullable(vals["utilized"]),
+            }
+            for comp, vals in comp_acc.items()
+        ),
+        key=lambda r: (r["utilized"] is None, -(r["utilized"] or 0)),
+    )
 
     # Chart series keep full stored precision so bar sums stay aligned with KPIs.
     hc_released = [
         {"high_court": r["_id"], "label": _short_hc(r["_id"]), "released": float(r["released"])}
-        for r in hc_rows if r.get("released")
+        for r in hc_rows if r.get("released") is not None
     ]
     hc_utilized = [
         {"high_court": r["_id"], "label": _short_hc(r["_id"]), "utilized": float(r["utilized"])}
-        for r in hc_rows if r.get("utilized")
+        for r in hc_rows if r.get("utilized") is not None
     ]
 
     top_hcs = [r["_id"] for r in hc_rows[:6]]
@@ -1178,20 +1213,24 @@ async def compute_financial_tracker_dashboard(
     for row in comp_hc_rows:
         comp = row["_id"]["component"]
         hc = row["_id"]["high_court"]
-        rel = float(row.get("released") or 0)
-        util = float(row.get("utilized") or 0)
+        rel = row.get("released")
+        util = row.get("utilized")
         if hc not in top_hcs:
             continue
+        if rel is None and util is None:
+            continue
         comp_by_hc.setdefault(hc, {"high_court": hc, "label": _short_hc(hc)})
-        comp_by_hc[hc][comp] = rel
+        if rel is not None:
+            comp_by_hc[hc][comp] = float(rel)
         util_pct_rows.setdefault(comp, {"component": comp})
         util_pct_rows[comp][hc] = safe_div_fn(util, rel)
         hc_comp_util.setdefault(hc, {"high_court": hc, "label": _short_hc(hc)})
-        hc_comp_util[hc][comp] = util
+        if util is not None:
+            hc_comp_util[hc][comp] = float(util)
 
     component_utilization = [
         {"component": r["_id"], "utilized": float(r["utilized"])}
-        for r in comp_totals if r.get("utilized")
+        for r in comp_totals if r.get("utilized") is not None
     ]
 
     task_q: dict = {}
@@ -1234,7 +1273,7 @@ async def compute_financial_tracker_dashboard(
         })
 
     chart_components = sorted(
-        {r["_id"]["component"] for r in comp_hc_rows if r.get("released") or r.get("utilized")},
+        {r["_id"]["component"] for r in comp_hc_rows if r.get("released") is not None or r.get("utilized") is not None},
         key=lambda c: next((x["utilized"] for x in comp_totals if x["_id"] == c), 0),
         reverse=True,
     )[:5]

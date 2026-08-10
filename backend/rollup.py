@@ -1,4 +1,5 @@
 """Roll up district-level tracker rows to HC/component aggregates for dashboards and reports."""
+from __future__ import annotations
 
 from typing import Optional
 
@@ -24,6 +25,45 @@ def resolve_storage_type(component: str, storage_type: Optional[str] = None) -> 
     return st
 
 
+def sum_nullable(values) -> Optional[float]:
+    """Sum numeric values; return None when every input is missing (preserve explicit 0)."""
+    nums = [float(v) for v in values if v is not None and v != ""]
+    if not nums:
+        return None
+    return sum(nums)
+
+
+def _non_null_count(field: str) -> dict:
+    """Count documents where field is present and not null."""
+    return {"$sum": {"$cond": [{"$eq": [f"${field}", None]}, 0, 1]}}
+
+
+def _sum_or_zero(field: str) -> dict:
+    return {"$sum": {"$ifNull": [f"${field}", 0]}}
+
+
+def _nullable_from_sum_n(sum_field: str, n_field: str) -> dict:
+    """Project null when no non-null inputs contributed to the sum."""
+    return {
+        "$cond": [
+            {"$eq": [f"${n_field}", 0]},
+            None,
+            f"${sum_field}",
+        ]
+    }
+
+
+def _group_nullable_field(src_field: str, as_name: str) -> dict:
+    return {
+        f"_{as_name}_sum": _sum_or_zero(src_field),
+        f"_{as_name}_n": _non_null_count(src_field),
+    }
+
+
+def _project_nullable_field(as_name: str) -> dict:
+    return {as_name: _nullable_from_sum_n(f"_{as_name}_sum", f"_{as_name}_n")}
+
+
 def physical_rollup_stages(extra_match: dict | None = None) -> list:
     """Pipeline stages: match → roll up by HC+component+indicator+period (ignore district)."""
     stages = []
@@ -37,8 +77,8 @@ def physical_rollup_stages(extra_match: dict | None = None) -> list:
                 "indicator": "$indicator",
                 "reporting_period": "$reporting_period",
             },
-            "target": {"$sum": {"$ifNull": ["$target", 0]}},
-            "achieved": {"$sum": {"$ifNull": ["$achieved", 0]}},
+            **_group_nullable_field("target", "target"),
+            **_group_nullable_field("achieved", "achieved"),
         }},
         {"$project": {
             "_id": 0,
@@ -46,8 +86,8 @@ def physical_rollup_stages(extra_match: dict | None = None) -> list:
             "component": "$_id.component",
             "indicator": "$_id.indicator",
             "reporting_period": "$_id.reporting_period",
-            "target": 1,
-            "achieved": 1,
+            **_project_nullable_field("target"),
+            **_project_nullable_field("achieved"),
         }},
     ])
     return stages
@@ -64,20 +104,20 @@ def financial_rollup_stages(extra_match: dict | None = None) -> list:
                 "component": "$component",
                 "reporting_period": "$reporting_period",
             },
-            "fund_target": {"$sum": {"$ifNull": ["$fund_target", 0]}},
-            "fund_allocated": {"$sum": {"$ifNull": ["$fund_allocated", 0]}},
-            "fund_released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-            "fund_utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
+            **_group_nullable_field("fund_target", "fund_target"),
+            **_group_nullable_field("fund_allocated", "fund_allocated"),
+            **_group_nullable_field("fund_released", "fund_released"),
+            **_group_nullable_field("fund_utilized", "fund_utilized"),
         }},
         {"$project": {
             "_id": 0,
             "high_court": "$_id.high_court",
             "component": "$_id.component",
             "reporting_period": "$_id.reporting_period",
-            "fund_target": 1,
-            "fund_allocated": 1,
-            "fund_released": 1,
-            "fund_utilized": 1,
+            **_project_nullable_field("fund_target"),
+            **_project_nullable_field("fund_allocated"),
+            **_project_nullable_field("fund_released"),
+            **_project_nullable_field("fund_utilized"),
         }},
     ])
     return stages
@@ -90,8 +130,13 @@ def physical_hc_rollup_stages(extra_match: dict | None = None) -> list:
     stages.extend([
         {"$group": {
             "_id": "$high_court",
-            "t": {"$sum": {"$ifNull": ["$target", 0]}},
-            "a": {"$sum": {"$ifNull": ["$achieved", 0]}},
+            **_group_nullable_field("target", "t"),
+            **_group_nullable_field("achieved", "a"),
+        }},
+        {"$project": {
+            "_id": 1,
+            **_project_nullable_field("t"),
+            **_project_nullable_field("a"),
         }},
     ])
     return stages
@@ -104,8 +149,13 @@ def financial_hc_rollup_stages(extra_match: dict | None = None) -> list:
     stages.extend([
         {"$group": {
             "_id": "$high_court",
-            "r": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-            "u": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
+            **_group_nullable_field("fund_released", "r"),
+            **_group_nullable_field("fund_utilized", "u"),
+        }},
+        {"$project": {
+            "_id": 1,
+            **_project_nullable_field("r"),
+            **_project_nullable_field("u"),
         }},
     ])
     return stages
@@ -116,9 +166,15 @@ def physical_national_totals_stages(extra_match: dict | None = None) -> list:
     return physical_rollup_stages(extra_match) + [
         {"$group": {
             "_id": None,
-            "target": {"$sum": {"$ifNull": ["$target", 0]}},
-            "achieved": {"$sum": {"$ifNull": ["$achieved", 0]}},
+            **_group_nullable_field("target", "target"),
+            **_group_nullable_field("achieved", "achieved"),
             "count": {"$sum": 1},
+        }},
+        {"$project": {
+            "_id": 0,
+            "count": 1,
+            **_project_nullable_field("target"),
+            **_project_nullable_field("achieved"),
         }},
     ]
 
@@ -127,28 +183,73 @@ def financial_national_totals_stages(extra_match: dict | None = None) -> list:
     return financial_rollup_stages(extra_match) + [
         {"$group": {
             "_id": None,
-            "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-            "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
-            "target": {"$sum": {"$ifNull": ["$fund_target", 0]}},
+            **_group_nullable_field("fund_released", "released"),
+            **_group_nullable_field("fund_utilized", "utilized"),
+            **_group_nullable_field("fund_target", "target"),
             "count": {"$sum": 1},
+        }},
+        {"$project": {
+            "_id": 0,
+            "count": 1,
+            **_project_nullable_field("released"),
+            **_project_nullable_field("utilized"),
+            **_project_nullable_field("target"),
         }},
     ]
 
 
+def _has_money_expr(crore_field: str, rupees_field: str) -> dict:
+    return {
+        "$or": [
+            {"$ne": [{"$ifNull": [f"${rupees_field}", None]}, None]},
+            {"$ne": [{"$ifNull": [f"${crore_field}", None]}, None]},
+        ]
+    }
+
+
 def _amount_as_rupees_expr(crore_field: str, rupees_field: str) -> dict:
-    """Prefer exact *_rupees; else treat values ≥1000 as ₹, otherwise ₹ crore → ₹."""
+    """Prefer exact *_rupees; else treat values ≥1000 as ₹, otherwise ₹ crore → ₹.
+
+    Returns null when both crore and rupees fields are missing (so callers can
+    distinguish unset from explicit 0).
+    """
     return {
         "$cond": [
-            {"$ne": [{"$ifNull": [f"${rupees_field}", None]}, None]},
-            {"$toDouble": {"$ifNull": [f"${rupees_field}", 0]}},
+            {"$not": [_has_money_expr(crore_field, rupees_field)]},
+            None,
             {
                 "$cond": [
-                    {"$gte": [{"$abs": {"$ifNull": [f"${crore_field}", 0]}}, 1000]},
-                    {"$toDouble": {"$ifNull": [f"${crore_field}", 0]}},
-                    {"$multiply": [{"$toDouble": {"$ifNull": [f"${crore_field}", 0]}}, 10_000_000]},
+                    {"$ne": [{"$ifNull": [f"${rupees_field}", None]}, None]},
+                    {"$toDouble": f"${rupees_field}"},
+                    {
+                        "$cond": [
+                            {"$gte": [{"$abs": {"$ifNull": [f"${crore_field}", 0]}}, 1000]},
+                            {"$toDouble": f"${crore_field}"},
+                            {"$multiply": [{"$toDouble": f"${crore_field}"}, 10_000_000]},
+                        ]
+                    },
                 ]
             },
         ]
+    }
+
+
+def _exact_money_group_fields(crore_field: str, rupees_field: str, as_name: str) -> dict:
+    return {
+        f"{as_name}_rupees": {"$sum": {"$ifNull": [_amount_as_rupees_expr(crore_field, rupees_field), 0]}},
+        f"{as_name}_n": {"$sum": {"$cond": [_has_money_expr(crore_field, rupees_field), 1, 0]}},
+    }
+
+
+def _exact_money_project_crore(as_name: str) -> dict:
+    return {
+        as_name: {
+            "$cond": [
+                {"$eq": [f"${as_name}_n", 0]},
+                None,
+                {"$divide": [f"${as_name}_rupees", 10_000_000]},
+            ]
+        }
     }
 
 
@@ -156,6 +257,7 @@ def financial_exact_totals_stages(extra_match: dict | None = None) -> list:
     """Sum money in absolute ₹ first, then convert once to ₹ crore.
 
     Avoids round-then-sum drift from per-row crore truncation (e.g. 4dp).
+    Missing funds stay null (UI shows NA); explicit 0 stays 0.
     """
     stages = []
     if extra_match:
@@ -163,21 +265,21 @@ def financial_exact_totals_stages(extra_match: dict | None = None) -> list:
     stages.append({
         "$group": {
             "_id": None,
-            "target_rupees": {"$sum": _amount_as_rupees_expr("fund_target", "fund_target_rupees")},
-            "allocated_rupees": {"$sum": _amount_as_rupees_expr("fund_allocated", "fund_allocated_rupees")},
-            "released_rupees": {"$sum": _amount_as_rupees_expr("fund_released", "fund_released_rupees")},
-            "utilized_rupees": {"$sum": _amount_as_rupees_expr("fund_utilized", "fund_utilized_rupees")},
+            **_exact_money_group_fields("fund_target", "fund_target_rupees", "target"),
+            **_exact_money_group_fields("fund_allocated", "fund_allocated_rupees", "allocated"),
+            **_exact_money_group_fields("fund_released", "fund_released_rupees", "released"),
+            **_exact_money_group_fields("fund_utilized", "fund_utilized_rupees", "utilized"),
             "count": {"$sum": 1},
         },
     })
     stages.append({
         "$project": {
             "_id": 0,
-            "target": {"$divide": ["$target_rupees", 10_000_000]},
-            "allocated": {"$divide": ["$allocated_rupees", 10_000_000]},
-            "released": {"$divide": ["$released_rupees", 10_000_000]},
-            "utilized": {"$divide": ["$utilized_rupees", 10_000_000]},
             "count": 1,
+            **_exact_money_project_crore("target"),
+            **_exact_money_project_crore("allocated"),
+            **_exact_money_project_crore("released"),
+            **_exact_money_project_crore("utilized"),
         },
     })
     return stages
@@ -187,8 +289,13 @@ def physical_period_totals_stages(extra_match: dict | None = None) -> list:
     return physical_rollup_stages(extra_match) + [
         {"$group": {
             "_id": "$reporting_period",
-            "target": {"$sum": {"$ifNull": ["$target", 0]}},
-            "achieved": {"$sum": {"$ifNull": ["$achieved", 0]}},
+            **_group_nullable_field("target", "target"),
+            **_group_nullable_field("achieved", "achieved"),
+        }},
+        {"$project": {
+            "_id": 1,
+            **_project_nullable_field("target"),
+            **_project_nullable_field("achieved"),
         }},
         {"$sort": {"_id": 1}},
     ]
@@ -198,8 +305,13 @@ def financial_period_totals_stages(extra_match: dict | None = None) -> list:
     return financial_rollup_stages(extra_match) + [
         {"$group": {
             "_id": "$reporting_period",
-            "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-            "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
+            **_group_nullable_field("fund_released", "released"),
+            **_group_nullable_field("fund_utilized", "utilized"),
+        }},
+        {"$project": {
+            "_id": 1,
+            **_project_nullable_field("released"),
+            **_project_nullable_field("utilized"),
         }},
         {"$sort": {"_id": 1}},
     ]
@@ -209,8 +321,13 @@ def physical_component_hc_stages(extra_match: dict | None = None) -> list:
     return physical_rollup_stages(extra_match) + [
         {"$group": {
             "_id": {"component": "$component", "high_court": "$high_court"},
-            "t": {"$sum": {"$ifNull": ["$target", 0]}},
-            "a": {"$sum": {"$ifNull": ["$achieved", 0]}},
+            **_group_nullable_field("target", "t"),
+            **_group_nullable_field("achieved", "a"),
+        }},
+        {"$project": {
+            "_id": 1,
+            **_project_nullable_field("t"),
+            **_project_nullable_field("a"),
         }},
     ]
 
@@ -219,8 +336,13 @@ def financial_component_hc_stages(extra_match: dict | None = None) -> list:
     return financial_rollup_stages(extra_match) + [
         {"$group": {
             "_id": {"component": "$component", "high_court": "$high_court"},
-            "r": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-            "u": {"$sum": {"$ifNull": ["$fund_utilized", 0]}},
+            **_group_nullable_field("fund_released", "r"),
+            **_group_nullable_field("fund_utilized", "u"),
+        }},
+        {"$project": {
+            "_id": 1,
+            **_project_nullable_field("r"),
+            **_project_nullable_field("u"),
         }},
     ]
 
@@ -271,8 +393,8 @@ def outcome_rollup_stages(extra_match: dict | None = None) -> list:
                 "reporting_period": "$reporting_period",
                 "granularity": "$granularity",
             },
-            "value": {"$sum": {"$ifNull": ["$value", 0]}},
-            "baseline": {"$sum": {"$ifNull": ["$baseline", 0]}},
+            **_group_nullable_field("value", "value"),
+            **_group_nullable_field("baseline", "baseline"),
         }},
         {"$project": {
             "_id": 0,
@@ -281,8 +403,8 @@ def outcome_rollup_stages(extra_match: dict | None = None) -> list:
             "kpi_id": "$_id.kpi_id",
             "reporting_period": "$_id.reporting_period",
             "granularity": "$_id.granularity",
-            "value": 1,
-            "baseline": 1,
+            **_project_nullable_field("value"),
+            **_project_nullable_field("baseline"),
         }},
     ])
     return stages
@@ -293,8 +415,13 @@ def outcome_subject_hc_stages(extra_match: dict | None = None) -> list:
     return outcome_rollup_stages(extra_match) + [
         {"$group": {
             "_id": {"subject": "$subject", "high_court": "$high_court"},
-            "value": {"$sum": {"$ifNull": ["$value", 0]}},
-            "baseline": {"$sum": {"$ifNull": ["$baseline", 0]}},
+            **_group_nullable_field("value", "value"),
+            **_group_nullable_field("baseline", "baseline"),
+        }},
+        {"$project": {
+            "_id": 1,
+            **_project_nullable_field("value"),
+            **_project_nullable_field("baseline"),
         }},
     ]
 
@@ -304,8 +431,13 @@ def outcome_period_totals_stages(extra_match: dict | None = None) -> list:
     return outcome_rollup_stages(extra_match) + [
         {"$group": {
             "_id": "$reporting_period",
-            "value": {"$sum": {"$ifNull": ["$value", 0]}},
-            "baseline": {"$sum": {"$ifNull": ["$baseline", 0]}},
+            **_group_nullable_field("value", "value"),
+            **_group_nullable_field("baseline", "baseline"),
+        }},
+        {"$project": {
+            "_id": 1,
+            **_project_nullable_field("value"),
+            **_project_nullable_field("baseline"),
         }},
         {"$sort": {"_id": 1}},
     ]

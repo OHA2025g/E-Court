@@ -23,14 +23,14 @@ function yoyRag(expPct) {
 }
 
 function fmtAmt(n) {
-  if (n == null || n === "" || Number.isNaN(Number(n))) return "0";
+  if (n == null || n === "" || Number.isNaN(Number(n))) return "NA";
   const v = Number(n);
   if (v === 0) return "0";
   return v.toLocaleString("en-IN", { maximumFractionDigits: 2, minimumFractionDigits: 0 });
 }
 
 function fmtPctWhole(n) {
-  if (n == null || Number.isNaN(Number(n))) return "0%";
+  if (n == null || Number.isNaN(Number(n))) return "NA";
   return `${Math.round(Number(n))}%`;
 }
 

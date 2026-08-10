@@ -15,7 +15,9 @@ export function mapHoverCounts(info, metric) {
 
   if (metric === "outcome") {
     if (info.total == null && info.reported == null) return null;
-    return `Reported ${info.reported ?? 0} / ${info.total ?? 0} KPIs`;
+    const reported = info.reported == null ? "NA" : String(info.reported);
+    const total = info.total == null ? "NA" : String(info.total);
+    return `Reported ${reported} / ${total} KPIs`;
   }
 
   // Physical: skip absolute when UOMs are mixed.
