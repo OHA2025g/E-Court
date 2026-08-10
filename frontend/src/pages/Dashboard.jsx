@@ -352,6 +352,7 @@ export default function Dashboard() {
       ? `${labels.absoluteScopeHint(physUomLabel)} · ${labels.indicatorsHint(s?.physical?.indicator_count || 0)}`
       : `${labels.indicatorsHint(s?.physical?.indicator_count || 0)} · ${labels.uomHint(physUomLabel)}`)
     : labels.indicatorsHint(s?.physical?.indicator_count || 0);
+  // Digitization scope → Cr pages (e.g. 3,108.77), never absolute *1e7 page counts.
   const physTargetDisp = formatPhysAmount(s?.physical?.target, physUom).text;
   const physAchievedDisp = formatPhysAmount(s?.physical?.achieved, physUom).text;
   const varianceHint = s?.financial?.variance == null
