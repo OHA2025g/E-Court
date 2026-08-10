@@ -89,7 +89,12 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
   }, [rows]);
 
   const hasData = useMemo(
-    () => enriched.some((r) => (Number(r.budget) || 0) > 0 || (Number(r.utilized) || 0) > 0 || (Number(r.phys_target) || 0) > 0),
+    () => enriched.some((r) => (
+      (Number(r.budget) || 0) > 0
+      || (Number(r.utilized) || 0) > 0
+      || (Number(r.phys_target) || 0) > 0
+      || (Number(r.phys_achieved) || 0) > 0
+    )),
     [enriched],
   );
 
@@ -156,8 +161,8 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
 
         {!isLoading && !isError && !hasData && (
           <div className="cwpf-status warn no-print">
-            No physical/financial figures for this period. Select the baseline period
-            Select a reporting period with loaded tracker data.
+            No physical/financial figures for this period. Choose a reporting period with loaded
+            tracker data (e.g. Sep 2023 – Mar 2026 or Physical Achieved till Sep 2025).
           </div>
         )}
 

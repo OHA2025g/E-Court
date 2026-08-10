@@ -211,17 +211,20 @@ export default function Reports() {
     return match?.label || period || "";
   }, [periods.data, period]);
 
-  // Demo reports: prefer a period at/before current month (avoid empty future months).
+  // Demo reports: use the cumulative loaded period (Sep 2023 – Mar 2026), not empty
+  // monthly shells like August 2026 that only exist as calendar placeholders.
   useEffect(() => {
     if (!isDemoReport || !periods.data?.length) return;
     const list = periods.data;
-    const nowYm = new Date().toISOString().slice(0, 7);
-    const latestWithOrBeforeNow = [...list]
-      .filter((p) => String(p.period) <= nowYm)
-      .sort((a, b) => String(b.period).localeCompare(String(a.period)))[0]?.period;
-    const preferred = latestWithOrBeforeNow || list[0]?.period;
+    const codes = new Set(list.map((p) => String(p.period)));
+    const preferred = codes.has("2026-03")
+      ? "2026-03"
+      : (codes.has("2025-09") ? "2025-09" : (list[0]?.period || ""));
     if (!preferred) return;
-    if (!period || period > nowYm) {
+    const current = String(period || "");
+    // Empty selection or monthly shells after the cumulative Mar-2026 load → switch to preferred.
+    const needsPreferred = !current || (current > "2026-03" && current !== preferred);
+    if (needsPreferred && current !== preferred) {
       setPeriod(preferred);
     }
   }, [isDemoReport, period, periods.data]);

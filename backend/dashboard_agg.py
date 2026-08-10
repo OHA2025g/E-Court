@@ -1029,6 +1029,9 @@ async def compute_financial_status_yoy(
         fy2627_exp = 0.0
         grand_rel = fy2324_rel + fy2425_rel + fy2526_rel + fy2627_rel
         grand_exp = fy2324_exp + fy2425_exp + fy2526_exp + fy2627_exp
+        # Demo data often has Released/Utilised without Allocated — fall back so cost column is not blank.
+        if not cost and grand_rel:
+            cost = grand_rel
         exp_pct = safe_div_fn(grand_exp, cost if cost else None)
         rows.append({
             "component": name,
@@ -1050,7 +1053,7 @@ async def compute_financial_status_yoy(
         "fiscal_years": ["2023-24", "2024-25", "2025-26", "2026-27"],
         "rows": rows,
         "mapping_note": (
-            "Cost = Fund Allocated (fallback Target). "
+            "Cost = Fund Allocated (fallback Target, then Released). "
             "FY 2023-24 Expenditure = Fund Utilised. "
             "FY 2024-25 Released = Fund Released (cumulative 2024–27 load). "
             "FY 2025-26 / 2026-27 cells are provisional zeros until year-split data is tracked."
