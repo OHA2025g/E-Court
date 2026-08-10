@@ -69,19 +69,39 @@ export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", co
   const [metric, setMetric] = useState("physical");
   const [hover, setHover] = useState(null);
 
-  const { data: fetched, isLoading } = useQuery({
-    queryKey: ["heatmap", "v2-counts", reportingPeriod, highCourt, component, metric, publicMode],
+  const filterParams = useMemo(() => ({
+    ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
+    ...(highCourt ? { high_court: highCourt } : {}),
+    ...(component ? { component } : {}),
+    metric,
+  }), [reportingPeriod, highCourt, component, metric]);
+
+  const { data: fetched, isLoading, isSuccess } = useQuery({
+    queryKey: ["heatmap", "v3-fallback", filterParams, publicMode],
+    queryFn: () => api.get(`${publicMode ? "/public" : "/dashboard"}/heatmap`, {
+      params: filterParams,
+    }).then(r => r.data),
+    enabled: !embedData || metric !== "physical",
+  });
+
+  const primaryEmpty = isSuccess && (fetched?.cells || []).every((c) => !c?.rag || c.rag === "NA");
+  const { data: fallbackFetched } = useQuery({
+    queryKey: ["heatmap", "v3-all-periods", { highCourt, component, metric, publicMode }],
     queryFn: () => api.get(`${publicMode ? "/public" : "/dashboard"}/heatmap`, {
       params: {
-        ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
         ...(highCourt ? { high_court: highCourt } : {}),
         ...(component ? { component } : {}),
         metric,
       },
     }).then(r => r.data),
-    enabled: !embedData || metric !== "physical",
+    enabled: Boolean(reportingPeriod) && !embedData && primaryEmpty,
   });
-  const data = embedData && metric === "physical" ? embedData : fetched;
+
+  const usingFallback = Boolean(reportingPeriod) && primaryEmpty
+    && (fallbackFetched?.cells || []).some((c) => c?.rag && c.rag !== "NA");
+  const data = embedData && metric === "physical"
+    ? embedData
+    : (usingFallback ? fallbackFetched : fetched);
 
   const rowField = data?.row_field || (metric === "outcome" ? "subject" : "component");
   const rowKeys = metric === "outcome"
@@ -211,9 +231,11 @@ export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", co
             className={`heatmap-hint${hoverDetail ? " is-detail" : ""}`}
             data-testid="heatmap-hover-detail"
           >
-            {hoverDetail || (cellCount > 0
-              ? `${cellCount.toLocaleString()} cells · hover for Target / Achieved or Released / Utilised`
-              : null)}
+            {hoverDetail || (usingFallback
+              ? "No cells for selected period — showing All periods"
+              : (cellCount > 0
+                ? `${cellCount.toLocaleString()} cells · hover for Target / Achieved or Released / Utilised`
+                : null))}
           </div>
         </footer>
       </div>

@@ -29,6 +29,7 @@ import IndiaChoropleth from "@/components/IndiaChoropleth";
 import FinancialTrackerDashboardTab from "@/components/dashboard/FinancialTrackerDashboardTab";
 import RagDeltaWidget from "@/components/RagDeltaWidget";
 import ComponentHcHeatmap from "@/components/ComponentHcHeatmap";
+import DashboardTabErrorBoundary from "@/components/DashboardTabErrorBoundary";
 import ParetoChart from "@/components/ParetoChart";
 import TrendChart from "@/components/TrendChart";
 import DashboardAiInsights from "@/components/dashboard/DashboardAiInsights";
@@ -181,11 +182,10 @@ export default function Dashboard() {
 
   const onDashboardTabChange = (tab) => {
     setActiveTab(tab);
-    // Keep Geographic / other tall tabs visible after switching from a scrolled Overview.
+    // After Overview scroll depth, Geographic must land in view (not a blank viewport).
     requestAnimationFrame(() => {
-      document
-        .querySelector('[data-testid="dashboard-tabs"]')
-        ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      const tabs = document.querySelector('[data-testid="dashboard-tabs"]');
+      tabs?.scrollIntoView({ block: "start", behavior: "smooth" });
     });
   };
 
@@ -619,9 +619,17 @@ export default function Dashboard() {
           </div>
         </TabsContent>
 
-        <TabsContent value="geographic" className="mt-5 space-y-5">
-          <IndiaChoropleth reportingPeriod={period} highCourt={highCourt} component={component} />
-          <ComponentHcHeatmap reportingPeriod={period} highCourt={highCourt} component={component} />
+        <TabsContent
+          value="geographic"
+          forceMount
+          className="mt-5 space-y-5 data-[state=inactive]:hidden"
+        >
+          <DashboardTabErrorBoundary label="Geographic view" resetKey={`${period}|${highCourt}|${component}`}>
+            <div data-testid="dashboard-geographic-panel" className="space-y-5">
+              <IndiaChoropleth reportingPeriod={period} highCourt={highCourt} component={component} />
+              <ComponentHcHeatmap reportingPeriod={period} highCourt={highCourt} component={component} />
+            </div>
+          </DashboardTabErrorBoundary>
         </TabsContent>
 
         <TabsContent value="performance" className="mt-5 space-y-5">

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { api } from "@/lib/api";
@@ -38,6 +38,10 @@ function metricLabel(metric) {
   return "Physical achievement";
 }
 
+function statesHaveRag(states) {
+  return Object.values(states || {}).some((s) => s && s.in_scope !== false && s.rag && s.rag !== "NA");
+}
+
 export default function IndiaChoropleth({ reportingPeriod, highCourt = "", component = "" }) {
   const [metric, setMetric] = useState("physical");
   const [accessible] = useAccessibleRag();
@@ -45,26 +49,54 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
     queryKey: ["rag-thresholds"],
     queryFn: () => api.get("/master/rag-thresholds").then(r => r.data),
   });
-  const { data } = useQuery({
-    queryKey: ["states-rag", "v14-tooltip", reportingPeriod, highCourt, component, metric],
+
+  // Load GeoJSON ourselves (correct MIME / Safari-safe) and pass the object to the map.
+  const geography = useQuery({
+    queryKey: ["india-geojson", "v2-simplified"],
+    queryFn: async () => {
+      const res = await fetch(INDIA_TOPO_URL, { cache: "force-cache" });
+      if (!res.ok) throw new Error(`India map failed to load (${res.status})`);
+      return res.json();
+    },
+    staleTime: Infinity,
+  });
+
+  const filterParams = useMemo(() => ({
+    ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
+    ...(highCourt ? { high_court: highCourt } : {}),
+    ...(component ? { component } : {}),
+    metric,
+  }), [reportingPeriod, highCourt, component, metric]);
+
+  const primary = useQuery({
+    queryKey: ["states-rag", "v15-geo", filterParams],
+    queryFn: () => api.get("/dashboard/states-rag", { params: filterParams }).then(r => r.data),
+  });
+
+  // Monthly periods often have no tracker rows — fall back to All periods so the map is not blank.
+  const primaryEmpty = primary.isSuccess && !statesHaveRag(primary.data);
+  const fallback = useQuery({
+    queryKey: ["states-rag", "v15-geo-fallback", { highCourt, component, metric }],
     queryFn: () => api.get("/dashboard/states-rag", {
       params: {
-        ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
         ...(highCourt ? { high_court: highCourt } : {}),
         ...(component ? { component } : {}),
         metric,
       },
     }).then(r => r.data),
+    enabled: Boolean(reportingPeriod) && primaryEmpty,
   });
+
+  const usingFallback = Boolean(reportingPeriod) && primaryEmpty && statesHaveRag(fallback.data);
+  const data = usingFallback ? fallback.data : primary.data;
   const [hover, setHover] = useState(null);
   const states = data || {};
   const legend = ragLegendLabels(thresholds.data);
   const label = metricLabel(metric);
   const detail = hover ? mapHoverDetail(hover, metric, label) : null;
   const counts = hover ? mapHoverCounts(hover, metric) : null;
-  const scopedStates = Object.values(states).filter((s) => s && s.in_scope !== false);
-  const hasRagData = scopedStates.some((s) => s.rag && s.rag !== "NA");
-  const mapLoaded = data !== undefined;
+  const hasRagData = statesHaveRag(states);
+  const mapLoaded = primary.isSuccess || fallback.isSuccess;
 
   const onMapMouseMove = useCallback((e) => {
     setHover((prev) => {
@@ -83,6 +115,7 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
       title={`India · ${label} RAG by High Court Jurisdiction`}
       subtitle="Each state polygon is coloured by aggregate % of its parent High Court"
       testId="india-choropleth-card"
+      className="!overflow-visible"
       action={
         <div className="flex gap-1 text-[10px] uppercase tracking-wider">
           {METRICS.map(m => (
@@ -100,11 +133,21 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
     >
       <div className="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4">
         <div
-          className="lg:col-span-3 bg-white rounded-sm relative overflow-visible pt-1"
+          className="lg:col-span-3 bg-white rounded-sm relative overflow-visible pt-1 min-h-[320px]"
           onMouseMove={onMapMouseMove}
           onMouseLeave={() => setHover(null)}
         >
-          {mapLoaded && !hasRagData && (
+          {usingFallback && (
+            <div
+              className="mb-3 rounded-sm border border-sky-200 bg-sky-50 px-3 py-2 text-xs text-sky-950"
+              data-testid="india-map-period-fallback"
+              role="status"
+            >
+              No map data for the selected reporting period — showing{" "}
+              <span className="font-semibold">All periods</span> instead.
+            </div>
+          )}
+          {mapLoaded && !hasRagData && !usingFallback && (
             <div
               className="mb-3 rounded-sm border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900"
               data-testid="india-map-empty-state"
@@ -116,50 +159,62 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
               Sep 2023 – Mar 2026).
             </div>
           )}
-          <ComposableMap
-            projection={INDIA_MAP_PROJECTION}
-            projectionConfig={INDIA_MAP_PROJECTION_CONFIG}
-            width={INDIA_MAP_DIMENSIONS.width}
-            height={INDIA_MAP_DIMENSIONS.height}
-            style={INDIA_MAP_STYLE}
-            data-testid="india-choropleth"
-          >
-            <Geographies geography={INDIA_TOPO_URL}>
-              {({ geographies }) => (geographies || []).map(geo => {
-                const stateName = geo.properties.ST_NM || geo.properties.NAME_1 || geo.properties.name || "";
-                const info = findStateInfo(states, stateName);
-                const rag = info?.in_scope === false ? "NA" : (info?.rag || "NA");
-                const fill = RAG_COLORS[rag] || RAG_COLORS.NA;
-                const strokeStyle = choroplethStrokeProps(rag, accessible);
-                return (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    fill={fill}
-                    stroke="#FFFFFF"
-                    strokeWidth={strokeStyle.strokeWidth}
-                    strokeDasharray={strokeStyle.strokeDasharray}
-                    style={{
-                      default: { outline: "none", transition: "fill 0.2s" },
-                      hover: { outline: "none", fill: "#1E40AF", cursor: "pointer" },
-                      pressed: { outline: "none" },
-                    }}
-                    onMouseEnter={(e) => {
-                      const parent = e.currentTarget.ownerSVGElement?.parentElement;
-                      const rect = parent?.getBoundingClientRect?.() || e.currentTarget.getBoundingClientRect();
-                      setHover({
-                        name: stateName,
-                        ...(info || {}),
-                        rag,
-                        x: e.clientX - rect.left + 12,
-                        y: e.clientY - rect.top + 12,
-                      });
-                    }}
-                  />
-                );
-              })}
-            </Geographies>
-          </ComposableMap>
+          {geography.isError && (
+            <div className="mb-3 rounded-sm border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-900" role="alert">
+              India map outlines could not be loaded. Refresh the page or try again.
+            </div>
+          )}
+          {geography.isLoading && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70 text-sm text-slate-500">
+              Loading map…
+            </div>
+          )}
+          {geography.data && (
+            <ComposableMap
+              projection={INDIA_MAP_PROJECTION}
+              projectionConfig={INDIA_MAP_PROJECTION_CONFIG}
+              width={INDIA_MAP_DIMENSIONS.width}
+              height={INDIA_MAP_DIMENSIONS.height}
+              style={INDIA_MAP_STYLE}
+              data-testid="india-choropleth"
+            >
+              <Geographies geography={geography.data}>
+                {({ geographies }) => (geographies || []).map(geo => {
+                  const stateName = geo.properties.ST_NM || geo.properties.NAME_1 || geo.properties.name || "";
+                  const info = findStateInfo(states, stateName);
+                  const rag = info?.in_scope === false ? "NA" : (info?.rag || "NA");
+                  const fill = RAG_COLORS[rag] || RAG_COLORS.NA;
+                  const strokeStyle = choroplethStrokeProps(rag, accessible);
+                  return (
+                    <Geography
+                      key={geo.rsmKey}
+                      geography={geo}
+                      fill={fill}
+                      stroke="#FFFFFF"
+                      strokeWidth={strokeStyle.strokeWidth}
+                      strokeDasharray={strokeStyle.strokeDasharray}
+                      style={{
+                        default: { outline: "none", transition: "fill 0.2s" },
+                        hover: { outline: "none", fill: "#1E40AF", cursor: "pointer" },
+                        pressed: { outline: "none" },
+                      }}
+                      onMouseEnter={(e) => {
+                        const parent = e.currentTarget.ownerSVGElement?.parentElement;
+                        const rect = parent?.getBoundingClientRect?.() || e.currentTarget.getBoundingClientRect();
+                        setHover({
+                          name: stateName,
+                          ...(info || {}),
+                          rag,
+                          x: e.clientX - rect.left + 12,
+                          y: e.clientY - rect.top + 12,
+                        });
+                      }}
+                    />
+                  );
+                })}
+              </Geographies>
+            </ComposableMap>
+          )}
           {hover && (
             <div
               className="absolute z-20 max-w-xs pointer-events-none rounded-sm border border-slate-200 bg-white px-3 py-2 text-xs shadow-lg"
