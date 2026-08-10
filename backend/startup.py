@@ -397,6 +397,232 @@ async def restore_cloud_financial_actuals_from_audits(db):
         )
 
 
+FINANCIAL_BASELINE_RESTORE_KEY = "zeroed_financial_baseline_restored_v1"
+PHYSICAL_BASELINE_RESTORE_KEY = "zeroed_physical_baseline_restored_v1"
+BASELINE_RESTORE_PERIOD = "2026-05"
+
+
+def _numeric_or_zero(value) -> float:
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return float(value)
+    return 0.0
+
+
+def _financial_amounts_zeroed(row: dict) -> bool:
+    """True when allocated/target/released/utilized are all missing or zero."""
+    return (
+        _numeric_or_zero(row.get("fund_allocated")) == 0
+        and _numeric_or_zero(row.get("fund_target")) == 0
+        and _numeric_or_zero(row.get("fund_released")) == 0
+        and _numeric_or_zero(row.get("fund_utilized")) == 0
+    )
+
+
+def _physical_amounts_zeroed(row: dict) -> bool:
+    return _numeric_or_zero(row.get("target")) == 0 and _numeric_or_zero(row.get("achieved")) == 0
+
+
+def _seed_has_financial_signal(row: dict) -> bool:
+    return not _financial_amounts_zeroed(row)
+
+
+def _seed_has_physical_signal(row: dict) -> bool:
+    return not _physical_amounts_zeroed(row)
+
+
+async def restore_zeroed_financial_baseline_from_seed(
+    db,
+    now_utc_fn: Callable,
+    compute_rag_fn: Callable,
+    safe_div_fn: Callable,
+):
+    """Re-apply seed financial amounts onto zeroed/null live rows (non-Cloud).
+
+    Demo environments sometimes retain financial_entries shells (remarks from ETL)
+    after amounts were wiped. seed_baseline will not re-run once baseline_seed_done
+    is set, so e-Sewa / Digitisation stay at 0 on YoY All-periods until restored.
+    Cloud Computing is skipped — live NICSI / audit-restored actuals take precedence.
+    """
+    done = await db.settings.find_one({"key": FINANCIAL_BASELINE_RESTORE_KEY})
+    if done and done.get("value"):
+        return
+
+    path = ROOT_DIR / "seed_data.json"
+    if not path.exists():
+        return
+    with open(path) as f:
+        data = json.load(f)
+    baseline = data.get("financial_baseline") or []
+    if not baseline:
+        return
+
+    thresholds = DEFAULT_RAG_THRESHOLDS
+    updated = 0
+    inserted = 0
+
+    for raw in baseline:
+        component = raw.get("component")
+        if not component or component == CLOUD_COMPUTING_COMPONENT:
+            continue
+        if not _seed_has_financial_signal(raw):
+            continue
+        hc = normalize_high_court_dashes(raw.get("high_court") or "")
+        if not hc:
+            continue
+
+        rel = raw.get("fund_released")
+        util = raw.get("fund_utilized")
+        util_pct = safe_div_fn(util, rel)
+        variance = (rel - util) if (rel is not None and util is not None) else None
+        payload = {
+            "description": raw.get("description"),
+            "fund_target": raw.get("fund_target"),
+            "fund_allocated": raw.get("fund_allocated"),
+            "fund_released": rel,
+            "fund_utilized": util,
+            "utilisation_percent": util_pct,
+            "variance": round(variance, 2) if variance is not None else None,
+            "rag": compute_rag_fn(util_pct, thresholds),
+            "remarks": raw.get("remarks") or "Restored from seed financial baseline",
+        }
+
+        candidates = await db.financial_entries.find(
+            {"high_court": hc, "component": component}
+        ).to_list(50)
+        preferred = next(
+            (r for r in candidates if r.get("reporting_period") == BASELINE_RESTORE_PERIOD),
+            None,
+        )
+        target_row = preferred or (candidates[0] if candidates else None)
+
+        if target_row is not None:
+            if not _financial_amounts_zeroed(target_row):
+                continue
+            await db.financial_entries.update_one(
+                {"_id": target_row["_id"]},
+                {"$set": payload},
+            )
+            updated += 1
+            continue
+
+        await db.financial_entries.insert_one({
+            "high_court": hc,
+            "component": component,
+            "reporting_period": BASELINE_RESTORE_PERIOD,
+            **payload,
+            "created_by": "system",
+            "created_at": now_utc_fn(),
+        })
+        inserted += 1
+
+    await db.settings.update_one(
+        {"key": FINANCIAL_BASELINE_RESTORE_KEY},
+        {"$set": {"value": True}},
+        upsert=True,
+    )
+    if updated or inserted:
+        logger.info(
+            "Zeroed financial baseline restored from seed: updated=%d inserted=%d",
+            updated, inserted,
+        )
+
+
+async def restore_zeroed_physical_baseline_from_seed(
+    db,
+    now_utc_fn: Callable,
+    compute_rag_fn: Callable,
+    safe_div_fn: Callable,
+):
+    """Re-apply seed physical amounts onto zeroed live rows (non-Cloud)."""
+    done = await db.settings.find_one({"key": PHYSICAL_BASELINE_RESTORE_KEY})
+    if done and done.get("value"):
+        return
+
+    path = ROOT_DIR / "seed_data.json"
+    if not path.exists():
+        return
+    with open(path) as f:
+        data = json.load(f)
+    baseline = data.get("physical_baseline") or []
+    if not baseline:
+        return
+
+    thresholds = DEFAULT_RAG_THRESHOLDS
+    updated = 0
+    inserted = 0
+
+    for raw in baseline:
+        component = raw.get("component")
+        indicator = raw.get("indicator")
+        if not component or not indicator or component == CLOUD_COMPUTING_COMPONENT:
+            continue
+        if not _seed_has_physical_signal(raw):
+            continue
+        hc = normalize_high_court_dashes(raw.get("high_court") or "")
+        if not hc:
+            continue
+
+        target = raw.get("target")
+        achieved = raw.get("achieved")
+        percent = safe_div_fn(achieved, target)
+        payload = {
+            "target": target,
+            "achieved": achieved,
+            "percent": percent,
+            "rag": compute_rag_fn(percent, thresholds),
+            "remarks": raw.get("remarks") or "Restored from seed physical baseline",
+        }
+
+        candidates = await db.physical_entries.find(
+            {
+                "high_court": hc,
+                "component": component,
+                "indicator": indicator,
+                "$or": [{"district": None}, {"district": {"$exists": False}}],
+            }
+        ).to_list(50)
+        # Prefer DoJ physical snapshot month (2025-09), then seed baseline month.
+        sep = next((r for r in candidates if r.get("reporting_period") == "2025-09"), None)
+        preferred = next(
+            (r for r in candidates if r.get("reporting_period") == BASELINE_RESTORE_PERIOD),
+            None,
+        )
+        target_row = sep or preferred or (candidates[0] if candidates else None)
+
+        if target_row is not None:
+            if not _physical_amounts_zeroed(target_row):
+                continue
+            await db.physical_entries.update_one(
+                {"_id": target_row["_id"]},
+                {"$set": payload},
+            )
+            updated += 1
+            continue
+
+        await db.physical_entries.insert_one({
+            "high_court": hc,
+            "component": component,
+            "indicator": indicator,
+            "reporting_period": BASELINE_RESTORE_PERIOD,
+            "district": None,
+            **payload,
+            "created_by": "system",
+            "created_at": now_utc_fn(),
+        })
+        inserted += 1
+
+    await db.settings.update_one(
+        {"key": PHYSICAL_BASELINE_RESTORE_KEY},
+        {"$set": {"value": True}},
+        upsert=True,
+    )
+    if updated or inserted:
+        logger.info(
+            "Zeroed physical baseline restored from seed: updated=%d inserted=%d",
+            updated, inserted,
+        )
+
+
 async def ensure_indexes(db):
     await db.users.create_index("email", unique=True)
     await migrate_district_indexes(db)
@@ -951,6 +1177,12 @@ async def run_startup(
     await backfill_outcome_component_fields(db)
     await fix_outcome_kpi_names(db)
     await seed_baseline(db, now_utc_fn, compute_rag_fn, safe_div_fn)
+    await restore_zeroed_financial_baseline_from_seed(
+        db, now_utc_fn, compute_rag_fn, safe_div_fn,
+    )
+    await restore_zeroed_physical_baseline_from_seed(
+        db, now_utc_fn, compute_rag_fn, safe_div_fn,
+    )
     await seed_dpr(db, now_utc_fn)
     await seed_pmu_tasks(db, now_utc_fn)
     await seed_tm_tasks(db, now_utc_fn)

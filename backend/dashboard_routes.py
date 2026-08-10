@@ -48,7 +48,7 @@ def _dimension_match(
 
 
 # Bump when dashboard aggregation semantics change so Redis does not serve stale KPIs.
-_DASHBOARD_CACHE_VER = "v18-yoy-cost-released"
+_DASHBOARD_CACHE_VER = "v19-yoy-all-periods-baseline-restore"
 
 
 def _dashboard_cache_key(route: str, user: dict, reporting_period: Optional[str], include_unapproved: bool, **extra) -> str:
@@ -144,9 +144,11 @@ def register_dashboard_routes(
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
+        # YoY is a multi-year cumulative rollup — always gate/filter as All periods
+        # so baseline months (e.g. 2026-05) are not dropped when another month is selected.
+        extra = await _extra(user, None, include_unapproved, high_court, component)
         return await _cached_dashboard(
-            "financial-status-yoy", user, reporting_period, include_unapproved,
+            "financial-status-yoy", user, None, include_unapproved,
             lambda: compute_financial_status_yoy(
                 db, scope_filter_fn, safe_div_fn, user, reporting_period, extra,
             ),

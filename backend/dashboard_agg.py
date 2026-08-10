@@ -1002,8 +1002,21 @@ async def compute_financial_status_yoy(
       - FY 2023-24 expenditure ← fund_utilized (DoJ utilised 2023–24 + baseline util)
       - FY 2024-25 released ← fund_released (DoJ released 2024–27 cumulative load)
       - other FY cells ← 0 (provisional / not yet split in tracker)
+
+    Cumulative fund fields live across reporting months (e.g. Cloud on 2026-03,
+    seed baseline on 2026-05). Always roll up all periods; the selected period is
+    retained only as report metadata.
     """
-    fmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
+    # Strip period from approval gating so All-periods / any month still includes
+    # baseline financial rows on retired months (e.g. 2026-05).
+    period_agnostic_extra = None
+    if extra_match:
+        period_agnostic_extra = {
+            k: v for k, v in extra_match.items() if k != "reporting_period"
+        } or None
+    fmatch = await build_agg_match(
+        db, scope_filter_fn, user, None, False, period_agnostic_extra,
+    )
     fin = await db.financial_entries.aggregate(
         financial_rollup_stages(fmatch) + [
             {"$group": {"_id": "$component",
