@@ -59,9 +59,10 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
 
   // Load GeoJSON ourselves (correct MIME / Safari-safe) and pass the object to the map.
   const geography = useQuery({
-    queryKey: ["india-geojson", "v2-simplified"],
+    queryKey: ["india-geojson", "v3-fixed-uts"],
     queryFn: async () => {
-      const res = await fetch(INDIA_TOPO_URL, { cache: "force-cache" });
+      // Cache-bust after UT geometry repair (Puducherry / DNH over-simplification).
+      const res = await fetch(`${INDIA_TOPO_URL}?v=3`, { cache: "force-cache" });
       if (!res.ok) throw new Error(`India map failed to load (${res.status})`);
       return res.json();
     },

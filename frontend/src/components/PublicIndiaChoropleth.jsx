@@ -105,7 +105,7 @@ export default function PublicIndiaChoropleth({
             style={INDIA_MAP_STYLE}
             data-testid="public-india-choropleth"
           >
-            <Geographies geography={INDIA_TOPO_URL}>
+            <Geographies geography={`${INDIA_TOPO_URL}?v=3`}>
               {({ geographies }) => geographies.map(geo => {
                 const stateName = geo.properties.ST_NM || geo.properties.NAME_1 || geo.properties.name || "";
                 const info = findStateInfo(activeStates, stateName);
