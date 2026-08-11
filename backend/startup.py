@@ -663,6 +663,7 @@ async def ensure_indexes(db):
     await migrate_cloud_dashboard_visibility(db)
     await migrate_cloud_to_cumulative_period(db)
     await restore_cloud_financial_actuals_from_audits(db)
+    await canonicalize_tracker_high_court_dashes(db)
     await db.bulk_previews.create_index("token", unique=True)
     await db.bulk_previews.create_index("expires_at", expireAfterSeconds=0)
     await db.audit_logs.create_index([("timestamp", -1)])
@@ -695,6 +696,70 @@ async def ensure_indexes(db):
     await ensure_scope_charter_indexes(db)
     await ensure_auth_indexes(db)
     await ensure_dashboard_indexes(db)
+
+
+TRACKER_HC_DASH_CANON_KEY = "tracker_high_court_dashes_canonicalized_v1"
+
+
+async def canonicalize_tracker_high_court_dashes(db):
+    """Rewrite tracker high_court values to HIGH_COURTS en-dash canon.
+
+    Collapses ASCII hyphen / en-dash twins (e.g. Gauhati - Nagaland vs
+    Gauhati – Nagaland) that otherwise produce NA + funded drill-down rows.
+    """
+    done = await db.settings.find_one({"key": TRACKER_HC_DASH_CANON_KEY})
+    if done and done.get("value"):
+        return
+
+    collections = (
+        (
+            db.physical_entries,
+            ("high_court", "component", "indicator", "reporting_period", "district", "storage_type"),
+        ),
+        (
+            db.financial_entries,
+            ("high_court", "component", "reporting_period", "district"),
+        ),
+        (
+            db.outcome_entries,
+            ("high_court", "subject", "kpi_id", "reporting_period", "granularity", "district"),
+        ),
+    )
+    rewritten = 0
+    dropped = 0
+    for coll, key_fields in collections:
+        async for row in coll.find({"high_court": {"$type": "string"}}):
+            raw = row.get("high_court") or ""
+            canon = None
+            norm = normalize_high_court_dashes(raw, "-")
+            for candidate in HIGH_COURTS:
+                if normalize_high_court_dashes(candidate, "-") == norm:
+                    canon = candidate
+                    break
+            if not canon:
+                canon = normalize_high_court_dashes(raw)
+            if not canon or canon == raw:
+                continue
+            q = {field: row.get(field) for field in key_fields}
+            q["high_court"] = canon
+            existing = await coll.find_one(q)
+            if existing and existing.get("_id") != row.get("_id"):
+                await coll.delete_one({"_id": row["_id"]})
+                dropped += 1
+                continue
+            await coll.update_one({"_id": row["_id"]}, {"$set": {"high_court": canon}})
+            rewritten += 1
+
+    await db.settings.update_one(
+        {"key": TRACKER_HC_DASH_CANON_KEY},
+        {"$set": {"value": True}},
+        upsert=True,
+    )
+    if rewritten or dropped:
+        logger.info(
+            "Canonicalized tracker High Court dashes: rewritten=%d dropped_dupes=%d",
+            rewritten, dropped,
+        )
 
 
 async def reconcile_high_court_dash_names(db):

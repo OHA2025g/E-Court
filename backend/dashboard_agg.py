@@ -17,6 +17,7 @@ from rollup import (
     physical_rollup_stages,
     sum_nullable,
 )
+from high_court_names import normalize_high_court_dashes
 from seed_constants import (
     COMPONENTS,
     DEFAULT_RAG_THRESHOLDS,
@@ -1074,6 +1075,17 @@ async def compute_financial_status_yoy(
     }
 
 
+def _canonical_hc_label(name: Optional[str]) -> Optional[str]:
+    """Prefer HIGH_COURTS en-dash spelling; otherwise normalize dashes."""
+    if not name:
+        return name
+    norm = normalize_high_court_dashes(name, "-")
+    for canonical in HIGH_COURTS:
+        if normalize_high_court_dashes(canonical, "-") == norm:
+            return canonical
+    return normalize_high_court_dashes(name) or name
+
+
 async def compute_dashboard_by_hc(
     db,
     scope_filter_fn: Callable,
@@ -1086,12 +1098,32 @@ async def compute_dashboard_by_hc(
     fmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
     rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
     fin = await db.financial_entries.aggregate(financial_hc_rollup_stages(fmatch)).to_list(100)
+    # Merge ASCII/en-dash HC spellings so Gauhati - Nagaland and Gauhati – Nagaland
+    # do not appear as separate drill-down rows (one NA + one with funds).
     pmap: dict[str, list] = defaultdict(list)
+    hc_labels: dict[str, str] = {}
     for row in rolled_phys:
         hc = row.get("high_court")
-        if hc:
-            pmap[hc].append(row)
-    fmap = {f["_id"]: {"released": f["r"], "utilized": f["u"]} for f in fin}
+        if not hc:
+            continue
+        key = normalize_high_court_dashes(hc, "-") or hc
+        pmap[key].append(row)
+        hc_labels[key] = _canonical_hc_label(hc)
+    fmap: dict[str, dict] = {}
+    for f in fin:
+        raw = f.get("_id")
+        if not raw:
+            continue
+        key = normalize_high_court_dashes(raw, "-") or raw
+        prev = fmap.get(key)
+        if prev:
+            fmap[key] = {
+                "released": sum_nullable([prev.get("released"), f.get("r")]),
+                "utilized": sum_nullable([prev.get("utilized"), f.get("u")]),
+            }
+        else:
+            fmap[key] = {"released": f.get("r"), "utilized": f.get("u")}
+        hc_labels[key] = _canonical_hc_label(raw)
     hcs = sorted(set(list(pmap.keys()) + list(fmap.keys())))
     target_pcts = {
         hc: mean_achievement_percent(pmap.get(hc, []), safe_div_fn)
@@ -1105,18 +1137,18 @@ async def compute_dashboard_by_hc(
     selected_comp = _match_value(extra_match, "component")
     selected_uom = COMPONENT_UOM.get(selected_comp) if selected_comp else None
     rows = []
-    for hc in hcs:
-        hc_phys = pmap.get(hc, [])
+    for hc_key in hcs:
+        hc_phys = pmap.get(hc_key, [])
         totals = physical_absolute_totals(hc_phys)
         # Prefer target-based mean %; fall back to relative-vs-max for Cloud GB (no targets).
-        phys_pct = target_pcts.get(hc)
+        phys_pct = target_pcts.get(hc_key)
         if phys_pct is None:
-            phys_pct = relative_pcts.get(hc)
-        f = fmap.get(hc, {"released": None, "utilized": None})
+            phys_pct = relative_pcts.get(hc_key)
+        f = fmap.get(hc_key, {"released": None, "utilized": None})
         # Prefer scoped component UOM; else homogeneous absolute scope (e.g. Cloud-only filter).
         phys_uom = selected_uom or (None if totals.get("mixed_uom") else totals.get("uom"))
         rows.append({
-            "high_court": hc,
+            "high_court": hc_labels.get(hc_key) or hc_key,
             "phys_target": totals["target"],
             "phys_achieved": totals["achieved"],
             "phys_percent": phys_pct,
