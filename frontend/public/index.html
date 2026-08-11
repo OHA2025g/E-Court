@@ -102,14 +102,28 @@
                     }),
                     (e.__SV = 1));
             })(document, window.posthog || []);
-            posthog.init("phc_xAvL2Iq4tFmANRE7kzbKwaSqp1HJjN7x48s3vr0CMjs", {
-                api_host: "https://us.i.posthog.com",
-                person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well,
-                session_recording: {
-                    recordCrossOriginIframes: true,
-                    capturePerformance: false,
-                },
-            });
+            try {
+                posthog.init("phc_xAvL2Iq4tFmANRE7kzbKwaSqp1HJjN7x48s3vr0CMjs", {
+                    api_host: "https://us.i.posthog.com",
+                    person_profiles: "identified_only",
+                    // Canvas replay uses blob: workers; if CSP/adblock blocks them,
+                    // do not let analytics break the SPA paint (blank white screen).
+                    session_recording: {
+                        recordCrossOriginIframes: true,
+                        capturePerformance: false,
+                        recordCanvas: false,
+                    },
+                    loaded: function (ph) {
+                        try {
+                            if (ph && typeof ph.on === "function") {
+                                ph.on("eventCaptureBlocked", function () {});
+                            }
+                        } catch (_e) {}
+                    },
+                });
+            } catch (_err) {
+                // Analytics must never prevent the app from rendering.
+            }
         </script>
     </body>
 </html>

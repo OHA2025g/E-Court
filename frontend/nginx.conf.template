@@ -32,8 +32,10 @@ server {
         add_header X-Content-Type-Options "nosniff" always;
         add_header Referrer-Policy "strict-origin-when-cross-origin" always;
         add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
-        # CSP_CONNECT_SRC: set CSP_API_ORIGIN at container start when API is on another host
-        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' ${CSP_CONNECT_SRC} https://us.i.posthog.com; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'self';" always;
+        # CSP_CONNECT_SRC: set CSP_API_ORIGIN at container start when API is on another host.
+        # worker-src blob: is required for PostHog session replay; without it some browsers
+        # (notably Safari) log CSP errors and can fail to paint the SPA (blank white screen).
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.i.posthog.com https://*.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; connect-src 'self' ${CSP_CONNECT_SRC} https://*.i.posthog.com https://*.posthog.com https://us.i.posthog.com https://us-assets.i.posthog.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self' blob: data:; child-src 'self' blob:; frame-ancestors 'self';" always;
         add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0" always;
         try_files $uri =404;
     }
@@ -50,7 +52,7 @@ server {
         add_header X-Content-Type-Options "nosniff" always;
         add_header Referrer-Policy "strict-origin-when-cross-origin" always;
         add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
-        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' ${CSP_CONNECT_SRC} https://us.i.posthog.com; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'self';" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.i.posthog.com https://*.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; connect-src 'self' ${CSP_CONNECT_SRC} https://*.i.posthog.com https://*.posthog.com https://us.i.posthog.com https://us-assets.i.posthog.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self' blob: data:; child-src 'self' blob:; frame-ancestors 'self';" always;
         add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0" always;
         try_files $uri $uri/ /index.html;
     }
