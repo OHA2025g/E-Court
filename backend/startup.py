@@ -403,6 +403,7 @@ async def restore_cloud_financial_actuals_from_audits(db):
 FINANCIAL_BASELINE_RESTORE_KEY = "zeroed_financial_baseline_restored_v1"
 PHYSICAL_BASELINE_RESTORE_KEY = "zeroed_physical_baseline_restored_v1"
 TRACKER_DEDUPE_AFTER_RESTORE_KEY = "tracker_dedupe_after_baseline_restore_v1"
+PURGE_SEEDED_FINANCIAL_KEY = "purge_seeded_non_cloud_financial_v1"
 BASELINE_RESTORE_PERIOD = "2026-05"
 # DoJ physical snapshot month — keep this; drop seed mirrors on 2026-05.
 PHYSICAL_DOJ_PERIOD = "2025-09"
@@ -442,99 +443,49 @@ async def restore_zeroed_financial_baseline_from_seed(
     compute_rag_fn: Callable,
     safe_div_fn: Callable,
 ):
-    """Re-apply seed financial amounts onto zeroed/null live rows (non-Cloud).
+    """No-op: non-Cloud seed/DoJ financial baseline must not be auto-restored.
 
-    Demo environments sometimes retain financial_entries shells (remarks from ETL)
-    after amounts were wiped. seed_baseline will not re-run once baseline_seed_done
-    is set, so e-Sewa / Digitisation stay at 0 on YoY All-periods until restored.
-    Cloud Computing is skipped — live NICSI / audit-restored actuals take precedence.
-
-    Lookups are dash-insensitive so ASCII / en-dash Gauhati benches do not create
-    parallel unique-index rows.
+    Live financial tracker is Cloud Computing (NICSI) only until further DoJ
+    financial Excel loads are approved. Mark the legacy restore flag so older
+    deploys do not re-fill e-Sewa / Digitisation seed amounts.
     """
-    done = await db.settings.find_one({"key": FINANCIAL_BASELINE_RESTORE_KEY})
-    if done and done.get("value"):
-        return
-
-    path = ROOT_DIR / "seed_data.json"
-    if not path.exists():
-        return
-    with open(path) as f:
-        data = json.load(f)
-    baseline = data.get("financial_baseline") or []
-    if not baseline:
-        return
-
-    thresholds = DEFAULT_RAG_THRESHOLDS
-    updated = 0
-    inserted = 0
-
-    for raw in baseline:
-        component = raw.get("component")
-        if not component or component == CLOUD_COMPUTING_COMPONENT:
-            continue
-        if not _seed_has_financial_signal(raw):
-            continue
-        hc_raw = raw.get("high_court") or ""
-        hc = normalize_high_court_dashes(hc_raw)
-        if not hc:
-            continue
-
-        rel = raw.get("fund_released")
-        util = raw.get("fund_utilized")
-        util_pct = safe_div_fn(util, rel)
-        variance = (rel - util) if (rel is not None and util is not None) else None
-        payload = {
-            "high_court": hc,
-            "description": raw.get("description"),
-            "fund_target": raw.get("fund_target"),
-            "fund_allocated": raw.get("fund_allocated"),
-            "fund_released": rel,
-            "fund_utilized": util,
-            "utilisation_percent": util_pct,
-            "variance": round(variance, 2) if variance is not None else None,
-            "rag": compute_rag_fn(util_pct, thresholds),
-            "remarks": raw.get("remarks") or "Restored from seed financial baseline",
-        }
-
-        candidates = await db.financial_entries.find(
-            {"high_court": high_court_filter_value(hc_raw), "component": component}
-        ).to_list(50)
-        preferred = next(
-            (r for r in candidates if r.get("reporting_period") == BASELINE_RESTORE_PERIOD),
-            None,
-        )
-        target_row = preferred or (candidates[0] if candidates else None)
-
-        if target_row is not None:
-            if not _financial_amounts_zeroed(target_row):
-                continue
-            await db.financial_entries.update_one(
-                {"_id": target_row["_id"]},
-                {"$set": payload},
-            )
-            updated += 1
-            continue
-
-        await db.financial_entries.insert_one({
-            "component": component,
-            "reporting_period": BASELINE_RESTORE_PERIOD,
-            "district": None,
-            **payload,
-            "created_by": "system",
-            "created_at": now_utc_fn(),
-        })
-        inserted += 1
-
+    _ = (now_utc_fn, compute_rag_fn, safe_div_fn)
     await db.settings.update_one(
         {"key": FINANCIAL_BASELINE_RESTORE_KEY},
         {"$set": {"value": True}},
         upsert=True,
     )
-    if updated or inserted:
+
+
+async def purge_seeded_non_cloud_financial(db):
+    """Delete all non-Cloud financial_entries (seed / DoJ baseline amounts).
+
+    Keeps Cloud Computing & Storage rows (live NICSI actuals on the cumulative
+    period). Removes e-Sewa, Digitisation, and other BRD seed rows.
+    """
+    done = await db.settings.find_one({"key": PURGE_SEEDED_FINANCIAL_KEY})
+    if done and done.get("value"):
+        return
+
+    res = await db.financial_entries.delete_many(
+        {"component": {"$ne": CLOUD_COMPUTING_COMPONENT}}
+    )
+    deleted = int(res.deleted_count or 0)
+    await db.settings.update_one(
+        {"key": PURGE_SEEDED_FINANCIAL_KEY},
+        {"$set": {"value": True}},
+        upsert=True,
+    )
+    # Ensure legacy restore cannot re-insert after purge.
+    await db.settings.update_one(
+        {"key": FINANCIAL_BASELINE_RESTORE_KEY},
+        {"$set": {"value": True}},
+        upsert=True,
+    )
+    if deleted:
         logger.info(
-            "Zeroed financial baseline restored from seed: updated=%d inserted=%d",
-            updated, inserted,
+            "Purged seeded non-Cloud financial entries: deleted=%d (Cloud kept)",
+            deleted,
         )
 
 
@@ -1081,8 +1032,12 @@ async def seed_baseline(db, now_utc_fn: Callable, compute_rag_fn: Callable, safe
         except Exception as e:
             logger.warning("Some physical seed dupes ignored: %s", e)
 
+    # Non-Cloud financial seed/DoJ baseline is not loaded — live financial tracker
+    # is Cloud Computing (NICSI) only until further Excel loads are approved.
     fin_docs = []
     for r in data["financial_baseline"]:
+        if r.get("component") != CLOUD_COMPUTING_COMPONENT:
+            continue
         rel, util = r.get("fund_released"), r.get("fund_utilized")
         util_pct = safe_div_fn(util, rel)
         variance = (rel - util) if (rel is not None and util is not None) else None
@@ -1262,6 +1217,7 @@ async def run_startup(
     await restore_zeroed_financial_baseline_from_seed(
         db, now_utc_fn, compute_rag_fn, safe_div_fn,
     )
+    await purge_seeded_non_cloud_financial(db)
     await restore_zeroed_physical_baseline_from_seed(
         db, now_utc_fn, compute_rag_fn, safe_div_fn,
     )
