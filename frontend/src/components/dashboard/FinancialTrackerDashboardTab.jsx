@@ -346,25 +346,23 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
         subtitle={hcSplitHint || undefined}
         elevated
         action={
-          <div className="flex gap-1 text-[10px] uppercase tracking-wider">
-            {[
-              { id: "top", label: labels.ftTop14 },
-              { id: "bottom", label: labels.ftBottom14 },
-            ].map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                onClick={() => setHcSplitView(opt.id)}
-                className={`px-2 py-1 rounded-sm border ${
-                  hcSplitView === opt.id
-                    ? "bg-[#003B73] text-white border-[#003B73]"
-                    : "bg-white text-slate-600 border-slate-300"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
+          <button
+            type="button"
+            onClick={() => setHcSplitView((v) => (v === "top" ? "bottom" : "top"))}
+            className="px-2.5 py-1 rounded-sm border border-[#003B73] bg-[#003B73] text-white text-[10px] uppercase tracking-wider"
+            title={
+              hcSplitView === "top"
+                ? `Switch to ${labels.ftBottom14}`
+                : `Switch to ${labels.ftTop14}`
+            }
+            aria-label={
+              hcSplitView === "top"
+                ? `Showing ${labels.ftTop14}. Switch to ${labels.ftBottom14}`
+                : `Showing ${labels.ftBottom14}. Switch to ${labels.ftTop14}`
+            }
+          >
+            {hcSplitView === "top" ? labels.ftTop14 : labels.ftBottom14}
+          </button>
         }
       >
         <div className="h-80 p-4">
