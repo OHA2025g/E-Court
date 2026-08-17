@@ -119,6 +119,61 @@ function EmptyChart({ message }) {
   );
 }
 
+const HC_SPLIT_SLICE = 14;
+
+/** Join HC released + utilised into stacked rows: utilised (bottom) + unutilised (top). */
+function buildHcReleasedSplitRows(hcReleased, hcUtilized) {
+  const utilByHc = new Map();
+  (hcUtilized || []).forEach((row) => {
+    if (row?.high_court) utilByHc.set(row.high_court, row.utilized);
+  });
+
+  return (hcReleased || [])
+    .map((row) => {
+      const released = Number(row.released) || 0;
+      const rawUtil = utilByHc.has(row.high_court) ? Number(utilByHc.get(row.high_court)) : 0;
+      const utilized = Number.isFinite(rawUtil) ? Math.max(0, rawUtil) : 0;
+      const cappedUtil = Math.min(utilized, released);
+      const unutilized = Math.max(0, released - cappedUtil);
+      const utilPct = released > 0 ? (cappedUtil / released) * 100 : null;
+      return {
+        high_court: row.high_court,
+        label: row.label || shortLabel(row.high_court, 16),
+        released,
+        utilized: cappedUtil,
+        unutilized,
+        util_pct: utilPct,
+      };
+    })
+    .sort((a, b) => b.released - a.released);
+}
+
+function HcReleasedSplitTooltip({ active, payload, label, labels }) {
+  if (!active || !payload?.length) return null;
+  const row = payload[0]?.payload || {};
+  return (
+    <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs shadow-md">
+      <div className="font-semibold text-slate-800 mb-1.5">{label}</div>
+      <div className="text-slate-700">
+        {labels.ftUtilizedShort}:{" "}
+        <span className="font-semibold tabular-nums">{fmtNum(row.utilized)}</span>
+      </div>
+      <div className="text-slate-700">
+        {labels.ftUnutilizedShort}:{" "}
+        <span className="font-semibold tabular-nums">{fmtNum(row.unutilized)}</span>
+      </div>
+      <div className="text-slate-700">
+        {labels.ftReleasedShort}:{" "}
+        <span className="font-semibold tabular-nums">{fmtNum(row.released)}</span>
+      </div>
+      <div className="text-slate-700">
+        {labels.ftUtilPct}:{" "}
+        <span className="font-semibold tabular-nums">{fmtPct(row.util_pct)}</span>
+      </div>
+    </div>
+  );
+}
+
 function UtilPctComponentHcChart({ rows, hcNames, utilPctLabel }) {
   const [hiddenHc, setHiddenHc] = useState(() => new Set());
 
@@ -193,6 +248,7 @@ function UtilPctComponentHcChart({ rows, hcNames, utilPctLabel }) {
 }
 
 export default function FinancialTrackerDashboardTab({ reportingPeriod, highCourt = "", component = "", labels }) {
+  const [hcSplitView, setHcSplitView] = useState("top");
   const filterParams = {
     ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
     ...(highCourt ? { high_court: highCourt } : {}),
@@ -205,6 +261,28 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
 
   const kpis = data?.kpis;
   const chartComponents = data?.chart_components || [];
+
+  const hcReleasedSplitAll = useMemo(
+    () => buildHcReleasedSplitRows(data?.hc_released, data?.hc_utilized),
+    [data?.hc_released, data?.hc_utilized],
+  );
+
+  const hcReleasedSplitRows = useMemo(() => {
+    const n = HC_SPLIT_SLICE;
+    if (hcReleasedSplitAll.length <= n) return hcReleasedSplitAll;
+    if (hcSplitView === "bottom") {
+      return [...hcReleasedSplitAll.slice(-n)].reverse();
+    }
+    return hcReleasedSplitAll.slice(0, n);
+  }, [hcReleasedSplitAll, hcSplitView]);
+
+  const hcSplitHint = useMemo(() => {
+    const shown = hcReleasedSplitRows.length;
+    if (!shown) return null;
+    return hcSplitView === "bottom"
+      ? labels.ftHcReleasedSplitHintBottom(shown)
+      : labels.ftHcReleasedSplitHintTop(shown);
+  }, [hcReleasedSplitRows.length, hcSplitView, labels]);
 
   const hcNames = useMemo(() => {
     const names = new Set();
@@ -263,43 +341,70 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <Card title={labels.ftHcReleased} elevated>
-          <div className="h-72 p-4">
-            {(data?.hc_released || []).length === 0 ? (
-              <EmptyChart message={labels.noData} />
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.hc_released} margin={{ top: 8, right: 12, left: 0, bottom: 56 }}>
-                  <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                  <XAxis dataKey="label" stroke="#475569" fontSize={10} angle={-25} textAnchor="end" interval={0} height={70} />
-                  <YAxis stroke="#475569" fontSize={11} />
-                  <Tooltip formatter={(v) => [fmtNum(v), labels.ftReleasedShort]} />
-                  <Bar dataKey="released" name={labels.ftReleasedShort} fill="#22c55e" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            )}
+      <Card
+        title={labels.ftHcReleasedSplit}
+        subtitle={hcSplitHint || undefined}
+        elevated
+        action={
+          <div className="flex gap-1 text-[10px] uppercase tracking-wider">
+            {[
+              { id: "top", label: labels.ftTop14 },
+              { id: "bottom", label: labels.ftBottom14 },
+            ].map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => setHcSplitView(opt.id)}
+                className={`px-2 py-1 rounded-sm border ${
+                  hcSplitView === opt.id
+                    ? "bg-[#003B73] text-white border-[#003B73]"
+                    : "bg-white text-slate-600 border-slate-300"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
-        </Card>
-
-        <Card title={labels.ftHcUtilized} elevated>
-          <div className="h-72 p-4">
-            {(data?.hc_utilized || []).length === 0 ? (
-              <EmptyChart message={labels.noData} />
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.hc_utilized} margin={{ top: 8, right: 12, left: 0, bottom: 56 }}>
-                  <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                  <XAxis dataKey="label" stroke="#475569" fontSize={10} angle={-25} textAnchor="end" interval={0} height={70} />
-                  <YAxis stroke="#475569" fontSize={11} />
-                  <Tooltip formatter={(v) => [fmtNum(v), labels.ftUtilizedShort]} />
-                  <Bar dataKey="utilized" name={labels.ftUtilizedShort} fill="#003B73" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </Card>
-      </div>
+        }
+      >
+        <div className="h-80 p-4">
+          {hcReleasedSplitRows.length === 0 ? (
+            <EmptyChart message={labels.noData} />
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={hcReleasedSplitRows} margin={{ top: 8, right: 12, left: 0, bottom: 56 }}>
+                <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="label"
+                  stroke="#475569"
+                  fontSize={10}
+                  angle={-25}
+                  textAnchor="end"
+                  interval={0}
+                  height={70}
+                />
+                <YAxis stroke="#475569" fontSize={11} />
+                <Tooltip content={<HcReleasedSplitTooltip labels={labels} />} />
+                <Legend />
+                <Bar
+                  dataKey="utilized"
+                  name={labels.ftUtilizedShort}
+                  stackId="released"
+                  fill="#003B73"
+                  radius={[0, 0, 0, 0]}
+                />
+                <Bar
+                  dataKey="unutilized"
+                  name={labels.ftUnutilizedShort}
+                  stackId="released"
+                  fill="#86efac"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <Card title={labels.ftHcComponentReleased} elevated>
