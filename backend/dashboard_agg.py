@@ -102,10 +102,16 @@ def physical_percent_with_relative_fallback(
     safe_div_fn: Callable,
     *,
     sum_ratio: bool = False,
+    allow_relative: bool = False,
     target_key: str = "target",
     achieved_key: str = "achieved",
 ) -> Optional[float]:
-    """Prefer target-based %; fall back to mean relative-vs-max HC achieved (Cloud GB)."""
+    """Target-based achievement %.
+
+    When no usable target exists (e.g. Cloud capacity with target 0/null), returns
+    None so the UI shows NA — unless ``allow_relative`` is True, in which case it
+    falls back to mean relative-vs-max HC achieved (ranking, not true achievement).
+    """
     if sum_ratio:
         target = sum(float(r.get(target_key) or 0) for r in rows)
         achieved = sum(float(r.get(achieved_key) or 0) for r in rows)
@@ -114,7 +120,9 @@ def physical_percent_with_relative_fallback(
         pct = mean_achievement_percent(rows, safe_div_fn, target_key, achieved_key)
     if pct is not None:
         return pct
-    return mean_relative_achieved_percent(rows, achieved_key=achieved_key)
+    if allow_relative:
+        return mean_relative_achieved_percent(rows, achieved_key=achieved_key)
+    return None
 
 
 def physical_absolute_totals(rows: list) -> dict:
@@ -833,13 +841,12 @@ async def compute_dashboard_summary(
     rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
     phys_totals = physical_absolute_totals(rolled_phys)
     # Homogeneous UOM → ratio of sums; mixed UOMs → equal-weight mean of indicator %.
-    # Cloud GB (target 0) → mean of relative-vs-max HC achievement.
+    # No usable target (e.g. Cloud GB) → NA. Do not invent relative-vs-max ranking
+    # as "Avg Physical % Achieved" — that is not achievement against a target.
     if phys_totals["mixed_uom"]:
-        phys_percent = physical_percent_with_relative_fallback(rolled_phys, safe_div_fn)
+        phys_percent = mean_achievement_percent(rolled_phys, safe_div_fn)
     else:
         phys_percent = safe_div_fn(phys_totals["achieved"], phys_totals["target"])
-        if phys_percent is None:
-            phys_percent = mean_relative_achieved_percent(rolled_phys)
     thresholds = await fetch_rag_thresholds(db)
     relative_hc = relative_achieved_percent_by_hc(group_rows_by_hc(rolled_phys))
     rag: dict = {}

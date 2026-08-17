@@ -137,17 +137,20 @@ def test_relative_achieved_percent_by_hc_for_cloud_without_targets():
     assert "Empty" not in out
 
 
-def test_component_phys_percent_falls_back_when_cloud_has_no_targets():
-    """Performance chart by-component must not leave Physical % blank for Cloud GB."""
+def test_component_phys_percent_is_na_when_cloud_has_no_targets():
+    """Without a real target, Physical % must be NA — not a relative-vs-max ranking."""
     rows = [
         {"high_court": "Allahabad", "target": 0, "achieved": 7700},
         {"high_court": "Bombay", "target": 0, "achieved": 19700},
         {"high_court": "Calcutta", "target": 0, "achieved": 9850},
     ]
     assert _safe_div(sum(r["achieved"] for r in rows), 0) is None
-    pct = physical_percent_with_relative_fallback(rows, _safe_div, sum_ratio=True)
-    expected = mean_relative_achieved_percent(rows)
-    assert pct == expected
+    assert physical_percent_with_relative_fallback(rows, _safe_div, sum_ratio=True) is None
+    # Opt-in ranking remains available for non-KPI uses.
+    pct = physical_percent_with_relative_fallback(
+        rows, _safe_div, sum_ratio=True, allow_relative=True,
+    )
+    assert pct == mean_relative_achieved_percent(rows)
     assert pct is not None and 0 < pct <= 100
 
 
