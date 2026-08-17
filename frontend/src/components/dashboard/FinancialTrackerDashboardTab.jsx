@@ -155,22 +155,44 @@ function HcReleasedSplitTooltip({ active, payload, label, labels }) {
     <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs shadow-md">
       <div className="font-semibold text-slate-800 mb-1.5">{label}</div>
       <div className="text-slate-700">
-        {labels.ftUtilizedShort}:{" "}
+        {labels.ftLegendReleased}:{" "}
+        <span className="font-semibold tabular-nums">{fmtNum(row.released)}</span>
+      </div>
+      <div className="text-slate-700">
+        {labels.ftLegendUtilized}:{" "}
         <span className="font-semibold tabular-nums">{fmtNum(row.utilized)}</span>
       </div>
       <div className="text-slate-700">
-        {labels.ftUnutilizedShort}:{" "}
+        {labels.ftLegendUnutilized}:{" "}
         <span className="font-semibold tabular-nums">{fmtNum(row.unutilized)}</span>
-      </div>
-      <div className="text-slate-700">
-        {labels.ftReleasedShort}:{" "}
-        <span className="font-semibold tabular-nums">{fmtNum(row.released)}</span>
       </div>
       <div className="text-slate-700">
         {labels.ftUtilPct}:{" "}
         <span className="font-semibold tabular-nums">{fmtPct(row.util_pct)}</span>
       </div>
     </div>
+  );
+}
+
+function HcReleasedSplitLegend({ labels }) {
+  const items = [
+    { key: "released", label: labels.ftLegendReleased, color: "#22c55e" },
+    { key: "utilized", label: labels.ftLegendUtilized, color: "#003B73" },
+    { key: "unutilized", label: labels.ftLegendUnutilized, color: "#86efac" },
+    { key: "util_pct", label: labels.ftUtilPct, color: "#ea580c" },
+  ];
+  return (
+    <ul className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 pt-2 text-[11px]">
+      {items.map((item) => (
+        <li key={item.key} className="inline-flex items-center gap-1.5 text-slate-600">
+          <span
+            className="inline-block w-2.5 h-2.5 rounded-sm shrink-0 border border-white shadow-sm"
+            style={{ background: item.color }}
+          />
+          <span>{item.label}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -383,17 +405,17 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
                 />
                 <YAxis stroke="#475569" fontSize={11} />
                 <Tooltip content={<HcReleasedSplitTooltip labels={labels} />} />
-                <Legend />
+                <Legend content={<HcReleasedSplitLegend labels={labels} />} />
                 <Bar
                   dataKey="utilized"
-                  name={labels.ftUtilizedShort}
+                  name={labels.ftLegendUtilized}
                   stackId="released"
                   fill="#003B73"
                   radius={[0, 0, 0, 0]}
                 />
                 <Bar
                   dataKey="unutilized"
-                  name={labels.ftUnutilizedShort}
+                  name={labels.ftLegendUnutilized}
                   stackId="released"
                   fill="#86efac"
                   radius={[4, 4, 0, 0]}
