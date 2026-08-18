@@ -119,7 +119,6 @@ function EmptyChart({ message }) {
   );
 }
 
-const HC_SPLIT_SLICE = 14;
 const HC_COMP_SLICE = 6;
 
 function SliceToggleButton({ view, setView, topLabel, bottomLabel }) {
@@ -180,7 +179,7 @@ function HcReleasedSplitTooltip({ active, payload, label, labels }) {
   const row = payload[0]?.payload || {};
   return (
     <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs shadow-md">
-      <div className="font-semibold text-slate-800 mb-1.5">{label}</div>
+      <div className="font-semibold text-slate-800 mb-1.5">{row.high_court || label}</div>
       <div className="text-slate-700">
         {labels.ftLegendReleased}:{" "}
         <span className="font-semibold tabular-nums">{fmtNum(row.released)}</span>
@@ -315,7 +314,6 @@ function UtilPctComponentHcChart({ rows, hcNames, utilPctLabel }) {
 }
 
 export default function FinancialTrackerDashboardTab({ reportingPeriod, highCourt = "", component = "", labels }) {
-  const [hcSplitView, setHcSplitView] = useState("top");
   const [hcCompView, setHcCompView] = useState("top");
   const filterParams = {
     ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
@@ -335,22 +333,9 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
     [data?.hc_released, data?.hc_utilized],
   );
 
-  const hcReleasedSplitRows = useMemo(() => {
-    const n = HC_SPLIT_SLICE;
-    if (hcReleasedSplitAll.length <= n) return hcReleasedSplitAll;
-    if (hcSplitView === "bottom") {
-      return [...hcReleasedSplitAll.slice(-n)].reverse();
-    }
-    return hcReleasedSplitAll.slice(0, n);
-  }, [hcReleasedSplitAll, hcSplitView]);
-
-  const hcSplitHint = useMemo(() => {
-    const shown = hcReleasedSplitRows.length;
-    if (!shown) return null;
-    return hcSplitView === "bottom"
-      ? labels.ftHcReleasedSplitHintBottom(shown)
-      : labels.ftHcReleasedSplitHintTop(shown);
-  }, [hcReleasedSplitRows.length, hcSplitView, labels]);
+  const hcSplitHint = hcReleasedSplitAll.length
+    ? labels.ftHcReleasedSplitHintAll(hcReleasedSplitAll.length)
+    : null;
 
   // Rank HCs by total funds released (desc) for Top/Bottom 6 component charts.
   const rankedHcByReleased = useMemo(
@@ -441,30 +426,26 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
         title={labels.ftHcReleasedSplit}
         subtitle={hcSplitHint || undefined}
         elevated
-        action={
-          <SliceToggleButton
-            view={hcSplitView}
-            setView={setHcSplitView}
-            topLabel={labels.ftTop14}
-            bottomLabel={labels.ftBottom14}
-          />
-        }
       >
-        <div className="h-80 p-4">
-          {hcReleasedSplitRows.length === 0 ? (
+        <div className="h-[28rem] p-4">
+          {hcReleasedSplitAll.length === 0 ? (
             <EmptyChart message={labels.noData} />
           ) : (
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={hcReleasedSplitRows} margin={{ top: 8, right: 12, left: 0, bottom: 56 }}>
+              <BarChart
+                data={hcReleasedSplitAll}
+                margin={{ top: 8, right: 12, left: 0, bottom: 72 }}
+                barCategoryGap="18%"
+              >
                 <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
                 <XAxis
                   dataKey="label"
                   stroke="#475569"
-                  fontSize={10}
-                  angle={-25}
+                  fontSize={9}
+                  angle={-40}
                   textAnchor="end"
                   interval={0}
-                  height={70}
+                  height={88}
                 />
                 <YAxis stroke="#475569" fontSize={11} />
                 <Tooltip content={<HcReleasedSplitTooltip labels={labels} />} />
