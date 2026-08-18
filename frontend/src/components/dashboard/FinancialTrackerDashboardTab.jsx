@@ -50,8 +50,8 @@ function ComponentUtilDonut({ items, totalLabel, valueLabel }) {
   if (!slices.length) return null;
 
   return (
-    <div className="flex flex-col sm:flex-row items-stretch gap-4 min-h-[240px]">
-      <div className="relative mx-auto sm:mx-0 w-[200px] h-[200px] shrink-0">
+    <div className="flex flex-col items-center gap-4 min-h-[240px]">
+      <div className="relative mx-auto w-[200px] h-[200px] shrink-0">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
             <Pie
@@ -84,17 +84,17 @@ function ComponentUtilDonut({ items, totalLabel, valueLabel }) {
         </div>
       </div>
 
-      <ScrollRegion className="flex-1 min-w-0 max-h-[220px] overflow-y-auto pr-1" label={valueLabel}>
+      <ScrollRegion className="w-full max-w-sm max-h-[160px] overflow-y-auto" label={valueLabel}>
         <ul className="space-y-2 py-1">
           {slices.map((slice, i) => {
             const pct = total > 0 ? ((slice.value / total) * 100).toFixed(1) : "0.0";
             return (
-              <li key={slice.name} className="flex items-start gap-2 text-xs">
+              <li key={slice.name} className="flex items-start justify-center gap-2 text-xs">
                 <span
                   className="mt-1 inline-block w-2.5 h-2.5 rounded-sm shrink-0 border border-white shadow-sm"
                   style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
                 />
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 text-center">
                   <div className="text-slate-700 leading-snug" title={slice.name}>
                     {slice.name}
                   </div>
@@ -147,7 +147,7 @@ function sliceRankedNames(rankedNames, view, n) {
   return list.slice(0, n);
 }
 
-/** Join HC released + utilised into stacked rows: utilised (bottom) + unutilised (top). */
+/** Join HC released + utilised into grouped bar rows. */
 function buildHcReleasedSplitRows(hcReleased, hcUtilized) {
   const utilByHc = new Map();
   (hcUtilized || []).forEach((row) => {
@@ -160,14 +160,12 @@ function buildHcReleasedSplitRows(hcReleased, hcUtilized) {
       const rawUtil = utilByHc.has(row.high_court) ? Number(utilByHc.get(row.high_court)) : 0;
       const utilized = Number.isFinite(rawUtil) ? Math.max(0, rawUtil) : 0;
       const cappedUtil = Math.min(utilized, released);
-      const unutilized = Math.max(0, released - cappedUtil);
       const utilPct = released > 0 ? (cappedUtil / released) * 100 : null;
       return {
         high_court: row.high_court,
         label: row.label || shortLabel(row.high_court, 16),
         released,
         utilized: cappedUtil,
-        unutilized,
         util_pct: utilPct,
       };
     })
@@ -189,10 +187,6 @@ function HcReleasedSplitTooltip({ active, payload, label, labels }) {
         <span className="font-semibold tabular-nums">{fmtNum(row.utilized)}</span>
       </div>
       <div className="text-slate-700">
-        {labels.ftLegendUnutilized}:{" "}
-        <span className="font-semibold tabular-nums">{fmtNum(row.unutilized)}</span>
-      </div>
-      <div className="text-slate-700">
         {labels.ftUtilPct}:{" "}
         <span className="font-semibold tabular-nums">{fmtPct(row.util_pct)}</span>
       </div>
@@ -204,8 +198,6 @@ function HcReleasedSplitLegend({ labels }) {
   const items = [
     { key: "released", label: labels.ftLegendReleased, color: "#22c55e" },
     { key: "utilized", label: labels.ftLegendUtilized, color: "#003B73" },
-    { key: "unutilized", label: labels.ftLegendUnutilized, color: "#86efac" },
-    { key: "util_pct", label: labels.ftUtilPct, color: "#ea580c" },
   ];
   return (
     <ul className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 pt-2 text-[11px]">
@@ -451,18 +443,16 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
                 <Tooltip content={<HcReleasedSplitTooltip labels={labels} />} />
                 <Legend content={<HcReleasedSplitLegend labels={labels} />} />
                 <Bar
-                  dataKey="utilized"
-                  name={labels.ftLegendUtilized}
-                  stackId="released"
-                  fill="#003B73"
-                  radius={[0, 0, 0, 0]}
+                  dataKey="released"
+                  name={labels.ftLegendReleased}
+                  fill="#22c55e"
+                  radius={[3, 3, 0, 0]}
                 />
                 <Bar
-                  dataKey="unutilized"
-                  name={labels.ftLegendUnutilized}
-                  stackId="released"
-                  fill="#86efac"
-                  radius={[4, 4, 0, 0]}
+                  dataKey="utilized"
+                  name={labels.ftLegendUtilized}
+                  fill="#003B73"
+                  radius={[3, 3, 0, 0]}
                 />
               </BarChart>
             </ResponsiveContainer>
