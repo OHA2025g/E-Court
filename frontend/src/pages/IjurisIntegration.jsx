@@ -86,7 +86,7 @@ export default function IjurisIntegration() {
           <div className="lg:col-span-2 space-y-3">
             <div className="flex items-center gap-3">
               <SelectField label={l.recordType} value={recordType} onChange={loadSample}
-                options={recordTypeOptions} />
+                options={recordTypeOptions} hideEmptyOption />
               <div className="self-end text-xs text-slate-500">{l.editJsonHint}</div>
             </div>
             <textarea

@@ -32,15 +32,16 @@
     "darkMode": "ਡਾਰਕ ਮੋਡ",
     "lightMode": "ਲਾਈਟ ਮੋਡ",
     "language": "ਭਾਸ਼ਾ",
-    "skipToContent": "ਮੁੱਖ ਸਮੱਗਰੀ 'ਤੇ ਜਾਓ"
+    "skipToContent": "ਮੁੱਖ ਸਮੱਗਰੀ 'ਤੇ ਜਾਓ",
+    "selectAll": "Select All"
   },
   "dashboard": {
     "narrativeTitle": "Executive narrative",
     "narrativeSubtitle": "Summary from approved dashboard data",
     "highCourtFilter": "High Court",
-    "allHighCourts": "All High Courts",
+    "allHighCourts": "Select All",
     "componentFilter": "Component",
-    "allComponents": "All Components"
+    "allComponents": "Select All"
   },
   "submissions": {
     "slaTitle": "ਜਮਾਅ SLA",
@@ -177,8 +178,8 @@
       "title": "ਕੰਮ ਸੂਚੀ",
       "tasksCount": "{{count}} ਕੰਮ",
       "filters": "ਫਿਲਟਰ",
-      "allStatuses": "ਸਾਰੀਆਂ ਸਥਿਤੀਆਂ",
-      "allPriorities": "ਸਾਰੀਆਂ ਤਰਜੀਹਾਂ"
+      "allStatuses": "Select All",
+      "allPriorities": "Select All"
     },
     "bulk": {
       "selected": "{{count}} ਚੁਣੇ",

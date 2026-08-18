@@ -32,15 +32,16 @@
     "darkMode": "இருண்ட பயன்முறை",
     "lightMode": "வெளிச்ச பயன்முறை",
     "language": "மொழி",
-    "skipToContent": "முதன்மை உள்ளடக்கத்திற்கு செல்"
+    "skipToContent": "முதன்மை உள்ளடக்கத்திற்கு செல்",
+    "selectAll": "Select All"
   },
   "dashboard": {
     "narrativeTitle": "Executive narrative",
     "narrativeSubtitle": "Summary from approved dashboard data",
     "highCourtFilter": "High Court",
-    "allHighCourts": "All High Courts",
+    "allHighCourts": "Select All",
     "componentFilter": "Component",
-    "allComponents": "All Components"
+    "allComponents": "Select All"
   },
   "submissions": {
     "slaTitle": "சமர்ப்பிப்பு SLA",
@@ -177,8 +178,8 @@
       "title": "பணி பட்டியல்",
       "tasksCount": "{{count}} பணிகள்",
       "filters": "வடிகட்டிகள்",
-      "allStatuses": "அனைத்து நிலைகள்",
-      "allPriorities": "அனைத்து முன்னுரிமைகள்"
+      "allStatuses": "Select All",
+      "allPriorities": "Select All"
     },
     "bulk": {
       "selected": "{{count}} தேர்ந்தெடுக்கப்பட்டது",

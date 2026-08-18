@@ -53,7 +53,9 @@ export default function AdminBackup() {
         <div className="p-4 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <SelectField label={b.fieldMode} value={mode} onChange={setMode}
-              options={[{ label: b.modeMerge, value: "merge" }, { label: b.modeReplace, value: "replace" }]} />
+              options={[{ label: b.modeMerge, value: "merge" }, { label: b.modeReplace, value: "replace" }]}
+              hideEmptyOption
+            />
             <label className="block sm:col-span-2">
               <span className="text-[10px] uppercase tracking-[0.2em] text-slate-600 font-medium">{b.loadJsonFile}</span>
               <input type="file" accept=".json" onChange={onPick} className="mt-1 text-sm" />

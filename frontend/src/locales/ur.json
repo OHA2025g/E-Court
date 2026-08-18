@@ -32,15 +32,16 @@
     "darkMode": "ڈارک موڈ",
     "lightMode": "لائٹ موڈ",
     "language": "زبان",
-    "skipToContent": "مواد پر جائیں"
+    "skipToContent": "مواد پر جائیں",
+    "selectAll": "Select All"
   },
   "dashboard": {
     "narrativeTitle": "تنفیذی خلاصہ",
     "narrativeSubtitle": "منظور شدہ ڈیش بورڈ ڈیٹا سے خلاصہ",
     "highCourtFilter": "High Court",
-    "allHighCourts": "All High Courts",
+    "allHighCourts": "Select All",
     "componentFilter": "Component",
-    "allComponents": "All Components"
+    "allComponents": "Select All"
   },
   "submissions": {
     "slaTitle": "جمع کرانے کی SLA",
@@ -177,8 +178,8 @@
       "title": "کام کی فہرست",
       "tasksCount": "{{count}} کام",
       "filters": "فلٹرز",
-      "allStatuses": "تمام حیثیتیں",
-      "allPriorities": "تمام ترجیحات"
+      "allStatuses": "Select All",
+      "allPriorities": "Select All"
     },
     "bulk": {
       "selected": "{{count}} منتخب",

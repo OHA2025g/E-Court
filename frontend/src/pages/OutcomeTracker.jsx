@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, fmtNum, fmtPct, formatApiError, BACKEND_URL } from "@/lib/api";
+import { api, fmtNum, fmtPct, formatApiError, BACKEND_URL, downloadApiFile } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import Card from "@/components/Card";
 import BulkUploadPanel from "@/components/tracker/BulkUploadPanel";
@@ -310,13 +310,23 @@ export default function OutcomeTracker() {
     }
   }
 
-  function exportUrl(fmt) {
-    const params = new URLSearchParams();
-    if (hc) params.set("high_court", hc);
-    if (subject) params.set("subject", subject);
-    if (period) params.set("reporting_period", period);
-    params.set("format", fmt);
-    return `${BACKEND_URL}/api/export/outcome?${params.toString()}`;
+  function exportParams() {
+    const params = {};
+    if (hc) params.high_court = hc;
+    if (subject) params.subject = subject;
+    if (period) params.reporting_period = period;
+    return params;
+  }
+
+  async function downloadExport(fileFormat) {
+    try {
+      await downloadApiFile("/export/outcome", {
+        params: { ...exportParams(), file_format: fileFormat },
+        filename: fileFormat === "pdf" ? "outcome_report.pdf" : "outcome_report.xlsx",
+      });
+    } catch (e) {
+      toast.error(e?.message || formatApiError(e?.response?.data?.detail));
+    }
   }
 
   const tableColumns = useMemo(() => [
@@ -413,7 +423,7 @@ export default function OutcomeTracker() {
               options={kpiOptions.map(k => ({ label: k.kpi || k.kpi_id, value: k.kpi_id }))}
               disabled={!subComponent}
             />
-            <SelectField label={labels.granularity} value={granularity} onChange={setGranularity} options={GRANULARITIES} />
+            <SelectField label={labels.granularity} value={granularity} onChange={setGranularity} options={GRANULARITIES} hideEmptyOption />
             {districtRequired && (
               <>
                 <SelectField label={labels.district} value={district} onChange={setDistrict}
@@ -426,8 +436,8 @@ export default function OutcomeTracker() {
                 )}
               </>
             )}
-            <SelectField label="Outcome Type" value={outcomeType} onChange={setOutcomeType} options={OUTCOME_TYPES} />
-            <SelectField label="Value Type" value={valueType} onChange={setValueType} options={VALUE_TYPES} />
+            <SelectField label="Outcome Type" value={outcomeType} onChange={setOutcomeType} options={OUTCOME_TYPES} hideEmptyOption />
+            <SelectField label="Value Type" value={valueType} onChange={setValueType} options={VALUE_TYPES} hideEmptyOption />
             <NumberField testid={TID.baselineInput} label="Baseline (for Relative KPIs)" value={baseline} onChange={setBaseline} disabled={!canEdit || outcomeType !== "Relative"} />
             <NumberField testid={TID.valueInput} label="Value" value={value} onChange={setValue} disabled={!canEdit} />
             <div className="sm:col-span-2"><TextField testid={TID.remarksInput} label="Remarks" value={remarks} onChange={setRemarks} disabled={!canEdit} /></div>
@@ -447,14 +457,14 @@ export default function OutcomeTracker() {
         </Card>
         <Card title={labels.exportBulk}>
           <div className="p-4 space-y-3 border-b border-slate-100">
-            <a data-testid={TID.exportXlsx} href={exportUrl("xlsx")} target="_blank" rel="noreferrer"
+            <button type="button" data-testid={TID.exportXlsx} onClick={() => downloadExport("xlsx")}
               className="w-full inline-flex items-center justify-center gap-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-sm uppercase tracking-wider text-xs">
               <FileXls size={16} /> {labels.exportExcel}
-            </a>
-            <a data-testid={TID.exportPdf} href={exportUrl("pdf")} target="_blank" rel="noreferrer"
+            </button>
+            <button type="button" data-testid={TID.exportPdf} onClick={() => downloadExport("pdf")}
               className="w-full inline-flex items-center justify-center gap-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-sm uppercase tracking-wider text-xs">
               <FilePdf size={16} /> {labels.exportPdf}
-            </a>
+            </button>
             <p className="text-xs text-slate-500">{listTotal} outcome rows in current selection.</p>
           </div>
           <BulkUploadPanel

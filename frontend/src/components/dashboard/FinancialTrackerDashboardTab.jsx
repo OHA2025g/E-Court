@@ -120,6 +120,33 @@ function EmptyChart({ message }) {
 }
 
 const HC_SPLIT_SLICE = 14;
+const HC_COMP_SLICE = 6;
+
+function SliceToggleButton({ view, setView, topLabel, bottomLabel }) {
+  return (
+    <button
+      type="button"
+      onClick={() => setView((v) => (v === "top" ? "bottom" : "top"))}
+      className="px-2.5 py-1 rounded-sm border border-[#003B73] bg-[#003B73] text-white text-[10px] uppercase tracking-wider"
+      title={view === "top" ? `Switch to ${bottomLabel}` : `Switch to ${topLabel}`}
+      aria-label={
+        view === "top"
+          ? `Showing ${topLabel}. Switch to ${bottomLabel}`
+          : `Showing ${bottomLabel}. Switch to ${topLabel}`
+      }
+    >
+      {view === "top" ? topLabel : bottomLabel}
+    </button>
+  );
+}
+
+/** Pick top N or bottom N names from a desc-ranked list. */
+function sliceRankedNames(rankedNames, view, n) {
+  const list = rankedNames || [];
+  if (list.length <= n) return list;
+  if (view === "bottom") return [...list.slice(-n)].reverse();
+  return list.slice(0, n);
+}
 
 /** Join HC released + utilised into stacked rows: utilised (bottom) + unutilised (top). */
 function buildHcReleasedSplitRows(hcReleased, hcUtilized) {
@@ -271,6 +298,7 @@ function UtilPctComponentHcChart({ rows, hcNames, utilPctLabel }) {
 
 export default function FinancialTrackerDashboardTab({ reportingPeriod, highCourt = "", component = "", labels }) {
   const [hcSplitView, setHcSplitView] = useState("top");
+  const [hcCompView, setHcCompView] = useState("top");
   const filterParams = {
     ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
     ...(highCourt ? { high_court: highCourt } : {}),
@@ -306,15 +334,52 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
       : labels.ftHcReleasedSplitHintTop(shown);
   }, [hcReleasedSplitRows.length, hcSplitView, labels]);
 
-  const hcNames = useMemo(() => {
-    const names = new Set();
-    (data?.utilization_by_component_hc || []).forEach(row => {
-      Object.keys(row).forEach(k => {
-        if (k !== "component") names.add(k);
+  // Rank HCs by total funds released (desc) for Top/Bottom 6 component charts.
+  const rankedHcByReleased = useMemo(
+    () => (data?.hc_released || []).map((r) => r.high_court).filter(Boolean),
+    [data?.hc_released],
+  );
+
+  const selectedCompHcs = useMemo(
+    () => sliceRankedNames(rankedHcByReleased, hcCompView, HC_COMP_SLICE),
+    [rankedHcByReleased, hcCompView],
+  );
+
+  const hcComponentReleasedRows = useMemo(() => {
+    const byHc = new Map((data?.hc_component_released || []).map((r) => [r.high_court, r]));
+    return selectedCompHcs.map((hc) => byHc.get(hc)).filter(Boolean);
+  }, [data?.hc_component_released, selectedCompHcs]);
+
+  const utilPctRowsForSlice = useMemo(() => {
+    return (data?.utilization_by_component_hc || []).map((row) => {
+      const next = { component: row.component };
+      selectedCompHcs.forEach((hc) => {
+        if (Object.prototype.hasOwnProperty.call(row, hc)) next[hc] = row[hc];
       });
-    });
-    return [...names].slice(0, 6);
-  }, [data]);
+      // Keep only components that have at least one value in the selected HC set.
+      const hasVal = selectedCompHcs.some((hc) => next[hc] != null);
+      return hasVal ? next : null;
+    }).filter(Boolean);
+  }, [data?.utilization_by_component_hc, selectedCompHcs]);
+
+  const hcCompSliceHint = useMemo(() => {
+    const n = selectedCompHcs.length;
+    if (!n) return null;
+    return hcCompView === "bottom"
+      ? labels.ftHcCompSliceHintBottom(n)
+      : labels.ftHcCompSliceHintTop(n);
+  }, [selectedCompHcs.length, hcCompView, labels]);
+
+  // Keep the smaller utilised×HC chart on top-6 by released to avoid overcrowding.
+  const hcNamesUtilizedChart = useMemo(
+    () => sliceRankedNames(rankedHcByReleased, "top", HC_COMP_SLICE),
+    [rankedHcByReleased],
+  );
+
+  const hcComponentUtilizedRows = useMemo(() => {
+    const selected = new Set(hcNamesUtilizedChart);
+    return (data?.hc_component_utilized || []).filter((r) => selected.has(r.high_court));
+  }, [data?.hc_component_utilized, hcNamesUtilizedChart]);
 
   const taskPieSlices = useMemo(
     () => buildDonutSlices(
@@ -368,23 +433,12 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
         subtitle={hcSplitHint || undefined}
         elevated
         action={
-          <button
-            type="button"
-            onClick={() => setHcSplitView((v) => (v === "top" ? "bottom" : "top"))}
-            className="px-2.5 py-1 rounded-sm border border-[#003B73] bg-[#003B73] text-white text-[10px] uppercase tracking-wider"
-            title={
-              hcSplitView === "top"
-                ? `Switch to ${labels.ftBottom14}`
-                : `Switch to ${labels.ftTop14}`
-            }
-            aria-label={
-              hcSplitView === "top"
-                ? `Showing ${labels.ftTop14}. Switch to ${labels.ftBottom14}`
-                : `Showing ${labels.ftBottom14}. Switch to ${labels.ftTop14}`
-            }
-          >
-            {hcSplitView === "top" ? labels.ftTop14 : labels.ftBottom14}
-          </button>
+          <SliceToggleButton
+            view={hcSplitView}
+            setView={setHcSplitView}
+            topLabel={labels.ftTop14}
+            bottomLabel={labels.ftBottom14}
+          />
         }
       >
         <div className="h-80 p-4">
@@ -427,13 +481,25 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <Card title={labels.ftHcComponentReleased} elevated>
+        <Card
+          title={labels.ftHcComponentReleased}
+          subtitle={hcCompSliceHint || undefined}
+          elevated
+          action={
+            <SliceToggleButton
+              view={hcCompView}
+              setView={setHcCompView}
+              topLabel={labels.ftTop6}
+              bottomLabel={labels.ftBottom6}
+            />
+          }
+        >
           <div className="h-80 p-4">
-            {(data?.hc_component_released || []).length === 0 ? (
+            {hcComponentReleasedRows.length === 0 ? (
               <EmptyChart message={labels.noData} />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.hc_component_released} margin={{ top: 8, right: 12, left: 0, bottom: 56 }}>
+                <BarChart data={hcComponentReleasedRows} margin={{ top: 8, right: 12, left: 0, bottom: 56 }}>
                   <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
                   <XAxis dataKey="label" stroke="#475569" fontSize={10} angle={-25} textAnchor="end" interval={0} height={70} />
                   <YAxis stroke="#475569" fontSize={11} />
@@ -448,15 +514,27 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
           </div>
         </Card>
 
-        <Card title={labels.ftUtilPctComponentHc} elevated>
+        <Card
+          title={labels.ftUtilPctComponentHc}
+          subtitle={hcCompSliceHint || undefined}
+          elevated
+          action={
+            <SliceToggleButton
+              view={hcCompView}
+              setView={setHcCompView}
+              topLabel={labels.ftTop6}
+              bottomLabel={labels.ftBottom6}
+            />
+          }
+        >
           <div className="h-80 p-4">
-            {(data?.utilization_by_component_hc || []).length === 0 ? (
+            {utilPctRowsForSlice.length === 0 || selectedCompHcs.length === 0 ? (
               <EmptyChart message={labels.noData} />
             ) : (
               <UtilPctComponentHcChart
-                key={reportingPeriod || "all"}
-                rows={data.utilization_by_component_hc}
-                hcNames={hcNames}
+                key={`${reportingPeriod || "all"}-${hcCompView}-${selectedCompHcs.join("|")}`}
+                rows={utilPctRowsForSlice}
+                hcNames={selectedCompHcs}
                 utilPctLabel={labels.ftUtilPct}
               />
             )}
@@ -508,11 +586,11 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
 
         <Card title={labels.ftHcComponentUtilized} elevated className="xl:col-span-1">
           <div className="h-64 p-3">
-            {(data?.hc_component_utilized || []).length === 0 ? (
+            {hcComponentUtilizedRows.length === 0 ? (
               <EmptyChart message={labels.noData} />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.hc_component_utilized} margin={{ top: 8, right: 8, left: 0, bottom: 48 }}>
+                <BarChart data={hcComponentUtilizedRows} margin={{ top: 8, right: 8, left: 0, bottom: 48 }}>
                   <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
                   <XAxis dataKey="label" stroke="#475569" fontSize={9} angle={-20} textAnchor="end" interval={0} height={56} />
                   <YAxis stroke="#475569" fontSize={10} />

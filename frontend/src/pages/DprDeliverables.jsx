@@ -38,7 +38,7 @@ function DprDialog({ open, onOpenChange, item, onSaved }) {
         <DialogHeader><DialogTitle>{isEdit ? l.editDeliverable : l.addDeliverable}</DialogTitle></DialogHeader>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <TextField label={l.fieldCode} value={form.code} onChange={(v) => setForm(f => ({ ...f, code: v }))} disabled={isEdit} />
-          <SelectField label={l.colStatus} value={form.status} onChange={(v) => setForm(f => ({ ...f, status: v }))} options={STATUSES} />
+          <SelectField label={l.colStatus} value={form.status} onChange={(v) => setForm(f => ({ ...f, status: v }))} options={STATUSES} hideEmptyOption />
           <div className="sm:col-span-2"><TextField label={l.fieldTitle} value={form.title} onChange={(v) => setForm(f => ({ ...f, title: v }))} /></div>
           <TextField label={l.fieldOwner} value={form.owner || ""} onChange={(v) => setForm(f => ({ ...f, owner: v }))} />
           <label className="block">

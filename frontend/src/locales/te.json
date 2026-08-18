@@ -32,15 +32,16 @@
     "darkMode": "డార్క్ మోడ్",
     "lightMode": "లైట్ మోడ్",
     "language": "భాష",
-    "skipToContent": "ప్రధాన కంటెంట్‌కు వెళ్లండి"
+    "skipToContent": "ప్రధాన కంటెంట్‌కు వెళ్లండి",
+    "selectAll": "Select All"
   },
   "dashboard": {
     "narrativeTitle": "Executive narrative",
     "narrativeSubtitle": "Summary from approved dashboard data",
     "highCourtFilter": "High Court",
-    "allHighCourts": "All High Courts",
+    "allHighCourts": "Select All",
     "componentFilter": "Component",
-    "allComponents": "All Components"
+    "allComponents": "Select All"
   },
   "submissions": {
     "slaTitle": "సమర్పణ SLA",
@@ -177,8 +178,8 @@
       "title": "పని జాబితా",
       "tasksCount": "{{count}} పనులు",
       "filters": "ఫిల్టర్లు",
-      "allStatuses": "అన్ని స్థితులు",
-      "allPriorities": "అన్ని ప్రాధాన్యతలు"
+      "allStatuses": "Select All",
+      "allPriorities": "Select All"
     },
     "bulk": {
       "selected": "{{count}} ఎంచుకోబడింది",

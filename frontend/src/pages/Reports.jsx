@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { api, fmtNum, fmtPct, BACKEND_URL, formatApiError } from "@/lib/api";
+import { api, fmtNum, fmtPct, formatApiError, downloadApiFile } from "@/lib/api";
 import Card from "@/components/Card";
 import ScrollRegion from "@/components/ui/ScrollRegion";
 import RagBadge from "@/components/RagBadge";
@@ -14,12 +14,22 @@ import { unwrapTrackerResponse } from "@/lib/trackerApi";
 import ComponentWiseDemoReport from "@/components/reports/ComponentWiseDemoReport";
 import FinancialYoyDemoReport from "@/components/reports/FinancialYoyDemoReport";
 
-function ExportBtn({ url, kind, testid }) {
+function ExportBtn({ path, params, kind, filename, testid }) {
+  async function onClick() {
+    try {
+      await downloadApiFile(path, {
+        params: { ...params, file_format: kind },
+        filename: filename || (kind === "pdf" ? "report.pdf" : "report.xlsx"),
+      });
+    } catch (e) {
+      toast.error(e?.message || formatApiError(e?.response?.data?.detail));
+    }
+  }
   return (
-    <a data-testid={testid} href={url} target="_blank" rel="noreferrer"
+    <button type="button" data-testid={testid} onClick={onClick}
       className="inline-flex items-center gap-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-sm uppercase tracking-wider text-[11px]">
       {kind === "xlsx" ? <FileXls size={14} /> : <FilePdf size={14} />} {kind.toUpperCase()}
-    </a>
+    </button>
   );
 }
 
@@ -127,17 +137,26 @@ export default function Reports() {
   const finItems = fin.data?.items || [];
   const outItems = out.data?.items || [];
 
-  const physUrl = (f) => {
-    const p = new URLSearchParams(); if (hc) p.set("high_court", hc); if (component) p.set("component", component); if (period) p.set("reporting_period", period); p.set("format", f);
-    return `${BACKEND_URL}/api/export/physical?${p}`;
+  const physExportParams = () => {
+    const p = {};
+    if (hc) p.high_court = hc;
+    if (component) p.component = component;
+    if (period) p.reporting_period = period;
+    return p;
   };
-  const finUrl = (f) => {
-    const p = new URLSearchParams(); if (hc) p.set("high_court", hc); if (component) p.set("component", component); if (period) p.set("reporting_period", period); p.set("format", f);
-    return `${BACKEND_URL}/api/export/financial?${p}`;
+  const finExportParams = () => {
+    const p = {};
+    if (hc) p.high_court = hc;
+    if (component) p.component = component;
+    if (period) p.reporting_period = period;
+    return p;
   };
-  const outUrl = (f) => {
-    const p = new URLSearchParams(); if (hc) p.set("high_court", hc); if (subject) p.set("subject", subject); if (period) p.set("reporting_period", period); p.set("format", f);
-    return `${BACKEND_URL}/api/export/outcome?${p}`;
+  const outExportParams = () => {
+    const p = {};
+    if (hc) p.high_court = hc;
+    if (subject) p.subject = subject;
+    if (period) p.reporting_period = period;
+    return p;
   };
 
   const ragOf = (r) => r >= 80 ? "GREEN" : r >= 65 ? "AMBER" : r != null ? "RED" : "NA";
@@ -284,7 +303,7 @@ export default function Reports() {
 
         <TabsContent value="physical" className="mt-4">
           <Card title={t("reports.physicalReport", { count: phys.data?.total ?? physItems.length })}
-            action={<div className="flex gap-2"><SearchInput value={search} onChange={setSearch} placeholder={t("common.search", { defaultValue: "Search…" })} /><ExportBtn url={physUrl("xlsx")} kind="xlsx" testid={TID.exportXlsx} /><ExportBtn url={physUrl("pdf")} kind="pdf" testid={TID.exportPdf} /></div>}>
+            action={<div className="flex gap-2"><SearchInput value={search} onChange={setSearch} placeholder={t("common.search", { defaultValue: "Search…" })} /><ExportBtn path="/export/physical" params={physExportParams()} kind="xlsx" filename="physical_report.xlsx" testid={TID.exportXlsx} /><ExportBtn path="/export/physical" params={physExportParams()} kind="pdf" filename="physical_report.pdf" testid={TID.exportPdf} /></div>}>
             <SortableTable
               scrollLabel={t("reports.reportTable")}
               noDataLabel={t("reports.noData")}
@@ -307,7 +326,7 @@ export default function Reports() {
 
         <TabsContent value="financial" className="mt-4">
           <Card title={t("reports.financialReport", { count: fin.data?.total ?? finItems.length })}
-            action={<div className="flex gap-2"><SearchInput value={search} onChange={setSearch} placeholder={t("common.search", { defaultValue: "Search…" })} /><ExportBtn url={finUrl("xlsx")} kind="xlsx" /><ExportBtn url={finUrl("pdf")} kind="pdf" /></div>}>
+            action={<div className="flex gap-2"><SearchInput value={search} onChange={setSearch} placeholder={t("common.search", { defaultValue: "Search…" })} /><ExportBtn path="/export/financial" params={finExportParams()} kind="xlsx" filename="financial_report.xlsx" /><ExportBtn path="/export/financial" params={finExportParams()} kind="pdf" filename="financial_report.pdf" /></div>}>
             <SortableTable
               scrollLabel={t("reports.reportTable")}
               noDataLabel={t("reports.noData")}
@@ -329,7 +348,7 @@ export default function Reports() {
 
         <TabsContent value="outcome" className="mt-4">
           <Card title={t("reports.outcomeReport", { count: out.data?.total ?? outItems.length })}
-            action={<div className="flex gap-2"><SearchInput value={search} onChange={setSearch} placeholder={t("common.search", { defaultValue: "Search…" })} /><ExportBtn url={outUrl("xlsx")} kind="xlsx" /><ExportBtn url={outUrl("pdf")} kind="pdf" /></div>}>
+            action={<div className="flex gap-2"><SearchInput value={search} onChange={setSearch} placeholder={t("common.search", { defaultValue: "Search…" })} /><ExportBtn path="/export/outcome" params={outExportParams()} kind="xlsx" filename="outcome_report.xlsx" /><ExportBtn path="/export/outcome" params={outExportParams()} kind="pdf" filename="outcome_report.pdf" /></div>}>
             <SortableTable
               scrollLabel={t("reports.reportTable")}
               noDataLabel={t("reports.noData")}

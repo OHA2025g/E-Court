@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, fmtNum, fmtPct, formatApiError, BACKEND_URL } from "@/lib/api";
+import { api, fmtNum, fmtPct, formatApiError, BACKEND_URL, downloadApiFile } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import Card from "@/components/Card";
 import RagBadge from "@/components/RagBadge";
@@ -252,15 +252,25 @@ export default function FinancialTracker() {
     }
   }
 
-  function exportUrl(fmt) {
-    const params = new URLSearchParams();
-    if (hc) params.set("high_court", hc);
-    if (component) params.set("component", component);
-    if (period) params.set("reporting_period", period);
-    if (districtFilter === "__hc__") params.set("district", "__hc__");
-    else if (districtFilter) params.set("district", districtFilter);
-    params.set("format", fmt);
-    return `${BACKEND_URL}/api/export/financial?${params.toString()}`;
+  function exportParams() {
+    const params = {};
+    if (hc) params.high_court = hc;
+    if (component) params.component = component;
+    if (period) params.reporting_period = period;
+    if (districtFilter === "__hc__") params.district = "__hc__";
+    else if (districtFilter) params.district = districtFilter;
+    return params;
+  }
+
+  async function downloadExport(fileFormat) {
+    try {
+      await downloadApiFile("/export/financial", {
+        params: { ...exportParams(), file_format: fileFormat },
+        filename: fileFormat === "pdf" ? "financial_report.pdf" : "financial_report.xlsx",
+      });
+    } catch (e) {
+      toast.error(e?.message || formatApiError(e?.response?.data?.detail));
+    }
   }
 
   const ragColor = (r) => r >= 80 ? "GREEN" : r >= 65 ? "AMBER" : r != null ? "RED" : "NA";
@@ -449,14 +459,18 @@ export default function FinancialTracker() {
             <SelectField testid={TID.periodSelect} label={labels.reportingMonth} value={period} onChange={setPeriod} options={(periods.data || []).map(p => ({ label: p.label, value: p.period }))} />
             <SelectField testid="district-select" label={labels.districtOptional} value={district} onChange={setDistrict}
               options={[{ label: labels.hcLevel, value: "" }, ...(districts.data || []).map(d => ({ label: d.name, value: d.name }))]}
-              disabled={!hc} />
+              disabled={!hc}
+              hideEmptyOption
+            />
             <SelectField label={labels.tableFilter} value={districtFilter} onChange={setDistrictFilter}
               options={[
                 { label: labels.allDistricts, value: "" },
                 { label: labels.hcLevelOnly, value: "__hc__" },
                 ...(districts.data || []).map(d => ({ label: d.name, value: d.name })),
               ]}
-              disabled={!hc} />
+              disabled={!hc}
+              hideEmptyOption
+            />
             <SelectField testid={TID.componentSelect} label={labels.component} value={component} onChange={setComponent} options={(comps.data || []).map(c => c.name)} />
             <NumberField label="Fund Target (₹ Cr)" value={target} onChange={setTarget} disabled={!canEditFinField("fund_target")} />
             <NumberField label="Fund Allocated (₹ Cr)" value={allocated} onChange={setAllocated} disabled={!canEditFinField("fund_allocated")} />
@@ -484,14 +498,14 @@ export default function FinancialTracker() {
         </Card>
         <Card title={labels.exportBulk} subtitle={labels.exportBulkSubtitle}>
           <div className="p-4 space-y-3 border-b border-slate-100">
-            <a data-testid={TID.exportXlsx} href={exportUrl("xlsx")} target="_blank" rel="noreferrer"
+            <button type="button" data-testid={TID.exportXlsx} onClick={() => downloadExport("xlsx")}
               className="w-full inline-flex items-center justify-center gap-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-sm uppercase tracking-wider text-xs">
               <FileXls size={16} /> {labels.exportExcel}
-            </a>
-            <a data-testid={TID.exportPdf} href={exportUrl("pdf")} target="_blank" rel="noreferrer"
+            </button>
+            <button type="button" data-testid={TID.exportPdf} onClick={() => downloadExport("pdf")}
               className="w-full inline-flex items-center justify-center gap-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-sm uppercase tracking-wider text-xs">
               <FilePdf size={16} /> {labels.exportPdf}
-            </a>
+            </button>
           </div>
           <BulkUploadPanel
             tracker="financial"

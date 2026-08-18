@@ -1268,7 +1268,7 @@ async def compute_financial_tracker_dashboard(
         for r in hc_rows if r.get("utilized") is not None
     ]
 
-    top_hcs = [r["_id"] for r in hc_rows[:6]]
+    # Full HC×component matrices — frontend slices Top/Bottom 6 for the charts.
     comp_by_hc: dict[str, dict] = {}
     util_pct_rows: dict[str, dict] = {}
     hc_comp_util: dict[str, dict] = {}
@@ -1278,8 +1278,6 @@ async def compute_financial_tracker_dashboard(
         hc = row["_id"]["high_court"]
         rel = row.get("released")
         util = row.get("utilized")
-        if hc not in top_hcs:
-            continue
         if rel is None and util is None:
             continue
         comp_by_hc.setdefault(hc, {"high_court": hc, "label": _short_hc(hc)})

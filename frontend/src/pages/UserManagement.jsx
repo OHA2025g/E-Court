@@ -12,12 +12,15 @@ import { toast } from "sonner";
 import { SelectField, TextField } from "@/pages/PhysicalTracker";
 import { PASSWORD_POLICY_HINT, validatePasswordClient } from "@/lib/passwordPolicy";
 import { useAdminLabels } from "@/lib/useAdminLabels";
+import { useTranslation } from "react-i18next";
 
 const ROLES = ["Admin", "CPC", "Viewer"];
 const TASK_ROLE_OPTIONS = ["manager", "team_lead", "team_member", "auditor", "admin"];
 
 function UserDialog({ open, onOpenChange, user, hcs, users, onSaved }) {
   const { save, saving, saved, users: l } = useAdminLabels();
+  const { t } = useTranslation();
+  const selectLabel = t("common.select");
   const isEdit = !!user;
   const [form, setForm] = useState(() => user || { email: "", name: "", role: "CPC", high_court: "", password: "", task_role: "", team_lead_id: "" });
   useEffect(() => {
@@ -58,9 +61,9 @@ function UserDialog({ open, onOpenChange, user, hcs, users, onSaved }) {
         <div className="grid grid-cols-1 gap-3">
           <TextField label={l.fieldEmail} value={form.email} onChange={(v) => setForm(f => ({ ...f, email: v }))} disabled={isEdit} />
           <TextField label={l.fieldFullName} value={form.name} onChange={(v) => setForm(f => ({ ...f, name: v }))} />
-          <SelectField label={l.fieldRole} value={form.role} onChange={(v) => setForm(f => ({ ...f, role: v }))} options={ROLES} />
+          <SelectField label={l.fieldRole} value={form.role} onChange={(v) => setForm(f => ({ ...f, role: v }))} options={ROLES} emptyLabel={selectLabel} />
           {form.role === "CPC" && (
-            <SelectField label={l.fieldHcScope} value={form.high_court || ""} onChange={(v) => setForm(f => ({ ...f, high_court: v }))} options={hcs.map(h => h.name)} />
+            <SelectField label={l.fieldHcScope} value={form.high_court || ""} onChange={(v) => setForm(f => ({ ...f, high_court: v }))} options={hcs.map(h => h.name)} emptyLabel={selectLabel} />
           )}
           <label className="block">
             <span className="text-[10px] uppercase tracking-[0.2em] text-slate-600 font-medium">Task role (optional)</span>

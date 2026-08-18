@@ -26,6 +26,26 @@ from rollup import (
 )
 
 
+def _attachment_headers(filename: str) -> dict:
+    return {
+        "Content-Disposition": f'attachment; filename="{filename}"',
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+        "Pragma": "no-cache",
+        "X-Content-Type-Options": "nosniff",
+    }
+
+
+def _resolve_export_format(
+    file_format: Optional[str],
+    format: Optional[str],
+) -> str:
+    """Prefer file_format; accept legacy `format` query for older clients."""
+    chosen = (file_format or format or "xlsx").lower().strip()
+    if chosen not in ("xlsx", "pdf"):
+        raise HTTPException(status_code=422, detail="file_format must be xlsx or pdf")
+    return chosen
+
+
 def build_multi_sheet_xlsx(sheets: list) -> bytes:
     """Build workbook with one or more sheets. Values are written as-is (exact numbers)."""
     buf = io.BytesIO()
@@ -118,7 +138,8 @@ def register_export_routes(
 
     @api.get("/export/physical")
     async def export_physical(request: Request,
-                              format: Literal["xlsx", "pdf"] = "xlsx",
+                              file_format: Optional[Literal["xlsx", "pdf"]] = Query(None),
+                              format: Optional[Literal["xlsx", "pdf"]] = Query(None),
                               high_court: Optional[str] = None,
                               component: Optional[str] = None,
                               reporting_period: Optional[str] = None,
@@ -126,6 +147,7 @@ def register_export_routes(
                               storage_type: Optional[str] = None,
                               user: dict = Depends(require_fully_authenticated)):
         _enforce_export_limit(user)
+        fmt = _resolve_export_format(file_format, format)
         lang = resolve_export_lang(request.headers.get("accept-language"))
         q = await _export_query(user, reporting_period, high_court, component, district)
         if storage_type:
@@ -136,24 +158,26 @@ def register_export_routes(
                 "achieved", "percent", "target_dpr", "achieved_ecommittee", "percent_ecommittee",
                 "target_cpc", "achieved_cpc", "percent_cpc", "rag", "remarks"]
         headers = physical_headers(lang)
-        if format == "xlsx":
+        if fmt == "xlsx":
             data = _build_xlsx(rows, cols, headers)
             return StreamingResponse(io.BytesIO(data),
                                      media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                     headers={"Content-Disposition": "attachment; filename=physical_report.xlsx"})
+                                     headers=_attachment_headers("physical_report.xlsx"))
         data = _build_pdf("Physical Tracker Report", rows, cols, headers)
         return StreamingResponse(io.BytesIO(data), media_type="application/pdf",
-                                 headers={"Content-Disposition": "attachment; filename=physical_report.pdf"})
+                                 headers=_attachment_headers("physical_report.pdf"))
 
     @api.get("/export/financial")
     async def export_financial(request: Request,
-                               format: Literal["xlsx", "pdf"] = "xlsx",
+                               file_format: Optional[Literal["xlsx", "pdf"]] = Query(None),
+                               format: Optional[Literal["xlsx", "pdf"]] = Query(None),
                                high_court: Optional[str] = None,
                                component: Optional[str] = None,
                                reporting_period: Optional[str] = None,
                                district: Optional[str] = None,
                                user: dict = Depends(require_fully_authenticated)):
         _enforce_export_limit(user)
+        fmt = _resolve_export_format(file_format, format)
         lang = resolve_export_lang(request.headers.get("accept-language"))
         q = await _export_query(user, reporting_period, high_court, component, district)
         items = await db.financial_entries.find(q).sort("high_court", 1).to_list(20000)
@@ -162,23 +186,25 @@ def register_export_routes(
                 "fund_allocated", "fund_released", "fund_utilized",
                 "utilisation_percent", "variance", "rag", "remarks"]
         headers = financial_headers(lang)
-        if format == "xlsx":
+        if fmt == "xlsx":
             data = _build_xlsx(rows, cols, headers)
             return StreamingResponse(io.BytesIO(data),
                                      media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                     headers={"Content-Disposition": "attachment; filename=financial_report.xlsx"})
+                                     headers=_attachment_headers("financial_report.xlsx"))
         data = _build_pdf("Financial Tracker Report", rows, cols, headers)
         return StreamingResponse(io.BytesIO(data), media_type="application/pdf",
-                                 headers={"Content-Disposition": "attachment; filename=financial_report.pdf"})
+                                 headers=_attachment_headers("financial_report.pdf"))
 
     @api.get("/export/outcome")
     async def export_outcome(request: Request,
-                             format: Literal["xlsx", "pdf"] = "xlsx",
+                             file_format: Optional[Literal["xlsx", "pdf"]] = Query(None),
+                             format: Optional[Literal["xlsx", "pdf"]] = Query(None),
                              high_court: Optional[str] = None,
                              subject: Optional[str] = None,
                              reporting_period: Optional[str] = None,
                              user: dict = Depends(require_fully_authenticated)):
         _enforce_export_limit(user)
+        fmt = _resolve_export_format(file_format, format)
         lang = resolve_export_lang(request.headers.get("accept-language"))
         q = await _export_query(user, reporting_period, high_court, None, None, subject)
         items = await db.outcome_entries.find(q).sort([("high_court", 1), ("subject", 1), ("kpi_id", 1)]).to_list(20000)
@@ -187,14 +213,14 @@ def register_export_routes(
                 "outcome_type", "periodicity", "baseline", "value",
                 "computed_percent", "reporting_period", "remarks"]
         headers = outcome_headers(lang)
-        if format == "xlsx":
+        if fmt == "xlsx":
             data = _build_xlsx(rows, cols, headers)
             return StreamingResponse(io.BytesIO(data),
                                      media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                     headers={"Content-Disposition": "attachment; filename=outcome_report.xlsx"})
+                                     headers=_attachment_headers("outcome_report.xlsx"))
         data = _build_pdf("Outcome Tracker Report", rows, cols, headers)
         return StreamingResponse(io.BytesIO(data), media_type="application/pdf",
-                                 headers={"Content-Disposition": "attachment; filename=outcome_report.pdf"})
+                                 headers=_attachment_headers("outcome_report.pdf"))
 
     @api.get("/export/dashboard/high-court-table")
     async def export_high_court_table(

@@ -32,15 +32,16 @@
     "darkMode": "ഡാർക്ക് മോഡ്",
     "lightMode": "ലൈറ്റ് മോഡ്",
     "language": "ഭാഷ",
-    "skipToContent": "പ്രധാന ഉള്ളടക്കത്തിലേക്ക്"
+    "skipToContent": "പ്രധാന ഉള്ളടക്കത്തിലേക്ക്",
+    "selectAll": "Select All"
   },
   "dashboard": {
     "narrativeTitle": "Executive narrative",
     "narrativeSubtitle": "Summary from approved dashboard data",
     "highCourtFilter": "High Court",
-    "allHighCourts": "All High Courts",
+    "allHighCourts": "Select All",
     "componentFilter": "Component",
-    "allComponents": "All Components"
+    "allComponents": "Select All"
   },
   "submissions": {
     "slaTitle": "സമർപ്പണ SLA",
@@ -177,8 +178,8 @@
       "title": "ടാസ്‌ക് ലിസ്റ്റ്",
       "tasksCount": "{{count}} ടാസ്‌ക്കുകൾ",
       "filters": "ഫിൽട്ടറുകൾ",
-      "allStatuses": "എല്ലാ നിലകളും",
-      "allPriorities": "എല്ലാ മുൻഗണനകളും"
+      "allStatuses": "Select All",
+      "allPriorities": "Select All"
     },
     "bulk": {
       "selected": "{{count}} തിരഞ്ഞെടുത്തു",

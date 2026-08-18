@@ -32,15 +32,16 @@
     "darkMode": "ಡಾರ್ಕ್ ಮೋಡ್",
     "lightMode": "ಲೈಟ್ ಮೋಡ್",
     "language": "ಭಾಷೆ",
-    "skipToContent": "ಮುಖ್ಯ ವಿಷಯಕ್ಕೆ ಹೋಗಿ"
+    "skipToContent": "ಮುಖ್ಯ ವಿಷಯಕ್ಕೆ ಹೋಗಿ",
+    "selectAll": "Select All"
   },
   "dashboard": {
     "narrativeTitle": "Executive narrative",
     "narrativeSubtitle": "Summary from approved dashboard data",
     "highCourtFilter": "High Court",
-    "allHighCourts": "All High Courts",
+    "allHighCourts": "Select All",
     "componentFilter": "Component",
-    "allComponents": "All Components"
+    "allComponents": "Select All"
   },
   "submissions": {
     "slaTitle": "ಸಲ್ಲಿಕೆ SLA",
@@ -177,8 +178,8 @@
       "title": "ಕಾರ್ಯ ಪಟ್ಟಿ",
       "tasksCount": "{{count}} ಕಾರ್ಯಗಳು",
       "filters": "ಫಿಲ್ಟರ್‌ಗಳು",
-      "allStatuses": "ಎಲ್ಲ ಸ್ಥಿತಿಗಳು",
-      "allPriorities": "ಎಲ್ಲ ಆದ್ಯತೆಗಳು"
+      "allStatuses": "Select All",
+      "allPriorities": "Select All"
     },
     "bulk": {
       "selected": "{{count}} ಆಯ್ಕೆ",

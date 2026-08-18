@@ -67,6 +67,73 @@ export function fmtPct(n) {
   return `${Number(n).toFixed(2)}%`;
 }
 
+/**
+ * Authenticated file download via axios (cookies) with a forced local filename.
+ * Prefer this over raw <a href> for /api/export/* so Excel/PDF cannot be mixed up
+ * by cross-origin navigation, caches, or missing Content-Disposition handling.
+ */
+export async function downloadApiFile(path, { params = {}, filename } = {}) {
+  let res;
+  try {
+    res = await api.get(path, { params, responseType: "blob" });
+  } catch (err) {
+    const data = err?.response?.data;
+    if (data instanceof Blob) {
+      const text = await data.text();
+      let detail = text;
+      try {
+        const parsed = JSON.parse(text);
+        detail = parsed?.detail ?? text;
+      } catch {
+        /* keep raw text */
+      }
+      throw new Error(formatApiError(detail));
+    }
+    throw new Error(formatApiError(err?.response?.data?.detail) || err?.message || "Download failed");
+  }
+
+  const blob = res.data;
+  const headerType = String(res.headers?.["content-type"] || blob?.type || "").toLowerCase();
+
+  // Auth / validation errors often arrive as JSON with blob responseType.
+  if (headerType.includes("application/json") || headerType.includes("text/plain")) {
+    const text = await blob.text();
+    let detail = text;
+    try {
+      const parsed = JSON.parse(text);
+      detail = parsed?.detail ?? text;
+    } catch {
+      /* keep raw text */
+    }
+    throw new Error(formatApiError(detail));
+  }
+
+  const wantXlsx = String(filename || "").toLowerCase().endsWith(".xlsx");
+  const wantPdf = String(filename || "").toLowerCase().endsWith(".pdf");
+  const head = new Uint8Array(await blob.slice(0, 5).arrayBuffer());
+  const isPdf = head[0] === 0x25 && head[1] === 0x50 && head[2] === 0x44 && head[3] === 0x46; // %PDF
+  const isZip = head[0] === 0x50 && head[1] === 0x4b; // PK (xlsx)
+  if (wantXlsx && isPdf) {
+    throw new Error("Server returned a PDF instead of Excel. Please try again.");
+  }
+  if (wantPdf && isZip) {
+    throw new Error("Server returned an Excel file instead of PDF. Please try again.");
+  }
+
+  const mime = wantPdf
+    ? "application/pdf"
+    : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  const fileBlob = blob.type ? blob : new Blob([blob], { type: mime });
+  const url = URL.createObjectURL(fileBlob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename || (wantPdf ? "export.pdf" : "export.xlsx");
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 export function ragLabel(r) {
   if (!r || r === "NA") return "NA";
   return r;

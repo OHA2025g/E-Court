@@ -80,8 +80,8 @@ export default function TaskCreateDialog({ open, onOpenChange, onCreated, parent
           <div className="sm:col-span-2">
             <TextField label={l.create.descriptionField} value={form.description} onChange={(v) => setForm((f) => ({ ...f, description: v }))} testid="tm-task-description" />
           </div>
-          <SelectField label={l.create.category} value={form.category} onChange={(v) => setForm((f) => ({ ...f, category: v }))} options={categories} />
-          <SelectField label={l.create.priority} value={form.priority} onChange={(v) => setForm((f) => ({ ...f, priority: v }))} options={PRIORITIES} />
+          <SelectField label={l.create.category} value={form.category} onChange={(v) => setForm((f) => ({ ...f, category: v }))} options={categories} hideEmptyOption />
+          <SelectField label={l.create.priority} value={form.priority} onChange={(v) => setForm((f) => ({ ...f, priority: v }))} options={PRIORITIES} hideEmptyOption />
           <TextField label={l.create.module} value={form.module_name} onChange={(v) => setForm((f) => ({ ...f, module_name: v }))} />
           <TextField label={l.create.project} value={form.project_name} onChange={(v) => setForm((f) => ({ ...f, project_name: v }))} />
           <TextField label={l.create.department} value={form.department_name} onChange={(v) => setForm((f) => ({ ...f, department_name: v }))} />

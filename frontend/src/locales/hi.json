@@ -34,6 +34,7 @@
     "language": "भाषा",
     "skipToContent": "मुख्य सामग्री पर जाएं",
     "select": "— चुनें —",
+    "selectAll": "सभी चुनें",
     "yes": "हाँ",
     "no": "नहीं",
     "add": "जोड़ें",
@@ -59,7 +60,7 @@
     "narrativeLoading": "सारांश तैयार किया जा रहा है…",
     "narrativeError": "सारांश लोड नहीं हो सका।",
     "reportingPeriod": "रिपोर्टिंग अवधि",
-    "allPeriods": "सभी अवधि",
+    "allPeriods": "सभी चुनें",
     "cabinetBrief": "कैबिनेट ब्रीफ (PDF)",
     "physTargetSum": "भौतिक लक्ष्य",
     "physAchieved": "भौतिक प्राप्त",
@@ -128,6 +129,10 @@
     "ftLegendUnutilized": "निधि अप्रयुक्त",
     "ftTop14": "शीर्ष 14",
     "ftBottom14": "निचले 14",
+    "ftTop6": "शीर्ष 6",
+    "ftBottom6": "निचले 6",
+    "ftHcCompSliceHintTop": "निधि जारी के अनुसार शीर्ष {{n}} उच्च न्यायालय",
+    "ftHcCompSliceHintBottom": "निधि जारी के अनुसार निचले {{n}} उच्च न्यायालय",
     "ftHcComponentReleased": "निधि जारी — उच्च न्यायालय बनाम घटक (₹ करोड़)",
     "ftUtilPctComponentHc": "निधि उपयोग % — घटक बनाम उच्च न्यायालय",
     "ftUtilPct": "उपयोग %",
@@ -151,9 +156,9 @@
     "aiInsightsSectionActionItems": "कार्य आइटम",
     "aiInsightsSectionActionPlan": "कार्य योजना",
     "highCourtFilter": "उच्च न्यायालय",
-    "allHighCourts": "सभी उच्च न्यायालय",
+    "allHighCourts": "सभी चुनें",
     "componentFilter": "घटक",
-    "allComponents": "सभी घटक"
+    "allComponents": "सभी चुनें"
   },
   "submissions": {
     "slaTitle": "सबमिशन SLA",
@@ -258,8 +263,8 @@
     "achievedCpc": "CPC के अनुसार प्राप्त",
     "percentCpc": "CPC के अनुसार % प्राप्त",
     "columnFilterPlaceholder": "फ़िल्टर…",
-    "columnFilterAll": "सभी",
-    "allDistricts": "सभी जिले",
+    "columnFilterAll": "सभी चुनें",
+    "allDistricts": "सभी चुनें",
     "hcLevelOnly": "केवल HC-स्तर",
     "remarksOptional": "टिप्पणी (वैकल्पिक)",
     "achievedCumulative": "प्राप्त (संचयी)",
@@ -844,8 +849,8 @@
       "title": "कार्य सूची",
       "tasksCount": "{{count}} कार्य",
       "filters": "फ़िल्टर",
-      "allStatuses": "सभी स्थितियाँ",
-      "allPriorities": "सभी प्राथमिकताएँ"
+      "allStatuses": "सभी चुनें",
+      "allPriorities": "सभी चुनें"
     },
     "bulk": {
       "selected": "{{count}} चयनित",

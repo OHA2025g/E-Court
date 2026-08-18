@@ -49,8 +49,8 @@ function TaskDialog({ open, onOpenChange, task, onSaved }) {
           <div className="sm:col-span-2"><TextField label={l.fieldTitle} value={form.title} onChange={(v) => setForm(f => ({ ...f, title: v }))} /></div>
           <TextField label={l.fieldOwner} value={form.owner || ""} onChange={(v) => setForm(f => ({ ...f, owner: v }))} />
           <TextField label={l.fieldStakeholder} value={form.stakeholder || ""} onChange={(v) => setForm(f => ({ ...f, stakeholder: v }))} />
-          <SelectField label={l.fieldPriority} value={form.priority} onChange={(v) => setForm(f => ({ ...f, priority: v }))} options={PRIORITIES} />
-          <SelectField label={l.fieldStatus} value={form.status} onChange={(v) => setForm(f => ({ ...f, status: v }))} options={STATUSES} />
+          <SelectField label={l.fieldPriority} value={form.priority} onChange={(v) => setForm(f => ({ ...f, priority: v }))} options={PRIORITIES} hideEmptyOption />
+          <SelectField label={l.fieldStatus} value={form.status} onChange={(v) => setForm(f => ({ ...f, status: v }))} options={STATUSES} hideEmptyOption />
           <label className="block sm:col-span-2">
             <span className="text-[10px] uppercase tracking-[0.2em] text-slate-600 font-medium">{l.fieldDueDate}</span>
             <input type="date" value={form.due_date || ""} onChange={(e) => setForm(f => ({ ...f, due_date: e.target.value }))}

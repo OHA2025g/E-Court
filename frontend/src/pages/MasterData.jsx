@@ -10,6 +10,12 @@ import { toast } from "sonner";
 import { FloppyDisk, Plus, PencilSimple, Trash } from "@phosphor-icons/react";
 import { SelectField, TextField, NumberField } from "@/pages/PhysicalTracker";
 import { useMasterDataLabels } from "@/lib/useMasterDataLabels";
+import { useTranslation } from "react-i18next";
+
+function useSelectLabel() {
+  const { t } = useTranslation();
+  return t("common.select");
+}
 
 function useAdmin() { return useAuth().user?.role === "Admin"; }
 
@@ -111,7 +117,7 @@ function HighCourtDialog({ open, onOpenChange, item, onSaved }) {
   return (
     <SaveDialog open={open} onOpenChange={onOpenChange} title={labels.entityHighCourt} isEdit={isEdit} onSave={save} busy={busy}>
       <TextField label={labels.fieldName} value={form.name} onChange={(v) => setForm(f => ({ ...f, name: v }))} />
-      <SelectField label={labels.colActive} value={form.active ? labels.yes : labels.no} onChange={(v) => setForm(f => ({ ...f, active: v === labels.yes }))} options={yn} />
+      <SelectField label={labels.colActive} value={form.active ? labels.yes : labels.no} onChange={(v) => setForm(f => ({ ...f, active: v === labels.yes }))} options={yn} hideEmptyOption />
     </SaveDialog>
   );
 }
@@ -136,7 +142,7 @@ function ComponentDialog({ open, onOpenChange, item, onSaved }) {
     <SaveDialog open={open} onOpenChange={onOpenChange} title={labels.entityComponent} isEdit={isEdit} onSave={save} busy={busy}>
       <TextField label={labels.fieldCode} value={form.code} onChange={(v) => setForm(f => ({ ...f, code: v }))} disabled={isEdit} />
       <TextField label={labels.fieldName} value={form.name} onChange={(v) => setForm(f => ({ ...f, name: v }))} />
-      <SelectField label={labels.fieldUom} value={form.uom} onChange={(v) => setForm(f => ({ ...f, uom: v }))} options={["Count", "Percentage", "Crore Pages", "GB", "TB", "PB", "GB / TB / PB", "KWH", "Ratio", "Amount"]} />
+      <SelectField label={labels.fieldUom} value={form.uom} onChange={(v) => setForm(f => ({ ...f, uom: v }))} options={["Count", "Percentage", "Crore Pages", "GB", "TB", "PB", "GB / TB / PB", "KWH", "Ratio", "Amount"]} hideEmptyOption />
       <NumberField label={labels.fieldSequence} value={form.seq} onChange={(v) => setForm(f => ({ ...f, seq: v }))} />
     </SaveDialog>
   );
@@ -144,6 +150,7 @@ function ComponentDialog({ open, onOpenChange, item, onSaved }) {
 
 function IndicatorDialog({ open, onOpenChange, item, onSaved, components }) {
   const labels = useMasterDataLabels();
+  const selectLabel = useSelectLabel();
   const isEdit = !!item;
   const [form, setForm] = useState({ component: "", indicator: "", unit: "Count", data_type: "Int" });
   const [busy, setBusy] = useState(false);
@@ -171,16 +178,17 @@ function IndicatorDialog({ open, onOpenChange, item, onSaved, components }) {
   }
   return (
     <SaveDialog open={open} onOpenChange={onOpenChange} title={labels.entityIndicator} isEdit={isEdit} onSave={save} busy={busy}>
-      <SelectField label={labels.colComponent} value={form.component} onChange={(v) => setForm(f => ({ ...f, component: v }))} options={components.map(c => c.name)} disabled={isEdit} />
+      <SelectField label={labels.colComponent} value={form.component} onChange={(v) => setForm(f => ({ ...f, component: v }))} options={components.map(c => c.name)} disabled={isEdit} emptyLabel={selectLabel} />
       <TextField label={labels.fieldIndicator} value={form.indicator} onChange={(v) => setForm(f => ({ ...f, indicator: v }))} />
-      <SelectField label={labels.colUnit} value={form.unit} onChange={(v) => setForm(f => ({ ...f, unit: v }))} options={["Count", "Percentage", "Crore Pages", "GB", "TB", "PB", "GB / TB / PB"]} />
-      <SelectField label={labels.fieldDataType} value={form.data_type} onChange={(v) => setForm(f => ({ ...f, data_type: v }))} options={["Int", "Float"]} />
+      <SelectField label={labels.colUnit} value={form.unit} onChange={(v) => setForm(f => ({ ...f, unit: v }))} options={["Count", "Percentage", "Crore Pages", "GB", "TB", "PB", "GB / TB / PB"]} hideEmptyOption />
+      <SelectField label={labels.fieldDataType} value={form.data_type} onChange={(v) => setForm(f => ({ ...f, data_type: v }))} options={["Int", "Float"]} hideEmptyOption />
     </SaveDialog>
   );
 }
 
 function KpiDialog({ open, onOpenChange, item, onSaved, subjects }) {
   const labels = useMasterDataLabels();
+  const selectLabel = useSelectLabel();
   const isEdit = !!item;
   const [form, setForm] = useState({ subject: "", kpi_id: "", kpi: "", periodicity: "Monthly", granularity: "District", outcome_type: "Absolute", value_type: "Count", description: "" });
   const [busy, setBusy] = useState(false);
@@ -196,14 +204,14 @@ function KpiDialog({ open, onOpenChange, item, onSaved, subjects }) {
   }
   return (
     <SaveDialog open={open} onOpenChange={onOpenChange} title={labels.entityKpi} isEdit={isEdit} onSave={save} busy={busy}>
-      <SelectField label={labels.colSubject} value={form.subject} onChange={(v) => setForm(f => ({ ...f, subject: v }))} options={subjects.map(s => s.name)} disabled={isEdit} />
+      <SelectField label={labels.colSubject} value={form.subject} onChange={(v) => setForm(f => ({ ...f, subject: v }))} options={subjects.map(s => s.name)} disabled={isEdit} emptyLabel={selectLabel} />
       <TextField label={labels.fieldKpiId} value={form.kpi_id} onChange={(v) => setForm(f => ({ ...f, kpi_id: v }))} disabled={isEdit} />
       <TextField label={labels.fieldKpi} value={form.kpi} onChange={(v) => setForm(f => ({ ...f, kpi: v }))} />
       <TextField label={labels.fieldDescription} value={form.description || ""} onChange={(v) => setForm(f => ({ ...f, description: v }))} />
-      <SelectField label={labels.fieldPeriodicity} value={form.periodicity} onChange={(v) => setForm(f => ({ ...f, periodicity: v }))} options={["Monthly", "Yearly", "Cumulative", "On-date"]} />
-      <SelectField label={labels.fieldGranularity} value={form.granularity} onChange={(v) => setForm(f => ({ ...f, granularity: v }))} options={["National", "State", "District"]} />
-      <SelectField label={labels.fieldOutcomeType} value={form.outcome_type} onChange={(v) => setForm(f => ({ ...f, outcome_type: v }))} options={["Absolute", "Relative"]} />
-      <SelectField label={labels.fieldValueType} value={form.value_type} onChange={(v) => setForm(f => ({ ...f, value_type: v }))} options={["Count", "Amount", "Percentage", "Ratio"]} />
+      <SelectField label={labels.fieldPeriodicity} value={form.periodicity} onChange={(v) => setForm(f => ({ ...f, periodicity: v }))} options={["Monthly", "Yearly", "Cumulative", "On-date"]} hideEmptyOption />
+      <SelectField label={labels.fieldGranularity} value={form.granularity} onChange={(v) => setForm(f => ({ ...f, granularity: v }))} options={["National", "State", "District"]} hideEmptyOption />
+      <SelectField label={labels.fieldOutcomeType} value={form.outcome_type} onChange={(v) => setForm(f => ({ ...f, outcome_type: v }))} options={["Absolute", "Relative"]} hideEmptyOption />
+      <SelectField label={labels.fieldValueType} value={form.value_type} onChange={(v) => setForm(f => ({ ...f, value_type: v }))} options={["Count", "Amount", "Percentage", "Ratio"]} hideEmptyOption />
     </SaveDialog>
   );
 }
@@ -250,13 +258,14 @@ function PeriodDialog({ open, onOpenChange, item, onSaved }) {
     <SaveDialog open={open} onOpenChange={onOpenChange} title={labels.entityPeriod} isEdit={isEdit} onSave={save} busy={busy}>
       <TextField label={labels.fieldPeriod} value={form.period} onChange={(v) => setForm(f => ({ ...f, period: v }))} disabled={isEdit} />
       <TextField label={labels.fieldDisplayLabel} value={form.label} onChange={(v) => setForm(f => ({ ...f, label: v }))} />
-      <SelectField label={labels.fieldIsBaseline} value={form.is_baseline ? labels.yes : labels.no} onChange={(v) => setForm(f => ({ ...f, is_baseline: v === labels.yes }))} options={yn} />
+      <SelectField label={labels.fieldIsBaseline} value={form.is_baseline ? labels.yes : labels.no} onChange={(v) => setForm(f => ({ ...f, is_baseline: v === labels.yes }))} options={yn} hideEmptyOption />
     </SaveDialog>
   );
 }
 
 function DistrictDialog({ open, onOpenChange, item, onSaved, hcs }) {
   const labels = useMasterDataLabels();
+  const selectLabel = useSelectLabel();
   const isEdit = !!item;
   const [form, setForm] = useState({ high_court: "", name: "", active: true });
   const [busy, setBusy] = useState(false);
@@ -278,9 +287,9 @@ function DistrictDialog({ open, onOpenChange, item, onSaved, hcs }) {
   }
   return (
     <SaveDialog open={open} onOpenChange={onOpenChange} title={labels.entityDistrict} isEdit={isEdit} onSave={save} busy={busy}>
-      <SelectField label={labels.colHighCourt} value={form.high_court} onChange={(v) => setForm(f => ({ ...f, high_court: v }))} options={hcs.map(h => h.name)} disabled={isEdit} />
+      <SelectField label={labels.colHighCourt} value={form.high_court} onChange={(v) => setForm(f => ({ ...f, high_court: v }))} options={hcs.map(h => h.name)} disabled={isEdit} emptyLabel={selectLabel} />
       <TextField label={labels.fieldDistrictName} value={form.name} onChange={(v) => setForm(f => ({ ...f, name: v }))} disabled={isEdit} />
-      <SelectField label={labels.colActive} value={form.active ? labels.yes : labels.no} onChange={(v) => setForm(f => ({ ...f, active: v === labels.yes }))} options={yn} />
+      <SelectField label={labels.colActive} value={form.active ? labels.yes : labels.no} onChange={(v) => setForm(f => ({ ...f, active: v === labels.yes }))} options={yn} hideEmptyOption />
     </SaveDialog>
   );
 }

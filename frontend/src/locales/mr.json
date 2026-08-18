@@ -32,15 +32,16 @@
     "darkMode": "डार्क मोड",
     "lightMode": "लाइट मोड",
     "language": "भाषा",
-    "skipToContent": "मुख्य सामग्रीवर जा"
+    "skipToContent": "मुख्य सामग्रीवर जा",
+    "selectAll": "Select All"
   },
   "dashboard": {
     "narrativeTitle": "Executive narrative",
     "narrativeSubtitle": "Summary from approved dashboard data",
     "highCourtFilter": "High Court",
-    "allHighCourts": "All High Courts",
+    "allHighCourts": "Select All",
     "componentFilter": "Component",
-    "allComponents": "All Components"
+    "allComponents": "Select All"
   },
   "submissions": {
     "slaTitle": "सबमिशन SLA",
@@ -177,8 +178,8 @@
       "title": "कार्य यादी",
       "tasksCount": "{{count}} कार्य",
       "filters": "फिल्टर",
-      "allStatuses": "सभी स्थितीयाँ",
-      "allPriorities": "सभी प्राधान्यएँ"
+      "allStatuses": "Select All",
+      "allPriorities": "Select All"
     },
     "bulk": {
       "selected": "{{count}} निवडले",

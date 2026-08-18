@@ -32,15 +32,16 @@
     "darkMode": "ডার্ক মোড",
     "lightMode": "লাইট মোড",
     "language": "ভাষা",
-    "skipToContent": "মূল বিষয়বস্তুতে যান"
+    "skipToContent": "মূল বিষয়বস্তুতে যান",
+    "selectAll": "Select All"
   },
   "dashboard": {
     "narrativeTitle": "Executive narrative",
     "narrativeSubtitle": "Summary from approved dashboard data",
     "highCourtFilter": "High Court",
-    "allHighCourts": "All High Courts",
+    "allHighCourts": "Select All",
     "componentFilter": "Component",
-    "allComponents": "All Components"
+    "allComponents": "Select All"
   },
   "submissions": {
     "slaTitle": "জমা SLA",
@@ -177,8 +178,8 @@
       "title": "কাজের তালিকা",
       "tasksCount": "{{count}}টি কাজ",
       "filters": "ফিল্টার",
-      "allStatuses": "সব অবস্থা",
-      "allPriorities": "সব অগ্রাধিকার"
+      "allStatuses": "Select All",
+      "allPriorities": "Select All"
     },
     "bulk": {
       "selected": "{{count}}টি নির্বাচিত",
