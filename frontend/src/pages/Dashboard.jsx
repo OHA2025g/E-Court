@@ -58,7 +58,8 @@ function PerformancePctTooltip({ active, payload, label, nameKey = "component", 
       {payload.map((entry) => {
         const key = entry.dataKey;
         const isPhys = key === "phys_percent";
-        const pct = entry.value;
+        const hasPhysTarget = row.phys_target != null && Number(row.phys_target) > 0;
+        const pct = isPhys && !hasPhysTarget ? null : entry.value;
         const countLine = isPhys
           ? formatPhysTargetAchieved(row.phys_target, row.phys_achieved, physUom)
           : `Released ₹${fmtNum(row.fin_released)} Cr / Utilised ₹${fmtNum(row.fin_utilized)} Cr`;
@@ -104,6 +105,14 @@ function physRag(pct) {
   if (pct >= 80) return "GREEN";
   if (pct >= 65) return "AMBER";
   return "RED";
+}
+
+function withTargetBasedPhysPercent(rows) {
+  return (rows || []).map((r) => {
+    const hasTarget = r.phys_target != null && Number(r.phys_target) > 0;
+    if (hasTarget) return r;
+    return { ...r, phys_percent: null };
+  });
 }
 
 function compareSortValues(a, b) {
@@ -244,12 +253,20 @@ export default function Dashboard() {
   const ragTotal = useMemo(() => ragData.reduce((sum, d) => sum + d.value, 0), [ragData]);
 
   const sortedCompRows = useMemo(
-    () => sortTableRows(byComp.data || [], compSort.key, compSort.dir),
+    () => sortTableRows(withTargetBasedPhysPercent(byComp.data), compSort.key, compSort.dir),
     [byComp.data, compSort],
   );
   const sortedHcRows = useMemo(
-    () => sortTableRows(byHc.data || [], hcSort.key, hcSort.dir),
+    () => sortTableRows(withTargetBasedPhysPercent(byHc.data), hcSort.key, hcSort.dir),
     [byHc.data, hcSort],
+  );
+  const compChartRows = useMemo(
+    () => withTargetBasedPhysPercent(byComp.data),
+    [byComp.data],
+  );
+  const hcChartRows = useMemo(
+    () => withTargetBasedPhysPercent(byHc.data),
+    [byHc.data],
   );
 
   const cabinetBriefHref = useMemo(() => {
@@ -437,7 +454,7 @@ export default function Dashboard() {
     <Card title={labels.componentPerformance} testId={TID.componentChart} elevated>
       <div className="h-96 p-4">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={byComp.data || []} margin={{ top: 8, right: 16, left: 0, bottom: 60 }}>
+          <BarChart data={compChartRows} margin={{ top: 8, right: 16, left: 0, bottom: 60 }}>
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
             <XAxis dataKey="component" stroke="#475569" fontSize={10} angle={-25} textAnchor="end" interval={0} height={80} />
             <YAxis stroke="#475569" fontSize={11} unit="%" />
@@ -455,7 +472,7 @@ export default function Dashboard() {
     <Card title={cpcCourt ? labels.hcSummary : labels.hcComparison} testId={TID.hcChart} elevated>
       <div className="h-[480px] p-4">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={byHc.data || []} margin={{ top: 8, right: 16, left: 0, bottom: 80 }}>
+          <BarChart data={hcChartRows} margin={{ top: 8, right: 16, left: 0, bottom: 80 }}>
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
             <XAxis dataKey="high_court" stroke="#475569" fontSize={10} angle={-35} textAnchor="end" interval={0} height={100} />
             <YAxis stroke="#475569" fontSize={11} unit="%" />

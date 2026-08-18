@@ -48,7 +48,7 @@ def _dimension_match(
 
 
 # Bump when dashboard aggregation semantics change so Redis does not serve stale KPIs.
-_DASHBOARD_CACHE_VER = "v25-ft-drop-task-charts"
+_DASHBOARD_CACHE_VER = "v26-phys-pct-na-no-target"
 
 
 def _dashboard_cache_key(route: str, user: dict, reporting_period: Optional[str], include_unapproved: bool, **extra) -> str:

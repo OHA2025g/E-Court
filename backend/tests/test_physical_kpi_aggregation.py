@@ -154,6 +154,17 @@ def test_component_phys_percent_is_na_when_cloud_has_no_targets():
     assert pct is not None and 0 < pct <= 100
 
 
+def test_hc_comparison_percent_is_na_when_target_missing():
+    """High Court Comparison must not turn Target NA into a ranking % vs the top court."""
+    madras = [{"high_court": "Madras", "target": None, "achieved": 8202.24}]
+    leader = [{"high_court": "Leader", "target": None, "achieved": 24700}]
+    by_hc = {"Madras": madras, "Leader": leader}
+    ranking = relative_achieved_percent_by_hc(by_hc)
+    assert ranking["Madras"] == round(8202.24 / 24700 * 100, 2)
+    assert mean_achievement_percent(madras, _safe_div) is None
+    assert physical_percent_with_relative_fallback(madras, _safe_div) is None
+
+
 def test_sum_ratio_still_used_when_targets_exist():
     rows = [
         {"high_court": "A", "target": 100, "achieved": 40},

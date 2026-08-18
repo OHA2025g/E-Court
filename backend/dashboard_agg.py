@@ -233,9 +233,10 @@ def resolve_period_pair(reporting_period: Optional[str] = None) -> Optional[tupl
 
 
 async def aggregate_hc_percent_physical(db, match: dict) -> dict[str, float]:
-    """HC physical % = mean of per-indicator % (avoids mixed-UOM sum/sum distortion).
+    """HC physical % = mean of per-indicator achieved/target.
 
-    Falls back to relative-vs-max achieved when targets are absent (Cloud storage GB).
+    No usable target (e.g. Cloud capacity) → omitted so callers treat it as NA.
+    Do not invent relative-vs-max ranking.
     """
     def _pct(achieved, target):
         if achieved is None or target is None or not target:
@@ -248,14 +249,11 @@ async def aggregate_hc_percent_physical(db, match: dict) -> dict[str, float]:
         hc = r.get("high_court")
         if hc:
             by_hc[hc].append(r)
-    out = {
+    return {
         hc: pct
         for hc, hc_rows in by_hc.items()
         if (pct := mean_achievement_percent(hc_rows, _pct)) is not None
     }
-    if out:
-        return out
-    return relative_achieved_percent_by_hc(by_hc)
 
 
 async def aggregate_hc_percent_financial(db, match: dict) -> dict[str, float]:
@@ -486,13 +484,6 @@ async def compute_heatmap(
         row_field = "subject"
     else:
         rows = await db.physical_entries.aggregate(physical_component_hc_stages(match)).to_list(500)
-        # Per-component peak achieved for target-less rows (Cloud GB capacity)
-        peak_by_comp: dict[str, float] = defaultdict(float)
-        for r in rows:
-            comp = r["_id"]["component"]
-            a = r.get("a")
-            if a is not None and float(a) > peak_by_comp[comp]:
-                peak_by_comp[comp] = float(a)
         for r in rows:
             t, a = r.get("t"), r.get("a")
             comp = r["_id"]["component"]
@@ -501,8 +492,6 @@ async def compute_heatmap(
             a_f = None if a is None else float(a)
             if t_f:
                 pct = round((a_f or 0) / t_f * 100, 2)
-            elif a_f is not None and a_f > 0 and peak_by_comp.get(comp):
-                pct = round(100.0 * a_f / peak_by_comp[comp], 2)
             else:
                 pct = None
             cell_map[(comp, hc)] = {
@@ -579,15 +568,12 @@ async def compute_pareto_red_flags(
             by_comp[r.get("component") or "Unknown"].append(r)
         for comp, rows in by_comp.items():
             has_targets = any(float(r.get("target") or 0) > 0 for r in rows)
-            if has_targets:
-                for r in rows:
-                    t, a = r.get("target") or 0, r.get("achieved") or 0
-                    pct = round((a / t) * 100, 2) if t else None
-                    if compute_rag_fn(pct, thresholds) == "RED":
-                        component_red[comp] = component_red.get(comp, 0) + 1
+            if not has_targets:
+                # No usable target (e.g. Cloud) → NA, not a RED achievement flag.
                 continue
-            # Cloud-style capacity with no targets - count RED High Courts vs peak HC.
-            for pct in relative_achieved_percent_by_hc(group_rows_by_hc(rows)).values():
+            for r in rows:
+                t, a = r.get("target") or 0, r.get("achieved") or 0
+                pct = round((a / t) * 100, 2) if t else None
                 if compute_rag_fn(pct, thresholds) == "RED":
                     component_red[comp] = component_red.get(comp, 0) + 1
     rows = sorted(component_red.items(), key=lambda x: x[1], reverse=True)
@@ -848,12 +834,9 @@ async def compute_dashboard_summary(
     else:
         phys_percent = safe_div_fn(phys_totals["achieved"], phys_totals["target"])
     thresholds = await fetch_rag_thresholds(db)
-    relative_hc = relative_achieved_percent_by_hc(group_rows_by_hc(rolled_phys))
     rag: dict = {}
     for row in rolled_phys:
         pct = safe_div_fn(row.get("achieved"), row.get("target"))
-        if pct is None:
-            pct = relative_hc.get(row.get("high_court"))
         status = compute_rag_fn(pct, thresholds)
         rag[status] = rag.get(status, 0) + 1
     rolled_fin = await db.financial_entries.aggregate(financial_rollup_stages(fmatch)).to_list(5000)
@@ -961,7 +944,7 @@ async def compute_dashboard_by_component(
         name = c["name"]
         phys_rows = pmap.get(name, [])
         # Single-component scope is always one UOM - absolute sums are valid here.
-        # Cloud GB has achieved with no targets → mean relative-vs-max HC %.
+        # Cloud with no target → Physical % is NA.
         target = sum_nullable(r.get("target") for r in phys_rows)
         achieved = sum_nullable(r.get("achieved") for r in phys_rows)
         f = fmap.get(name)
@@ -1132,25 +1115,14 @@ async def compute_dashboard_by_hc(
             fmap[key] = {"released": f.get("r"), "utilized": f.get("u")}
         hc_labels[key] = _canonical_hc_label(raw)
     hcs = sorted(set(list(pmap.keys()) + list(fmap.keys())))
-    target_pcts = {
-        hc: mean_achievement_percent(pmap.get(hc, []), safe_div_fn)
-        for hc in hcs
-        if pmap.get(hc)
-    }
-    target_pcts = {hc: pct for hc, pct in target_pcts.items() if pct is not None}
-    relative_pcts = (
-        {} if target_pcts else relative_achieved_percent_by_hc(pmap)
-    )
     selected_comp = _match_value(extra_match, "component")
     selected_uom = COMPONENT_UOM.get(selected_comp) if selected_comp else None
     rows = []
     for hc_key in hcs:
         hc_phys = pmap.get(hc_key, [])
         totals = physical_absolute_totals(hc_phys)
-        # Prefer target-based mean %; fall back to relative-vs-max for Cloud GB (no targets).
-        phys_pct = target_pcts.get(hc_key)
-        if phys_pct is None:
-            phys_pct = relative_pcts.get(hc_key)
+        # Target-based mean % only. Cloud with no target → NA, not ranking vs the top HC.
+        phys_pct = mean_achievement_percent(hc_phys, safe_div_fn) if hc_phys else None
         f = fmap.get(hc_key, {"released": None, "utilized": None})
         # Prefer scoped component UOM; else homogeneous absolute scope (e.g. Cloud-only filter).
         phys_uom = selected_uom or (None if totals.get("mixed_uom") else totals.get("uom"))
