@@ -391,11 +391,9 @@ export default function FinancialTracker() {
     {
       key: "rag",
       label: labels.rag,
+      sortValue: (r) => r.utilisation_percent,
+      sortType: "number",
       render: (r) => <RagBadge status={ragColor(r.utilisation_percent)} />,
-      sortValue: (r) => ragColor(r.utilisation_percent),
-      filterValue: (r) => ragColor(r.utilisation_percent),
-      filterType: "select",
-      filterOptions: ["GREEN", "AMBER", "RED", "NA"],
     },
     {
       key: "remarks",

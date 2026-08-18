@@ -14,12 +14,12 @@ import { TableSkeleton } from "@/components/Skeletons";
 import { useMinLoading } from "@/lib/useMinLoading";
 import PeriodLockBanner from "@/components/PeriodLockBanner";
 import { unwrapTrackerResponse } from "@/lib/trackerApi";
-import TrackerPagination from "@/components/TrackerPagination";
 import ScrollRegion from "@/components/ui/ScrollRegion";
 import EntryCommentsPanel, { CommentsButton } from "@/components/EntryCommentsPanel";
 import { useTrackerLabels } from "@/lib/useTrackerLabels";
 
 const PAGE_SIZE = 50;
+const TABLE_FETCH_SIZE = 500;
 
 const GRANULARITIES = ["State", "District", "National"];
 const OUTCOME_TYPES = ["Absolute", "Relative"];
@@ -45,7 +45,7 @@ export default function OutcomeTracker() {
   const [saving, setSaving] = useState(false);
   const [initBusy, setInitBusy] = useState(false);
   const [initPromptDismissed, setInitPromptDismissed] = useState(false);
-  const [page, setPage] = useState(1);
+  const [tablePage, setTablePage] = useState(1);
   const [commentsEntry, setCommentsEntry] = useState(null);
 
   const hcs = useQuery({ queryKey: ["hcs"], queryFn: () => api.get("/master/high-courts").then(r => r.data) });
@@ -67,9 +67,9 @@ export default function OutcomeTracker() {
     high_court: hc || undefined,
     subject: subject || undefined,
     reporting_period: period || undefined,
-    page,
-    page_size: PAGE_SIZE,
-  }), [hc, subject, period, page]);
+    page: 1,
+    page_size: TABLE_FETCH_SIZE,
+  }), [hc, subject, period]);
   const list = useQuery({
     queryKey: ["outcome", listParams],
     queryFn: () => api.get("/outcome", { params: listParams }).then((r) => unwrapTrackerResponse(r.data)),
@@ -89,7 +89,7 @@ export default function OutcomeTracker() {
     return s;
   }, [anomalies.data]);
 
-  useEffect(() => { setPage(1); }, [hc, subject, period]);
+  useEffect(() => { setTablePage(1); }, [hc, subject, period]);
   const initPromptKey = hc && period ? `pmis-outcome-init-prompt:${hc}:${period}` : null;
   const hcPeriodRows = useQuery({
     queryKey: ["outcome", "hc-period", hc, period],
@@ -329,42 +329,70 @@ export default function OutcomeTracker() {
     }
   }
 
-  const tableColumns = useMemo(() => [
+  const kpiLookup = useMemo(() => {
+    const m = {};
+    (allKpis.data || []).forEach((k) => {
+      m[`${k.subject}|${k.kpi_id}`] = k;
+    });
+    return m;
+  }, [allKpis.data]);
+
+  const tableColumns = useMemo(() => {
+    const kpiMetaFor = (r) => kpiLookup[`${r.subject}|${r.kpi_id}`];
+    return [
     { key: "high_court", label: labels.highCourt },
-    { key: "component", label: labels.component, render: (r) => {
-      const meta = (allKpis.data || []).find((k) => k.subject === r.subject && k.kpi_id === r.kpi_id);
-      return r.component || meta?.component || "NA";
-    } },
-    { key: "sub_component", label: labels.subComponent, render: (r) => {
-      const meta = (allKpis.data || []).find((k) => k.subject === r.subject && k.kpi_id === r.kpi_id);
-      const label = r.sub_component || r.subject || meta?.sub_component || meta?.subject || "NA";
-      return (
-      <span className="inline-flex items-center gap-1">
-        {label}
-        {anomalyKeys.has(`${r.high_court}|${r.subject}|${r.kpi_id}`) && (
-          <span className="text-[9px] uppercase tracking-wider bg-violet-100 text-violet-800 px-1 rounded-sm" title={labels.anomalyBadge}>3σ</span>
-        )}
-      </span>
-    ); } },
-    { key: "kpi", label: labels.kpi, render: (r) => {
-      const meta = (allKpis.data || []).find((k) => k.subject === r.subject && k.kpi_id === r.kpi_id);
-      return r.kpi || meta?.kpi || "NA";
-    } },
+    {
+      key: "component",
+      label: labels.component,
+      sortValue: (r) => r.component || kpiMetaFor(r)?.component || "",
+      render: (r) => r.component || kpiMetaFor(r)?.component || "NA",
+    },
+    {
+      key: "sub_component",
+      label: labels.subComponent,
+      sortValue: (r) => r.sub_component || r.subject || kpiMetaFor(r)?.sub_component || kpiMetaFor(r)?.subject || "",
+      render: (r) => {
+        const meta = kpiMetaFor(r);
+        const label = r.sub_component || r.subject || meta?.sub_component || meta?.subject || "NA";
+        return (
+          <span className="inline-flex items-center gap-1">
+            {label}
+            {anomalyKeys.has(`${r.high_court}|${r.subject}|${r.kpi_id}`) && (
+              <span className="text-[9px] uppercase tracking-wider bg-violet-100 text-violet-800 px-1 rounded-sm" title={labels.anomalyBadge}>3σ</span>
+            )}
+          </span>
+        );
+      },
+    },
+    {
+      key: "kpi",
+      label: labels.kpi,
+      sortValue: (r) => r.kpi || kpiMetaFor(r)?.kpi || r.kpi_id || "",
+      render: (r) => r.kpi || kpiMetaFor(r)?.kpi || "NA",
+    },
     { key: "granularity", label: labels.granularity },
-    { key: "district", label: labels.district, render: r => r.district || (r.granularity === "District" ? "NA" : "") },
+    {
+      key: "district",
+      label: labels.district,
+      sortValue: (r) => r.district || (r.granularity === "District" ? "NA" : ""),
+      render: (r) => r.district || (r.granularity === "District" ? "NA" : ""),
+    },
     { key: "outcome_type", label: labels.type },
-    { key: "periodicity", label: labels.periodicity },
-    { key: "baseline", label: labels.baseline, align: "right", editable: canEdit, field: "baseline", inputType: "number", render: r => fmtNum(r.baseline) },
-    { key: "value", label: labels.value, align: "right", editable: canEdit, field: "value", inputType: "number", render: r => fmtNum(r.value) },
-    { key: "computed_percent", label: labels.computedPercent, align: "right", render: r => fmtPct(r.computed_percent) },
+    { key: "periodicity", label: labels.periodicity, sortValue: (r) => r.periodicity || "" },
+    { key: "baseline", label: labels.baseline, align: "right", editable: canEdit, field: "baseline", inputType: "number", sortType: "number", render: (r) => fmtNum(r.baseline) },
+    { key: "value", label: labels.value, align: "right", editable: canEdit, field: "value", inputType: "number", sortType: "number", render: (r) => fmtNum(r.value) },
+    { key: "computed_percent", label: labels.computedPercent, align: "right", sortType: "number", render: (r) => fmtPct(r.computed_percent) },
     { key: "reporting_period", label: labels.period },
-    { key: "remarks", label: labels.remarks, editable: canEdit, field: "remarks" },
+    { key: "remarks", label: labels.remarks, editable: canEdit, field: "remarks", sortValue: (r) => r.remarks || "" },
     {
       key: "comments",
       label: "",
+      sortable: false,
+      filterable: false,
       render: (r) => <CommentsButton onClick={() => setCommentsEntry(r)} />,
     },
-  ], [canEdit, anomalyKeys, labels, allKpis.data]);
+  ];
+  }, [canEdit, anomalyKeys, labels, kpiLookup]);
 
   return (
     <div className="space-y-6">
@@ -489,6 +517,10 @@ export default function OutcomeTracker() {
               rowKey={(r) => r.id}
               canEdit={canEdit}
               onSaveRow={saveRow}
+              enableSortFilter
+              page={tablePage}
+              pageSize={PAGE_SIZE}
+              onPageChange={setTablePage}
               onRowClick={(r) => {
                 const meta = (allKpis.data || []).find((k) => k.subject === r.subject && k.kpi_id === r.kpi_id);
                 setHc(r.high_court || "");
@@ -510,7 +542,6 @@ export default function OutcomeTracker() {
               <div className="text-center text-slate-400 py-12">No outcome data.</div>
             )}
           </ScrollRegion>
-          <TrackerPagination page={page} pageSize={PAGE_SIZE} total={listTotal} onPageChange={setPage} />
           </>
         )}
       </Card>

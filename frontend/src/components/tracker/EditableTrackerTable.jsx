@@ -71,10 +71,11 @@ function ColumnHeader({
   onFilterChange,
   filterPlaceholder,
   allLabel,
+  enableColumnFilters,
 }) {
   const isSorted = sortKey === col.key;
   const canSort = col.sortable !== false;
-  const canFilter = col.filterable !== false;
+  const canFilter = enableColumnFilters && col.filterable !== false;
 
   function toggleSort() {
     if (!canSort) return;
@@ -151,6 +152,7 @@ export default function EditableTrackerTable({
   onSaveRow,
   onRowClick,
   enableSortFilter = false,
+  enableColumnFilters = false,
   page = 1,
   pageSize = 50,
   onPageChange,
@@ -183,9 +185,9 @@ export default function EditableTrackerTable({
 
   const processedRows = useMemo(() => {
     if (!enableSortFilter) return rows;
-    const filtered = filterRows(rows, columns, filters);
+    const filtered = enableColumnFilters ? filterRows(rows, columns, filters) : rows;
     return sortRows(filtered, columns, sortKey, sortDir);
-  }, [rows, columns, filters, sortKey, sortDir, enableSortFilter]);
+  }, [rows, columns, filters, sortKey, sortDir, enableSortFilter, enableColumnFilters]);
 
   const displayRows = useMemo(() => {
     if (!enableSortFilter) return rows;
@@ -234,6 +236,7 @@ export default function EditableTrackerTable({
                     onFilterChange={handleFilterChange}
                     filterPlaceholder={filterPlaceholder}
                     allLabel={allLabel}
+                    enableColumnFilters={enableColumnFilters}
                   />
                 ) : (
                   c.label
