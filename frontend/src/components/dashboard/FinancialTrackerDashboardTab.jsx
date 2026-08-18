@@ -381,15 +381,6 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
     return (data?.hc_component_utilized || []).filter((r) => selected.has(r.high_court));
   }, [data?.hc_component_utilized, hcNamesUtilizedChart]);
 
-  const taskPieSlices = useMemo(
-    () => buildDonutSlices(
-      (data?.task_count_by_component || []).map(r => ({ component: r.component || "Unassigned", utilized: r.count })),
-      "utilized",
-      4,
-    ),
-    [data],
-  );
-
   if (isLoading) {
     return <div className="text-sm text-slate-500 py-8 text-center">{labels.loading}</div>;
   }
@@ -542,49 +533,8 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-5">
-        <Card title={labels.ftTaskCountComponent} elevated>
-          <div className="p-3">
-            {taskPieSlices.slices.length === 0 ? (
-              <EmptyChart message={labels.noData} />
-            ) : (
-              <div className="flex flex-col sm:flex-row items-stretch gap-4 min-h-[220px]">
-                <div className="relative mx-auto sm:mx-0 w-[180px] h-[180px] shrink-0">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={taskPieSlices.slices}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={78}
-                        paddingAngle={2}
-                        label={false}
-                      >
-                        {taskPieSlices.slices.map((_, i) => (
-                          <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <ul className="flex-1 space-y-2 text-xs py-1">
-                  {taskPieSlices.slices.map((slice, i) => (
-                    <li key={slice.name} className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: CHART_COLORS[i % CHART_COLORS.length] }} />
-                      <span className="text-slate-700 truncate" title={slice.name}>{slice.name}</span>
-                      <span className="ml-auto tabular-nums text-slate-600">{slice.value}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </Card>
-
-        <Card title={labels.ftHcComponentUtilized} elevated className="xl:col-span-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <Card title={labels.ftHcComponentUtilized} elevated>
           <div className="h-64 p-3">
             {hcComponentUtilizedRows.length === 0 ? (
               <EmptyChart message={labels.noData} />
@@ -615,29 +565,6 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
                 totalLabel="₹ Cr"
                 valueLabel={labels.ftUtilizedShort}
               />
-            )}
-          </div>
-        </Card>
-
-        <Card title={labels.ftWeeklyTaskStatus} elevated>
-          <div className="h-64 p-3">
-            {(data?.weekly_task_status || []).length === 0 ? (
-              <EmptyChart message={labels.noData} />
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.weekly_task_status} margin={{ top: 8, right: 8, left: 0, bottom: 36 }}>
-                  <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                  <XAxis dataKey="week" stroke="#475569" fontSize={10} />
-                  <YAxis stroke="#475569" fontSize={10} allowDecimals={false} />
-                  <Tooltip
-                    labelFormatter={(_, payload) => payload?.[0]?.payload?.range || ""}
-                  />
-                  <Legend />
-                  <Bar dataKey="created" name={labels.ftTaskCreated} fill="#3b82f6" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="completed" name={labels.ftTaskCompleted} fill="#ef4444" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="still_open" name={labels.ftTaskStillOpen} fill="#14b8a6" radius={[3, 3, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
             )}
           </div>
         </Card>

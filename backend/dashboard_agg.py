@@ -1,6 +1,6 @@
 """Dashboard aggregation helpers for visualisation endpoints."""
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Any, Callable, Optional
 
 from rollup import (
@@ -1294,45 +1294,6 @@ async def compute_financial_tracker_dashboard(
         for r in comp_totals if r.get("utilized") is not None
     ]
 
-    task_q: dict = {}
-    if user.get("role") == "CPC" and user.get("high_court"):
-        task_q["high_court_name"] = user["high_court"]
-
-    task_by_comp = await db.tm_tasks.aggregate([
-        {"$match": task_q},
-        {"$group": {"_id": {"$ifNull": ["$component", "Unassigned"]}, "count": {"$sum": 1}}},
-        {"$sort": {"count": -1}},
-    ]).to_list(50)
-
-    now = datetime.now(timezone.utc)
-    weekly_task_status = []
-    for w in range(3, -1, -1):
-        week_start = (now - timedelta(days=now.weekday() + w * 7)).replace(
-            hour=0, minute=0, second=0, microsecond=0,
-        )
-        week_end = week_start + timedelta(days=6, hours=23, minutes=59, seconds=59)
-        created = await db.tm_tasks.count_documents({
-            **task_q,
-            "created_at": {"$gte": week_start, "$lte": week_end},
-        })
-        completed = await db.tm_tasks.count_documents({
-            **task_q,
-            "status": "CLOSED",
-            "closed_at": {"$gte": week_start, "$lte": week_end},
-        })
-        still_open = await db.tm_tasks.count_documents({
-            **task_q,
-            "created_at": {"$lte": week_end},
-            "status": {"$nin": ["CLOSED", "CANCELLED", "DUPLICATE"]},
-        })
-        weekly_task_status.append({
-            "week": f"Week {4 - w}",
-            "range": f"{week_start.strftime('%d-%m-%Y')} to {week_end.strftime('%d-%m-%Y')}",
-            "created": created,
-            "completed": completed,
-            "still_open": still_open,
-        })
-
     chart_components = sorted(
         {r["_id"]["component"] for r in comp_hc_rows if r.get("released") is not None or r.get("utilized") is not None},
         key=lambda c: next((x["utilized"] for x in comp_totals if x["_id"] == c), 0),
@@ -1354,8 +1315,4 @@ async def compute_financial_tracker_dashboard(
         "utilization_by_component_hc": list(util_pct_rows.values()),
         "component_utilization": component_utilization,
         "chart_components": chart_components,
-        "task_count_by_component": [
-            {"component": r["_id"] or "Unassigned", "count": r["count"]} for r in task_by_comp
-        ],
-        "weekly_task_status": weekly_task_status,
     }
