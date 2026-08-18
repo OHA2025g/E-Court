@@ -147,7 +147,7 @@ function sliceRankedNames(rankedNames, view, n) {
   return list.slice(0, n);
 }
 
-/** Join HC released + utilised into grouped bar rows. */
+/** Join HC released + utilised into stacked rows: utilised (bottom) + remainder (top = released). */
 function buildHcReleasedSplitRows(hcReleased, hcUtilized) {
   const utilByHc = new Map();
   (hcUtilized || []).forEach((row) => {
@@ -160,12 +160,14 @@ function buildHcReleasedSplitRows(hcReleased, hcUtilized) {
       const rawUtil = utilByHc.has(row.high_court) ? Number(utilByHc.get(row.high_court)) : 0;
       const utilized = Number.isFinite(rawUtil) ? Math.max(0, rawUtil) : 0;
       const cappedUtil = Math.min(utilized, released);
+      const unutilized = Math.max(0, released - cappedUtil);
       const utilPct = released > 0 ? (cappedUtil / released) * 100 : null;
       return {
         high_court: row.high_court,
         label: row.label || shortLabel(row.high_court, 16),
         released,
         utilized: cappedUtil,
+        unutilized,
         util_pct: utilPct,
       };
     })
@@ -443,15 +445,17 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
                 <Tooltip content={<HcReleasedSplitTooltip labels={labels} />} />
                 <Legend content={<HcReleasedSplitLegend labels={labels} />} />
                 <Bar
-                  dataKey="released"
-                  name={labels.ftLegendReleased}
-                  fill="#22c55e"
-                  radius={[3, 3, 0, 0]}
-                />
-                <Bar
                   dataKey="utilized"
                   name={labels.ftLegendUtilized}
+                  stackId="released"
                   fill="#003B73"
+                  radius={[0, 0, 0, 0]}
+                />
+                <Bar
+                  dataKey="unutilized"
+                  name={labels.ftLegendReleased}
+                  stackId="released"
+                  fill="#22c55e"
                   radius={[3, 3, 0, 0]}
                 />
               </BarChart>
