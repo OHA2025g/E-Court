@@ -275,12 +275,14 @@ export default function Reports() {
               )}
             </div>
           )}
-          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 ${isDemoReport ? "lg:grid-cols-1 max-w-xs" : "lg:grid-cols-4"}`}>
+          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 ${isDemoReport ? "lg:grid-cols-1 max-w-xs" : activeTab === "outcome" ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
           {!isDemoReport && (
             <>
               <SelectField label={t("reports.colHighCourt")} value={hc} onChange={setHc} options={(hcs.data || []).map(h => h.name)} />
               <SelectField label={t("reports.colComponent")} value={component} onChange={setComponent} options={(comps.data || []).map(c => c.name)} />
-              <SelectField label={t("reports.colSubject")} value={subject} onChange={setSubject} options={(subs.data || []).map(s => s.name)} />
+              {activeTab === "outcome" && (
+                <SelectField label={t("reports.colSubject")} value={subject} onChange={setSubject} options={(subs.data || []).map(s => s.name)} />
+              )}
             </>
           )}
           <SelectField label={t("reports.colPeriod")} value={period} onChange={setPeriod} options={(periods.data || []).map(p => ({ label: p.label, value: p.period }))} />
