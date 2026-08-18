@@ -309,6 +309,7 @@ function UtilPctComponentHcChart({ rows, hcNames, utilPctLabel }) {
 
 export default function FinancialTrackerDashboardTab({ reportingPeriod, highCourt = "", component = "", labels }) {
   const [hcCompView, setHcCompView] = useState("top");
+  const [hcUtilView, setHcUtilView] = useState("top");
   const filterParams = {
     ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
     ...(highCourt ? { high_court: highCourt } : {}),
@@ -367,16 +368,32 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
       : labels.ftHcCompSliceHintTop(n);
   }, [selectedCompHcs.length, hcCompView, labels]);
 
-  // Keep the smaller utilised×HC chart on top-6 by released to avoid overcrowding.
-  const hcNamesUtilizedChart = useMemo(
-    () => sliceRankedNames(rankedHcByReleased, "top", HC_COMP_SLICE),
-    [rankedHcByReleased],
+  // Rank HCs by total funds utilised (desc) for Top/Bottom 6 utilised chart.
+  const rankedHcByUtilized = useMemo(
+    () => [...(data?.hc_utilized || [])]
+      .filter((r) => r.high_court)
+      .sort((a, b) => (Number(b.utilized) || 0) - (Number(a.utilized) || 0))
+      .map((r) => r.high_court),
+    [data?.hc_utilized],
+  );
+
+  const selectedUtilHcs = useMemo(
+    () => sliceRankedNames(rankedHcByUtilized, hcUtilView, HC_COMP_SLICE),
+    [rankedHcByUtilized, hcUtilView],
   );
 
   const hcComponentUtilizedRows = useMemo(() => {
-    const selected = new Set(hcNamesUtilizedChart);
-    return (data?.hc_component_utilized || []).filter((r) => selected.has(r.high_court));
-  }, [data?.hc_component_utilized, hcNamesUtilizedChart]);
+    const byHc = new Map((data?.hc_component_utilized || []).map((r) => [r.high_court, r]));
+    return selectedUtilHcs.map((hc) => byHc.get(hc)).filter(Boolean);
+  }, [data?.hc_component_utilized, selectedUtilHcs]);
+
+  const hcUtilSliceHint = useMemo(() => {
+    const n = selectedUtilHcs.length;
+    if (!n) return null;
+    return hcUtilView === "bottom"
+      ? labels.ftHcUtilSliceHintBottom(n)
+      : labels.ftHcUtilSliceHintTop(n);
+  }, [selectedUtilHcs.length, hcUtilView, labels]);
 
   if (isLoading) {
     return <div className="text-sm text-slate-500 py-8 text-center">{labels.loading}</div>;
@@ -531,7 +548,19 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <Card title={labels.ftHcComponentUtilized} elevated>
+        <Card
+          title={labels.ftHcComponentUtilized}
+          subtitle={hcUtilSliceHint || undefined}
+          elevated
+          action={
+            <SliceToggleButton
+              view={hcUtilView}
+              setView={setHcUtilView}
+              topLabel={labels.ftTop6}
+              bottomLabel={labels.ftBottom6}
+            />
+          }
+        >
           <div className="h-72 p-3 flex flex-col">
             {hcComponentUtilizedRows.length === 0 ? (
               <EmptyChart message={labels.noData} />

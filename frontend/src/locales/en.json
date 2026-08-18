@@ -135,6 +135,8 @@
     "ftBottom6": "Bottom 6",
     "ftHcCompSliceHintTop": "Top {{n}} High Courts by funds released",
     "ftHcCompSliceHintBottom": "Bottom {{n}} High Courts by funds released",
+    "ftHcUtilSliceHintTop": "Top {{n}} High Courts by funds utilised",
+    "ftHcUtilSliceHintBottom": "Bottom {{n}} High Courts by funds utilised",
     "ftHcComponentReleased": "Funds Released - High Court vs Component (₹ Cr)",
     "ftUtilPctComponentHc": "Fund Utilisation % - Component vs High Court",
     "ftUtilPct": "Utilisation %",

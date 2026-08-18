@@ -80,6 +80,8 @@ export function useDashboardLabels() {
       ftBottom6: t("dashboard.ftBottom6"),
       ftHcCompSliceHintTop: (n) => t("dashboard.ftHcCompSliceHintTop", { n }),
       ftHcCompSliceHintBottom: (n) => t("dashboard.ftHcCompSliceHintBottom", { n }),
+      ftHcUtilSliceHintTop: (n) => t("dashboard.ftHcUtilSliceHintTop", { n }),
+      ftHcUtilSliceHintBottom: (n) => t("dashboard.ftHcUtilSliceHintBottom", { n }),
       ftHcComponentReleased: t("dashboard.ftHcComponentReleased"),
       ftUtilPctComponentHc: t("dashboard.ftUtilPctComponentHc"),
       ftUtilPct: t("dashboard.ftUtilPct"),

@@ -130,6 +130,8 @@
     "ftBottom6": "निचले 6",
     "ftHcCompSliceHintTop": "निधि जारी के अनुसार शीर्ष {{n}} उच्च न्यायालय",
     "ftHcCompSliceHintBottom": "निधि जारी के अनुसार निचले {{n}} उच्च न्यायालय",
+    "ftHcUtilSliceHintTop": "निधि उपयोग के अनुसार शीर्ष {{n}} उच्च न्यायालय",
+    "ftHcUtilSliceHintBottom": "निधि उपयोग के अनुसार निचले {{n}} उच्च न्यायालय",
     "ftHcComponentReleased": "निधि जारी - उच्च न्यायालय बनाम घटक (₹ करोड़)",
     "ftUtilPctComponentHc": "निधि उपयोग % - घटक बनाम उच्च न्यायालय",
     "ftUtilPct": "उपयोग %",
