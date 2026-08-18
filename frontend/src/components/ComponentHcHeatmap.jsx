@@ -232,7 +232,7 @@ export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", co
             data-testid="heatmap-hover-detail"
           >
             {hoverDetail || (usingFallback
-              ? "No cells for selected period — showing All periods"
+              ? "No cells for selected period - showing All periods"
               : (cellCount > 0
                 ? `${cellCount.toLocaleString()} cells · hover for Target / Achieved or Released / Utilised`
                 : null))}

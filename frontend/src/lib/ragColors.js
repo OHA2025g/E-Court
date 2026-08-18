@@ -53,7 +53,7 @@ export function formatRagLegendLabel(name, accessible) {
   return `${RAG_SYMBOLS[name] || RAG_SYMBOLS.NA} ${name}`;
 }
 
-/** Dual-metric chart series — distinct dash + legend symbol when accessible mode is on. */
+/** Dual-metric chart series - distinct dash + legend symbol when accessible mode is on. */
 export const CHART_SERIES = {
   phys_percent: { color: "#003B73", symbol: "●", dash: "0" },
   phys_percent_hc: { color: "#0369A1", symbol: "●", dash: "0" },

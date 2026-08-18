@@ -126,8 +126,8 @@ async def assert_editable(db, high_court: str, reporting_period: str, user: dict
     ok, reason = await is_editable(db, high_court, reporting_period, user, now_fn)
     if not ok:
         messages = {
-            "period_submitted": "Period submitted for review — edits locked until returned or re-opened",
-            "period_approved": "Period approved — request Admin return or re-open to edit",
+            "period_submitted": "Period submitted for review - edits locked until returned or re-opened",
+            "period_approved": "Period approved - request Admin return or re-open to edit",
             "auto_locked": "Reporting period auto-locked after grace period",
             "grace_period_expired": "Grace period for data entry has expired",
         }
@@ -156,11 +156,11 @@ async def approved_match_filter(
                 detail="Only administrators may include unapproved submissions",
             )
         return {}
-    # CPC officers monitor their own HC on the dashboard — scope_filter restricts HC;
+    # CPC officers monitor their own HC on the dashboard - scope_filter restricts HC;
     # do not require national approval gating for their jurisdiction.
     if user and user.get("role") == "CPC" and user.get("high_court"):
         return {}
-    # Admins manage live tracker entry — always see entered data without waiting on
+    # Admins manage live tracker entry - always see entered data without waiting on
     # national submission approval (Viewers still gated).
     if user and user.get("role") == "Admin":
         return {}

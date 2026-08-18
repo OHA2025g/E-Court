@@ -232,7 +232,7 @@ export default function PublicProgress() {
               </div>
               <h1 className="public-hero-title">{t("public.title")}</h1>
               <p className="public-hero-tagline">
-                Real-time national aggregates across physical infrastructure, financial utilisation, and outcome KPIs — transparent progress for citizens and stakeholders.
+                Real-time national aggregates across physical infrastructure, financial utilisation, and outcome KPIs - transparent progress for citizens and stakeholders.
               </p>
               {updatedLabel && (
                 <p className="mt-3 text-xs text-white/50">
@@ -481,7 +481,7 @@ export default function PublicProgress() {
 
             <footer className="public-footer">
               {t("public.footer", {
-                date: data.updated_at ? new Date(data.updated_at).toLocaleString() : "—",
+                date: data.updated_at ? new Date(data.updated_at).toLocaleString() : "-",
               })}
             </footer>
           </>

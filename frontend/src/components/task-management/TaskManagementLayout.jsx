@@ -170,8 +170,8 @@ export function TaskTable({ rows, onRowClick, selectable, selectedIds, onSelecte
               <td className="p-3">{t.title}</td>
               <td className="p-3">{t.priority}</td>
               <td className="p-3">{t.status_label || t.status}</td>
-              <td className="p-3">{t.current_owner?.name || "—"}</td>
-              <td className="p-3">{t.due_date ? String(t.due_date).slice(0, 10) : "—"}</td>
+              <td className="p-3">{t.current_owner?.name || "-"}</td>
+              <td className="p-3">{t.due_date ? String(t.due_date).slice(0, 10) : "-"}</td>
               <td className="p-3">{t.sla_status}</td>
             </tr>
           ))}

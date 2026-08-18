@@ -57,7 +57,7 @@ function CrudPanel({ title, queryKey, listEndpoint, columns, rowKey, dialog: Dia
           <tbody>
             {(data || []).map((r) => (
               <tr key={typeof rowKey === "function" ? rowKey(r) : r[rowKey]}>
-                {columns.map(c => <td key={c.key}>{c.render ? c.render(r) : (r[c.key] ?? "—")}</td>)}
+                {columns.map(c => <td key={c.key}>{c.render ? c.render(r) : (r[c.key] ?? "-")}</td>)}
                 {isAdmin && DialogComp && (
                   <td>
                     <div className="flex gap-2">

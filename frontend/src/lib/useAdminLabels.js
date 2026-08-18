@@ -175,7 +175,7 @@ export function useAdminLabels() {
         fieldDueDate: t("pmu.fieldDueDate"),
         fieldDescription: t("pmu.fieldDescription"),
         fieldComments: t("pmu.fieldComments"),
-        ownerLabel: (owner) => t("pmu.ownerLabel", { owner: owner || "—" }),
+        ownerLabel: (owner) => t("pmu.ownerLabel", { owner: owner || "-" }),
         attachments: (count) => t("pmu.attachments", { count }),
         bucketCount: (status, count) => t("pmu.bucketCount", { status, count }),
       },

@@ -1,4 +1,4 @@
-"""Task Management — core business logic and workflow."""
+"""Task Management - core business logic and workflow."""
 import uuid
 from datetime import datetime, timezone, timedelta
 from typing import Any, Callable, Optional
@@ -83,12 +83,12 @@ async def get_user_brief(db, user_id: Optional[str]) -> Optional[dict]:
 
 def format_work_hours_display(hours) -> str:
     if hours is None:
-        return "—"
+        return "-"
     try:
         h = int(hours)
         return f"{h}:00"
     except (TypeError, ValueError):
-        return "—"
+        return "-"
 
 
 def compute_duration_days(task: dict) -> Optional[int]:
@@ -162,7 +162,7 @@ async def enrich_task(db, task: dict, now: datetime) -> dict:
 
 
 def _require_access(task, user, db=None):
-    """Sync check when task already loaded — use can_access_task async when needed."""
+    """Sync check when task already loaded - use can_access_task async when needed."""
     pass
 
 
@@ -1025,7 +1025,7 @@ async def get_associated_team_options(db) -> list[dict]:
 async def get_team_member_ids_by_label(db, label: str) -> list[str]:
     if not label:
         return []
-    parts = label.split(" — ", 1)
+    parts = label.split(" - ", 1)
     if len(parts) != 2:
         return []
     name, department = parts[0].strip(), parts[1].strip()

@@ -6,9 +6,9 @@ import { Paperclip, X, DownloadSimple, Spinner } from "@phosphor-icons/react";
 /**
  * Lightweight attachment widget for PMU tasks / DPR deliverables.
  * Props:
- *   value     — array of file ids
- *   onChange  — (newIds) => void
- *   disabled  — boolean
+ *   value     - array of file ids
+ *   onChange  - (newIds) => void
+ *   disabled  - boolean
  */
 export default function FileAttachments({ value = [], onChange, disabled }) {
   const inputRef = useRef(null);

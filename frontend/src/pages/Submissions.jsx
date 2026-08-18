@@ -159,9 +159,9 @@ export default function Submissions() {
                   <td className="font-medium text-slate-700">{r.high_court}</td>
                   <td>{r.reporting_period}</td>
                   <td><RagBadge status={STATUS_RAG[r.status] || "NA"} label={r.status} /></td>
-                  <td className="font-mono text-xs">{r.sla_due?.slice(0, 10) || "—"}</td>
-                  <td className="text-right tabular-nums">{r.days_remaining ?? "—"}</td>
-                  <td>{r.delinquent ? <Warning size={14} className="text-red-600" weight="fill" /> : "—"}</td>
+                  <td className="font-mono text-xs">{r.sla_due?.slice(0, 10) || "-"}</td>
+                  <td className="text-right tabular-nums">{r.days_remaining ?? "-"}</td>
+                  <td>{r.delinquent ? <Warning size={14} className="text-red-600" weight="fill" /> : "-"}</td>
                 </tr>
               ))}
               {!sla.isLoading && (sla.data?.rows?.length || 0) === 0 && (
@@ -223,7 +223,7 @@ export default function Submissions() {
                             </button>
                           </div>
                         ) : (
-                          <span className="text-xs text-slate-400">{r.decided_by || "—"}</span>
+                          <span className="text-xs text-slate-400">{r.decided_by || "-"}</span>
                         )}
                       </td>
                     )}
@@ -257,13 +257,13 @@ export default function Submissions() {
                     )}
                   </td>
                   <td className="text-right">{s.entry_count || 0}</td>
-                  <td className="font-mono text-xs">{s.submitted_at?.slice(0, 16) || "—"}</td>
-                  <td>{s.submitted_by || "—"}</td>
+                  <td className="font-mono text-xs">{s.submitted_at?.slice(0, 16) || "-"}</td>
+                  <td>{s.submitted_by || "-"}</td>
                   <td className="font-mono text-xs">
                     {s.approved_at ? `✓ ${s.approved_by} · ${s.approved_at.slice(0, 16)}`
-                      : s.returned_at ? `↩ ${s.returned_by} · ${s.returned_at.slice(0, 16)}` : "—"}
+                      : s.returned_at ? `↩ ${s.returned_by} · ${s.returned_at.slice(0, 16)}` : "-"}
                   </td>
-                  <td className="text-slate-500 text-xs max-w-md truncate">{s.return_reason || s.approval_note || s.note || "—"}</td>
+                  <td className="text-slate-500 text-xs max-w-md truncate">{s.return_reason || s.approval_note || s.note || "-"}</td>
                 </tr>
               ))}
               {(subs.data?.length || 0) === 0 && (

@@ -12,7 +12,7 @@ const TRACKERS = ["physical", "financial", "outcome", "users", "pmu_tasks", "dpr
 const ACTIONS = ["create", "update", "delete"];
 
 function val(v) {
-  if (v === null || v === undefined) return "—";
+  if (v === null || v === undefined) return "-";
   if (typeof v === "object") return JSON.stringify(v).slice(0, 80);
   return String(v).slice(0, 80);
 }
@@ -54,8 +54,8 @@ export default function AuditLogs() {
                   <td>{r.role}</td>
                   <td>{r.tracker}</td>
                   <td>{r.action}</td>
-                  <td>{r.high_court || "—"}</td>
-                  <td>{r.reporting_period || "—"}</td>
+                  <td>{r.high_court || "-"}</td>
+                  <td>{r.reporting_period || "-"}</td>
                   <td className="max-w-md">
                     {(r.changes || []).slice(0, 3).map((c, i) => (
                       <div key={i} className="text-xs">

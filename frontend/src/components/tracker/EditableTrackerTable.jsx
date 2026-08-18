@@ -9,7 +9,7 @@ import {
 } from "@/lib/trackerTableSortFilter";
 
 /**
- * Inline-editable table cell — saves on blur/Enter.
+ * Inline-editable table cell - saves on blur/Enter.
  */
 function EditableCell({ value, display, onSave, type = "text", disabled, className = "" }) {
   const [editing, setEditing] = useState(false);

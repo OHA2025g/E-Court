@@ -79,7 +79,7 @@ function UserDialog({ open, onOpenChange, user, hcs, users, onSaved }) {
             <span className="text-[10px] uppercase tracking-[0.2em] text-slate-600 font-medium">Reports to team lead</span>
             <select value={form.team_lead_id || ""} onChange={(e) => setForm(f => ({ ...f, team_lead_id: e.target.value }))}
               className="mt-1 w-full px-3 py-2 border border-slate-300 rounded-sm bg-white text-sm">
-              <option value="">— None —</option>
+              <option value="">- None -</option>
               {teamLeads.filter((u) => u.id !== user?.id).map((u) => (
                 <option key={u.id} value={u.id}>{u.name} ({u.email})</option>
               ))}
@@ -189,7 +189,7 @@ function TeamDialog({ open, onOpenChange, team, users, onSaved }) {
               onChange={(e) => setForm((f) => ({ ...f, team_lead_id: e.target.value }))}
               className="mt-1 w-full px-3 py-2 border border-slate-300 rounded-sm bg-white text-sm"
             >
-              <option value="">— None —</option>
+              <option value="">- None -</option>
               {leadOptions.map((u) => (
                 <option key={u.id} value={u.id}>{u.name} ({u.email})</option>
               ))}
@@ -342,9 +342,9 @@ export default function UserManagement() {
                       <td className="text-xs text-slate-600">
                         {u.task_role ? u.task_role.replace(/_/g, " ") : "Default"}
                       </td>
-                      <td className="text-xs text-slate-600">{u.team_label || "—"}</td>
-                      <td>{u.high_court || "—"}</td>
-                      <td className="font-mono text-xs text-slate-500">{u.created_at?.slice(0, 10) || "—"}</td>
+                      <td className="text-xs text-slate-600">{u.team_label || "-"}</td>
+                      <td>{u.high_court || "-"}</td>
+                      <td className="font-mono text-xs text-slate-500">{u.created_at?.slice(0, 10) || "-"}</td>
                       <td>
                         <div className="flex gap-2">
                           <button onClick={() => { setEditing(u); setDlg(true); }} className="text-slate-600 hover:text-[#003B73]" title={l.editBtn} aria-label={l.editBtn}><PencilSimple size={14} /></button>
@@ -383,7 +383,7 @@ export default function UserManagement() {
                       <tr key={t.id}>
                         <td className="font-medium">{t.name}</td>
                         <td>{t.department}</td>
-                        <td>{t.team_lead?.name || "—"}</td>
+                        <td>{t.team_lead?.name || "-"}</td>
                         <td>
                           <span className="text-xs text-slate-600">
                             {t.member_count || 0}

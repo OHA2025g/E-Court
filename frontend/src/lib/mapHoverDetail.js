@@ -29,7 +29,7 @@ export function mapHoverCounts(info, metric) {
 export function mapHoverDetail(info, metric, metricLabel) {
   if (!info) return null;
   const rag = info.rag || "NA";
-  const hc = info.high_court || "—";
+  const hc = info.high_court || "-";
   const head = `${info.name || "State"} · ${hc}`;
 
   if (info.in_scope === false) {

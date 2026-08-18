@@ -34,7 +34,7 @@ def register_api_token_routes(api, db, require_role, serialize_fn, now_utc_fn):
             "active": True,
         }
         r = await db.api_tokens.insert_one(doc)
-        return {"id": str(r.inserted_id), "token": raw, "note": "Store this token securely — shown once"}
+        return {"id": str(r.inserted_id), "token": raw, "note": "Store this token securely - shown once"}
 
     @api.delete("/admin/api-tokens/{tid}")
     async def revoke_token(tid: str, _: dict = Depends(require_role("Admin"))):

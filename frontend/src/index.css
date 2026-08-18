@@ -147,7 +147,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
   z-index: 50;
 }
 
-/* Login page — fixed full viewport; height must compensate for html { zoom: 0.9 } */
+/* Login page - fixed full viewport; height must compensate for html { zoom: 0.9 } */
 .login-page {
   position: fixed;
   top: 0;

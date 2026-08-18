@@ -36,7 +36,7 @@ ALL_ROLES = ("Admin", "CPC", "Viewer")
 
 
 def is_2fa_disabled() -> bool:
-    """Temporary bypass — set DISABLE_2FA=true to skip TOTP at login and mandatory setup."""
+    """Temporary bypass - set DISABLE_2FA=true to skip TOTP at login and mandatory setup."""
     return os.environ.get("DISABLE_2FA", "false").lower() in ("1", "true", "yes")
 
 
@@ -167,7 +167,7 @@ async def _decode_access_token(request: Request) -> tuple[dict, str]:
             raise HTTPException(status_code=401, detail="Invalid token type")
         sid = payload.get("sid")
         if not sid:
-            raise HTTPException(status_code=401, detail="Session expired — please sign in again")
+            raise HTTPException(status_code=401, detail="Session expired - please sign in again")
         session = await db.sessions.find_one({"id": sid})
         if not session or session.get("revoked_at"):
             raise HTTPException(status_code=401, detail="Session revoked")
@@ -619,7 +619,7 @@ def register_auth_routes(api: APIRouter):
                 raise HTTPException(status_code=401, detail="Invalid token")
             sid = payload.get("sid")
             if not sid:
-                raise HTTPException(status_code=401, detail="Session expired — please sign in again")
+                raise HTTPException(status_code=401, detail="Session expired - please sign in again")
             session = await db.sessions.find_one({"id": sid})
             if not session or session.get("revoked_at"):
                 raise HTTPException(status_code=401, detail="Session revoked")
@@ -771,7 +771,7 @@ def register_auth_routes(api: APIRouter):
                        [{"field": "password", "old": "***", "new": "*** (temporary)"}])
         await db.email_outbox.insert_one({
             "to": target["email"],
-            "subject": "eCourts PMIS — temporary password",
+            "subject": "eCourts PMIS - temporary password",
             "body": (
                 "Your PMIS account password was reset by an administrator.\n\n"
                 f"Temporary password: {temp_password}\n\n"

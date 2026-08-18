@@ -105,7 +105,7 @@ function WebhooksCard() {
                   <td className="font-mono text-xs">{o.ts?.slice(0, 19).replace("T", " ")}</td>
                   <td>{o.event}</td>
                   <td>{o.status}</td>
-                  <td className="text-xs">{o.http_status ?? "—"}</td>
+                  <td className="text-xs">{o.http_status ?? "-"}</td>
                 </tr>
               ))}
               {(outbox.data?.length || 0) === 0 && (
@@ -155,7 +155,7 @@ export default function Schedules() {
               {(jobs.data || []).map(j => (
                 <tr key={j.id}>
                   <td><Clock size={14} className="inline mr-1 text-slate-500" />{j.name}</td>
-                  <td className="font-mono text-xs">{j.next_run_time?.replace("T", " ").slice(0, 19) || "—"}</td>
+                  <td className="font-mono text-xs">{j.next_run_time?.replace("T", " ").slice(0, 19) || "-"}</td>
                   <td className="font-mono text-[11px] text-slate-500">{j.trigger}</td>
                   <td>
                     {j.id === "weekly_cabinet_brief" && (
@@ -182,8 +182,8 @@ export default function Schedules() {
                 <tr key={d.id}>
                   <td className="font-mono text-xs">{d.ts?.slice(0, 19).replace("T", " ")}</td>
                   <td>{d.job}</td>
-                  <td>{d.period_label || d.period || "—"}</td>
-                  <td className="text-xs text-slate-500">{(d.recipients || []).join(", ") || "—"}</td>
+                  <td>{d.period_label || d.period || "-"}</td>
+                  <td className="text-xs text-slate-500">{(d.recipients || []).join(", ") || "-"}</td>
                   <td>{d.status}</td>
                   <td>
                     {d.pdf_size_bytes > 0 && (

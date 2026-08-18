@@ -129,7 +129,7 @@ def register_master_routes(
         if not body.component or not body.indicator:
             raise HTTPException(status_code=400, detail="Component and sub-component are required")
         if not await db.components.find_one({"name": body.component}):
-            raise HTTPException(status_code=400, detail="Unknown component — add it under Components first")
+            raise HTTPException(status_code=400, detail="Unknown component - add it under Components first")
         if await db.indicators.find_one({"component": body.component, "indicator": body.indicator}):
             raise HTTPException(status_code=400, detail="Sub-component already exists for this component")
         await db.indicators.insert_one(body.model_dump())

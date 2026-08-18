@@ -1,4 +1,4 @@
-"""Dashboard routes — updated to pass approval gating."""
+"""Dashboard routes - updated to pass approval gating."""
 import time
 from typing import Literal, Optional
 
@@ -144,7 +144,7 @@ def register_dashboard_routes(
         include_unapproved: bool = False,
         user: dict = Depends(require_fully_authenticated),
     ):
-        # YoY is a multi-year cumulative rollup — always gate/filter as All periods
+        # YoY is a multi-year cumulative rollup - always gate/filter as All periods
         # so baseline months (e.g. 2026-05) are not dropped when another month is selected.
         extra = await _extra(user, None, include_unapproved, high_court, component)
         return await _cached_dashboard(
@@ -221,7 +221,7 @@ def register_dashboard_routes(
             if not result:
                 raise HTTPException(
                     status_code=400,
-                    detail="Unable to compute delta — select a reporting period with a prior period",
+                    detail="Unable to compute delta - select a reporting period with a prior period",
                 )
             return result
 
@@ -409,5 +409,5 @@ def register_dashboard_routes(
             db, lambda u: {}, compute_rag_fn, safe_div_fn, _public_user, reporting_period, metric, extra,
         )
         if not result:
-            raise HTTPException(status_code=400, detail="Unable to compute delta — no prior reporting period")
+            raise HTTPException(status_code=400, detail="Unable to compute delta - no prior reporting period")
         return result

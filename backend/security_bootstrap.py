@@ -60,7 +60,7 @@ def validate_jwt_secret(secret: str) -> None:
         logger.warning("SECURITY: %s (set JWT_STRICT=true in production)", msg)
         return
     if secret in KNOWN_WEAK_JWT_SECRETS:
-        msg = "JWT_SECRET is a known default — generate a unique secret for this deployment"
+        msg = "JWT_SECRET is a known default - generate a unique secret for this deployment"
         if JWT_STRICT or APP_ENV == "production":
             raise RuntimeError(msg)
         logger.warning("SECURITY: %s", msg)
@@ -127,7 +127,7 @@ def validate_outbound_url(url: str, *, https_only: bool = False) -> str:
         )
     host = (parsed.hostname or "").lower().strip(".")
     if not host:
-        raise HTTPException(status_code=400, detail="Invalid URL — missing host")
+        raise HTTPException(status_code=400, detail="Invalid URL - missing host")
     if host in _BLOCKED_HOSTS:
         raise HTTPException(status_code=400, detail="URL host is not allowed")
     try:

@@ -77,7 +77,7 @@ export default function ScopeCharter() {
           <p className="text-sm text-slate-500 mt-1">{t("scopeCharter.subtitle")}</p>
         </div>
         <div className="text-right text-xs text-slate-500">
-          <div>{t("scopeCharter.version", { version: data?.version || "—" })}</div>
+          <div>{t("scopeCharter.version", { version: data?.version || "-" })}</div>
           <div className="mt-1 font-semibold uppercase tracking-wider text-[#003B73]">{docStatus}</div>
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function ScopeCharter() {
           data-testid="scope-charter-signed-banner"
           className="rounded-sm border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"
         >
-          {t("scopeCharter.completedBanner", { date: (data.completed_at || "").slice(0, 10) || "—" })}
+          {t("scopeCharter.completedBanner", { date: (data.completed_at || "").slice(0, 10) || "-" })}
         </div>
       )}
 
@@ -110,8 +110,8 @@ export default function ScopeCharter() {
               {(data?.signoff_slots || []).map((slot) => (
                 <tr key={slot.id}>
                   <td>{slot.title}</td>
-                  <td>{slot.signoff?.signer_name || "—"}</td>
-                  <td className="text-xs font-mono">{slot.signoff?.signed_at?.slice(0, 10) || "—"}</td>
+                  <td>{slot.signoff?.signer_name || "-"}</td>
+                  <td className="text-xs font-mono">{slot.signoff?.signed_at?.slice(0, 10) || "-"}</td>
                   <td>
                     <StatusBadge
                       signed={slot.signed}

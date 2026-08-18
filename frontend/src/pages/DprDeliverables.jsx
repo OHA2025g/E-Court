@@ -109,12 +109,12 @@ export default function DprDeliverables() {
                 <tr key={r.id}>
                   <td className="font-mono text-xs">{r.code}</td>
                   <td className="font-medium text-slate-700 max-w-md">{r.title}</td>
-                  <td>{r.owner || "—"}</td>
-                  <td>{r.target_date || "—"}</td>
-                  <td>{r.actual_date || "—"}</td>
+                  <td>{r.owner || "-"}</td>
+                  <td>{r.target_date || "-"}</td>
+                  <td>{r.actual_date || "-"}</td>
                   <td><RagBadge status={ragOf(r.status)} label={r.status} /></td>
                   <td className="text-slate-500 text-xs max-w-xs truncate">
-                    {r.delay_reason || "—"}
+                    {r.delay_reason || "-"}
                     {(r.attachments?.length || 0) > 0 && (
                       <span className="ml-2 text-[10px] text-slate-500">📎 {r.attachments.length}</span>
                     )}

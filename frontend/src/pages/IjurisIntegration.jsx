@@ -138,7 +138,7 @@ export default function IjurisIntegration() {
                   <td>{log.record_type}</td>
                   <td><RagBadge status={log.status === "accepted" ? "GREEN" : "RED"} label={log.status} /></td>
                   <td>{log.ingested_by}</td>
-                  <td className="text-xs text-slate-600 max-w-md">{log.message || "—"}</td>
+                  <td className="text-xs text-slate-600 max-w-md">{log.message || "-"}</td>
                 </tr>
               ))}
               {(logs.data?.length || 0) === 0 && (

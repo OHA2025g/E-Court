@@ -55,6 +55,6 @@ async def consume_bulk_preview(
         expires = expires.replace(tzinfo=timezone.utc)
     if expires and expires < datetime.now(timezone.utc):
         await db.bulk_previews.delete_one({"token": token})
-        raise HTTPException(status_code=400, detail="Preview expired — upload the file again")
+        raise HTTPException(status_code=400, detail="Preview expired - upload the file again")
     await db.bulk_previews.delete_one({"token": token})
     return doc["raw"], doc.get("filename") or "upload.xlsx"

@@ -184,7 +184,7 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
         {!isLoading && !isError && usingFallback && (
           <div className="fyoy-status warn no-print" role="status">
             No financial figures for <span className="font-semibold">{periodLabel || period}</span>
-            {" "}— showing <span className="font-semibold">All periods</span> from loaded tracker data.
+            {" "}- showing <span className="font-semibold">All periods</span> from loaded tracker data.
           </div>
         )}
 

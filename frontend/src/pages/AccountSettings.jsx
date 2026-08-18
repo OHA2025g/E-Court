@@ -295,9 +295,9 @@ function ActiveSessions() {
                       <span className="ml-2 text-[10px] uppercase bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">{a.thisDevice}</span>
                     )}
                   </td>
-                  <td className="font-mono text-xs">{s.ip || "—"}</td>
-                  <td className="text-xs">{s.created_at?.slice(0, 16) || "—"}</td>
-                  <td className="text-xs">{s.last_seen_at?.slice(0, 16) || "—"}</td>
+                  <td className="font-mono text-xs">{s.ip || "-"}</td>
+                  <td className="text-xs">{s.created_at?.slice(0, 16) || "-"}</td>
+                  <td className="text-xs">{s.last_seen_at?.slice(0, 16) || "-"}</td>
                   <td>
                     <button type="button" disabled={busy === s.id} onClick={() => revoke(s.id, s.is_current)}
                       className="text-xs uppercase tracking-wider text-red-700 hover:underline">

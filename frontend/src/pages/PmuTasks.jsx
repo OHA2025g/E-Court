@@ -122,7 +122,7 @@ export default function PmuTasks() {
                   {t.description && <p className="text-xs text-slate-500 mt-1 line-clamp-3">{t.description}</p>}
                   <div className="mt-2 flex items-center justify-between text-[11px]">
                     <span className={`inline-flex px-2 py-0.5 rounded-sm border ${priorityColor(t.priority)}`}>{t.priority}</span>
-                    <span className="text-slate-500 inline-flex items-center gap-1"><ClockCounterClockwise size={12} /> {t.due_date || "—"}</span>
+                    <span className="text-slate-500 inline-flex items-center gap-1"><ClockCounterClockwise size={12} /> {t.due_date || "-"}</span>
                   </div>
                   <div className="mt-2 text-[11px] text-slate-500">{l.ownerLabel(t.owner)}</div>
                   {(t.attachments?.length || 0) > 0 && (

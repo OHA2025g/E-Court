@@ -6,7 +6,7 @@ import { useTaskLabels } from "@/lib/useTaskLabels";
 import Card from "@/components/Card";
 import { TaskKpiGrid, TaskTable } from "@/components/task-management/TaskManagementLayout";
 
-/** Read-only auditor overview — organisation task metrics and recent activity. */
+/** Read-only auditor overview - organisation task metrics and recent activity. */
 export default function AuditorDashboard() {
   const navigate = useNavigate();
   const l = useTaskLabels();

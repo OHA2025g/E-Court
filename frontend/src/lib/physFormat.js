@@ -8,7 +8,7 @@ export const GB_PER_TB = 1024;
  *
  * Digitization is stored as Crore Pages (same scale as the tracker /
  * "No of pages digitized (in Cr.)"). Show that scale with unit "Cr pages"
- * — never multiply into absolute pages (inflates KPI cards), and never use
+ * - never multiply into absolute pages (inflates KPI cards), and never use
  * bare "Crore" (reads like financial ₹ Cr).
  *
  * Cloud Computing capacity is stored in GB; convert to TB for display.

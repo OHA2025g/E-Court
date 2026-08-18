@@ -9,7 +9,7 @@ export default function DojEmblem({ className = "", height = 56 }) {
     <div className={`doj-emblem ${className}`.trim()}>
       <img
         src="/doj-logo.png"
-        alt="Department of Justice — न्याय विभाग"
+        alt="Department of Justice - न्याय विभाग"
         className="doj-emblem-img"
         style={{ height, width: "auto" }}
       />

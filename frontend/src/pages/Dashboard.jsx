@@ -47,7 +47,7 @@ const RAG_ORDER = ["GREEN", "AMBER", "RED", "NA"];
 function PerformancePctTooltip({ active, payload, label, nameKey = "component", selectedComponent = "" }) {
   if (!active || !payload?.length) return null;
   const row = payload[0]?.payload || {};
-  const title = label || row[nameKey] || "—";
+  const title = label || row[nameKey] || "-";
   const componentName = row.component || selectedComponent || "";
   const physUom = row.phys_uom
     || (componentName === "Cloud Computing & Storage" ? "GB / TB / PB" : undefined)
@@ -96,7 +96,7 @@ const DASHBOARD_TABS = [
   "hc-table",
 ];
 
-/** Tabs hidden for CPC officers — court-scoped view only. */
+/** Tabs hidden for CPC officers - court-scoped view only. */
 const CPC_HIDDEN_TABS = new Set(["rag-trends", "geographic", "performance", "hc-table"]);
 
 function physRag(pct) {

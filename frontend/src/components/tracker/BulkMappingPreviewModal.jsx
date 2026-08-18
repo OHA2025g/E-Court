@@ -113,7 +113,7 @@ function Stage2Diff({ template, database }) {
               <tr key={k} className={changed ? "bg-amber-50/80" : neu ? "bg-emerald-50/50" : "bg-white"}>
                 <td className="px-2 py-1 border-t border-slate-100 text-slate-600">{k}</td>
                 <td className="px-2 py-1 border-t border-slate-100 font-medium">{fmt(t)}</td>
-                <td className="px-2 py-1 border-t border-slate-100">{database == null ? "— (new)" : fmt(d)}</td>
+                <td className="px-2 py-1 border-t border-slate-100">{database == null ? "- (new)" : fmt(d)}</td>
                 <td className="px-2 py-1 border-t border-slate-100 uppercase tracking-wider text-[10px]">
                   {neu ? <span className="text-emerald-700">Insert</span> : changed ? <span className="text-amber-800">Update</span> : <span className="text-slate-400">Same</span>}
                 </td>
@@ -319,7 +319,7 @@ export default function BulkMappingPreviewModal({
 
         <DialogFooter className="px-5 py-4 border-t border-slate-200 bg-slate-50 shrink-0 flex-row gap-2 sm:justify-between">
           <p className="text-[11px] text-slate-500 self-center">
-            Preview cached 30 minutes — confirm without re-uploading.
+            Preview cached 30 minutes - confirm without re-uploading.
           </p>
           <div className="flex gap-2">
             <button type="button" onClick={onCancel}

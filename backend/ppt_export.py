@@ -28,7 +28,7 @@ def _hex_rgb(h: str) -> tuple:
 
 def _fmt_pct(v) -> str:
     if v is None:
-        return "—"
+        return "-"
     return f"{v:.1f}%"
 
 
@@ -79,7 +79,7 @@ def render_states_rag_png(states: dict, width: int = 960, height: int = 540) -> 
     """Grid of state/UT cells coloured by parent HC physical RAG."""
     img = Image.new("RGB", (width, height), "white")
     d = ImageDraw.Draw(img)
-    d.text((16, 10), "India — physical RAG by state/UT jurisdiction", fill="#0A1128")
+    d.text((16, 10), "India - physical RAG by state/UT jurisdiction", fill="#0A1128")
 
     items = sorted(states.items())
     if not items:
@@ -159,15 +159,15 @@ async def build_dashboard_pptx(
     prs = Presentation()
 
     slide = prs.slides.add_slide(prs.slide_layouts[5])
-    slide.shapes.title.text = f"eCourts PMIS Dashboard — {label}"
+    slide.shapes.title.text = f"eCourts PMIS Dashboard - {label}"
     box = slide.shapes.add_textbox(Inches(0.5), Inches(1.5), Inches(9), Inches(5))
     tf = box.text_frame
     tf.text = "National KPI Summary (approved data only)"
     kpi_lines = [
         f"Physical achievement: {_fmt_pct(phys.get('percent'))}",
         f"Financial utilisation: {_fmt_pct(fin.get('utilisation_percent'))}",
-        f"Physical RAG — Green: {rag_p.get('GREEN', 0)}, Amber: {rag_p.get('AMBER', 0)}, Red: {rag_p.get('RED', 0)}",
-        f"Financial RAG — Green: {rag_f.get('GREEN', 0)}, Amber: {rag_f.get('AMBER', 0)}, Red: {rag_f.get('RED', 0)}",
+        f"Physical RAG - Green: {rag_p.get('GREEN', 0)}, Amber: {rag_p.get('AMBER', 0)}, Red: {rag_p.get('RED', 0)}",
+        f"Financial RAG - Green: {rag_f.get('GREEN', 0)}, Amber: {rag_f.get('AMBER', 0)}, Red: {rag_f.get('RED', 0)}",
         f"Outcome KPI rows tracked: {summary.get('outcome', {}).get('kpi_count', 0)}",
     ]
     for line in kpi_lines:
@@ -175,14 +175,14 @@ async def build_dashboard_pptx(
         p.text = line
         p.font.size = Pt(14)
 
-    _add_image_slide(prs, "National trend — physical achievement", render_trend_png(trend))
-    _add_image_slide(prs, "India choropleth — physical RAG by state", render_states_rag_png(states))
+    _add_image_slide(prs, "National trend - physical achievement", render_trend_png(trend))
+    _add_image_slide(prs, "India choropleth - physical RAG by state", render_states_rag_png(states))
 
     top_lines = [f"{r['high_court']}: {_fmt_pct(r['phys_percent'])}" for r in top5]
     bot_lines = [f"{r['high_court']}: {_fmt_pct(r['phys_percent'])}" for r in bottom5]
     _add_bullet_slide(
         prs,
-        f"Top & bottom High Courts — physical ({label})",
+        f"Top & bottom High Courts - physical ({label})",
         ["Top performers:"] + top_lines + [""] + ["Needs attention:"] + bot_lines,
     )
 

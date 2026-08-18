@@ -12,7 +12,7 @@ import {
 import { mapHoverCounts, mapHoverDetail } from "@/lib/mapHoverDetail";
 import { RAG_COLORS, RAG_SYMBOLS, choroplethStrokeProps, ragLegendLabels, useAccessibleRag } from "@/lib/ragColors";
 
-/** Read pointer offset vs map shell. Must run sync in the handler — e.currentTarget is null inside setState updaters. */
+/** Read pointer offset vs map shell. Must run sync in the handler - e.currentTarget is null inside setState updaters. */
 function pointerInMap(mapEl, clientX, clientY) {
   if (!mapEl) return null;
   const rect = mapEl.getBoundingClientRect();
@@ -81,7 +81,7 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
     queryFn: () => api.get("/dashboard/states-rag", { params: filterParams }).then(r => r.data),
   });
 
-  // Monthly periods often have no tracker rows — fall back to All periods so the map is not blank.
+  // Monthly periods often have no tracker rows - fall back to All periods so the map is not blank.
   const primaryEmpty = primary.isSuccess && !statesHaveRag(primary.data);
   const fallback = useQuery({
     queryKey: ["states-rag", "v15-geo-fallback", { highCourt, component, metric }],
@@ -147,7 +147,7 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
               data-testid="india-map-period-fallback"
               role="status"
             >
-              No map data for the selected reporting period — showing{" "}
+              No map data for the selected reporting period - showing{" "}
               <span className="font-semibold">All periods</span> instead.
             </div>
           )}
@@ -227,7 +227,7 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
             >
               <div className="font-semibold text-slate-900">{hover.name}</div>
               <div className="text-slate-500 text-[11px] mt-0.5">
-                High Court: <span className="text-[#003B73] font-medium">{hover.high_court || "—"}</span>
+                High Court: <span className="text-[#003B73] font-medium">{hover.high_court || "-"}</span>
               </div>
               {hover.in_scope === false ? (
                 <div className="text-slate-500 text-[11px] mt-1">Outside your jurisdiction</div>

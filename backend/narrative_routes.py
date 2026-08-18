@@ -30,7 +30,7 @@ def register_narrative_routes(
 
         rec = await get_narrative_record(db, body.reporting_period)
         if not rec or not rec.get("draft_text"):
-            raise HTTPException(status_code=404, detail="No draft narrative to approve — regenerate first")
+            raise HTTPException(status_code=404, detail="No draft narrative to approve - regenerate first")
         text = (body.text or rec.get("draft_text") or "").strip()
         if len(text) < 20:
             raise HTTPException(status_code=400, detail="Narrative text too short")

@@ -16,7 +16,7 @@ import {
   useAccessibleRag,
 } from "@/lib/ragColors";
 
-/** Must run sync in the handler — e.currentTarget is null inside setState updaters. */
+/** Must run sync in the handler - e.currentTarget is null inside setState updaters. */
 function pointerInMap(mapEl, clientX, clientY) {
   if (!mapEl) return null;
   const rect = mapEl.getBoundingClientRect();
@@ -148,7 +148,7 @@ export default function PublicIndiaChoropleth({
             >
               <div className="font-semibold text-slate-900">{hover.name}</div>
               <div className="text-slate-500 text-[11px] mt-0.5">
-                High Court: <span className="text-[#003B73] font-medium">{hover.high_court || "—"}</span>
+                High Court: <span className="text-[#003B73] font-medium">{hover.high_court || "-"}</span>
               </div>
               {counts && (
                 <div className="text-slate-800 text-[11px] mt-1.5 leading-snug font-medium">{counts}</div>

@@ -25,7 +25,7 @@ import {
 const CHART_COLORS = ["#f59e0b", "#fb923c", "#ea580c", "#14b8a6", "#6366f1", "#ec4899", "#84cc16", "#64748b"];
 
 function shortLabel(name, max = 18) {
-  if (!name) return "—";
+  if (!name) return "-";
   return name.length <= max ? name : `${name.slice(0, max - 1)}…`;
 }
 
@@ -216,7 +216,7 @@ function HcReleasedSplitLegend({ labels }) {
   );
 }
 
-/** Full component names — Recharts Legend + shortLabel was clipping e.g. Cloud Computing & Storage. */
+/** Full component names - Recharts Legend + shortLabel was clipping e.g. Cloud Computing & Storage. */
 function ComponentSeriesLegend({ names }) {
   if (!names?.length) return null;
   return (

@@ -191,7 +191,7 @@ export default function TaskDetailPage() {
   if (!task) return <div className="text-red-600 p-6">{l.detail.notFound}</div>;
 
   const ownerName = task.current_owner?.name || l.common.unassigned;
-  const durationLabel = task.duration_days != null ? `${task.duration_days} days` : "—";
+  const durationLabel = task.duration_days != null ? `${task.duration_days} days` : "-";
   const dueDays = daysUntil(task.due_date);
   const canShowEscalate = perms.canEscalate && WORKFLOW_ACTIVE.includes(task.status);
   const canShowBlock = perms.canMarkBlocked && !readOnly && task.status !== "BLOCKED" && WORKFLOW_ACTIVE.includes(task.status)
@@ -263,7 +263,7 @@ export default function TaskDetailPage() {
               </div>
               <h1 className="tm-detail-title">{task.title}</h1>
               <div className="tm-detail-meta">
-                <span>{l.detail.byCreator(task.created_by_user?.name || "—")}</span>
+                <span>{l.detail.byCreator(task.created_by_user?.name || "-")}</span>
                 {task.module_name && (
                   <span className="inline-flex items-center gap-1 text-[#003B73]">
                     <Folder size={14} /> {task.module_name}
@@ -336,7 +336,7 @@ export default function TaskDetailPage() {
             <div className="tm-info-grid">
               <InfoField label={l.detail.fields.associatedTeam}>
                 {readOnly ? (
-                  <span className="tm-info-readonly">{infoForm.associated_team || "—"}</span>
+                  <span className="tm-info-readonly">{infoForm.associated_team || "-"}</span>
                 ) : (
                   <select
                     disabled={readOnly}
@@ -395,7 +395,7 @@ export default function TaskDetailPage() {
                 <span className="tm-info-readonly">{durationLabel}</span>
               </InfoField>
               <InfoField label={l.detail.fields.workHours}>
-                <span className="tm-info-readonly">{task.work_hours_display || "—"}</span>
+                <span className="tm-info-readonly">{task.work_hours_display || "-"}</span>
               </InfoField>
               <InfoField label={l.detail.fields.completionPct}>
                 <span className="tm-info-readonly">{task.progress_pct ?? 0} %</span>
@@ -523,14 +523,14 @@ export default function TaskDetailPage() {
                         </td>
                         <td><StatusBadge status={st.status} label={st.status_label} /></td>
                         <td>{st.current_owner?.name || l.common.unassigned}</td>
-                        <td>{fmtDate(st.start_date || st.sla_started_at || st.created_at) || "—"}</td>
+                        <td>{fmtDate(st.start_date || st.sla_started_at || st.created_at) || "-"}</td>
                         <td>
-                          {fmtDate(st.due_date) || "—"}
+                          {fmtDate(st.due_date) || "-"}
                           {days != null && days >= 0 && (
                             <span className="text-emerald-600 text-xs ml-1">({l.detail.daysToGo(days)})</span>
                           )}
                         </td>
-                        <td>{st.duration_days != null ? `${st.duration_days} days` : "—"}</td>
+                        <td>{st.duration_days != null ? `${st.duration_days} days` : "-"}</td>
                         <td><PriorityBadge priority={st.priority} /></td>
                       </tr>
                     );
@@ -563,7 +563,7 @@ export default function TaskDetailPage() {
           {tab === "logHours" && (
             <div className="tm-empty-tab">
               <Clock size={32} className="text-slate-300 mb-2" />
-              <p>Work hours budget: {task.work_hours_display || "—"} (SLA hours)</p>
+              <p>Work hours budget: {task.work_hours_display || "-"} (SLA hours)</p>
               <p className="text-sm text-slate-500 mt-1">Detailed time logging will be available in a future release.</p>
             </div>
           )}
@@ -592,8 +592,8 @@ export default function TaskDetailPage() {
 
           {tab === "dependency" && (
             <div className="tm-empty-tab text-sm space-y-2">
-              <p><strong>Source type:</strong> {task.source_type || "—"}</p>
-              <p><strong>Source reference:</strong> {task.source_reference_id || "—"}</p>
+              <p><strong>Source type:</strong> {task.source_type || "-"}</p>
+              <p><strong>Source reference:</strong> {task.source_reference_id || "-"}</p>
               {task.parent_task_id && (
                 <p><strong>Parent task:</strong> linked</p>
               )}
@@ -630,8 +630,8 @@ export default function TaskDetailPage() {
 
           {tab === "assignment" && (
             <div className="text-sm space-y-2 p-2">
-              <p>{l.detail.assignmentCard.lead(task.team_lead?.name || "—")}</p>
-              <p>{l.detail.assignmentCard.member(task.team_member?.name || "—")}</p>
+              <p>{l.detail.assignmentCard.lead(task.team_lead?.name || "-")}</p>
+              <p>{l.detail.assignmentCard.member(task.team_member?.name || "-")}</p>
               {!readOnly && <TaskAssignmentPanel taskId={id} task={task} onUpdated={refetch} />}
             </div>
           )}
@@ -651,7 +651,7 @@ export default function TaskDetailPage() {
               )}
               <ul className="p-4 space-y-2 text-sm">
                 {(data?.approvals || []).map((a) => (
-                  <li key={a.id} className="border-l-2 border-violet-300 pl-3">{a.approval_level}: {a.decision} — {a.remarks || "—"}</li>
+                  <li key={a.id} className="border-l-2 border-violet-300 pl-3">{a.approval_level}: {a.decision} - {a.remarks || "-"}</li>
                 ))}
               </ul>
             </div>

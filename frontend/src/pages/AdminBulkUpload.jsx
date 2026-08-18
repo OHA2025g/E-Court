@@ -170,7 +170,7 @@ export default function AdminBulkUpload() {
 
       <Card
         title={`${tracker.label} · Excel bulk upload`}
-        subtitle={`Period ${period || "—"} · Template columns: ${tracker.headers}`}
+        subtitle={`Period ${period || "-"} · Template columns: ${tracker.headers}`}
       >
         <div className="border-b border-slate-100 px-4 py-3 bg-slate-50 text-xs text-slate-600 flex gap-2 items-start">
           <Info size={16} className="shrink-0 mt-0.5 text-[#003B73]" />
@@ -193,7 +193,7 @@ export default function AdminBulkUpload() {
 
       <Card
         title="Flush tracker data"
-        subtitle="Permanently delete entries for the selected tracker — use before a clean re-import"
+        subtitle="Permanently delete entries for the selected tracker - use before a clean re-import"
       >
         <div className="p-4 space-y-3" data-testid={TID.bulkFlushPanel}>
           {!showFlush ? (
@@ -220,7 +220,7 @@ export default function AdminBulkUpload() {
                     onChange={() => setFlushScope("period")}
                     data-testid="bulk-flush-scope-period"
                   />
-                  This period only ({period || "—"})
+                  This period only ({period || "-"})
                 </label>
                 <label className="inline-flex items-center gap-2 cursor-pointer">
                   <input

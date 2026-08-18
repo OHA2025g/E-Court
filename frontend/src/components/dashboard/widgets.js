@@ -1,4 +1,4 @@
-/** Dashboard widget registry — ids, labels, and default grid layout. */
+/** Dashboard widget registry - ids, labels, and default grid layout. */
 export const WIDGET_IDS = [
   "filters",
   "rag-delta",

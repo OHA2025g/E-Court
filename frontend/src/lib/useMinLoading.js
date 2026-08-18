@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Returns a "loading" boolean that stays true for at least `minMs` after
- * the underlying isLoading first turned true — avoids skeleton flicker
+ * the underlying isLoading first turned true - avoids skeleton flicker
  * on warm-cache navigations.
  */
 export function useMinLoading(isLoading, minMs = 250) {

@@ -174,7 +174,7 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
         {!isLoading && !isError && usingFallback && (
           <div className="cwpf-status warn no-print" role="status">
             No physical/financial figures for <span className="font-semibold">{periodLabel || period}</span>
-            {" "}— showing <span className="font-semibold">All periods</span> from loaded tracker data.
+            {" "}- showing <span className="font-semibold">All periods</span> from loaded tracker data.
           </div>
         )}
 

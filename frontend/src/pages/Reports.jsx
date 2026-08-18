@@ -84,7 +84,7 @@ function SortableTable({ rows, columns, search, sortDefault, scrollLabel, noData
             <tr key={r.id || i}>
               {columns.map(c => (
                 <td key={c.key} className={c.align === "right" ? "text-right" : ""}>
-                  {c.render ? c.render(r) : (r[c.key] ?? "—")}
+                  {c.render ? c.render(r) : (r[c.key] ?? "-")}
                 </td>
               ))}
             </tr>
@@ -231,7 +231,7 @@ export default function Reports() {
     return match?.label || period || "";
   }, [periods.data, period, t]);
 
-  // DoJ-style reports need loaded tracker rollups — empty calendar months (e.g. Aug 2026) have no figures.
+  // DoJ-style reports need loaded tracker rollups - empty calendar months (e.g. Aug 2026) have no figures.
   // Prefer Sep 2023 – Mar 2026 (2026-03), then Physical till Sep 2025, else All periods.
   const onReportTabChange = (tab) => {
     const enteringDoj = tab === "demo-cwpf" || tab === "demo-fin-yoy";
@@ -319,7 +319,7 @@ export default function Reports() {
                 { key: "achieved", label: t("reports.colAchieved"), align: "right", render: r => fmtNum(r.achieved, { digits: 0 }) },
                 { key: "percent", label: t("reports.colPercent"), align: "right", render: r => fmtPct(r.percent) },
                 { key: "rag", label: t("reports.colRag"), render: r => <RagBadge status={ragOf(r.percent)} /> },
-                { key: "remarks", label: t("reports.colRemarks"), render: r => <span className="text-slate-500">{r.remarks || "—"}</span> },
+                { key: "remarks", label: t("reports.colRemarks"), render: r => <span className="text-slate-500">{r.remarks || "-"}</span> },
               ]} />
           </Card>
         </TabsContent>

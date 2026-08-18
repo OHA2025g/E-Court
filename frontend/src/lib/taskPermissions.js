@@ -1,4 +1,4 @@
-/** Task Management role mapping — aligns PMIS roles with task workflow roles. */
+/** Task Management role mapping - aligns PMIS roles with task workflow roles. */
 
 const TASK_ROLE_ALIASES = {
   manager: "manager",

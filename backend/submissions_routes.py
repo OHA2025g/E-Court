@@ -70,7 +70,7 @@ def register_submissions_routes(
         key = {"high_court": body.high_court, "reporting_period": body.reporting_period}
         existing = await db.submissions.find_one(key)
         if existing and existing.get("status") == "Approved":
-            raise HTTPException(status_code=400, detail="Period already approved — request a Return first")
+            raise HTTPException(status_code=400, detail="Period already approved - request a Return first")
 
         doc = {
             **key,

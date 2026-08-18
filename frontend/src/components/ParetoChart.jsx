@@ -14,9 +14,9 @@ function ParetoTooltip({ active, payload, label, barLabel }) {
   return (
     <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs shadow-md">
       <div className="font-semibold text-slate-800 mb-1.5">{label}</div>
-      <div className="text-slate-700">{barLabel}: <span className="font-semibold tabular-nums">{row.red_count ?? "—"}</span></div>
-      <div className="text-slate-700">% of total: <span className="font-semibold tabular-nums">{row.pct_of_total ?? "—"}%</span></div>
-      <div className="text-slate-700">Cumulative: <span className="font-semibold tabular-nums">{row.cumulative_pct ?? "—"}%</span></div>
+      <div className="text-slate-700">{barLabel}: <span className="font-semibold tabular-nums">{row.red_count ?? "-"}</span></div>
+      <div className="text-slate-700">% of total: <span className="font-semibold tabular-nums">{row.pct_of_total ?? "-"}%</span></div>
+      <div className="text-slate-700">Cumulative: <span className="font-semibold tabular-nums">{row.cumulative_pct ?? "-"}%</span></div>
     </div>
   );
 }
@@ -51,7 +51,7 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
 
   return (
     <Card
-      title="Pareto — Red Flag Concentration"
+      title="Pareto - Red Flag Concentration"
       subtitle={subtitle}
       testId="pareto-chart"
       action={

@@ -109,7 +109,7 @@ def physical_percent_with_relative_fallback(
     """Target-based achievement %.
 
     When no usable target exists (e.g. Cloud capacity with target 0/null), returns
-    None so the UI shows NA — unless ``allow_relative`` is True, in which case it
+    None so the UI shows NA - unless ``allow_relative`` is True, in which case it
     falls back to mean relative-vs-max HC achieved (ranking, not true achievement).
     """
     if sum_ratio:
@@ -151,7 +151,7 @@ def physical_absolute_totals(rows: list) -> dict:
     summable_uoms = {_row_uom(r) for r in summable}
 
     if not summable:
-        # Only storage/percentage in scope (e.g. Cloud filter) — show that UOM.
+        # Only storage/percentage in scope (e.g. Cloud filter) - show that UOM.
         if len(all_uoms) == 1:
             uom = next(iter(all_uoms))
             return {
@@ -176,7 +176,7 @@ def physical_absolute_totals(rows: list) -> dict:
         scope = next(iter(summable_uoms))
         scoped = summable
     else:
-        # Multiple non-Count summable UOMs — pick the UOM with the most rows.
+        # Multiple non-Count summable UOMs - pick the UOM with the most rows.
         by_uom: dict[str, list] = defaultdict(list)
         for r in summable:
             by_uom[_row_uom(r)].append(r)
@@ -586,7 +586,7 @@ async def compute_pareto_red_flags(
                     if compute_rag_fn(pct, thresholds) == "RED":
                         component_red[comp] = component_red.get(comp, 0) + 1
                 continue
-            # Cloud-style capacity with no targets — count RED High Courts vs peak HC.
+            # Cloud-style capacity with no targets - count RED High Courts vs peak HC.
             for pct in relative_achieved_percent_by_hc(group_rows_by_hc(rows)).values():
                 if compute_rag_fn(pct, thresholds) == "RED":
                     component_red[comp] = component_red.get(comp, 0) + 1
@@ -842,7 +842,7 @@ async def compute_dashboard_summary(
     phys_totals = physical_absolute_totals(rolled_phys)
     # Homogeneous UOM → ratio of sums; mixed UOMs → equal-weight mean of indicator %.
     # No usable target (e.g. Cloud GB) → NA. Do not invent relative-vs-max ranking
-    # as "Avg Physical % Achieved" — that is not achievement against a target.
+    # as "Avg Physical % Achieved" - that is not achievement against a target.
     if phys_totals["mixed_uom"]:
         phys_percent = mean_achievement_percent(rolled_phys, safe_div_fn)
     else:
@@ -960,7 +960,7 @@ async def compute_dashboard_by_component(
     for c in components:
         name = c["name"]
         phys_rows = pmap.get(name, [])
-        # Single-component scope is always one UOM — absolute sums are valid here.
+        # Single-component scope is always one UOM - absolute sums are valid here.
         # Cloud GB has achieved with no targets → mean relative-vs-max HC %.
         target = sum_nullable(r.get("target") for r in phys_rows)
         achieved = sum_nullable(r.get("achieved") for r in phys_rows)
@@ -1050,7 +1050,7 @@ async def compute_financial_status_yoy(
         fy2627_exp = 0.0
         grand_rel = fy2324_rel + fy2425_rel + fy2526_rel + fy2627_rel
         grand_exp = fy2324_exp + fy2425_exp + fy2526_exp + fy2627_exp
-        # Tracker often has Released/Utilised without Allocated — fall back so cost is not blank.
+        # Tracker often has Released/Utilised without Allocated - fall back so cost is not blank.
         if not cost and grand_rel:
             cost = grand_rel
         exp_pct = safe_div_fn(grand_exp, cost if cost else None)
@@ -1177,7 +1177,7 @@ async def compute_dashboard_by_hc(
 
 def _short_hc(name: str, max_len: int = 14) -> str:
     if not name:
-        return "—"
+        return "-"
     if len(name) <= max_len:
         return name
     return name[: max_len - 1].rstrip() + "…"
@@ -1195,7 +1195,7 @@ async def compute_financial_tracker_dashboard(
 
     KPI totals sum raw ``financial_entries`` amounts first (full stored precision),
     then utilisation % is derived from those exact sums. Display rounding happens
-    in the UI — never by summing already-rounded HC/component subtotals.
+    in the UI - never by summing already-rounded HC/component subtotals.
     """
     fmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
 
@@ -1268,7 +1268,7 @@ async def compute_financial_tracker_dashboard(
         for r in hc_rows if r.get("utilized") is not None
     ]
 
-    # Full HC×component matrices — frontend slices Top/Bottom 6 for the charts.
+    # Full HC×component matrices - frontend slices Top/Bottom 6 for the charts.
     comp_by_hc: dict[str, dict] = {}
     util_pct_rows: dict[str, dict] = {}
     hc_comp_util: dict[str, dict] = {}
