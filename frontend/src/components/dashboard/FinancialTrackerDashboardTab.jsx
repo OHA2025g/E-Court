@@ -232,6 +232,18 @@ function utilPctLookup(utilByComponentHc) {
   return byHc;
 }
 
+function componentTotalsFromHcRows(rows) {
+  const totals = {};
+  (rows || []).forEach((row) => {
+    Object.entries(row).forEach(([key, value]) => {
+      if (HC_COMP_META_KEYS.has(key)) return;
+      const n = Number(value);
+      if (Number.isFinite(n)) totals[key] = (totals[key] || 0) + n;
+    });
+  });
+  return totals;
+}
+
 function HcComponentAmountTooltip({ active, payload, label, pctKey = "_util_pct" }) {
   if (!active || !payload?.length) return null;
   const row = payload[0]?.payload || {};
@@ -390,30 +402,22 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
   );
 
   const hcComponentReleasedRows = useMemo(() => {
-    const byHc = new Map((data?.hc_component_released || []).map((r) => [r.high_court, r]));
-    const totalByHc = new Map(
-      (data?.hc_released || []).map((r) => [r.high_court, Number(r.released) || 0]),
-    );
+    const all = data?.hc_component_released || [];
+    const byHc = new Map(all.map((r) => [r.high_court, r]));
+    const componentTotals = componentTotalsFromHcRows(all);
     return selectedCompHcs.map((hc) => {
       const row = byHc.get(hc);
       if (!row) return null;
-      let total = totalByHc.get(hc) || 0;
-      if (!total) {
-        total = Object.entries(row).reduce((sum, [key, value]) => {
-          if (HC_COMP_META_KEYS.has(key)) return sum;
-          const n = Number(value);
-          return Number.isFinite(n) ? sum + n : sum;
-        }, 0);
-      }
       const pct = {};
       Object.entries(row).forEach(([key, value]) => {
         if (HC_COMP_META_KEYS.has(key)) return;
         const amt = Number(value);
+        const total = componentTotals[key];
         if (total > 0 && Number.isFinite(amt)) pct[key] = (amt / total) * 100;
       });
       return { ...row, _release_pct: pct };
     }).filter(Boolean);
-  }, [data?.hc_component_released, data?.hc_released, selectedCompHcs]);
+  }, [data?.hc_component_released, selectedCompHcs]);
 
   const utilPctRowsForSlice = useMemo(() => {
     return (data?.utilization_by_component_hc || []).map((row) => {
