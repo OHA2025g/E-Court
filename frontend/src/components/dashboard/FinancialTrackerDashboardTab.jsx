@@ -216,6 +216,8 @@ function HcReleasedSplitLegend({ labels }) {
   );
 }
 
+const HC_COMP_META_KEYS = new Set(["high_court", "label", "_util_pct", "_release_pct"]);
+
 function utilPctLookup(utilByComponentHc) {
   const byHc = {};
   (utilByComponentHc || []).forEach((row) => {
@@ -230,7 +232,7 @@ function utilPctLookup(utilByComponentHc) {
   return byHc;
 }
 
-function HcComponentUtilTooltip({ active, payload, label }) {
+function HcComponentAmountTooltip({ active, payload, label, pctKey = "_util_pct" }) {
   if (!active || !payload?.length) return null;
   const row = payload[0]?.payload || {};
   return (
@@ -239,7 +241,7 @@ function HcComponentUtilTooltip({ active, payload, label }) {
       {payload.map((entry) => {
         const amount = entry.value;
         if (amount == null || amount === "") return null;
-        const pct = row._util_pct?.[entry.dataKey];
+        const pct = row[pctKey]?.[entry.dataKey];
         return (
           <div key={entry.dataKey} className="mb-1 last:mb-0 flex items-start gap-1.5 text-slate-700">
             <span
@@ -389,8 +391,29 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
 
   const hcComponentReleasedRows = useMemo(() => {
     const byHc = new Map((data?.hc_component_released || []).map((r) => [r.high_court, r]));
-    return selectedCompHcs.map((hc) => byHc.get(hc)).filter(Boolean);
-  }, [data?.hc_component_released, selectedCompHcs]);
+    const totalByHc = new Map(
+      (data?.hc_released || []).map((r) => [r.high_court, Number(r.released) || 0]),
+    );
+    return selectedCompHcs.map((hc) => {
+      const row = byHc.get(hc);
+      if (!row) return null;
+      let total = totalByHc.get(hc) || 0;
+      if (!total) {
+        total = Object.entries(row).reduce((sum, [key, value]) => {
+          if (HC_COMP_META_KEYS.has(key)) return sum;
+          const n = Number(value);
+          return Number.isFinite(n) ? sum + n : sum;
+        }, 0);
+      }
+      const pct = {};
+      Object.entries(row).forEach(([key, value]) => {
+        if (HC_COMP_META_KEYS.has(key)) return;
+        const amt = Number(value);
+        if (total > 0 && Number.isFinite(amt)) pct[key] = (amt / total) * 100;
+      });
+      return { ...row, _release_pct: pct };
+    }).filter(Boolean);
+  }, [data?.hc_component_released, data?.hc_released, selectedCompHcs]);
 
   const utilPctRowsForSlice = useMemo(() => {
     return (data?.utilization_by_component_hc || []).map((row) => {
@@ -437,7 +460,7 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
       const fromApi = pctByHc[hc] || pctByHc[row.high_court] || {};
       const pct = { ...fromApi };
       Object.keys(row).forEach((key) => {
-        if (key === "high_court" || key === "label" || key === "_util_pct") return;
+        if (HC_COMP_META_KEYS.has(key)) return;
         if (pct[key] != null) return;
         const util = Number(row[key]);
         const rel = Number(released[key]);
@@ -568,7 +591,7 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
                       <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
                       <XAxis dataKey="label" stroke="#475569" fontSize={10} angle={-25} textAnchor="end" interval={0} height={70} />
                       <YAxis stroke="#475569" fontSize={11} />
-                      <Tooltip formatter={(v) => fmtNum(v)} />
+                      <Tooltip content={<HcComponentAmountTooltip pctKey="_release_pct" />} />
                       {chartComponents.map((comp, i) => (
                         <Bar key={comp} dataKey={comp} name={comp} fill={CHART_COLORS[i % CHART_COLORS.length]} radius={[2, 2, 0, 0]} />
                       ))}
@@ -634,7 +657,7 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
                       <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
                       <XAxis dataKey="label" stroke="#475569" fontSize={9} angle={-20} textAnchor="end" interval={0} height={56} />
                       <YAxis stroke="#475569" fontSize={10} />
-                      <Tooltip content={<HcComponentUtilTooltip />} />
+                      <Tooltip content={<HcComponentAmountTooltip pctKey="_util_pct" />} />
                       {chartComponents.slice(0, 3).map((comp, i) => (
                         <Bar key={comp} dataKey={comp} name={comp} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                       ))}
