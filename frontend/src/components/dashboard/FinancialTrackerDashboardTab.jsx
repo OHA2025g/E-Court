@@ -216,6 +216,50 @@ function HcReleasedSplitLegend({ labels }) {
   );
 }
 
+function utilPctLookup(utilByComponentHc) {
+  const byHc = {};
+  (utilByComponentHc || []).forEach((row) => {
+    const comp = row.component;
+    if (!comp) return;
+    Object.entries(row).forEach(([key, value]) => {
+      if (key === "component") return;
+      byHc[key] = byHc[key] || {};
+      byHc[key][comp] = value;
+    });
+  });
+  return byHc;
+}
+
+function HcComponentUtilTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) return null;
+  const row = payload[0]?.payload || {};
+  return (
+    <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs shadow-md max-w-xs">
+      <div className="font-semibold text-slate-800 mb-1.5">{row.high_court || label}</div>
+      {payload.map((entry) => {
+        const amount = entry.value;
+        if (amount == null || amount === "") return null;
+        const pct = row._util_pct?.[entry.dataKey];
+        return (
+          <div key={entry.dataKey} className="mb-1 last:mb-0 flex items-start gap-1.5 text-slate-700">
+            <span
+              className="mt-1 inline-block h-2 w-2 rounded-sm shrink-0"
+              style={{ background: entry.color || "#f59e0b" }}
+            />
+            <span>
+              {entry.name}:{" "}
+              <span className="font-semibold tabular-nums">
+                {fmtNum(amount)} Cr
+                {pct != null ? ` (${fmtPct(pct)})` : ""}
+              </span>
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 /** Full component names - Recharts Legend + shortLabel was clipping e.g. Cloud Computing & Storage. */
 function ComponentSeriesLegend({ names }) {
   if (!names?.length) return null;
@@ -384,8 +428,26 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
 
   const hcComponentUtilizedRows = useMemo(() => {
     const byHc = new Map((data?.hc_component_utilized || []).map((r) => [r.high_court, r]));
-    return selectedUtilHcs.map((hc) => byHc.get(hc)).filter(Boolean);
-  }, [data?.hc_component_utilized, selectedUtilHcs]);
+    const releasedByHc = new Map((data?.hc_component_released || []).map((r) => [r.high_court, r]));
+    const pctByHc = utilPctLookup(data?.utilization_by_component_hc);
+    return selectedUtilHcs.map((hc) => {
+      const row = byHc.get(hc);
+      if (!row) return null;
+      const released = releasedByHc.get(hc) || {};
+      const fromApi = pctByHc[hc] || pctByHc[row.high_court] || {};
+      const pct = { ...fromApi };
+      Object.keys(row).forEach((key) => {
+        if (key === "high_court" || key === "label" || key === "_util_pct") return;
+        if (pct[key] != null) return;
+        const util = Number(row[key]);
+        const rel = Number(released[key]);
+        if (Number.isFinite(util) && Number.isFinite(rel) && rel > 0) {
+          pct[key] = (util / rel) * 100;
+        }
+      });
+      return { ...row, _util_pct: pct };
+    }).filter(Boolean);
+  }, [data?.hc_component_utilized, data?.hc_component_released, data?.utilization_by_component_hc, selectedUtilHcs]);
 
   const hcUtilSliceHint = useMemo(() => {
     const n = selectedUtilHcs.length;
@@ -572,7 +634,7 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
                       <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
                       <XAxis dataKey="label" stroke="#475569" fontSize={9} angle={-20} textAnchor="end" interval={0} height={56} />
                       <YAxis stroke="#475569" fontSize={10} />
-                      <Tooltip formatter={(v) => fmtNum(v)} />
+                      <Tooltip content={<HcComponentUtilTooltip />} />
                       {chartComponents.slice(0, 3).map((comp, i) => (
                         <Bar key={comp} dataKey={comp} name={comp} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                       ))}
