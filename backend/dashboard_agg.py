@@ -686,18 +686,40 @@ async def compute_public_progress(
     reporting_period: Optional[str],
     state_to_hc: dict,
     extra_match: Optional[dict] = None,
+    *,
+    use_latest_snapshot: bool = True,
 ) -> dict:
+    use_latest = use_latest_snapshot and not reporting_period
+
     pmatch: dict = {}
     fmatch: dict = {}
+    omatch: dict = {}
     if reporting_period:
         pmatch["reporting_period"] = reporting_period
         fmatch["reporting_period"] = reporting_period
+        omatch["reporting_period"] = reporting_period
     if extra_match:
         pmatch = merge_match(pmatch, extra_match)
         fmatch = merge_match(fmatch, extra_match)
+        omatch = merge_match(omatch, extra_match)
 
-    fin = await db.financial_entries.aggregate(financial_national_totals_stages(fmatch)).to_list(1)
     rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
+    fin_rolled = await db.financial_entries.aggregate(financial_rollup_stages(fmatch)).to_list(50000)
+    outcome_rolled = await db.outcome_entries.aggregate(outcome_rollup_stages(omatch)).to_list(50000)
+
+    if use_latest:
+        rolled_phys = _rows_latest_snapshot(
+            rolled_phys, ("high_court", "component", "indicator"),
+        )
+        fin_rolled = _rows_latest_snapshot(fin_rolled, ("high_court", "component"))
+        outcome_rolled = _rows_latest_snapshot(
+            outcome_rolled, ("high_court", "subject", "kpi_id", "granularity"),
+        )
+
+    snapshot_period = reporting_period or _snapshot_label_from_rows(
+        rolled_phys, fin_rolled, outcome_rolled,
+    )
+
     phys_totals = physical_absolute_totals(rolled_phys)
     thresholds = await fetch_rag_thresholds(db)
     rag_counts: dict[str, int] = {}
@@ -706,41 +728,16 @@ async def compute_public_progress(
         status = compute_rag_fn(pct, thresholds)
         rag_counts[status] = rag_counts.get(status, 0) + 1
 
-    p = {
-        "target": phys_totals["target"],
-        "achieved": phys_totals["achieved"],
-    }
-    f = fin[0] if fin else {"released": None, "utilized": None}
-    omatch: dict = {}
-    if reporting_period:
-        omatch["reporting_period"] = reporting_period
-    if extra_match:
-        omatch = merge_match(omatch, extra_match)
-    outcome_rolled = await db.outcome_entries.aggregate(outcome_rollup_stages(omatch)).to_list(50000)
+    f_totals = _financial_totals_from_rows(fin_rolled)
     outcome_reported = sum(1 for row in outcome_rolled if row.get("value") is not None)
     outcome_total = len(outcome_rolled)
     outcome_pct = safe_div_fn(outcome_reported, outcome_total)
-
-    outcome_hc_rows = await db.outcome_entries.aggregate(outcome_hc_rollup_stages(omatch)).to_list(50)
-    outcome_hc_ranking = []
-    for r in outcome_hc_rows:
-        total = r.get("total") or 0
-        reported = r.get("reported") or 0
-        if total > 0:
-            pct = safe_div_fn(reported, total)
-            outcome_hc_ranking.append({
-                "high_court": r["_id"],
-                "reported_count": reported,
-                "kpi_count": total,
-                "reporting_percent": pct,
-            })
-    outcome_hc_ranking.sort(key=lambda x: x["reporting_percent"] or 0, reverse=True)
+    outcome_hc_ranking = _outcome_hc_ranking_from_rows(outcome_rolled, safe_div_fn)
 
     phys_pct = physical_kpi_achievement_percent(rolled_phys, phys_totals, safe_div_fn)
-    fin_pct = safe_div_fn(f["utilized"], f["released"])
+    fin_pct = safe_div_fn(f_totals.get("utilized"), f_totals.get("released"))
 
-    hc_pct = await aggregate_hc_percent_physical(db, pmatch)
-    thresholds = await fetch_rag_thresholds(db)
+    hc_pct = _hc_percent_physical_from_rows(rolled_phys, safe_div_fn)
     hc_rag_counts = {"GREEN": 0, "AMBER": 0, "RED": 0, "NA": 0}
     hc_ranking = []
     for hc in HIGH_COURTS:
@@ -758,17 +755,22 @@ async def compute_public_progress(
 
     public_user = {"role": "Viewer"}
     public_scope = lambda u: {}
+    viz_period = snapshot_period if use_latest else reporting_period
     trend = await compute_trend_with_milestones(db, public_scope, safe_div_fn, public_user, extra_match)
-    heatmap = await compute_heatmap(db, public_scope, compute_rag_fn, public_user, reporting_period, "physical", extra_match)
-    pareto = await compute_pareto_red_flags(db, public_scope, compute_rag_fn, public_user, reporting_period, "physical", extra_match)
+    heatmap = await compute_heatmap(
+        db, public_scope, compute_rag_fn, public_user, viz_period, "physical", extra_match,
+    )
+    pareto = await compute_pareto_red_flags(
+        db, public_scope, compute_rag_fn, public_user, viz_period, "physical", extra_match,
+    )
     states_financial = await compute_states_rag(
-        db, state_to_hc, public_scope, compute_rag_fn, public_user, reporting_period, "financial", extra_match,
+        db, state_to_hc, public_scope, compute_rag_fn, public_user, viz_period, "financial", extra_match,
     )
     states_outcome = await compute_states_rag(
-        db, state_to_hc, public_scope, compute_rag_fn, public_user, reporting_period, "outcome", extra_match,
+        db, state_to_hc, public_scope, compute_rag_fn, public_user, viz_period, "outcome", extra_match,
     )
 
-    pair = resolve_period_pair(reporting_period)
+    pair = resolve_period_pair(snapshot_period)
     comparison_period = pair[0] if pair else None
     rag_delta = None
     if comparison_period:
@@ -776,7 +778,7 @@ async def compute_public_progress(
             db, public_scope, compute_rag_fn, safe_div_fn, public_user, comparison_period, "physical", extra_match,
         )
 
-    fin_hc_rows = await db.financial_entries.aggregate(financial_hc_rollup_stages(fmatch)).to_list(50)
+    fin_hc_rows = _financial_hc_rows_from_snapshot(fin_rolled)
     fin_hc_ranking = []
     for r in fin_hc_rows:
         pct = safe_div_fn(r.get("u"), r.get("r"))
@@ -785,18 +787,19 @@ async def compute_public_progress(
     fin_hc_ranking.sort(key=lambda x: x["fin_percent"] or 0, reverse=True)
 
     return {
-        "reporting_period": reporting_period,
+        "reporting_period": snapshot_period,
+        "snapshot_mode": "latest" if use_latest else "period",
         "comparison_period": comparison_period,
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "physical": {
             "percent": phys_pct,
-            "target": p["target"],
-            "achieved": p["achieved"],
+            "target": phys_totals["target"],
+            "achieved": phys_totals["achieved"],
         },
         "financial": {
             "utilisation_percent": fin_pct,
-            "released": f["released"],
-            "utilized": f["utilized"],
+            "released": f_totals.get("released"),
+            "utilized": f_totals.get("utilized"),
         },
         "outcome": {
             "kpi_count": outcome_total,
@@ -933,6 +936,74 @@ def _rows_latest_snapshot(rows: list, key_fields: tuple[str, ...]) -> list:
         if prev is None or period > str(prev.get("reporting_period") or ""):
             best[key] = row
     return list(best.values())
+
+
+def _snapshot_label_from_rows(*row_sets: list) -> Optional[str]:
+    periods: set[str] = set()
+    for rows in row_sets:
+        for row in rows:
+            p = str(row.get("reporting_period") or "")
+            if p:
+                periods.add(p)
+    return max(periods) if periods else None
+
+
+def _financial_totals_from_rows(rows: list) -> dict:
+    return {
+        "released": sum_nullable(r.get("fund_released") for r in rows),
+        "utilized": sum_nullable(r.get("fund_utilized") for r in rows),
+    }
+
+
+def _financial_hc_rows_from_snapshot(rows: list) -> list:
+    by_hc: dict[str, dict] = defaultdict(lambda: {"r": None, "u": None})
+    for row in rows:
+        hc = row.get("high_court")
+        if not hc:
+            continue
+        bucket = by_hc[hc]
+        for src, dst in (("fund_released", "r"), ("fund_utilized", "u")):
+            val = row.get(src)
+            if val is not None:
+                bucket[dst] = (bucket[dst] or 0) + float(val)
+    return [{"_id": hc, "r": bucket["r"], "u": bucket["u"]} for hc, bucket in by_hc.items()]
+
+
+def _hc_percent_physical_from_rows(rows: list, safe_div_fn: Callable) -> dict[str, float]:
+    by_hc: dict[str, list] = defaultdict(list)
+    for row in rows:
+        hc = row.get("high_court")
+        if hc:
+            by_hc[hc].append(row)
+    return {
+        hc: pct
+        for hc, hc_rows in by_hc.items()
+        if (pct := mean_achievement_percent(hc_rows, safe_div_fn)) is not None
+    }
+
+
+def _outcome_hc_ranking_from_rows(rows: list, safe_div_fn: Callable) -> list:
+    by_hc: dict[str, dict] = defaultdict(lambda: {"total": 0, "reported": 0})
+    for row in rows:
+        hc = row.get("high_court")
+        if not hc:
+            continue
+        by_hc[hc]["total"] += 1
+        if row.get("value") is not None:
+            by_hc[hc]["reported"] += 1
+    ranking = []
+    for hc, counts in by_hc.items():
+        total = counts["total"]
+        reported = counts["reported"]
+        if total > 0:
+            ranking.append({
+                "high_court": hc,
+                "reported_count": reported,
+                "kpi_count": total,
+                "reporting_percent": safe_div_fn(reported, total),
+            })
+    ranking.sort(key=lambda x: x["reporting_percent"] or 0, reverse=True)
+    return ranking
 
 
 def _component_source_period(*period_sets: set[str]) -> Optional[str]:

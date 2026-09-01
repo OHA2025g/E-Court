@@ -238,6 +238,9 @@ export default function PublicProgress() {
               {updatedLabel && (
                 <p className="mt-3 text-xs text-white/50">
                   Last updated {updatedLabel}
+                  {data?.reporting_period && (
+                    <> · Data snapshot: {data.reporting_period}</>
+                  )}
                 </p>
               )}
             </div>

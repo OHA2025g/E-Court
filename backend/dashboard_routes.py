@@ -359,7 +359,7 @@ def register_dashboard_routes(
         _enforce_public_rate_limit(request)
         from auth import enforce_api_token_rate_limit_for_request
         await enforce_api_token_rate_limit_for_request(request)
-        cache_key = f"public:progress:v3-states-rag-tooltip:{reporting_period or '__all__'}"
+        cache_key = f"public:progress:v4-latest-snapshot:{reporting_period or '__all__'}"
         redis_cached = cache_get(cache_key)
         if redis_cached:
             return redis_cached
@@ -368,9 +368,10 @@ def register_dashboard_routes(
         cached = _public_cache.get(mem_key)
         if cached and now - cached["ts"] < _PUBLIC_CACHE_TTL:
             return cached["data"]
-        extra = await approved_match_filter(db, reporting_period, False, None)
+        # Citizen dashboard: latest loaded tracker snapshot, not approval-gated open periods.
         data = await compute_public_progress(
-            db, compute_rag_fn, safe_div_fn, reporting_period, state_to_hc, extra,
+            db, compute_rag_fn, safe_div_fn, reporting_period, state_to_hc, {},
+            use_latest_snapshot=not reporting_period,
         )
         _public_cache[mem_key] = {"ts": now, "data": data}
         cache_set(cache_key, data)
