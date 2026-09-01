@@ -1,5 +1,5 @@
 /* Offline cache for public transparency API responses */
-const CACHE_NAME = "pmis-public-v1";
+const CACHE_NAME = "pmis-public-v2";
 const SHELL = ["/", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
@@ -22,7 +22,8 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (event.request.method !== "GET") return;
 
-  const isPublicApi = url.pathname.startsWith("/api/public/");
+  const isPublicApi =
+    url.origin === self.location.origin && url.pathname.startsWith("/api/public/");
   const isShell = url.origin === self.location.origin && (url.pathname === "/" || url.pathname === "/public");
 
   if (!isPublicApi && !isShell) return;

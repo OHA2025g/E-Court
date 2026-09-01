@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { BACKEND_URL, fmtPct } from "@/lib/api";
+import { fmtPct } from "@/lib/api";
 import {
   RAG_COLORS,
   formatRagLegendLabel,
@@ -35,7 +35,8 @@ import {
 } from "recharts";
 
 async function fetchPublicProgress() {
-  const r = await fetch(`${BACKEND_URL}/api/public/progress`);
+  // Same-origin /api is proxied by nginx (Docker Compose → backend; Easypanel → demo API).
+  const r = await fetch("/api/public/progress");
   if (!r.ok) throw new Error("Failed to load public progress");
   return r.json();
 }
