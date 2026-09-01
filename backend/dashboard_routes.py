@@ -2,7 +2,7 @@
 import time
 from typing import Literal, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 
 from dashboard_agg import (
     compute_dashboard_by_component,
@@ -48,7 +48,7 @@ def _dimension_match(
 
 
 # Bump when dashboard aggregation semantics change so Redis does not serve stale KPIs.
-_DASHBOARD_CACHE_VER = "v26-phys-pct-na-no-target"
+_DASHBOARD_CACHE_VER = "v28-fin-yoy-latest-snapshot"
 
 
 def _dashboard_cache_key(route: str, user: dict, reporting_period: Optional[str], include_unapproved: bool, **extra) -> str:
@@ -125,15 +125,24 @@ def register_dashboard_routes(
         high_court: Optional[str] = None,
         component: Optional[str] = None,
         include_unapproved: bool = False,
+        snapshot: Optional[str] = Query(
+            None,
+            description="When 'latest', each component uses its newest loaded reporting month "
+            "(avoids double-counting cumulative tracker values across periods).",
+        ),
         user: dict = Depends(require_fully_authenticated),
     ):
         extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
+        snapshot_mode = snapshot if snapshot == "latest" else None
+        cache_period = "__latest__" if snapshot_mode else reporting_period
         return await _cached_dashboard(
-            "by-component", user, reporting_period, include_unapproved,
+            "by-component", user, cache_period, include_unapproved,
             lambda: compute_dashboard_by_component(
                 db, scope_filter_fn, safe_div_fn, user, reporting_period, extra,
+                snapshot_mode=snapshot_mode,
             ),
             **_cache_dims(high_court, component),
+            snapshot=snapshot_mode or "period",
         )
 
     @api.get("/dashboard/financial-status-yoy")
@@ -142,17 +151,24 @@ def register_dashboard_routes(
         high_court: Optional[str] = None,
         component: Optional[str] = None,
         include_unapproved: bool = False,
+        snapshot: Optional[str] = Query(
+            None,
+            description="When 'latest', each component uses its newest loaded reporting month "
+            "(recommended default; avoids double-counting cumulative fund fields).",
+        ),
         user: dict = Depends(require_fully_authenticated),
     ):
-        # YoY is a multi-year cumulative rollup - always gate/filter as All periods
-        # so baseline months (e.g. 2026-05) are not dropped when another month is selected.
-        extra = await _extra(user, None, include_unapproved, high_court, component)
+        extra = await _extra(user, reporting_period, include_unapproved, high_court, component)
+        snapshot_mode = snapshot if snapshot == "latest" else None
+        cache_period = "__latest__" if snapshot_mode else (reporting_period or "__all__")
         return await _cached_dashboard(
-            "financial-status-yoy", user, None, include_unapproved,
+            "financial-status-yoy", user, cache_period, include_unapproved,
             lambda: compute_financial_status_yoy(
                 db, scope_filter_fn, safe_div_fn, user, reporting_period, extra,
+                snapshot_mode=snapshot_mode,
             ),
             **_cache_dims(high_court, component),
+            snapshot=snapshot_mode or "period",
         )
 
     @api.get("/dashboard/by-high-court")

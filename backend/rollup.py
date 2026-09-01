@@ -6,6 +6,9 @@ from typing import Optional
 from seed_constants import (
     CLOUD_COMPUTING_COMPONENT,
     DEFAULT_STORAGE_TYPE,
+    NSC_COMPONENT,
+    NSC_FINANCIAL_COMPLEX,
+    NSC_FINANCIAL_ROOMS,
     STORAGE_TYPE_OPTIONS,
 )
 
@@ -124,11 +127,29 @@ def physical_rollup_stages(extra_match: dict | None = None) -> list:
     return stages
 
 
+def _financial_canonical_component_stage() -> dict:
+    """Roll NSC Rooms/Complex financial sub-lines into the BRD component name."""
+    return {
+        "$addFields": {
+            "component": {
+                "$switch": {
+                    "branches": [
+                        {"case": {"$eq": ["$component", NSC_FINANCIAL_ROOMS]}, "then": NSC_COMPONENT},
+                        {"case": {"$eq": ["$component", NSC_FINANCIAL_COMPLEX]}, "then": NSC_COMPONENT},
+                    ],
+                    "default": "$component",
+                }
+            }
+        }
+    }
+
+
 def financial_rollup_stages(extra_match: dict | None = None) -> list:
     stages = []
     if extra_match:
         stages.append({"$match": extra_match})
     stages.extend([
+        _financial_canonical_component_stage(),
         {"$group": {
             "_id": {
                 "high_court": "$high_court",

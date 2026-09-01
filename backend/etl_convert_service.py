@@ -7,6 +7,14 @@ from typing import Any, Optional
 import openpyxl
 from openpyxl import Workbook
 
+from consolidated_tracker_excel import (
+    financial_records_to_bulk_rows as consol_fin_bulk_rows,
+    is_consolidated_financial_header,
+    is_consolidated_physical_header,
+    physical_records_to_bulk_rows as consol_phys_bulk_rows,
+    transform_consolidated_financial_rows,
+    transform_consolidated_physical_rows,
+)
 from financial_excel import (
     BULK_HEADERS as FIN_HEADERS,
     COMPONENT_ALIASES,
@@ -60,7 +68,15 @@ def load_workbook_sheets(raw: bytes) -> dict[str, list[tuple]]:
 def pick_sheet(sheets: dict[str, list[tuple]], preferred: Optional[str] = None) -> tuple[str, list[tuple]]:
     if preferred and preferred in sheets:
         return preferred, sheets[preferred]
-    for name in ("Physical_Tracker", "Funds_Released", "Funds_Utilised", "Funds_Utilized", "Sheet1"):
+    for name in (
+        "Physical Tracker",
+        "Financial Tracker",
+        "Physical_Tracker",
+        "Funds_Released",
+        "Funds_Utilised",
+        "Funds_Utilized",
+        "Sheet1",
+    ):
         if name in sheets:
             return name, sheets[name]
     first = next(iter(sheets.items()))
@@ -137,7 +153,13 @@ def _source_snapshot(row: tuple | list, labels: list[str], limit: int = 8) -> di
 
 def convert_physical(raw: bytes, *, sheet: Optional[str] = None) -> dict[str, Any]:
     sheets = load_workbook_sheets(raw)
-    sheet_name, rows = pick_sheet(sheets, sheet or "Physical_Tracker")
+    preferred = sheet
+    if not preferred:
+        if "Physical Tracker" in sheets:
+            preferred = "Physical Tracker"
+        elif "Physical_Tracker" in sheets:
+            preferred = "Physical_Tracker"
+    sheet_name, rows = pick_sheet(sheets, preferred)
     if not rows:
         raise ValueError("Empty sheet")
 
@@ -182,6 +204,63 @@ def convert_physical(raw: bytes, *, sheet: Optional[str] = None) -> dict[str, An
             "bulk_bytes": raw,
             "bulk_filename": "physical_bulk.xlsx",
             "desired_headers": list(PHYS_HEADERS),
+        }
+
+    if is_consolidated_physical_header(header0):
+        result = transform_consolidated_physical_rows(rows)
+        records = result["records"]
+        issues = list(result.get("issues") or [])
+        column_mappings = [
+            {"source": "Court", "target": "High Court", "transform": "HC_ALIASES (Orissa→Odisha, Gauhati…)"},
+            {"source": "Component", "target": "Component", "transform": "CONSOLIDATED_COMPONENT_ALIASES"},
+            {"source": "Description", "target": "Sub-Component", "transform": "DESCRIPTION_INDICATOR_ALIASES"},
+            {"source": "Target / Achieved", "target": "Target / Achieved (e-Sewa → DPR/CPC)", "transform": "parse_messy_quantity; pages→Cr"},
+            {"source": "Physical Tracker Remarks", "target": "Remarks", "transform": "append ETL note"},
+        ]
+        row_maps = []
+        labels = header_cells(rows[0])
+        for rec in records:
+            src_row_idx = rec.get("source_row") or 0
+            src_row = rows[src_row_idx - 1] if 0 < src_row_idx <= len(rows) else ()
+            row_maps.append({
+                "source_row": src_row_idx,
+                "source": _source_snapshot(src_row, labels, limit=9),
+                "target": {
+                    "High Court": rec["high_court"],
+                    "Component": rec["component"],
+                    "Sub-Component": rec["indicator"],
+                    "District": rec.get("district") or "",
+                    "Target": rec.get("target"),
+                    "Achieved": rec.get("achieved"),
+                    "Target as per DPR": rec.get("target_dpr"),
+                    "Achieved as per CPC": rec.get("achieved_cpc"),
+                    "Remarks": rec.get("remarks") or "",
+                },
+                "status": "ok",
+            })
+        for iss in issues:
+            row_maps.append({
+                "source_row": iss.get("row"),
+                "source": {"error": iss.get("error")},
+                "target": {},
+                "status": "error",
+                "error": iss.get("error"),
+            })
+        bulk_rows = consol_phys_bulk_rows(records)
+        bulk_bytes = write_bulk_xlsx(PHYS_HEADERS, bulk_rows[1:], "Physical_Bulk")
+        return {
+            "tracker": "physical",
+            "format_detected": "consolidated_long_physical",
+            "sheet": sheet_name,
+            "column_mappings": column_mappings,
+            "row_mappings": row_maps[:MAX_ROW_MAPPINGS],
+            "row_mappings_total": len(row_maps),
+            "stats": result.get("stats") or {},
+            "issues": issues,
+            "bulk_bytes": bulk_bytes,
+            "bulk_filename": "physical_consolidated_converted_bulk.xlsx",
+            "desired_headers": list(PHYS_HEADERS),
+            "alias_hints": {"high_court_aliases": len(HC_ALIASES)},
         }
 
     _ = is_wide_physical(rows)  # detection hint only; transform raises if unusable
@@ -265,7 +344,9 @@ def convert_financial(
     sheets = load_workbook_sheets(raw)
     preferred = sheet
     if not preferred:
-        if mode == "utilised":
+        if "Financial Tracker" in sheets:
+            preferred = "Financial Tracker"
+        elif mode == "utilised":
             preferred = "Funds_Utilised" if "Funds_Utilised" in sheets else "Funds_Utilized"
         elif mode == "released":
             preferred = "Funds_Released"
@@ -320,6 +401,79 @@ def convert_financial(
             "bulk_bytes": raw,
             "bulk_filename": "financial_bulk.xlsx",
             "desired_headers": list(FIN_HEADERS),
+        }
+
+    if is_consolidated_financial_header(header0):
+        result = transform_consolidated_financial_rows(rows)
+        records = result["records"]
+        issues = list(result.get("issues") or [])
+        column_mappings = [
+            {"source": "Court", "target": "High Court", "transform": "HC_ALIASES"},
+            {
+                "source": "Component",
+                "target": "Component",
+                "transform": "CONSOLIDATED_COMPONENT_ALIASES; Rooms+Complex summed",
+            },
+            {
+                "source": "Funds Released (₹)",
+                "target": "Fund Released",
+                "transform": "₹ absolute ÷ 10,000,000 → ₹ Cr",
+            },
+            {
+                "source": "Funds Utilised (₹)",
+                "target": "Fund Utilized",
+                "transform": "₹ absolute ÷ 10,000,000 → ₹ Cr",
+            },
+            {
+                "source": "Financial Tracker Remarks",
+                "target": "Remarks",
+                "transform": "append ETL note",
+            },
+        ]
+        row_maps = []
+        for rec in records:
+            src_row_idx = rec.get("source_row") or 0
+            src_row = rows[src_row_idx - 1] if 0 < src_row_idx <= len(rows) else ()
+            row_maps.append({
+                "source_row": src_row_idx,
+                "source": _source_snapshot(src_row, display_header, limit=9),
+                "target": {
+                    "High Court": rec["high_court"],
+                    "Component": rec["component"],
+                    "District": "",
+                    "Fund Released": rec.get("fund_released"),
+                    "Fund Utilized": rec.get("fund_utilized"),
+                    "Remarks": rec.get("remarks") or "",
+                },
+                "status": "ok",
+            })
+        for iss in issues:
+            row_maps.append({
+                "source_row": iss.get("row"),
+                "source": {"error": iss.get("error")},
+                "target": {},
+                "status": "error",
+                "error": iss.get("error"),
+            })
+        bulk_rows = consol_fin_bulk_rows(records, amounts_as_rupees=True)
+        bulk_bytes = write_bulk_xlsx(FIN_HEADERS, bulk_rows[1:], "Financial_Bulk")
+        return {
+            "tracker": "financial",
+            "format_detected": "consolidated_long_financial",
+            "sheet": sheet_name,
+            "mode": "both",
+            "column_mappings": column_mappings,
+            "row_mappings": row_maps[:MAX_ROW_MAPPINGS],
+            "row_mappings_total": len(row_maps),
+            "stats": result.get("stats") or {},
+            "issues": issues,
+            "bulk_bytes": bulk_bytes,
+            "bulk_filename": "financial_consolidated_converted_bulk.xlsx",
+            "desired_headers": list(FIN_HEADERS),
+            "alias_hints": {
+                "component_aliases": len(COMPONENT_ALIASES),
+                "high_court_aliases": len(HC_ALIASES),
+            },
         }
 
     resolved_mode = mode

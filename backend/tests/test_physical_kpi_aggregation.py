@@ -3,6 +3,7 @@ from dashboard_agg import (
     mean_achievement_percent,
     mean_relative_achieved_percent,
     physical_absolute_totals,
+    physical_kpi_achievement_percent,
     physical_percent_with_relative_fallback,
     relative_achieved_percent_by_hc,
 )
@@ -171,6 +172,27 @@ def test_sum_ratio_still_used_when_targets_exist():
         {"high_court": "B", "target": 100, "achieved": 60},
     ]
     assert physical_percent_with_relative_fallback(rows, _safe_div, sum_ratio=True) == 50.0
+
+
+def test_mixed_uom_kpi_percent_matches_count_scope():
+    """When KPI cards show Count totals, Avg % must not average unrelated UOM rows."""
+    rows = [
+        {"component": "e-Sewa Kendras", "target": 100, "achieved": 50},
+        {"component": "Cloud Computing & Storage", "target": 0, "achieved": 1000},
+        {"component": "Digitisation of Court Records", "target": 10, "achieved": 100609525},
+    ]
+    totals = physical_absolute_totals(rows)
+    assert totals["mixed_uom"] is True
+    pct = physical_kpi_achievement_percent(rows, totals, _safe_div)
+    assert pct == 50.0
+
+
+def test_mean_skips_absurd_unit_mismatch_percent():
+    rows = [
+        {"component": "e-Sewa Kendras", "target": 100, "achieved": 50},
+        {"component": "Digitisation of Court Records", "target": 30, "achieved": 100609525},
+    ]
+    assert mean_achievement_percent(rows, _safe_div) == 50.0
 
 
 def test_financial_variance_null_safe():

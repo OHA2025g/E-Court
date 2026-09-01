@@ -33,6 +33,8 @@ COMPONENT_UOM = {c["name"]: c["uom"] for c in COMPONENTS}
 # Storage capacity and percentage indicators must not enter absolute target/achieved sums.
 NON_SUMMABLE_UOMS = frozenset({"GB / TB / PB", "Percentage"})
 PREFERRED_ABSOLUTE_UOM = "Count"
+# Skip obvious unit-mismatch rows (e.g. pages stored as crore) from mean % rollups.
+MAX_PLAUSIBLE_ACHIEVEMENT_PCT = 1000.0
 
 
 def _row_uom(row: dict) -> str:
@@ -70,11 +72,26 @@ def mean_achievement_percent(
     pcts = []
     for row in rows:
         pct = safe_div_fn(row.get(achieved_key), row.get(target_key))
-        if pct is not None:
+        if pct is not None and pct <= MAX_PLAUSIBLE_ACHIEVEMENT_PCT:
             pcts.append(pct)
     if not pcts:
         return None
     return round(sum(pcts) / len(pcts), 2)
+
+
+def physical_kpi_achievement_percent(
+    rolled_phys: list,
+    phys_totals: dict,
+    safe_div_fn: Callable,
+) -> Optional[float]:
+    """National Avg Physical % for KPI cards (Target/Achieved scope aligned)."""
+    if not phys_totals.get("mixed_uom"):
+        return safe_div_fn(phys_totals.get("achieved"), phys_totals.get("target"))
+    scope_pct = safe_div_fn(phys_totals.get("achieved"), phys_totals.get("target"))
+    if scope_pct is not None:
+        return scope_pct
+    summable = [r for r in rolled_phys if _row_uom(r) not in NON_SUMMABLE_UOMS]
+    return mean_achievement_percent(summable, safe_div_fn)
 
 
 def group_rows_by_hc(rows: list, hc_key: str = "high_court") -> dict[str, list]:
@@ -719,10 +736,7 @@ async def compute_public_progress(
             })
     outcome_hc_ranking.sort(key=lambda x: x["reporting_percent"] or 0, reverse=True)
 
-    if phys_totals["mixed_uom"]:
-        phys_pct = mean_achievement_percent(rolled_phys, safe_div_fn)
-    else:
-        phys_pct = safe_div_fn(phys_totals["achieved"], phys_totals["target"])
+    phys_pct = physical_kpi_achievement_percent(rolled_phys, phys_totals, safe_div_fn)
     fin_pct = safe_div_fn(f["utilized"], f["released"])
 
     hc_pct = await aggregate_hc_percent_physical(db, pmatch)
@@ -829,10 +843,7 @@ async def compute_dashboard_summary(
     # Homogeneous UOM → ratio of sums; mixed UOMs → equal-weight mean of indicator %.
     # No usable target (e.g. Cloud GB) → NA. Do not invent relative-vs-max ranking
     # as "Avg Physical % Achieved" - that is not achievement against a target.
-    if phys_totals["mixed_uom"]:
-        phys_percent = mean_achievement_percent(rolled_phys, safe_div_fn)
-    else:
-        phys_percent = safe_div_fn(phys_totals["achieved"], phys_totals["target"])
+    phys_percent = physical_kpi_achievement_percent(rolled_phys, phys_totals, safe_div_fn)
     thresholds = await fetch_rag_thresholds(db)
     rag: dict = {}
     for row in rolled_phys:
@@ -907,6 +918,30 @@ def _match_value(extra_match: Optional[dict], key: str) -> Optional[Any]:
     return None
 
 
+def _rows_latest_snapshot(rows: list, key_fields: tuple[str, ...]) -> list:
+    """Keep only the row from the latest reporting_period for each series key.
+
+    Tracker fund/physical fields are cumulative snapshots per month — summing
+    multiple periods would double-count. For DoJ component reports, take the
+    newest loaded month per High Court × component (× indicator for physical).
+    """
+    best: dict[tuple, dict] = {}
+    for row in rows:
+        key = tuple(row.get(field) for field in key_fields)
+        period = str(row.get("reporting_period") or "")
+        prev = best.get(key)
+        if prev is None or period > str(prev.get("reporting_period") or ""):
+            best[key] = row
+    return list(best.values())
+
+
+def _component_source_period(*period_sets: set[str]) -> Optional[str]:
+    merged = set()
+    for ps in period_sets:
+        merged |= {p for p in ps if p}
+    return max(merged) if merged else None
+
+
 async def compute_dashboard_by_component(
     db,
     scope_filter_fn: Callable,
@@ -914,22 +949,37 @@ async def compute_dashboard_by_component(
     user: dict,
     reporting_period: Optional[str],
     extra_match: Optional[dict] = None,
+    *,
+    snapshot_mode: Optional[str] = None,
 ) -> list:
-    pmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
-    fmatch = await build_agg_match(db, scope_filter_fn, user, reporting_period, False, extra_match)
+    use_latest = snapshot_mode == "latest"
+    period_for_match = None if use_latest else reporting_period
+    pmatch = await build_agg_match(db, scope_filter_fn, user, period_for_match, False, extra_match)
+    fmatch = await build_agg_match(db, scope_filter_fn, user, period_for_match, False, extra_match)
     rolled_phys = await db.physical_entries.aggregate(physical_rollup_stages(pmatch)).to_list(50000)
     fin_rolled = await db.financial_entries.aggregate(financial_rollup_stages(fmatch)).to_list(50000)
+    if use_latest:
+        rolled_phys = _rows_latest_snapshot(
+            rolled_phys, ("high_court", "component", "indicator"),
+        )
+        fin_rolled = _rows_latest_snapshot(fin_rolled, ("high_court", "component"))
     pmap: dict[str, list] = defaultdict(list)
+    phys_periods: dict[str, set[str]] = defaultdict(set)
     for row in rolled_phys:
         comp = row.get("component")
         if comp:
             pmap[comp].append(row)
+            if row.get("reporting_period"):
+                phys_periods[comp].add(str(row["reporting_period"]))
     fmap: dict[str, dict] = {}
     fin_by_comp: dict[str, list] = defaultdict(list)
+    fin_periods: dict[str, set[str]] = defaultdict(set)
     for row in fin_rolled:
         comp = row.get("component")
         if comp:
             fin_by_comp[comp].append(row)
+            if row.get("reporting_period"):
+                fin_periods[comp].add(str(row["reporting_period"]))
     for name, rows in fin_by_comp.items():
         fmap[name] = {
             "allocated": sum_nullable(r.get("fund_allocated") for r in rows),
@@ -973,6 +1023,10 @@ async def compute_dashboard_by_component(
             "fin_released": fin_released, "fin_utilized": fin_utilized,
             "fin_percent": safe_div_fn(fin_utilized, fin_released),
             "fin_exp_percent": safe_div_fn(fin_utilized, budget if budget else None),
+            "source_period": _component_source_period(
+                phys_periods.get(name, set()),
+                fin_periods.get(name, set()),
+            ),
         })
     return rows
 
@@ -984,6 +1038,8 @@ async def compute_financial_status_yoy(
     user: dict,
     reporting_period: Optional[str],
     extra_match: Optional[dict] = None,
+    *,
+    snapshot_mode: Optional[str] = None,
 ) -> dict:
     """Component × FY financial status for the DoJ-style Year-on-Year report.
 
@@ -994,38 +1050,50 @@ async def compute_financial_status_yoy(
       - FY 2024-25 released ← fund_released (DoJ released 2024–27 cumulative load)
       - other FY cells ← 0 (provisional / not yet split in tracker)
 
-    Cumulative fund fields live across reporting months (e.g. Cloud on 2026-03,
-    seed baseline on 2026-05). Always roll up all periods; the selected period is
-    retained only as report metadata.
+    When ``snapshot_mode`` is ``latest`` (or no reporting_period is given), each
+    High Court × component row uses its newest loaded month so uploading July 2026
+    replaces June 2026 without summing both (cumulative double-count).
     """
-    # Strip period from approval gating so All-periods / any month still includes
-    # baseline financial rows on retired months (e.g. 2026-05).
-    period_agnostic_extra = None
-    if extra_match:
-        period_agnostic_extra = {
-            k: v for k, v in extra_match.items() if k != "reporting_period"
-        } or None
+    use_latest = snapshot_mode == "latest" or not reporting_period
+    period_for_match = None if use_latest else reporting_period
     fmatch = await build_agg_match(
-        db, scope_filter_fn, user, None, False, period_agnostic_extra,
+        db, scope_filter_fn, user, period_for_match, False, extra_match,
     )
-    fin = await db.financial_entries.aggregate(
-        financial_rollup_stages(fmatch) + [
-            {"$group": {"_id": "$component",
-                        "allocated": {"$sum": {"$ifNull": ["$fund_allocated", 0]}},
-                        "target": {"$sum": {"$ifNull": ["$fund_target", 0]}},
-                        "released": {"$sum": {"$ifNull": ["$fund_released", 0]}},
-                        "utilized": {"$sum": {"$ifNull": ["$fund_utilized", 0]}}}},
-        ]
-    ).to_list(100)
-    fmap = {f["_id"]: f for f in fin}
+    fin_rolled = await db.financial_entries.aggregate(
+        financial_rollup_stages(fmatch),
+    ).to_list(50000)
+    if use_latest:
+        fin_rolled = _rows_latest_snapshot(fin_rolled, ("high_court", "component"))
+
+    fmap: dict[str, dict] = defaultdict(
+        lambda: {"allocated": None, "target": None, "released": None, "utilized": None},
+    )
+    fin_periods: dict[str, set[str]] = defaultdict(set)
+    for row in fin_rolled:
+        comp = row.get("component")
+        if not comp:
+            continue
+        bucket = fmap[comp]
+        bucket["allocated"] = sum_nullable([bucket["allocated"], row.get("fund_allocated")])
+        bucket["target"] = sum_nullable([bucket["target"], row.get("fund_target")])
+        bucket["released"] = sum_nullable([bucket["released"], row.get("fund_released")])
+        bucket["utilized"] = sum_nullable([bucket["utilized"], row.get("fund_utilized")])
+        if row.get("reporting_period"):
+            fin_periods[comp].add(str(row["reporting_period"]))
+
     rows = []
+    latest_periods: set[str] = set()
     for c in COMPONENTS:
         name = c["name"]
-        f = fmap.get(name, {"allocated": 0, "target": 0, "released": 0, "utilized": 0})
-        cost = f["allocated"] or f["target"] or 0
+        f = fmap.get(name) or {"allocated": None, "target": None, "released": None, "utilized": None}
+        allocated = f["allocated"]
+        target = f["target"]
+        released = f["released"]
+        utilized = f["utilized"]
+        cost = allocated if allocated not in (None, 0) else (target if target not in (None, 0) else (released or 0))
         fy2324_rel = 0.0
-        fy2324_exp = float(f["utilized"] or 0)
-        fy2425_rel = float(f["released"] or 0)
+        fy2324_exp = float(utilized or 0)
+        fy2425_rel = float(released or 0)
         fy2425_exp = 0.0
         fy2526_rel = 0.0
         fy2526_exp = 0.0
@@ -1033,10 +1101,12 @@ async def compute_financial_status_yoy(
         fy2627_exp = 0.0
         grand_rel = fy2324_rel + fy2425_rel + fy2526_rel + fy2627_rel
         grand_exp = fy2324_exp + fy2425_exp + fy2526_exp + fy2627_exp
-        # Tracker often has Released/Utilised without Allocated - fall back so cost is not blank.
         if not cost and grand_rel:
             cost = grand_rel
         exp_pct = safe_div_fn(grand_exp, cost if cost else None)
+        src = _component_source_period(fin_periods.get(name, set()), set())
+        if src:
+            latest_periods.add(src)
         rows.append({
             "component": name,
             "cost_estimation": cost,
@@ -1051,9 +1121,13 @@ async def compute_financial_status_yoy(
             "grand_released": grand_rel,
             "grand_expenditure": grand_exp,
             "exp_percent_of_allocated": exp_pct,
+            "source_period": src,
         })
+    snapshot_label = max(latest_periods) if latest_periods else None
     return {
         "reporting_period": reporting_period,
+        "snapshot_mode": "latest" if use_latest else "period",
+        "snapshot_period": snapshot_label,
         "fiscal_years": ["2023-24", "2024-25", "2025-26", "2026-27"],
         "rows": rows,
         "mapping_note": (

@@ -71,41 +71,45 @@ function rowsHaveFigures(rows) {
   );
 }
 
+function latestSourcePeriod(rows) {
+  return (rows || []).reduce((max, row) => {
+    const p = row.source_period;
+    if (!p) return max;
+    return !max || p > max ? p : max;
+  }, null);
+}
+
 /**
  * DoJ-style Component Wise Physical & Financial Report from live tracker rollups.
+ * Default (no period selected): backend snapshot=latest — newest month per component.
  */
-export default function ComponentWiseDemoReport({ period, periodLabel }) {
+export default function ComponentWiseDemoReport({ period, periodLabel, periodOptions = [] }) {
   const printRef = useRef(null);
   const { user } = useAuth();
   const isAdmin = user?.role === "Admin";
+  const useLatestSnapshot = !period;
 
-  const fetchParams = (reportingPeriod) => ({
-    ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
-    include_unapproved: isAdmin ? true : undefined,
-  });
+  const fetchParams = () => {
+    const params = { include_unapproved: isAdmin ? true : undefined };
+    if (useLatestSnapshot) {
+      params.snapshot = "latest";
+    } else {
+      params.reporting_period = period;
+    }
+    return params;
+  };
 
-  const primary = useQuery({
-    queryKey: ["cwpf-report", period, isAdmin],
+  const reportQuery = useQuery({
+    queryKey: ["cwpf-report", useLatestSnapshot ? "latest" : period, isAdmin],
     queryFn: () =>
-      api.get("/dashboard/by-component", { params: fetchParams(period || undefined) }).then((r) => r.data),
+      api.get("/dashboard/by-component", { params: fetchParams() }).then((r) => r.data),
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
   });
 
-  const primaryEnriched = useMemo(() => enrichRows(primary.data), [primary.data]);
-  const primaryEmpty = primary.isSuccess && !rowsHaveFigures(primaryEnriched);
-
-  // Empty calendar months (e.g. Aug 2026) → fall back to All periods tracker load.
-  const fallback = useQuery({
-    queryKey: ["cwpf-report", "all-periods", isAdmin],
-    queryFn: () =>
-      api.get("/dashboard/by-component", { params: fetchParams(undefined) }).then((r) => r.data),
-    enabled: Boolean(period) && primaryEmpty,
-  });
-
-  const fallbackEnriched = useMemo(() => enrichRows(fallback.data), [fallback.data]);
-  const usingFallback = Boolean(period) && primaryEmpty && rowsHaveFigures(fallbackEnriched);
-  const enriched = usingFallback ? fallbackEnriched : primaryEnriched;
-  const isLoading = primary.isLoading || (Boolean(period) && primaryEmpty && fallback.isLoading);
-  const isError = primary.isError || (usingFallback && fallback.isError);
+  const enriched = useMemo(() => enrichRows(reportQuery.data), [reportQuery.data]);
+  const isLoading = reportQuery.isLoading;
+  const isError = reportQuery.isError;
   const hasData = rowsHaveFigures(enriched);
 
   const totals = useMemo(() => {
@@ -114,8 +118,15 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
     return { budget, utilized };
   }, [enriched]);
 
-  const asOnLabel = usingFallback
-    ? "All periods"
+  const latestPeriodCode = useMemo(() => latestSourcePeriod(enriched), [enriched]);
+  const latestPeriodLabel = useMemo(() => {
+    if (!latestPeriodCode) return null;
+    const match = periodOptions.find((p) => p.period === latestPeriodCode);
+    return match?.label || latestPeriodCode;
+  }, [latestPeriodCode, periodOptions]);
+
+  const asOnLabel = useLatestSnapshot
+    ? (latestPeriodLabel ? `Latest loaded data (through ${latestPeriodLabel})` : "Latest loaded data")
     : (periodLabel || period || "All periods");
 
   function handlePrint() {
@@ -141,7 +152,7 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `component-wise-physical-financial-${usingFallback ? "all" : (period || "all")}.csv`;
+    a.download = `component-wise-physical-financial-${useLatestSnapshot ? "latest" : (period || "all")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -171,19 +182,16 @@ export default function ComponentWiseDemoReport({ period, periodLabel }) {
         {isLoading && <div className="cwpf-status">Loading report…</div>}
         {isError && <div className="cwpf-status error">Unable to load component-wise data.</div>}
 
-        {!isLoading && !isError && usingFallback && (
+        {!isLoading && !isError && useLatestSnapshot && (
           <div className="cwpf-status warn no-print" role="status">
-            No physical/financial figures for <span className="font-semibold">{periodLabel || period}</span>
-            {" "}- showing <span className="font-semibold">All periods</span> from loaded tracker data.
+            Automatically uses the newest loaded reporting month for each component (including Cloud on its cumulative window).
+            Upload new tracker data anytime — this report refreshes on next load.
           </div>
         )}
 
         {!isLoading && !isError && !hasData && (
           <div className="cwpf-status warn no-print">
-            No physical/financial figures for the selected filters. Choose{" "}
-            <span className="font-semibold">All periods</span>,{" "}
-            <span className="font-semibold">Physical Achieved till Sep 2025</span>, or{" "}
-            <span className="font-semibold">Sep 2023 – Mar 2026</span>.
+            No physical/financial figures loaded yet. Import consolidated tracker data via Admin Bulk Upload or ETL Convert.
           </div>
         )}
 

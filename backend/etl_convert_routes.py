@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Upload
 
 from bulk_preview import consume_bulk_preview, save_bulk_preview
 from bulk_upload import process_financial_bulk, process_outcome_bulk, process_physical_bulk
+from cache_layer import cache_invalidate_prefix
 from etl_convert_service import convert_tracker, public_convert_payload
 from period_policy import assert_editable
 from tracker_routes import ADMIN_ONLY_CREATE_DETAIL
@@ -156,4 +157,6 @@ def register_etl_convert_routes(
             ],
             None, reporting_period,
         )
+        cache_invalidate_prefix("public:progress")
+        cache_invalidate_prefix("dashboard:")
         return result

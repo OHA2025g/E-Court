@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, fmtNum, fmtPct, formatApiError, BACKEND_URL, downloadApiFile } from "@/lib/api";
+import { api, fmtNum, fmtPct, formatApiError, BACKEND_URL, downloadApiFile, financialFormCr } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import Card from "@/components/Card";
 import RagBadge from "@/components/RagBadge";
@@ -146,10 +146,10 @@ export default function FinancialTracker() {
       (r.district || null) === d
     );
     if (found) {
-      setTarget(found.fund_target ?? "");
-      setAllocated(found.fund_allocated ?? "");
-      setReleased(found.fund_released ?? "");
-      setUtilized(found.fund_utilized ?? "");
+      setTarget(financialFormCr(found, "fund_target", "fund_target_rupees"));
+      setAllocated(financialFormCr(found, "fund_allocated", "fund_allocated_rupees"));
+      setReleased(financialFormCr(found, "fund_released", "fund_released_rupees"));
+      setUtilized(financialFormCr(found, "fund_utilized", "fund_utilized_rupees"));
       setRemarks(found.remarks ?? "");
     } else if (user?.role !== "Admin") {
       setTarget(""); setAllocated(""); setReleased(""); setUtilized(""); setRemarks("");
@@ -470,10 +470,10 @@ export default function FinancialTracker() {
               hideEmptyOption
             />
             <SelectField testid={TID.componentSelect} label={labels.component} value={component} onChange={setComponent} options={(comps.data || []).map(c => c.name)} />
-            <NumberField label="Fund Target (₹ Cr)" value={target} onChange={setTarget} disabled={!canEditFinField("fund_target")} />
-            <NumberField label="Fund Allocated (₹ Cr)" value={allocated} onChange={setAllocated} disabled={!canEditFinField("fund_allocated")} />
-            <NumberField testid={TID.releasedInput} label="Funds Released (₹ Cr)" value={released} onChange={setReleased} disabled={!canEditFinField("fund_released")} />
-            <NumberField testid={TID.utilizedInput} label="Funds Utilised (₹ Cr)" value={utilized} onChange={setUtilized} disabled={!canEditFinField("fund_utilized")} />
+            <NumberField exact label="Fund Target (₹ Cr)" value={target} onChange={setTarget} disabled={!canEditFinField("fund_target")} />
+            <NumberField exact label="Fund Allocated (₹ Cr)" value={allocated} onChange={setAllocated} disabled={!canEditFinField("fund_allocated")} />
+            <NumberField exact testid={TID.releasedInput} label="Funds Released (₹ Cr)" value={released} onChange={setReleased} disabled={!canEditFinField("fund_released")} />
+            <NumberField exact testid={TID.utilizedInput} label="Funds Utilised (₹ Cr)" value={utilized} onChange={setUtilized} disabled={!canEditFinField("fund_utilized")} />
             <div className="sm:col-span-2"><TextField testid={TID.remarksInput} label="Remarks" value={remarks} onChange={setRemarks} disabled={!canEditFinField("remarks")} /></div>
             {warn && (
               <div className="sm:col-span-2 flex items-start gap-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs p-2 rounded-sm">

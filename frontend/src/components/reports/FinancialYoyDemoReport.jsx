@@ -52,40 +52,48 @@ function yoyHasFigures(rows) {
 
 /**
  * DoJ-style Financial Status Year-on-Year report from live tracker fund fields.
+ * Default (no period): snapshot=latest — newest month per component, auto-updates on upload.
  */
-export default function FinancialYoyDemoReport({ period, periodLabel }) {
+export default function FinancialYoyDemoReport({ period, periodLabel, periodOptions = [] }) {
   const printRef = useRef(null);
   const { user } = useAuth();
   const isAdmin = user?.role === "Admin";
+  const useLatestSnapshot = !period;
 
-  const fetchParams = (reportingPeriod) => ({
-    ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
-    include_unapproved: isAdmin ? true : undefined,
-  });
+  const fetchParams = () => {
+    const params = { include_unapproved: isAdmin ? true : undefined };
+    if (useLatestSnapshot) {
+      params.snapshot = "latest";
+    } else {
+      params.reporting_period = period;
+    }
+    return params;
+  };
 
-  const primary = useQuery({
-    queryKey: ["fin-yoy-report", period, isAdmin],
+  const reportQuery = useQuery({
+    queryKey: ["fin-yoy-report", useLatestSnapshot ? "latest" : period, isAdmin],
     queryFn: () =>
-      api.get("/dashboard/financial-status-yoy", { params: fetchParams(period || undefined) }).then((r) => r.data),
+      api.get("/dashboard/financial-status-yoy", { params: fetchParams() }).then((r) => r.data),
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
   });
 
-  const primaryRows = useMemo(() => mapYoyRows(primary.data), [primary.data]);
-  const primaryEmpty = primary.isSuccess && !yoyHasFigures(primaryRows);
-
-  const fallback = useQuery({
-    queryKey: ["fin-yoy-report", "all-periods", isAdmin],
-    queryFn: () =>
-      api.get("/dashboard/financial-status-yoy", { params: fetchParams(undefined) }).then((r) => r.data),
-    enabled: Boolean(period) && primaryEmpty,
-  });
-
-  const fallbackRows = useMemo(() => mapYoyRows(fallback.data), [fallback.data]);
-  const usingFallback = Boolean(period) && primaryEmpty && yoyHasFigures(fallbackRows);
-  const data = usingFallback ? fallback.data : primary.data;
-  const rows = usingFallback ? fallbackRows : primaryRows;
-  const isLoading = primary.isLoading || (Boolean(period) && primaryEmpty && fallback.isLoading);
-  const isError = primary.isError || (usingFallback && fallback.isError);
+  const data = reportQuery.data;
+  const rows = useMemo(() => mapYoyRows(data), [data]);
+  const isLoading = reportQuery.isLoading;
+  const isError = reportQuery.isError;
   const hasData = yoyHasFigures(rows);
+
+  const latestPeriodLabel = useMemo(() => {
+    const code = data?.snapshot_period;
+    if (!code) return null;
+    const match = periodOptions.find((p) => p.period === code);
+    return match?.label || code;
+  }, [data?.snapshot_period, periodOptions]);
+
+  const periodDisplay = useLatestSnapshot
+    ? (latestPeriodLabel ? `Latest loaded data (through ${latestPeriodLabel})` : "Latest loaded data")
+    : (periodLabel || period || "All periods");
 
   const totals = useMemo(() => {
     const sum = (key) => rows.reduce((s, r) => s + (Number(r[key]) || 0), 0);
@@ -150,7 +158,7 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `financial-status-yoy-${usingFallback ? "all" : (period || "all")}.csv`;
+    a.download = `financial-status-yoy-${useLatestSnapshot ? "latest" : (period || "all")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -174,26 +182,21 @@ export default function FinancialYoyDemoReport({ period, periodLabel }) {
           </div>
         </header>
 
-        <p className="fyoy-period no-print">
-          Reporting period: {usingFallback ? "All periods" : (periodLabel || period || "All periods")}
-        </p>
+        <p className="fyoy-period no-print">Reporting period: {periodDisplay}</p>
 
         {isLoading && <div className="fyoy-status">Loading report…</div>}
         {isError && <div className="fyoy-status error">Unable to load year-on-year financial data.</div>}
 
-        {!isLoading && !isError && usingFallback && (
+        {!isLoading && !isError && useLatestSnapshot && (
           <div className="fyoy-status warn no-print" role="status">
-            No financial figures for <span className="font-semibold">{periodLabel || period}</span>
-            {" "}- showing <span className="font-semibold">All periods</span> from loaded tracker data.
+            Automatically uses the newest loaded reporting month for each component.
+            Upload new tracker data anytime — this report refreshes on next load.
           </div>
         )}
 
         {!isLoading && !isError && !hasData && (
           <div className="fyoy-status warn no-print">
-            No financial figures for the selected filters. Choose{" "}
-            <span className="font-semibold">All periods</span>,{" "}
-            <span className="font-semibold">Physical Achieved till Sep 2025</span>, or{" "}
-            <span className="font-semibold">Sep 2023 – Mar 2026</span>.
+            No financial figures loaded yet. Import consolidated tracker data via Admin Bulk Upload or ETL Convert.
           </div>
         )}
 

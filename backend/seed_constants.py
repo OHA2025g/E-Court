@@ -21,6 +21,7 @@ COMPONENTS = [
     {"code": "SOL", "name": "Solar Power for ICT", "uom": "Count"},
     {"code": "AHW", "name": "Additional Hardware — Phase I & II", "uom": "Count"},
     {"code": "NSC", "name": "ICT for Newly Set-Up Courts", "uom": "Count"},
+    {"code": "IHC", "name": "ICT in High Courts", "uom": "Count"},
     {"code": "S3W", "name": "HC & DC Website Migration — S3WaaS", "uom": "Count"},
     {"code": "CCS", "name": "Cloud Computing & Storage", "uom": "GB / TB / PB"},
     {"code": "ICT", "name": "ICT Training / Change Management", "uom": "Count"},
@@ -30,6 +31,15 @@ COMPONENTS = [
     {"code": "CON", "name": "Connectivity — Primary + Redundancy", "uom": "Count"},
     {"code": "EOF", "name": "e-Office for HCs & District Courts", "uom": "Count"},
 ]
+
+# ICT newly set-up — Excel has separate Court Rooms vs Court Complex lines per HC.
+NSC_COMPONENT = "ICT for Newly Set-Up Courts"
+NSC_FINANCIAL_ROOMS = "ICT for Newly Set-Up Courts (Court Rooms)"
+NSC_FINANCIAL_COMPLEX = "ICT for Newly Set-Up Courts (Court Complex)"
+NSC_FINANCIAL_COMPONENTS = (NSC_FINANCIAL_ROOMS, NSC_FINANCIAL_COMPLEX)
+
+# DoJ consolidated tracker extension (not in original BRD-17 list).
+ICT_IN_HC_COMPONENT = "ICT in High Courts"
 
 # Cloud Computing Physical Tracker — Type of Storage dimension
 CLOUD_COMPUTING_COMPONENT = "Cloud Computing & Storage"
@@ -93,6 +103,11 @@ COMPONENT_INDICATORS = {
     ],
     "ICT for Newly Set-Up Courts": [
         "No of new Courts covered (in Absolute Count)",
+        "No of new Court Rooms covered (in Absolute Count)",
+        "No of new Court Complexes covered (in Absolute Count)",
+    ],
+    "ICT in High Courts": [
+        "High Court Bench (in Absolute Count)",
     ],
     "HC & DC Website Migration — S3WaaS": [
         "No of District Court websites migrated (in Absolute Count)",

@@ -242,6 +242,80 @@ async def migrate_cloud_dashboard_visibility(db):
         )
 
 
+async def migrate_digitisation_crore_page_units(db):
+    """Convert Digitisation rows stored as bare page counts into crore pages."""
+    from consolidated_tracker_excel import normalize_crore_pages_number
+
+    component = "Digitisation of Court Records"
+    updated = 0
+    async for row in db.physical_entries.find({"component": component}):
+        patch: dict = {}
+        for field in ("target", "achieved"):
+            val = row.get(field)
+            if val is None:
+                continue
+            num = float(val)
+            fixed = normalize_crore_pages_number(num, prefer_crore_pages=True)
+            if fixed != num:
+                patch[field] = fixed
+        if not patch:
+            continue
+        target = patch.get("target", row.get("target"))
+        achieved = patch.get("achieved", row.get("achieved"))
+        if target is not None and achieved is not None and float(target) != 0:
+            patch["percent"] = round((float(achieved) / float(target)) * 100, 2)
+        await db.physical_entries.update_one({"_id": row["_id"]}, {"$set": patch})
+        updated += 1
+    if updated:
+        logger.info("Digitisation page-unit migration: updated=%d rows", updated)
+
+
+async def migrate_nsc_room_complex_indicators(db):
+    """Ensure ICT newly set-up has separate Court Rooms vs Court Complex indicators."""
+    component = "ICT for Newly Set-Up Courts"
+    new_indicators = [
+        "No of new Court Rooms covered (in Absolute Count)",
+        "No of new Court Complexes covered (in Absolute Count)",
+    ]
+    inserted = 0
+    for indicator in new_indicators:
+        exists = await db.indicators.find_one({"component": component, "indicator": indicator})
+        if exists:
+            continue
+        await db.indicators.insert_one({"component": component, "indicator": indicator})
+        inserted += 1
+    if inserted:
+        logger.info("NSC indicator migration: inserted=%d indicators", inserted)
+
+
+async def migrate_ict_in_high_courts_master(db):
+    """Register ICT in High Courts in master components + indicators (DoJ consolidated tracker)."""
+    from seed_constants import ICT_IN_HC_COMPONENT
+
+    name = ICT_IN_HC_COMPONENT
+    code = "IHC"
+    if not await db.components.find_one({"name": name}):
+        last = await db.components.find_one(sort=[("seq", -1)])
+        seq = (last.get("seq") or 0) + 1 if last else 1
+        await db.components.insert_one({
+            "seq": seq,
+            "code": code,
+            "name": name,
+            "uom": "Count",
+        })
+        logger.info("ICT in High Courts master migration: inserted component %r", name)
+
+    indicator = "High Court Bench (in Absolute Count)"
+    if not await db.indicators.find_one({"component": name, "indicator": indicator}):
+        await db.indicators.insert_one({
+            "component": name,
+            "indicator": indicator,
+            "unit": "Count",
+            "data_type": "Int",
+        })
+        logger.info("ICT in High Courts master migration: inserted indicator %r", indicator)
+
+
 async def migrate_cloud_to_cumulative_period(db):
     """Move all Cloud Computing tracker rows onto Sep 2023 – Mar 2026 (2026-03)."""
     target = CLOUD_CUMULATIVE_PERIOD
@@ -662,6 +736,9 @@ async def ensure_indexes(db):
     await migrate_outcome_district_index(db)
     await migrate_cloud_dashboard_visibility(db)
     await migrate_cloud_to_cumulative_period(db)
+    await migrate_digitisation_crore_page_units(db)
+    await migrate_nsc_room_complex_indicators(db)
+    await migrate_ict_in_high_courts_master(db)
     await restore_cloud_financial_actuals_from_audits(db)
     await canonicalize_tracker_high_court_dashes(db)
     await db.bulk_previews.create_index("token", unique=True)

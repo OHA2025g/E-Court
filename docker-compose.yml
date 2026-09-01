@@ -25,15 +25,15 @@ services:
       context: ./backend
     restart: unless-stopped
     ports:
-      # Host access for local CRA (`yarn start` → REACT_APP_BACKEND_URL=http://localhost:8001)
-      - "8001:8001"
+      # Host access for local CRA (`yarn start` → REACT_APP_BACKEND_URL=http://localhost:8003)
+      - "8003:8001"
     env_file:
       - .env
     environment:
       MONGO_URL: ${MONGO_URL:-mongodb://mongo:27017}
       DB_NAME: ${DB_NAME:-pmis_ecourts}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5182}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5183}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       JWT_SECRET: ${JWT_SECRET:-docker-dev-jwt-secret-change-in-prod!!}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@pmis.gov.in}
@@ -70,7 +70,7 @@ services:
     build:
       context: ./frontend
       args:
-        REACT_APP_BACKEND_URL: http://localhost:5182
+        REACT_APP_BACKEND_URL: http://localhost:5183
         REACT_APP_SHOW_DEMO: ${REACT_APP_SHOW_DEMO:-true}
     restart: unless-stopped
     environment:
@@ -78,7 +78,7 @@ services:
       # CSP_API_ORIGIN: https://ecourt.demoapi.agrayianailabs.com
       CSP_API_ORIGIN: ${CSP_API_ORIGIN:-}
     ports:
-      - "5182:80"
+      - "5183:80"
     depends_on:
       - backend
 

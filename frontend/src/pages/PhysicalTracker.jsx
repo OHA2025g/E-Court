@@ -627,15 +627,16 @@ export function SelectField({
   );
 }
 
-export function NumberField({ label, value, onChange, disabled, testid }) {
+export function NumberField({ label, value, onChange, disabled, testid, exact = false }) {
   return (
     <label className="block">
       <span className="text-[10px] uppercase tracking-[0.2em] text-slate-600 font-medium">{label}</span>
       <input
         data-testid={testid}
-        type="number"
-        step="any"
-        min="0"
+        type={exact ? "text" : "number"}
+        inputMode={exact ? "decimal" : undefined}
+        step={exact ? undefined : "any"}
+        min={exact ? undefined : "0"}
         value={value}
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}

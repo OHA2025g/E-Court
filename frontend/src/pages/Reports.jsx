@@ -226,24 +226,28 @@ export default function Reports() {
   const isDemoFinYoy = activeTab === "demo-fin-yoy";
   const isDemoReport = isDemoCwpf || isDemoFinYoy;
   const periodLabel = useMemo(() => {
-    if (!period) return t("dashboard.allPeriods");
+    if (!period) {
+      return isDemoReport ? t("reports.latestLoadedData") : t("dashboard.allPeriods");
+    }
     const match = (periods.data || []).find((p) => p.period === period);
     return match?.label || period || "";
-  }, [periods.data, period, t]);
+  }, [periods.data, period, t, isDemoReport]);
 
-  // DoJ-style reports need loaded tracker rollups - empty calendar months (e.g. Aug 2026) have no figures.
-  // Prefer Sep 2023 – Mar 2026 (2026-03), then Physical till Sep 2025, else All periods.
+  // DoJ CWPF report auto-picks newest loaded month per component (snapshot=latest).
+  // Default to that mode; YoY still prefers a concrete baseline month when available.
   const onReportTabChange = (tab) => {
     const enteringDoj = tab === "demo-cwpf" || tab === "demo-fin-yoy";
     const leavingOther = activeTab !== "demo-cwpf" && activeTab !== "demo-fin-yoy";
     setActiveTab(tab);
     if (enteringDoj && leavingOther) {
-      const codes = new Set((periods.data || []).map((p) => String(p.period)));
-      if (codes.has("2026-03")) setPeriod("2026-03");
-      else if (codes.has("2025-09")) setPeriod("2025-09");
-      else setPeriod("");
+      setPeriod("");
     }
   };
+
+  const demoPeriodOptions = useMemo(
+    () => [{ label: t("reports.latestLoadedData"), value: "" }, ...(periods.data || []).map((p) => ({ label: p.label, value: p.period }))],
+    [periods.data, t],
+  );
 
   return (
     <div data-testid={TID.reportsRoot} className="space-y-6">
@@ -285,7 +289,13 @@ export default function Reports() {
               )}
             </>
           )}
-          <SelectField label={t("reports.colPeriod")} value={period} onChange={setPeriod} options={(periods.data || []).map(p => ({ label: p.label, value: p.period }))} />
+          <SelectField
+            label={t("reports.colPeriod")}
+            value={period}
+            onChange={setPeriod}
+            hideEmptyOption={isDemoReport}
+            options={isDemoReport ? demoPeriodOptions : (periods.data || []).map((p) => ({ label: p.label, value: p.period }))}
+          />
           </div>
         </div>
       </Card>
@@ -373,11 +383,19 @@ export default function Reports() {
         </TabsContent>
 
         <TabsContent value="demo-cwpf" className="mt-4">
-          <ComponentWiseDemoReport period={period} periodLabel={periodLabel} />
+          <ComponentWiseDemoReport
+            period={period}
+            periodLabel={periodLabel}
+            periodOptions={periods.data || []}
+          />
         </TabsContent>
 
         <TabsContent value="demo-fin-yoy" className="mt-4">
-          <FinancialYoyDemoReport period={period} periodLabel={periodLabel} />
+          <FinancialYoyDemoReport
+            period={period}
+            periodLabel={periodLabel}
+            periodOptions={periods.data || []}
+          />
         </TabsContent>
       </Tabs>
     </div>

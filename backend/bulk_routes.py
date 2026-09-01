@@ -9,11 +9,17 @@ from pydantic import BaseModel
 
 from bulk_preview import consume_bulk_preview, save_bulk_preview
 from bulk_upload import process_financial_bulk, process_outcome_bulk, process_physical_bulk
+from cache_layer import cache_invalidate_prefix
 from tracker_init import init_financial_period, init_outcome_period, init_physical_period
 from tracker_routes import ADMIN_ONLY_CREATE_DETAIL
 from period_policy import assert_editable
 
 MAX_FILE_BYTES = 10 * 1024 * 1024
+
+
+def _invalidate_dashboard_cache_after_bulk():
+    cache_invalidate_prefix("public:progress")
+    cache_invalidate_prefix("dashboard:")
 
 TRACKER_COLLECTIONS = {
     "physical": "physical_entries",
@@ -242,6 +248,8 @@ def register_bulk_routes(
             result["preview_token"] = await save_bulk_preview(
                 db, user["id"], "physical", reporting_period, name, raw,
             )
+        else:
+            _invalidate_dashboard_cache_after_bulk()
         return result
 
     @api.post("/financial/bulk")
@@ -263,6 +271,8 @@ def register_bulk_routes(
             result["preview_token"] = await save_bulk_preview(
                 db, user["id"], "financial", reporting_period, name, raw,
             )
+        else:
+            _invalidate_dashboard_cache_after_bulk()
         return result
 
     @api.post("/outcome/bulk")
@@ -282,6 +292,8 @@ def register_bulk_routes(
             result["preview_token"] = await save_bulk_preview(
                 db, user["id"], "outcome", reporting_period, name, raw,
             )
+        else:
+            _invalidate_dashboard_cache_after_bulk()
         return result
 
     @api.get("/physical/bulk-template")

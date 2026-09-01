@@ -67,6 +67,40 @@ export function fmtPct(n) {
   return `${Number(n).toFixed(2)}%`;
 }
 
+/** Exact ₹ crore string from integer rupees (no float rounding). */
+export function rupeesToCrExactString(rupees) {
+  if (rupees === null || rupees === undefined || rupees === "") return "";
+  const r = Number(rupees);
+  if (!Number.isFinite(r)) return "";
+  const sign = r < 0 ? "-" : "";
+  const abs = Math.abs(Math.round(r));
+  const whole = Math.floor(abs / 1e7);
+  const frac = abs % 1e7;
+  if (frac === 0) return `${sign}${whole}`;
+  const fracStr = String(frac).padStart(7, "0").replace(/0+$/, "");
+  return `${sign}${whole}.${fracStr}`;
+}
+
+/** Format a financial form field without display rounding (table/dashboard may use fmtNum). */
+export function financialFormCr(entry, croreKey, rupeesKey) {
+  if (!entry) return "";
+  const rupees = entry[rupeesKey];
+  if (rupees !== null && rupees !== undefined && rupees !== "") {
+    const exact = rupeesToCrExactString(rupees);
+    if (exact !== "") return exact;
+  }
+  const crore = entry[croreKey];
+  if (crore === null || crore === undefined || crore === "") return "";
+  const v = Number(crore);
+  if (!Number.isFinite(v)) return String(crore);
+  // Preserve stored precision; avoid fmtNum's 2dp rounding in forms.
+  const s = String(v);
+  if (s.includes("e") || s.includes("E")) {
+    return v.toFixed(10).replace(/\.?0+$/, "");
+  }
+  return s;
+}
+
 /**
  * Authenticated file download via axios (cookies) with a forced local filename.
  * Prefer this over raw <a href> for /api/export/* so Excel/PDF cannot be mixed up

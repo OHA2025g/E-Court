@@ -22,6 +22,7 @@ export const TID = {
   navDpr: "nav-dpr",
   navIjuris: "nav-ijuris",
   navBulkUpload: "nav-bulk-upload",
+  navEtlConvert: "nav-etl-convert",
   navUsers: "nav-users",
   bulkUploadPage: "bulk-upload-page",
   bulkFlushPanel: "bulk-flush-panel",

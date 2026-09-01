@@ -368,6 +368,15 @@ async def process_financial_bulk(
             errors.append({"row": i, "error": "Fund values must be numeric"})
             continue
         remarks_val = str(r[col_rem]).strip() if (col_rem >= 0 and r[col_rem]) else None
+        # Absolute ₹ inputs (≥1000) → exact *_rupees + crore (matches manual entry API).
+        rupee_floor = 1000.0
+        released_rupees = utilized_rupees = None
+        if released is not None and abs(float(released)) >= rupee_floor:
+            released_rupees = float(released)
+            released = released_rupees / 1e7
+        if utilized is not None and abs(float(utilized)) >= rupee_floor:
+            utilized_rupees = float(utilized)
+            utilized = utilized_rupees / 1e7
         q = entry_query_key_financial({"high_court": hc, "component": comp, "reporting_period": reporting_period, "district": district})
         existing = await db.financial_entries.find_one(q)
         # Partial ETL: blank cells preserve existing fund values on update
@@ -383,6 +392,10 @@ async def process_financial_bulk(
         rag = compute_rag_fn(utilisation, thresholds)
         row_data = {**q, "fund_released": released, "fund_utilized": utilized,
                     "utilisation_percent": utilisation, "variance": variance, "rag": rag, "remarks": remarks_val}
+        if released_rupees is not None:
+            row_data["fund_released_rupees"] = released_rupees
+        if utilized_rupees is not None:
+            row_data["fund_utilized_rupees"] = utilized_rupees
         template = {
             "High Court": hc, "Component": comp, "District": district or "",
             "Fund Released": released, "Fund Utilized": utilized, "Remarks": remarks_val or "",

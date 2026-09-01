@@ -12,6 +12,7 @@ from rollup import (
     entry_query_key_physical,
     resolve_storage_type,
 )
+from seed_constants import NSC_COMPONENT, NSC_FINANCIAL_COMPONENTS
 from period_policy import assert_editable
 from cache_layer import cache_invalidate_prefix
 from webhook_routes import enqueue_webhook
@@ -384,7 +385,10 @@ def register_tracker_routes(
         if high_court:
             q["high_court"] = high_court_filter_value(high_court)
         if component:
-            q["component"] = component
+            if component == NSC_COMPONENT:
+                q["component"] = {"$in": [NSC_COMPONENT, *NSC_FINANCIAL_COMPONENTS]}
+            else:
+                q["component"] = component
         if reporting_period:
             q["reporting_period"] = reporting_period
         apply_district_filter(q, district)

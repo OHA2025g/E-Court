@@ -39,3 +39,25 @@ def test_convert_financial_utilised():
     pub = public_convert_payload(r)
     assert "utilised" in pub["format_detected"]
     assert pub["row_mappings_total"] > 0
+
+
+CONSOL = REPO / "Physical_Financial_Tracker_Consolidated_2_Sheets_SrNo_First.xlsx"
+
+
+@pytest.mark.skipif(not CONSOL.exists(), reason="consolidated excel missing")
+def test_convert_consolidated_physical():
+    r = convert_tracker("physical", CONSOL.read_bytes(), sheet="Physical Tracker")
+    pub = public_convert_payload(r)
+    assert pub["format_detected"] == "consolidated_long_physical"
+    assert pub["row_mappings_total"] > 100
+    assert r["bulk_bytes"].startswith(b"PK")
+
+
+@pytest.mark.skipif(not CONSOL.exists(), reason="consolidated excel missing")
+def test_convert_consolidated_financial():
+    r = convert_tracker("financial", CONSOL.read_bytes(), sheet="Financial Tracker")
+    pub = public_convert_payload(r)
+    assert pub["format_detected"] == "consolidated_long_financial"
+    assert pub["row_mappings_total"] > 100
+    sample = next(m for m in pub["row_mappings"] if m.get("status") == "ok")
+    assert sample["target"].get("Fund Released") is not None or sample["target"].get("Fund Utilized") is not None
