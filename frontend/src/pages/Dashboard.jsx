@@ -375,11 +375,17 @@ export default function Dashboard() {
   // Digitization → Cr pages; Cloud capacity (stored GB) → TB.
   const physTargetDisp = formatPhysAmountLabel(s?.physical?.target, physUom);
   const physAchievedDisp = formatPhysAmountLabel(s?.physical?.achieved, physUom);
+  // Physical Target / Achieved / Avg % only make sense for a single component UOM.
+  const showPhysicalKpis = Boolean(component);
   const kpiRow = (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-      <KpiCard testId={TID.kpiPhysicalTarget} icon={Target} label={labels.physTargetSum} value={physTargetDisp} accent="primary" />
-      <KpiCard testId={TID.kpiPhysicalAchieved} icon={CheckCircle} label={labels.physAchieved} value={physAchievedDisp} accent="slate" />
-      <KpiCard testId={TID.kpiPhysicalPercent} icon={Gauge} label={labels.physPercent} value={fmtPct(s?.physical?.percent)} accent={s?.physical?.percent == null ? "slate" : s?.physical?.percent >= 80 ? "green" : s?.physical?.percent >= 65 ? "amber" : "red"} />
+    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 ${showPhysicalKpis ? "xl:grid-cols-6" : ""}`}>
+      {showPhysicalKpis && (
+        <>
+          <KpiCard testId={TID.kpiPhysicalTarget} icon={Target} label={labels.physTargetSum} value={physTargetDisp} accent="primary" />
+          <KpiCard testId={TID.kpiPhysicalAchieved} icon={CheckCircle} label={labels.physAchieved} value={physAchievedDisp} accent="slate" />
+          <KpiCard testId={TID.kpiPhysicalPercent} icon={Gauge} label={labels.physPercent} value={fmtPct(s?.physical?.percent)} accent={s?.physical?.percent == null ? "slate" : s?.physical?.percent >= 80 ? "green" : s?.physical?.percent >= 65 ? "amber" : "red"} />
+        </>
+      )}
       <KpiCard testId={TID.kpiFinReleased} icon={CurrencyInr} label={labels.finReleased} value={fmtNum(s?.financial?.released, { digits: 2 })} accent="primary" />
       <KpiCard testId={TID.kpiFinUtilized} icon={CurrencyInr} label={labels.finUtilized} value={fmtNum(s?.financial?.utilized, { digits: 2 })} accent="slate" />
       <KpiCard testId={TID.kpiFinPercent} icon={TrendUp} label={labels.finPercent} value={fmtPct(s?.financial?.utilisation_percent)} accent={s?.financial?.utilisation_percent >= 80 ? "green" : s?.financial?.utilisation_percent >= 65 ? "amber" : "red"} />
