@@ -31,6 +31,7 @@ const ACCENT_STYLES = {
 export default function Card({
   title,
   subtitle,
+  titleAction,
   action,
   children,
   className = "",
@@ -47,7 +48,7 @@ export default function Card({
         className,
       ].join(" ")}
     >
-      {(title || action) && (
+      {(title || action || titleAction) && (
         <header
           className={[
             "px-5 py-4 flex items-center justify-between gap-3 border-b border-slate-100",
@@ -56,16 +57,21 @@ export default function Card({
               : "bg-gradient-to-r from-slate-50 to-white",
           ].join(" ")}
         >
-          <div>
-            {title && (
-              <h3
-                className={[
-                  "font-display text-sm font-semibold uppercase tracking-[0.12em]",
-                  accentHeader ? "text-white" : "text-slate-800",
-                ].join(" ")}
-              >
-                {title}
-              </h3>
+          <div className="min-w-0">
+            {(title || titleAction) && (
+              <div className="flex items-center gap-2 min-w-0">
+                {title && (
+                  <h3
+                    className={[
+                      "font-display text-sm font-semibold uppercase tracking-[0.12em]",
+                      accentHeader ? "text-white" : "text-slate-800",
+                    ].join(" ")}
+                  >
+                    {title}
+                  </h3>
+                )}
+                {titleAction}
+              </div>
             )}
             {subtitle && (
               <p className={["text-xs mt-1", accentHeader ? "text-white/90" : "text-slate-500"].join(" ")}>

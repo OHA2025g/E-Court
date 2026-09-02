@@ -24,6 +24,7 @@ import {
   Stack,
   CaretUp,
   CaretDown,
+  Info,
 } from "@phosphor-icons/react";
 import IndiaChoropleth from "@/components/IndiaChoropleth";
 import FinancialTrackerDashboardTab from "@/components/dashboard/FinancialTrackerDashboardTab";
@@ -35,6 +36,7 @@ import TrendChart from "@/components/TrendChart";
 import DashboardAiInsights from "@/components/dashboard/DashboardAiInsights";
 import ScrollRegion from "@/components/ui/ScrollRegion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useDashboardLabels } from "@/lib/useDashboardLabels";
 import { RAG_COLORS, ragCellProps, formatRagLegendLabel, barSeriesProps, seriesLegendLabel, useAccessibleRag } from "@/lib/ragColors";
 import {
@@ -43,6 +45,146 @@ import {
 } from "recharts";
 
 const RAG_ORDER = ["GREEN", "AMBER", "RED", "NA"];
+
+function RagDistributionInfoDialog({ open, onOpenChange, labels, ragData, ragTotal, periodLabel, highCourtLabel, componentLabel }) {
+  const green = Number(ragData.find((d) => d.name === "GREEN")?.value) || 0;
+  const amber = Number(ragData.find((d) => d.name === "AMBER")?.value) || 0;
+  const red = Number(ragData.find((d) => d.name === "RED")?.value) || 0;
+  const na = Number(ragData.find((d) => d.name === "NA")?.value) || 0;
+  const sumParts = `${green} + ${amber} + ${red} + ${na} = ${ragTotal}`;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-testid={TID.ragDonutInfoDialog}>
+        <DialogHeader>
+          <DialogTitle className="font-display text-lg text-slate-900">{labels.ragInfoTitle}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 text-sm text-slate-700 leading-relaxed">
+          <section>
+            <h4 className="font-semibold text-slate-900 mb-1">What the centre TOTAL means</h4>
+            <p>
+              The number in the centre of the donut is the sum of all RAG legend counts for the current dashboard filters.
+              It is <strong>not</strong> the number of High Courts (28) and <strong>not</strong> the number of components.
+            </p>
+            <p className="mt-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 font-mono text-xs text-slate-800">
+              TOTAL = GREEN + AMBER + RED + NA<br />
+              {sumParts}
+            </p>
+          </section>
+
+          <section>
+            <h4 className="font-semibold text-slate-900 mb-1">Current filter scope</h4>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Reporting period: <strong>{periodLabel}</strong></li>
+              <li>High Court: <strong>{highCourtLabel}</strong></li>
+              <li>Component: <strong>{componentLabel}</strong></li>
+              <li>Indicator rows counted (TOTAL): <strong>{ragTotal}</strong></li>
+            </ul>
+          </section>
+
+          <section>
+            <h4 className="font-semibold text-slate-900 mb-1">What each unit counted is</h4>
+            <p>
+              Backend rollup builds one physical series per:
+            </p>
+            <p className="mt-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 font-mono text-xs text-slate-800">
+              High Court × Component × Indicator × Reporting Period
+            </p>
+            <p className="mt-2">
+              District-level rows (if any) are summed into that key before RAG is applied. Each such rolled row contributes
+              <strong> +1 </strong> to exactly one of GREEN / AMBER / RED / NA.
+            </p>
+          </section>
+
+          <section>
+            <h4 className="font-semibold text-slate-900 mb-1">How each row is classified</h4>
+            <ol className="list-decimal pl-5 space-y-1">
+              <li>
+                Achievement %: <span className="font-mono text-xs">(achieved ÷ target) × 100</span>
+              </li>
+              <li>
+                If target is missing or 0, or achieved is missing → % is not computable → <strong>NA</strong>
+              </li>
+              <li>Otherwise apply thresholds (defaults):</li>
+            </ol>
+            <ul className="mt-2 list-disc pl-5 space-y-1">
+              <li><strong>GREEN</strong> — % ≥ 80</li>
+              <li><strong>AMBER</strong> — 65% ≤ % &lt; 80</li>
+              <li><strong>RED</strong> — % &lt; 65</li>
+              <li><strong>NA</strong> — no usable %</li>
+            </ul>
+          </section>
+
+          <section>
+            <h4 className="font-semibold text-slate-900 mb-1">Current breakdown</h4>
+            <div className="overflow-x-auto rounded-lg border border-slate-200">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 text-slate-600 uppercase tracking-wide">
+                  <tr>
+                    <th className="px-3 py-2">Status</th>
+                    <th className="px-3 py-2 text-right">Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {RAG_ORDER.map((name) => {
+                    const value = Number(ragData.find((d) => d.name === name)?.value) || 0;
+                    return (
+                      <tr key={name} className="border-t border-slate-100">
+                        <td className="px-3 py-2">
+                          <span className="inline-flex items-center gap-2">
+                            <span
+                              className="inline-block w-2.5 h-2.5 rounded-sm border border-slate-200"
+                              style={{ background: RAG_COLORS[name] || RAG_COLORS.NA }}
+                              aria-hidden="true"
+                            />
+                            {formatRagLegendLabel(name, false)}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 text-right tabular-nums font-semibold text-slate-900">{value}</td>
+                      </tr>
+                    );
+                  })}
+                  <tr className="border-t border-slate-200 bg-slate-50">
+                    <td className="px-3 py-2 font-semibold">TOTAL</td>
+                    <td className="px-3 py-2 text-right tabular-nums font-bold text-slate-900">{ragTotal}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section>
+            <h4 className="font-semibold text-slate-900 mb-1">Important note on “Select All” periods</h4>
+            <p>
+              When Reporting Period is <strong>Select All</strong>, every matching period is counted. The same
+              High Court × Component × Indicator in two months counts twice (once per period). For example,
+              June 2026 consolidated rows plus Cloud Computing’s Mar 2026 cumulative window both contribute to TOTAL.
+            </p>
+            <p className="mt-2">
+              Choosing a single reporting period (e.g. June 2026) limits the donut to that month only.
+            </p>
+          </section>
+
+          <section>
+            <h4 className="font-semibold text-slate-900 mb-1">Short formula</h4>
+            <pre className="rounded-lg bg-slate-900 text-slate-100 text-[11px] leading-relaxed p-3 overflow-x-auto whitespace-pre-wrap">{`For each rolled physical row (HC × Component × Indicator × Period):
+  pct = achieved / target × 100   (or NA if not computable)
+  bucket += 1 for GREEN / AMBER / RED / NA
+
+TOTAL = number of those rows
+      = GREEN + AMBER + RED + NA
+      = ${sumParts}`}</pre>
+          </section>
+        </div>
+        <DialogFooter>
+          <button type="button" className="app-btn-secondary" onClick={() => onOpenChange(false)}>
+            {labels.ragInfoClose}
+          </button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function PerformancePctTooltip({ active, payload, label, nameKey = "component", selectedComponent = "" }) {
   if (!active || !payload?.length) return null;
@@ -172,6 +314,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [compSort, setCompSort] = useState({ key: "component", dir: "asc" });
   const [hcSort, setHcSort] = useState({ key: "high_court", dir: "asc" });
+  const [ragInfoOpen, setRagInfoOpen] = useState(false);
   const [accessibleRag] = useAccessibleRag();
   const cpcCourt = user?.role === "CPC" ? user?.high_court : null;
   const visibleTabs = useMemo(
@@ -393,7 +536,37 @@ export default function Dashboard() {
   );
 
   const ragDonut = (
-    <Card title={labels.ragDistribution} testId={TID.ragDonut} elevated>
+    <Card
+      title={labels.ragDistribution}
+      testId={TID.ragDonut}
+      elevated
+      titleAction={(
+        <button
+          type="button"
+          data-testid={TID.ragDonutInfoBtn}
+          className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100 hover:text-[#003B73] hover:border-[#003B73]/40 transition-colors shrink-0"
+          aria-label={labels.ragInfoAria}
+          title={labels.ragInfoAria}
+          onClick={() => setRagInfoOpen(true)}
+        >
+          <Info size={14} weight="bold" />
+        </button>
+      )}
+    >
+      <RagDistributionInfoDialog
+        open={ragInfoOpen}
+        onOpenChange={setRagInfoOpen}
+        labels={labels}
+        ragData={ragData}
+        ragTotal={ragTotal}
+        periodLabel={
+          period
+            ? ((periods.data || []).find((p) => p.period === period)?.label || period)
+            : labels.allPeriods
+        }
+        highCourtLabel={highCourt || labels.allHighCourts}
+        componentLabel={component || labels.allComponents}
+      />
       <div className="px-2 pb-2 pt-0 flex flex-col">
         {ragData.length === 0 ? (
           <div className="h-64 grid-bg flex items-center justify-center text-sm text-slate-400">{labels.noData}</div>

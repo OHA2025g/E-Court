@@ -40,6 +40,8 @@ export const TID = {
   kpiFinUtilized: "kpi-fin-utilized",
   kpiFinPercent: "kpi-fin-percent",
   ragDonut: "rag-donut",
+  ragDonutInfoBtn: "rag-donut-info-btn",
+  ragDonutInfoDialog: "rag-donut-info-dialog",
   componentChart: "component-bar-chart",
   hcChart: "hc-bar-chart",
   // common form
