@@ -11,7 +11,7 @@ import {
 /**
  * Inline-editable table cell - saves on blur/Enter.
  */
-function EditableCell({ value, display, onSave, type = "text", disabled, className = "" }) {
+function EditableCell({ value, display, onSave, type = "text", step, disabled, className = "" }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value ?? "");
   const shown = display != null ? display : (value ?? "NA");
@@ -37,7 +37,10 @@ function EditableCell({ value, display, onSave, type = "text", disabled, classNa
         role="button"
         tabIndex={0}
         className={`cursor-pointer hover:bg-blue-50 rounded px-0.5 ${className}`}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          setEditing(true);
+        }}
         onKeyDown={(e) => e.key === "Enter" && setEditing(true)}
       >
         {shown}
@@ -49,6 +52,7 @@ function EditableCell({ value, display, onSave, type = "text", disabled, classNa
     <input
       autoFocus
       type={type}
+      step={type === "number" ? (step ?? "any") : undefined}
       value={draft}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={commit}
@@ -259,6 +263,7 @@ export default function EditableTrackerTable({
                       value={col.editValue ? col.editValue(row) : row[col.field || col.key]}
                       display={col.render ? col.render(row) : undefined}
                       type={col.inputType || "text"}
+                      step={col.inputStep}
                       disabled={col.editable === "admin" && !canEdit}
                       onSave={(v) => saveField(row, (col.getField ? col.getField(row) : null) || col.field || col.key, v)}
                     />

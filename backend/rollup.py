@@ -145,6 +145,11 @@ def _financial_canonical_component_stage() -> dict:
 
 
 def financial_rollup_stages(extra_match: dict | None = None) -> list:
+    """Roll up HC×component×period using exact ₹ first, then convert once to ₹ Cr.
+
+    Avoids round-then-sum drift from summing pre-truncated crore fields at
+    component / sub-component (indicator) aggregation surfaces.
+    """
     stages = []
     if extra_match:
         stages.append({"$match": extra_match})
@@ -156,20 +161,20 @@ def financial_rollup_stages(extra_match: dict | None = None) -> list:
                 "component": "$component",
                 "reporting_period": "$reporting_period",
             },
-            **_group_nullable_field("fund_target", "fund_target"),
-            **_group_nullable_field("fund_allocated", "fund_allocated"),
-            **_group_nullable_field("fund_released", "fund_released"),
-            **_group_nullable_field("fund_utilized", "fund_utilized"),
+            **_exact_money_group_fields("fund_target", "fund_target_rupees", "fund_target"),
+            **_exact_money_group_fields("fund_allocated", "fund_allocated_rupees", "fund_allocated"),
+            **_exact_money_group_fields("fund_released", "fund_released_rupees", "fund_released"),
+            **_exact_money_group_fields("fund_utilized", "fund_utilized_rupees", "fund_utilized"),
         }},
         {"$project": {
             "_id": 0,
             "high_court": "$_id.high_court",
             "component": "$_id.component",
             "reporting_period": "$_id.reporting_period",
-            **_project_nullable_field("fund_target"),
-            **_project_nullable_field("fund_allocated"),
-            **_project_nullable_field("fund_released"),
-            **_project_nullable_field("fund_utilized"),
+            **_exact_money_project_crore("fund_target"),
+            **_exact_money_project_crore("fund_allocated"),
+            **_exact_money_project_crore("fund_released"),
+            **_exact_money_project_crore("fund_utilized"),
         }},
     ])
     return stages
@@ -196,19 +201,20 @@ def physical_hc_rollup_stages(extra_match: dict | None = None) -> list:
 
 
 def financial_hc_rollup_stages(extra_match: dict | None = None) -> list:
+    """HC financial totals from exact ₹ (same precision as national KPIs)."""
     stages = []
     if extra_match:
         stages.append({"$match": extra_match})
     stages.extend([
         {"$group": {
             "_id": "$high_court",
-            **_group_nullable_field("fund_released", "r"),
-            **_group_nullable_field("fund_utilized", "u"),
+            **_exact_money_group_fields("fund_released", "fund_released_rupees", "r"),
+            **_exact_money_group_fields("fund_utilized", "fund_utilized_rupees", "u"),
         }},
         {"$project": {
             "_id": 1,
-            **_project_nullable_field("r"),
-            **_project_nullable_field("u"),
+            **_exact_money_project_crore("r"),
+            **_exact_money_project_crore("u"),
         }},
     ])
     return stages

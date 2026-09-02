@@ -22,27 +22,35 @@ function reportRag(expPct) {
   return "RED";
 }
 
+function fmtExp(utilized, pct) {
+  const amt = utilized == null ? "0" : Number(utilized).toLocaleString("en-IN", { maximumFractionDigits: 4, minimumFractionDigits: 0 });
+  const p = pct == null || Number.isNaN(Number(pct)) ? 0 : Number(pct);
+  const pLabel = Number(p).toLocaleString("en-IN", { maximumFractionDigits: 2, minimumFractionDigits: 0 });
+  return `${amt} (${pLabel}%)`;
+}
+
 function fmtBudget(n) {
   if (n == null || n === "" || Number.isNaN(Number(n))) return "-";
   const v = Number(n);
-  return v.toLocaleString("en-IN", { maximumFractionDigits: 2, minimumFractionDigits: 0 });
+  return v.toLocaleString("en-IN", { maximumFractionDigits: 4, minimumFractionDigits: 0 });
 }
 
-function fmtExp(utilized, pct) {
-  const amt = utilized == null ? "0" : Number(utilized).toLocaleString("en-IN", { maximumFractionDigits: 2 });
-  const p = pct == null || Number.isNaN(Number(pct)) ? 0 : Math.round(Number(pct));
-  return `${amt} (${p}%)`;
-}
-
-function fmtPhysTarget(n) {
+function fmtPhysTarget(n, uom) {
   if (n == null || n === "" || Number(n) === 0) return "-";
-  return Number(n).toLocaleString("en-IN", { maximumFractionDigits: 0 });
+  const digits = uom === "Crore Pages" || uom === "Percentage" || uom === "GB / TB / PB" || uom === "GB" || uom === "TB"
+    ? 4
+    : 0;
+  return Number(n).toLocaleString("en-IN", {
+    maximumFractionDigits: digits,
+    minimumFractionDigits: 0,
+  });
 }
 
 function fmtPhysAch(pct, target) {
   if (target == null || Number(target) === 0) return "-";
   if (pct == null || Number.isNaN(Number(pct))) return "-";
-  return `${Math.round(Number(pct))}%`;
+  // Keep one decimal for achievement % so component rollups match tracker precision.
+  return `${Number(pct).toLocaleString("en-IN", { maximumFractionDigits: 2, minimumFractionDigits: 0 })}%`;
 }
 
 function enrichRows(rows) {
@@ -214,7 +222,7 @@ export default function ComponentWiseDemoReport({ period, periodLabel, periodOpt
                   <td className="col-comp">{r.component}</td>
                   <td className="col-num">{fmtBudget(r.budget)}</td>
                   <td className="col-num">{fmtExp(r.utilized, r.expPct)}</td>
-                  <td className="col-num">{fmtPhysTarget(r.phys_target)}</td>
+                  <td className="col-num">{fmtPhysTarget(r.phys_target, r.phys_uom)}</td>
                   <td className="col-num">{fmtPhysAch(r.phys_percent, r.phys_target)}</td>
                 </tr>
               ))}

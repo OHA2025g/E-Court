@@ -473,8 +473,8 @@ async def compute_heatmap(
             cell_map[(comp, hc)] = {
                 "percent": pct,
                 "rag": compute_rag_fn(pct, thresholds),
-                "released": None if rel is None else round(float(rel), 4),
-                "utilized": None if util is None else round(float(util), 4),
+                "released": None if rel is None else float(rel),
+                "utilized": None if util is None else float(util),
                 "uom": "₹ Cr",
             }
         row_keys = components
@@ -514,9 +514,9 @@ async def compute_heatmap(
             cell_map[(comp, hc)] = {
                 "percent": pct,
                 "rag": compute_rag_fn(pct, thresholds),
-                "target": None if t_f is None else round(t_f, 4),
-                "achieved": None if a_f is None else round(a_f, 4),
-                "uom": COMPONENT_UOM.get(comp),
+                "target": None if t_f is None else float(t_f),
+                "achieved": None if a_f is None else float(a_f),
+                "uom": next((c["uom"] for c in COMPONENTS if c["name"] == comp), None),
             }
         row_keys = components
         row_field = "component"

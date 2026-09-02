@@ -705,8 +705,8 @@ export default function Dashboard() {
                     <RagBadge status={physRag(r.phys_percent)} label={fmtPct(r.phys_percent)} />
                   </div>
                 </td>
-                <td className="dense-table-center">{fmtNum(r.fin_released)}</td>
-                <td className="dense-table-center">{fmtNum(r.fin_utilized)}</td>
+                <td className="dense-table-center">{fmtNum(r.fin_released, { digits: 4 })}</td>
+                <td className="dense-table-center">{fmtNum(r.fin_utilized, { digits: 4 })}</td>
                 <td className="dense-table-center">
                   <div className="flex justify-center">
                     <RagBadge status={physRag(r.fin_percent)} label={fmtPct(r.fin_percent)} />
@@ -750,8 +750,8 @@ export default function Dashboard() {
             {sortedHcRows.map((r) => (
               <tr key={r.high_court}>
                 <td className="font-medium text-slate-700">{r.high_court}</td>
-                <td className="dense-table-center">{fmtNum(r.fin_released)}</td>
-                <td className="dense-table-center">{fmtNum(r.fin_utilized)}</td>
+                <td className="dense-table-center">{fmtNum(r.fin_released, { digits: 4 })}</td>
+                <td className="dense-table-center">{fmtNum(r.fin_utilized, { digits: 4 })}</td>
                 <td className="dense-table-center">
                   <div className="flex justify-center">
                     <RagBadge status={physRag(r.fin_percent)} label={fmtPct(r.fin_percent)} />

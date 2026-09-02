@@ -3,6 +3,14 @@ import { fmtNum } from "@/lib/api";
 /** Cloud capacity is stored in GB; 1 TB = 1024 GB. */
 export const GB_PER_TB = 1024;
 
+/** Fraction digits for physical amounts by UOM (avoid integer-rounding Cr pages / %). */
+export function physAmountDigits(uom) {
+  if (uom === "Crore Pages" || uom === "Percentage" || uom === "GB / TB / PB" || uom === "GB" || uom === "TB") {
+    return 4;
+  }
+  return 0;
+}
+
 /**
  * Format physical tracker amounts for display.
  *
@@ -20,18 +28,19 @@ export function formatPhysAmount(value, uom) {
   const v = Number(value);
   if (Number.isNaN(v)) return { text: String(value), unit: "" };
 
+  const digits = physAmountDigits(uom);
   if (uom === "Crore Pages") {
-    return { text: fmtNum(v, { digits: 2 }), unit: "Cr pages" };
+    return { text: fmtNum(v, { digits }), unit: "Cr pages" };
   }
   if (uom === "GB / TB / PB" || uom === "GB") {
     const tb = v / GB_PER_TB;
-    return { text: fmtNum(tb, { digits: 2 }), unit: "TB" };
+    return { text: fmtNum(tb, { digits }), unit: "TB" };
   }
   if (uom === "TB") {
-    return { text: fmtNum(v, { digits: 2 }), unit: "TB" };
+    return { text: fmtNum(v, { digits }), unit: "TB" };
   }
   if (uom === "Percentage") {
-    return { text: fmtNum(v, { digits: 2 }), unit: "%" };
+    return { text: fmtNum(v, { digits }), unit: "%" };
   }
   return { text: fmtNum(v, { digits: 0 }), unit: "" };
 }

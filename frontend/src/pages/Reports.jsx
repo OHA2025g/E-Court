@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { api, fmtNum, fmtPct, formatApiError, downloadApiFile } from "@/lib/api";
+import { formatPhysAmount } from "@/lib/physFormat";
 import Card from "@/components/Card";
 import ScrollRegion from "@/components/ui/ScrollRegion";
 import RagBadge from "@/components/RagBadge";
@@ -327,8 +328,20 @@ export default function Reports() {
                 { key: "component", label: t("reports.colComponent") },
                 { key: "indicator", label: t("reports.colIndicator") },
                 { key: "reporting_period", label: t("reports.colPeriod") },
-                { key: "target", label: t("reports.colTarget"), align: "right", render: r => fmtNum(r.target, { digits: 0 }) },
-                { key: "achieved", label: t("reports.colAchieved"), align: "right", render: r => fmtNum(r.achieved, { digits: 0 }) },
+                { key: "target", label: t("reports.colTarget"), align: "right", render: r => {
+                  const uom = (r.indicator || "").toLowerCase().includes("cr") ? "Crore Pages"
+                    : (r.indicator || "").toLowerCase().includes("gb") ? "GB"
+                      : "Count";
+                  const { text } = formatPhysAmount(r.target, uom);
+                  return text;
+                } },
+                { key: "achieved", label: t("reports.colAchieved"), align: "right", render: r => {
+                  const uom = (r.indicator || "").toLowerCase().includes("cr") ? "Crore Pages"
+                    : (r.indicator || "").toLowerCase().includes("gb") ? "GB"
+                      : "Count";
+                  const { text } = formatPhysAmount(r.achieved, uom);
+                  return text;
+                } },
                 { key: "percent", label: t("reports.colPercent"), align: "right", render: r => fmtPct(r.percent) },
                 { key: "rag", label: t("reports.colRag"), render: r => <RagBadge status={ragOf(r.percent)} /> },
                 { key: "remarks", label: t("reports.colRemarks"), render: r => <span className="text-slate-500">{r.remarks || "-"}</span> },

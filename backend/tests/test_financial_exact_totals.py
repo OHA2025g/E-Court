@@ -6,7 +6,7 @@ BACKEND = Path(__file__).resolve().parents[1]
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
 
-from rollup import financial_exact_totals_stages  # noqa: E402
+from rollup import financial_exact_totals_stages, financial_rollup_stages  # noqa: E402
 
 
 def test_round_then_sum_differs_from_sum_then_round():
@@ -37,5 +37,16 @@ def test_financial_exact_totals_pipeline_sums_rupees_then_divides():
     assert "released_rupees" in group
     assert "utilized_rupees" in group
     project = stages[2]["$project"]
-    assert project["released"] == {"$divide": ["$released_rupees", 10_000_000]}
-    assert project["utilized"] == {"$divide": ["$utilized_rupees", 10_000_000]}
+    assert project["released"]["$cond"][2] == {"$divide": ["$released_rupees", 10_000_000]}
+    assert project["utilized"]["$cond"][2] == {"$divide": ["$utilized_rupees", 10_000_000]}
+
+
+def test_financial_rollup_stages_use_exact_rupees_then_crore():
+    """Component/HC rollups must not $sum pre-rounded crore fields."""
+    stages = financial_rollup_stages({"reporting_period": "2026-06"})
+    assert stages[0] == {"$match": {"reporting_period": "2026-06"}}
+    group = next(s["$group"] for s in stages if "$group" in s)
+    assert "fund_released_rupees" in group
+    assert "fund_utilized_rupees" in group
+    project = next(s["$project"] for s in stages if "$project" in s and "fund_released" in s["$project"])
+    assert project["fund_released"]["$cond"][2] == {"$divide": ["$fund_released_rupees", 10_000_000]}

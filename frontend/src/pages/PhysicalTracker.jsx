@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { api, fmtNum, fmtPct, formatApiError, BACKEND_URL, downloadApiFile } from "@/lib/api";
+import { formatPhysAmount, physAmountDigits } from "@/lib/physFormat";
 import { useTrackerLabels } from "@/lib/useTrackerLabels";
 import { useAuth } from "@/lib/auth";
 import Card from "@/components/Card";
@@ -310,6 +311,22 @@ export default function PhysicalTracker() {
 
   const ragColor = (r) => r >= 80 ? "GREEN" : r >= 65 ? "AMBER" : r != null ? "RED" : "NA";
 
+  const uomByComponent = useMemo(() => {
+    const map = {};
+    (comps.data || []).forEach((c) => {
+      if (c?.name) map[c.name] = c.uom;
+    });
+    return map;
+  }, [comps.data]);
+
+  const formatPhysCell = useCallback((value, componentName) => {
+    const uom = uomByComponent[componentName];
+    const { text, unit } = formatPhysAmount(value, uom);
+    if (text === "NA") return "NA";
+    // Tracker cells already sit under Component/Indicator; keep unit only for Cr pages / TB / %.
+    return unit ? `${text} ${unit}` : text;
+  }, [uomByComponent]);
+
   const tableColumns = useMemo(() => {
     const rowPercent = (r) => (
       isEsewaComponent
@@ -359,13 +376,14 @@ export default function PhysicalTracker() {
           editable: canEditTarget,
           field: "target",
           inputType: "number",
+          inputStep: "any",
           sortType: "number",
           getField: (r) => (r.component === ESEWA_COMPONENT ? "target_cpc" : "target"),
           editValue: (r) => (r.component === ESEWA_COMPONENT ? r.target_cpc : r.target),
           sortValue: (r) => (r.component === ESEWA_COMPONENT ? r.target_cpc : r.target),
-          render: (r) => fmtNum(
+          render: (r) => formatPhysCell(
             r.component === ESEWA_COMPONENT ? r.target_cpc : r.target,
-            { digits: 0 },
+            r.component,
           ),
         },
         {
@@ -375,13 +393,14 @@ export default function PhysicalTracker() {
           editable: canEdit,
           field: "achieved",
           inputType: "number",
+          inputStep: "any",
           sortType: "number",
           getField: (r) => (r.component === ESEWA_COMPONENT ? "achieved_cpc" : "achieved"),
           editValue: (r) => (r.component === ESEWA_COMPONENT ? r.achieved_cpc : r.achieved),
           sortValue: (r) => (r.component === ESEWA_COMPONENT ? r.achieved_cpc : r.achieved),
-          render: (r) => fmtNum(
+          render: (r) => formatPhysCell(
             r.component === ESEWA_COMPONENT ? r.achieved_cpc : r.achieved,
-            { digits: 0 },
+            r.component,
           ),
         },
         {
@@ -397,11 +416,11 @@ export default function PhysicalTracker() {
       );
     } else {
       cols.push(
-        { key: "target_dpr", label: labels.targetDpr, align: "right", editable: canEditTarget, field: "target_dpr", inputType: "number", sortType: "number", render: (r) => fmtNum(r.target_dpr, { digits: 0 }) },
-        { key: "achieved_ecommittee", label: labels.achievedEcommittee, align: "right", editable: canEdit, field: "achieved_ecommittee", inputType: "number", sortType: "number", render: (r) => fmtNum(r.achieved_ecommittee, { digits: 0 }) },
+        { key: "target_dpr", label: labels.targetDpr, align: "right", editable: canEditTarget, field: "target_dpr", inputType: "number", inputStep: "any", sortType: "number", render: (r) => fmtNum(r.target_dpr, { digits: physAmountDigits(uomByComponent[r.component]) }) },
+        { key: "achieved_ecommittee", label: labels.achievedEcommittee, align: "right", editable: canEdit, field: "achieved_ecommittee", inputType: "number", inputStep: "any", sortType: "number", render: (r) => fmtNum(r.achieved_ecommittee, { digits: physAmountDigits(uomByComponent[r.component]) }) },
         { key: "percent_ecommittee", label: labels.percentEcommittee, align: "right", sortType: "number", render: (r) => fmtPct(r.percent_ecommittee) },
-        { key: "target_cpc", label: labels.targetCpc, align: "right", editable: canEdit, field: "target_cpc", inputType: "number", sortType: "number", render: (r) => fmtNum(r.target_cpc, { digits: 0 }) },
-        { key: "achieved_cpc", label: labels.achievedCpc, align: "right", editable: canEdit, field: "achieved_cpc", inputType: "number", sortType: "number", render: (r) => fmtNum(r.achieved_cpc, { digits: 0 }) },
+        { key: "target_cpc", label: labels.targetCpc, align: "right", editable: canEdit, field: "target_cpc", inputType: "number", inputStep: "any", sortType: "number", render: (r) => fmtNum(r.target_cpc, { digits: physAmountDigits(uomByComponent[r.component]) }) },
+        { key: "achieved_cpc", label: labels.achievedCpc, align: "right", editable: canEdit, field: "achieved_cpc", inputType: "number", inputStep: "any", sortType: "number", render: (r) => fmtNum(r.achieved_cpc, { digits: physAmountDigits(uomByComponent[r.component]) }) },
         { key: "percent_cpc", label: labels.percentCpc, align: "right", sortType: "number", render: (r) => fmtPct(r.percent_cpc) },
       );
     }
@@ -425,7 +444,7 @@ export default function PhysicalTracker() {
       },
     );
     return cols;
-  }, [canEdit, canEditTarget, anomalyKeys, labels, isEsewaComponent, isCloudComponent]);
+  }, [canEdit, canEditTarget, anomalyKeys, labels, isEsewaComponent, isCloudComponent, formatPhysCell, uomByComponent]);
 
   return (
     <div className="space-y-6" data-tour="physical-tracker">
