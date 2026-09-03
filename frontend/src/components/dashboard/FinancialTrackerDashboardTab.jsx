@@ -120,6 +120,7 @@ function EmptyChart({ message }) {
 }
 
 const HC_COMP_SLICE = 6;
+const HC_UTIL_PCT_ENDS = 3;
 
 function SliceToggleButton({ view, setView, topLabel, bottomLabel }) {
   return (
@@ -145,6 +146,14 @@ function sliceRankedNames(rankedNames, view, n) {
   if (list.length <= n) return list;
   if (view === "bottom") return [...list.slice(-n)].reverse();
   return list.slice(0, n);
+}
+
+/** Top N and bottom N from a desc-ranked list (shows all when the pool is small). */
+function sliceTopAndBottom(rankedNames, n) {
+  const list = rankedNames || [];
+  if (list.length <= n) return [...list];
+  if (list.length <= n * 2) return [...list];
+  return [...list.slice(0, n), ...list.slice(-n)];
 }
 
 /** Join HC released + utilised into stacked rows: utilised (bottom) + remainder (top = released). */
@@ -405,6 +414,12 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
     [rankedHcByReleased, hcCompView],
   );
 
+  // Utilisation % chart: always Top 3 + Bottom 3 by funds released.
+  const utilPctHcNames = useMemo(
+    () => sliceTopAndBottom(rankedHcByReleased, HC_UTIL_PCT_ENDS),
+    [rankedHcByReleased],
+  );
+
   const hcComponentReleasedRows = useMemo(() => {
     const all = data?.hc_component_released || [];
     const byHc = new Map(all.map((r) => [r.high_court, r]));
@@ -426,14 +441,13 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
   const utilPctRowsForSlice = useMemo(() => {
     return (data?.utilization_by_component_hc || []).map((row) => {
       const next = { component: row.component };
-      selectedCompHcs.forEach((hc) => {
+      utilPctHcNames.forEach((hc) => {
         if (Object.prototype.hasOwnProperty.call(row, hc)) next[hc] = row[hc];
       });
-      // Keep only components that have at least one value in the selected HC set.
-      const hasVal = selectedCompHcs.some((hc) => next[hc] != null);
+      const hasVal = utilPctHcNames.some((hc) => next[hc] != null);
       return hasVal ? next : null;
     }).filter(Boolean);
-  }, [data?.utilization_by_component_hc, selectedCompHcs]);
+  }, [data?.utilization_by_component_hc, utilPctHcNames]);
 
   const hcCompSliceHint = useMemo(() => {
     const n = selectedCompHcs.length;
@@ -442,6 +456,11 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
       ? labels.ftHcCompSliceHintBottom(n)
       : labels.ftHcCompSliceHintTop(n);
   }, [selectedCompHcs.length, hcCompView, labels]);
+
+  const utilPctSliceHint = useMemo(() => {
+    if (!utilPctHcNames.length) return null;
+    return labels.ftHcCompSliceHintTopBottom(HC_UTIL_PCT_ENDS, HC_UTIL_PCT_ENDS);
+  }, [utilPctHcNames.length, labels]);
 
   // Rank HCs by total funds utilised (desc) for Top/Bottom 6 utilised chart.
   const rankedHcByUtilized = useMemo(
@@ -614,25 +633,17 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
 
         <Card
           title={labels.ftUtilPctComponentHc}
-          subtitle={hcCompSliceHint || undefined}
+          subtitle={utilPctSliceHint || undefined}
           elevated
-          action={
-            <SliceToggleButton
-              view={hcCompView}
-              setView={setHcCompView}
-              topLabel={labels.ftTop6}
-              bottomLabel={labels.ftBottom6}
-            />
-          }
         >
           <div className="h-80 p-4">
-            {utilPctRowsForSlice.length === 0 || selectedCompHcs.length === 0 ? (
+            {utilPctRowsForSlice.length === 0 || utilPctHcNames.length === 0 ? (
               <EmptyChart message={labels.noData} />
             ) : (
               <UtilPctComponentHcChart
-                key={`${reportingPeriod || "all"}-${hcCompView}-${selectedCompHcs.join("|")}`}
+                key={`${reportingPeriod || "all"}-top-bottom-${utilPctHcNames.join("|")}`}
                 rows={utilPctRowsForSlice}
-                hcNames={selectedCompHcs}
+                hcNames={utilPctHcNames}
                 utilPctLabel={labels.ftUtilPct}
               />
             )}
