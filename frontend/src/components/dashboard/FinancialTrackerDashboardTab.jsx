@@ -60,8 +60,8 @@ function ComponentUtilDonut({ items, totalLabel, valueLabel }) {
   if (!slices.length) return null;
 
   return (
-    <div className="flex flex-col items-center gap-4 min-h-[240px]">
-      <div className="relative mx-auto w-[200px] h-[200px] shrink-0">
+    <div className="h-full flex flex-col sm:flex-row items-center sm:items-stretch gap-4 min-h-0">
+      <div className="relative mx-auto sm:mx-0 w-[180px] h-[180px] shrink-0 self-center">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
             <Pie
@@ -70,8 +70,8 @@ function ComponentUtilDonut({ items, totalLabel, valueLabel }) {
               nameKey="name"
               cx="50%"
               cy="50%"
-              innerRadius={58}
-              outerRadius={82}
+              innerRadius={52}
+              outerRadius={74}
               paddingAngle={2}
               stroke="#fff"
               strokeWidth={2}
@@ -94,18 +94,21 @@ function ComponentUtilDonut({ items, totalLabel, valueLabel }) {
         </div>
       </div>
 
-      <ScrollRegion className="w-full max-w-sm max-h-[160px] overflow-y-auto" label={valueLabel}>
-        <ul className="space-y-2 py-1">
+      <ScrollRegion
+        className="flex-1 min-h-0 min-w-0 w-full overflow-y-auto pr-1"
+        label={valueLabel}
+      >
+        <ul className="space-y-2.5 py-0.5">
           {slices.map((slice, i) => {
             const pct = total > 0 ? ((slice.value / total) * 100).toFixed(1) : "0.0";
             return (
-              <li key={slice.name} className="flex items-start justify-center gap-2 text-xs">
+              <li key={slice.name} className="flex items-start gap-2 text-xs">
                 <span
                   className="mt-1 inline-block w-2.5 h-2.5 rounded-sm shrink-0 border border-white shadow-sm"
                   style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
                 />
-                <div className="min-w-0 text-center">
-                  <div className="text-slate-700 leading-snug" title={slice.name}>
+                <div className="min-w-0 flex-1">
+                  <div className="text-slate-700 leading-snug break-words" title={slice.name}>
                     {slice.name}
                   </div>
                   <div className="text-slate-500 tabular-nums mt-0.5">
@@ -755,7 +758,7 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
         </Card>
 
         <Card title={labels.ftComponentUtilDonut} elevated>
-          <div className="p-3">
+          <div className="h-72 p-3">
             {(data?.component_utilization || []).length === 0 ? (
               <EmptyChart message={labels.noData} />
             ) : (
