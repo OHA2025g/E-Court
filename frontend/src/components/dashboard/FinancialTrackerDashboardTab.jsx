@@ -189,6 +189,10 @@ function HcReleasedSplitTooltip({ active, payload, label, labels }) {
         <span className="font-semibold tabular-nums">{fmtNum(row.utilized)}</span>
       </div>
       <div className="text-slate-700">
+        {labels.ftLegendUnutilized}:{" "}
+        <span className="font-semibold tabular-nums">{fmtNum(row.unutilized)}</span>
+      </div>
+      <div className="text-slate-700">
         {labels.ftUtilPct}:{" "}
         <span className="font-semibold tabular-nums">{fmtPct(row.util_pct)}</span>
       </div>
@@ -198,8 +202,8 @@ function HcReleasedSplitTooltip({ active, payload, label, labels }) {
 
 function HcReleasedSplitLegend({ labels }) {
   const items = [
-    { key: "released", label: labels.ftLegendReleased, color: "#22c55e" },
     { key: "utilized", label: labels.ftLegendUtilized, color: "#003B73" },
+    { key: "unutilized", label: labels.ftLegendUnutilized, color: "#22c55e" },
   ];
   return (
     <ul className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 pt-2 text-[11px]">
@@ -559,7 +563,7 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
                 />
                 <Bar
                   dataKey="unutilized"
-                  name={labels.ftLegendReleased}
+                  name={labels.ftLegendUnutilized}
                   stackId="released"
                   fill="#22c55e"
                   radius={[3, 3, 0, 0]}

@@ -130,7 +130,7 @@
     "ftHcReleased": "उच्च न्यायालयवार निधि जारी (₹ करोड़)",
     "ftHcUtilized": "उच्च न्यायालयवार निधि उपयोग (₹ करोड़)",
     "ftHcReleasedSplit": "उच्च न्यायालय निधि - जारी बनाम उपयोग (₹ करोड़)",
-    "ftHcReleasedSplitHintAll": "निधि जारी के अनुसार सभी {{n}} उच्च न्यायालय",
+    "ftHcReleasedSplitHintAll": "सभी {{n}} उच्च न्यायालय · बार की ऊँचाई = जारी निधि (उपयोग + अप्रयुक्त)",
     "ftUnutilizedShort": "अप्रयुक्त",
     "ftLegendReleased": "निधि जारी",
     "ftLegendUtilized": "निधि उपयोग",

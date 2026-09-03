@@ -136,7 +136,7 @@
     "ftHcReleased": "High Court wise Fund Released (₹ Cr)",
     "ftHcUtilized": "High Court wise Fund Utilised (₹ Cr)",
     "ftHcReleasedSplit": "High Court Funds - Released Vs Utilised (₹ Cr)",
-    "ftHcReleasedSplitHintAll": "All {{n}} High Courts by funds released",
+    "ftHcReleasedSplitHintAll": "All {{n}} High Courts · bar height = funds released (utilised + unutilised)",
     "ftUnutilizedShort": "Unutilised",
     "ftLegendReleased": "Fund Released",
     "ftLegendUtilized": "Fund Utilised",
