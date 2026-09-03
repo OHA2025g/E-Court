@@ -137,6 +137,8 @@
     "ftLegendUnutilized": "निधि अप्रयुक्त",
     "ftTop6": "शीर्ष 6",
     "ftBottom6": "निचले 6",
+    "ftTop3": "शीर्ष 3",
+    "ftBottom3": "निचले 3",
     "ftHcCompSliceHintTop": "निधि जारी के अनुसार शीर्ष {{n}} उच्च न्यायालय",
     "ftHcCompSliceHintBottom": "निधि जारी के अनुसार निचले {{n}} उच्च न्यायालय",
     "ftHcCompSliceHintTopBottom": "निधि जारी के अनुसार शीर्ष {{top}} और निचले {{bottom}} उच्च न्यायालय",

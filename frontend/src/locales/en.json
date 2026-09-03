@@ -143,6 +143,8 @@
     "ftLegendUnutilized": "Fund Unutilised",
     "ftTop6": "Top 6",
     "ftBottom6": "Bottom 6",
+    "ftTop3": "Top 3",
+    "ftBottom3": "Bottom 3",
     "ftHcCompSliceHintTop": "Top {{n}} High Courts by funds released",
     "ftHcCompSliceHintBottom": "Bottom {{n}} High Courts by funds released",
     "ftHcCompSliceHintTopBottom": "Top {{top}} and bottom {{bottom}} High Courts by funds released",
