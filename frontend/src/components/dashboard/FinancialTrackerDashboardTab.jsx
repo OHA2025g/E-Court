@@ -15,7 +15,6 @@ import {
 } from "recharts";
 import { api, fmtNum, fmtPct } from "@/lib/api";
 import Card, { KpiCard } from "@/components/Card";
-import ScrollRegion from "@/components/ui/ScrollRegion";
 import {
   CurrencyInr,
   Target,
@@ -60,8 +59,8 @@ function ComponentUtilDonut({ items, totalLabel, valueLabel }) {
   if (!slices.length) return null;
 
   return (
-    <div className="h-full flex flex-col sm:flex-row items-center sm:items-stretch gap-4 min-h-0">
-      <div className="relative mx-auto sm:mx-0 w-[180px] h-[180px] shrink-0 self-center">
+    <div className="flex flex-col items-center gap-3">
+      <div className="relative w-[160px] h-[160px] shrink-0">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
             <Pie
@@ -70,8 +69,8 @@ function ComponentUtilDonut({ items, totalLabel, valueLabel }) {
               nameKey="name"
               cx="50%"
               cy="50%"
-              innerRadius={52}
-              outerRadius={74}
+              innerRadius={48}
+              outerRadius={68}
               paddingAngle={2}
               stroke="#fff"
               strokeWidth={2}
@@ -94,32 +93,27 @@ function ComponentUtilDonut({ items, totalLabel, valueLabel }) {
         </div>
       </div>
 
-      <ScrollRegion
-        className="flex-1 min-h-0 min-w-0 w-full overflow-y-auto pr-1"
-        label={valueLabel}
-      >
-        <ul className="space-y-2.5 py-0.5">
-          {slices.map((slice, i) => {
-            const pct = total > 0 ? ((slice.value / total) * 100).toFixed(1) : "0.0";
-            return (
-              <li key={slice.name} className="flex items-start gap-2 text-xs">
-                <span
-                  className="mt-1 inline-block w-2.5 h-2.5 rounded-sm shrink-0 border border-white shadow-sm"
-                  style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="text-slate-700 leading-snug break-words" title={slice.name}>
-                    {slice.name}
-                  </div>
-                  <div className="text-slate-500 tabular-nums mt-0.5">
-                    {fmtNum(slice.value)} · {pct}%
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </ScrollRegion>
+      <ul className="w-full max-w-md space-y-1.5" aria-label={valueLabel}>
+        {slices.map((slice, i) => {
+          const pct = total > 0 ? ((slice.value / total) * 100).toFixed(1) : "0.0";
+          return (
+            <li key={slice.name} className="flex items-start gap-2 text-xs">
+              <span
+                className="mt-0.5 inline-block w-2.5 h-2.5 rounded-sm shrink-0 border border-white shadow-sm"
+                style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
+              />
+              <div className="min-w-0 flex-1 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+                <span className="text-slate-700 leading-snug" title={slice.name}>
+                  {slice.name}
+                </span>
+                <span className="text-slate-500 tabular-nums shrink-0">
+                  {fmtNum(slice.value)} · {pct}%
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
@@ -758,7 +752,7 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
         </Card>
 
         <Card title={labels.ftComponentUtilDonut} elevated>
-          <div className="h-72 p-3">
+          <div className="p-4">
             {(data?.component_utilization || []).length === 0 ? (
               <EmptyChart message={labels.noData} />
             ) : (
