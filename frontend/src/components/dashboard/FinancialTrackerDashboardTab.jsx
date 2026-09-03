@@ -432,10 +432,28 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
     [rankedHcByReleased, hcCompView],
   );
 
-  // Utilisation % chart: Top 3 + Bottom 3 HCs by funds released.
+  // Utilisation % chart: Top 3 + Bottom 3 HCs by overall utilisation %.
+  const rankedHcByUtilPct = useMemo(() => {
+    const utilByHc = new Map(
+      (data?.hc_utilized || [])
+        .filter((r) => r?.high_court)
+        .map((r) => [r.high_court, Number(r.utilized)]),
+    );
+    return [...(data?.hc_released || [])]
+      .filter((r) => r?.high_court)
+      .map((r) => {
+        const released = Number(r.released) || 0;
+        const utilized = utilByHc.has(r.high_court) ? Number(utilByHc.get(r.high_court)) : 0;
+        const pct = released > 0 && Number.isFinite(utilized) ? (Math.max(0, utilized) / released) * 100 : -Infinity;
+        return { hc: r.high_court, pct };
+      })
+      .sort((a, b) => b.pct - a.pct)
+      .map((x) => x.hc);
+  }, [data?.hc_released, data?.hc_utilized]);
+
   const utilPctHcNames = useMemo(
-    () => sliceTopAndBottom(rankedHcByReleased, HC_UTIL_PCT_ENDS),
-    [rankedHcByReleased],
+    () => sliceTopAndBottom(rankedHcByUtilPct, HC_UTIL_PCT_ENDS),
+    [rankedHcByUtilPct],
   );
 
   const hcComponentReleasedRows = useMemo(() => {
