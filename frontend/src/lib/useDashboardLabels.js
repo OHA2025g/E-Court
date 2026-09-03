@@ -87,6 +87,7 @@ export function useDashboardLabels() {
       ftHcCompSliceHintTop: (n) => t("dashboard.ftHcCompSliceHintTop", { n }),
       ftHcCompSliceHintBottom: (n) => t("dashboard.ftHcCompSliceHintBottom", { n }),
       ftHcCompSliceHintTopBottom: (top, bottom) => t("dashboard.ftHcCompSliceHintTopBottom", { top, bottom }),
+      ftUtilPctCompHcSliceHint: (n) => t("dashboard.ftUtilPctCompHcSliceHint", { n }),
       ftHcUtilSliceHintTop: (n) => t("dashboard.ftHcUtilSliceHintTop", { n }),
       ftHcUtilSliceHintBottom: (n) => t("dashboard.ftHcUtilSliceHintBottom", { n }),
       ftHcComponentReleased: t("dashboard.ftHcComponentReleased"),

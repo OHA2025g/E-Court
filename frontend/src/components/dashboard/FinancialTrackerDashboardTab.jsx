@@ -414,7 +414,7 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
     [rankedHcByReleased, hcCompView],
   );
 
-  // Utilisation % chart: always Top 3 + Bottom 3 by funds released.
+  // Utilisation % chart: Top 3 + Bottom 3 HCs by funds released.
   const utilPctHcNames = useMemo(
     () => sliceTopAndBottom(rankedHcByReleased, HC_UTIL_PCT_ENDS),
     [rankedHcByReleased],
@@ -438,8 +438,9 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
     }).filter(Boolean);
   }, [data?.hc_component_released, selectedCompHcs]);
 
+  // Rank components by mean util % across the selected HCs (desc), then Top 3 + Bottom 3.
   const utilPctRowsForSlice = useMemo(() => {
-    return (data?.utilization_by_component_hc || []).map((row) => {
+    const withHc = (data?.utilization_by_component_hc || []).map((row) => {
       const next = { component: row.component };
       utilPctHcNames.forEach((hc) => {
         if (Object.prototype.hasOwnProperty.call(row, hc)) next[hc] = row[hc];
@@ -447,6 +448,22 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
       const hasVal = utilPctHcNames.some((hc) => next[hc] != null);
       return hasVal ? next : null;
     }).filter(Boolean);
+
+    const ranked = [...withHc]
+      .map((row) => {
+        const vals = utilPctHcNames
+          .map((hc) => Number(row[hc]))
+          .filter((v) => Number.isFinite(v));
+        const mean = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : -Infinity;
+        return { row, mean };
+      })
+      .sort((a, b) => b.mean - a.mean);
+
+    const selectedNames = new Set(
+      sliceTopAndBottom(ranked.map((x) => x.row.component), HC_UTIL_PCT_ENDS),
+    );
+    // Preserve rank order: top util first, then bottom util.
+    return ranked.map((x) => x.row).filter((row) => selectedNames.has(row.component));
   }, [data?.utilization_by_component_hc, utilPctHcNames]);
 
   const hcCompSliceHint = useMemo(() => {
@@ -458,9 +475,9 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
   }, [selectedCompHcs.length, hcCompView, labels]);
 
   const utilPctSliceHint = useMemo(() => {
-    if (!utilPctHcNames.length) return null;
-    return labels.ftHcCompSliceHintTopBottom(HC_UTIL_PCT_ENDS, HC_UTIL_PCT_ENDS);
-  }, [utilPctHcNames.length, labels]);
+    if (!utilPctHcNames.length || !utilPctRowsForSlice.length) return null;
+    return labels.ftUtilPctCompHcSliceHint(HC_UTIL_PCT_ENDS);
+  }, [utilPctHcNames.length, utilPctRowsForSlice.length, labels]);
 
   // Rank HCs by total funds utilised (desc) for Top/Bottom 6 utilised chart.
   const rankedHcByUtilized = useMemo(
