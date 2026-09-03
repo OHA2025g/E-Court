@@ -351,30 +351,48 @@ function UtilPctComponentHcChart({ rows, hcNames, utilPctLabel }) {
     </ul>
   );
 
+  const legendPayload = hcNames.map((hc, i) => ({
+    dataKey: hc,
+    value: shortLabel(hc, 16),
+    color: CHART_COLORS[i % CHART_COLORS.length],
+  }));
+
+  const visibleHcCount = Math.max(1, hcNames.filter((hc) => !hiddenHc.has(hc)).length);
+  // Keep grouped bars readable: fixed thickness + tight gaps (6 HCs × ~8px needs taller plot).
+  const barSize = Math.max(6, Math.min(12, Math.floor(48 / visibleHcCount)));
+
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        layout="vertical"
-        data={chartData}
-        margin={{ top: 8, right: 24, left: 8, bottom: 4 }}
-      >
-        <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-        <XAxis type="number" stroke="#475569" fontSize={11} unit="%" domain={[0, 100]} />
-        <YAxis type="category" dataKey="component" stroke="#475569" fontSize={10} width={120} />
-        <Tooltip formatter={(v) => [fmtPct(v), utilPctLabel]} />
-        <Legend content={renderLegend} />
-        {hcNames.map((hc, i) => (
-          <Bar
-            key={hc}
-            dataKey={hc}
-            name={shortLabel(hc, 16)}
-            fill={CHART_COLORS[i % CHART_COLORS.length]}
-            radius={[0, 3, 3, 0]}
-            hide={hiddenHc.has(hc)}
-          />
-        ))}
-      </BarChart>
-    </ResponsiveContainer>
+    <div className="h-full flex flex-col min-h-0">
+      <div className="flex-1 min-h-0">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            layout="vertical"
+            data={chartData}
+            margin={{ top: 4, right: 24, left: 4, bottom: 4 }}
+            barCategoryGap={10}
+            barGap={2}
+            barSize={barSize}
+          >
+            <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
+            <XAxis type="number" stroke="#475569" fontSize={11} unit="%" domain={[0, "auto"]} />
+            <YAxis type="category" dataKey="component" stroke="#475569" fontSize={10} width={120} />
+            <Tooltip formatter={(v) => [fmtPct(v), utilPctLabel]} />
+            {hcNames.map((hc, i) => (
+              <Bar
+                key={hc}
+                dataKey={hc}
+                name={shortLabel(hc, 16)}
+                fill={CHART_COLORS[i % CHART_COLORS.length]}
+                radius={[0, 2, 2, 0]}
+                hide={hiddenHc.has(hc)}
+                isAnimationActive={false}
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      {renderLegend({ payload: legendPayload })}
+    </div>
   );
 }
 
@@ -653,7 +671,7 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
           subtitle={utilPctSliceHint || undefined}
           elevated
         >
-          <div className="h-80 p-4">
+          <div className="h-[26rem] p-4">
             {utilPctRowsForSlice.length === 0 || utilPctHcNames.length === 0 ? (
               <EmptyChart message={labels.noData} />
             ) : (
