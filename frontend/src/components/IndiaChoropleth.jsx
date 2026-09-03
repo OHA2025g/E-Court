@@ -76,13 +76,18 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
     metric,
   }), [reportingPeriod, highCourt, component, metric]);
 
+  // Physical map mixes incompatible UOMs nationally - require a component filter.
+  const requireComponent = metric === "physical";
+  const componentMissing = requireComponent && !component;
+
   const primary = useQuery({
     queryKey: ["states-rag", "v15-geo", filterParams],
     queryFn: () => api.get("/dashboard/states-rag", { params: filterParams }).then(r => r.data),
+    enabled: !componentMissing,
   });
 
   // Monthly periods often have no tracker rows - fall back to All periods so the map is not blank.
-  const primaryEmpty = primary.isSuccess && !statesHaveRag(primary.data);
+  const primaryEmpty = !componentMissing && primary.isSuccess && !statesHaveRag(primary.data);
   const fallback = useQuery({
     queryKey: ["states-rag", "v15-geo-fallback", { highCourt, component, metric }],
     queryFn: () => api.get("/dashboard/states-rag", {
@@ -92,20 +97,20 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
         metric,
       },
     }).then(r => r.data),
-    enabled: Boolean(reportingPeriod) && primaryEmpty,
+    enabled: !componentMissing && Boolean(reportingPeriod) && primaryEmpty,
   });
 
-  const usingFallback = Boolean(reportingPeriod) && primaryEmpty && statesHaveRag(fallback.data);
+  const usingFallback = !componentMissing && Boolean(reportingPeriod) && primaryEmpty && statesHaveRag(fallback.data);
   const data = usingFallback ? fallback.data : primary.data;
   const [hover, setHover] = useState(null);
   const mapShellRef = useRef(null);
-  const states = data || {};
+  const states = componentMissing ? {} : (data || {});
   const legend = ragLegendLabels(thresholds.data);
   const label = metricLabel(metric);
   const detail = hover ? mapHoverDetail(hover, metric, label) : null;
   const counts = hover ? mapHoverCounts(hover, metric) : null;
   const hasRagData = statesHaveRag(states);
-  const mapLoaded = primary.isSuccess || fallback.isSuccess;
+  const mapLoaded = !componentMissing && (primary.isSuccess || fallback.isSuccess);
 
   const onMapMouseMove = useCallback((e) => {
     const pos = pointerInMap(mapShellRef.current, e.clientX, e.clientY);
@@ -141,6 +146,24 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
           onMouseMove={onMapMouseMove}
           onMouseLeave={() => setHover(null)}
         >
+          {componentMissing ? (
+            <div
+              className="flex h-full min-h-[280px] items-center justify-center rounded-sm border border-dashed border-slate-300 bg-slate-50 px-6 text-center"
+              data-testid="india-map-select-component"
+              role="status"
+            >
+              <div className="max-w-md space-y-1">
+                <p className="text-sm font-medium text-slate-800">
+                  Select a component to view the Physical map
+                </p>
+                <p className="text-xs text-slate-500">
+                  Physical achievement mixes different units across components. Choose a component
+                  from the filter above to colour states by that component’s High Court RAG.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
           {usingFallback && (
             <div
               className="mb-3 rounded-sm border border-sky-200 bg-sky-50 px-3 py-2 text-xs text-sky-950"
@@ -255,6 +278,8 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
           >
             {detail || "Hover a state for Target / Achieved or Released / Utilised (same detail as heatmap)"}
           </div>
+            </>
+          )}
         </div>
         <div className="text-xs space-y-2 self-start">
           <div className="font-semibold uppercase tracking-wider text-[10px] text-slate-600">Legend</div>
