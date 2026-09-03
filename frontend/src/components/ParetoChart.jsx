@@ -9,7 +9,7 @@ import { barSeriesProps, lineSeriesProps, seriesLegendLabel, useAccessibleRag } 
 import { TID } from "@/lib/testIds";
 import {
   ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, Tooltip,
-  CartesianGrid, Legend, LabelList,
+  CartesianGrid, LabelList,
 } from "recharts";
 
 function ParetoTooltip({ active, payload, label, barLabel }) {
@@ -312,15 +312,14 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
           </div>
         ) : (
           <>
-            <div className="h-80">
+            <div className="h-[22rem]">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={series} margin={{ top: 28, right: 20, left: 4, bottom: 60 }}>
+                <ComposedChart data={series} margin={{ top: 28, right: 20, left: 4, bottom: 72 }}>
                   <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                  <XAxis dataKey={xLabel} stroke="#475569" fontSize={9} angle={-30} textAnchor="end" interval={0} height={70} />
+                  <XAxis dataKey={xLabel} stroke="#475569" fontSize={9} angle={-30} textAnchor="end" interval={0} height={80} dy={4} />
                   <YAxis yAxisId="left" stroke="#475569" fontSize={11} label={{ value: barLabel, angle: -90, position: "insideLeft", fontSize: 10 }} />
                   <YAxis yAxisId="right" orientation="right" stroke="#475569" fontSize={11} domain={[0, 100]} unit="%" />
                   <Tooltip content={<ParetoTooltip barLabel={barLabel} />} />
-                  <Legend />
                   <Bar
                     yAxisId="left"
                     dataKey="red_count"
@@ -354,6 +353,29 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
                   </Line>
                 </ComposedChart>
               </ResponsiveContainer>
+            </div>
+            <div
+              className="mt-3 mb-1 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-xs text-slate-600"
+              aria-hidden="true"
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <span
+                  className="inline-block w-4 border-t-2 border-dashed"
+                  style={{ borderColor: lineSeriesProps("cumulative_pct", accessible).stroke }}
+                />
+                <span
+                  className="inline-block w-2 h-2 rounded-full border border-white shadow-sm"
+                  style={{ background: lineSeriesProps("cumulative_pct", accessible).stroke }}
+                />
+                {seriesLegendLabel("Cumulative %", "cumulative_pct", accessible)}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span
+                  className="inline-block w-3 h-3 rounded-sm"
+                  style={{ background: barSeriesProps("red_count", accessible).fill }}
+                />
+                {seriesLegendLabel(barLabel, "red_count", accessible)}
+              </span>
             </div>
             {cutoff > 0 && series.length > 0 && (
               <p className="mt-3 text-[11px] text-slate-500 flex flex-wrap items-center gap-x-3 gap-y-1">

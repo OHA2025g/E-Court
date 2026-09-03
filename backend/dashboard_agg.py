@@ -148,7 +148,7 @@ def physical_absolute_totals(rows: list) -> dict:
     - Drops non-summable UOMs (Cloud GB/TB/PB, Percentage) so storage capacity
       cannot inflate Phys Achieved.
     - When Count and Crore Pages both exist, shows Count totals (primary UOM)
-      and sets mixed_uom=True so % stays mean-of-indicators, not ratio-of-sums.
+      and sets mixed_uom=True; KPI % uses Count sum ratio when those totals exist.
     """
     active = [
         r for r in rows
@@ -658,9 +658,11 @@ async def compute_trend_with_milestones(
     for per in periods_sorted:
         f = fmap.get(per, {"released": None, "utilized": None})
         o = omap.get(per, {"total": 0, "reported": 0})
+        phys_rows = pmap.get(per, [])
+        phys_totals = physical_absolute_totals(phys_rows)
         periods.append({
             "period": per,
-            "phys_percent": mean_achievement_percent(pmap.get(per, []), safe_div_fn),
+            "phys_percent": physical_kpi_achievement_percent(phys_rows, phys_totals, safe_div_fn),
             "fin_percent": safe_div_fn(f.get("utilized"), f.get("released")),
             "outcome_reported_pct": safe_div_fn(o.get("reported"), o.get("total")),
         })

@@ -187,6 +187,23 @@ def test_mixed_uom_kpi_percent_matches_count_scope():
     assert pct == 50.0
 
 
+def test_trend_period_phys_uses_kpi_not_unweighted_mean():
+    """Progress Trend per-period Physical % must match KPI card (not mean of all row %)."""
+    rows = [
+        {"component": "e-Sewa Kendras", "target": 100, "achieved": 80},
+        {"component": "Paperless Courts", "target": 100, "achieved": 20},
+        {"component": "Digitisation of Court Records", "target": 10, "achieved": 1},
+        {"component": "Cloud Computing & Storage", "target": 0, "achieved": 5000},
+    ]
+    totals = physical_absolute_totals(rows)
+    kpi = physical_kpi_achievement_percent(rows, totals, _safe_div)
+    mean = mean_achievement_percent(rows, _safe_div)
+    # Count-scoped sum ratio: (80+20)/200 = 50%; mean of three indicator % differs.
+    assert kpi == 50.0
+    assert mean != kpi
+    assert mean == round(((80 / 100) * 100 + (20 / 100) * 100 + (1 / 10) * 100) / 3, 2)
+
+
 def test_mean_skips_absurd_unit_mismatch_percent():
     rows = [
         {"component": "e-Sewa Kendras", "target": 100, "achieved": 50},

@@ -129,6 +129,24 @@ def test_trend_with_milestones(client, viewer_session):
         assert "outcome_reported_pct" in data["periods"][0]
 
 
+def test_trend_phys_percent_matches_summary_kpi(client, viewer_session):
+    """Progress Trend Physical % must use the same formula as the Physical KPI card."""
+    token = viewer_session["token"]
+    period = "2026-06"
+    trend = client.get("/api/dashboard/trend", headers=auth_headers(token))
+    summary = client.get(
+        "/api/dashboard/summary",
+        headers=auth_headers(token),
+        params={"reporting_period": period},
+    )
+    assert trend.status_code == 200
+    assert summary.status_code == 200
+    row = next((p for p in trend.json().get("periods") or [] if p.get("period") == period), None)
+    if row is None:
+        return
+    assert row.get("phys_percent") == summary.json().get("physical", {}).get("percent")
+
+
 def test_states_rag_metric(client, viewer_session):
     token = viewer_session["token"]
     r = client.get("/api/dashboard/states-rag", headers=auth_headers(token), params={"metric": "financial"})
