@@ -148,14 +148,6 @@ function sliceRankedNames(rankedNames, view, n) {
   return list.slice(0, n);
 }
 
-/** Top N and bottom N from a desc-ranked list (shows all when the pool is small). */
-function sliceTopAndBottom(rankedNames, n) {
-  const list = rankedNames || [];
-  if (list.length <= n) return [...list];
-  if (list.length <= n * 2) return [...list];
-  return [...list.slice(0, n), ...list.slice(-n)];
-}
-
 /** Join HC released + utilised into stacked rows: utilised (bottom) + remainder (top = released). */
 function buildHcReleasedSplitRows(hcReleased, hcUtilized) {
   const utilByHc = new Map();
