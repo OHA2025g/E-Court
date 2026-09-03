@@ -49,6 +49,51 @@ function ParetoInfoDialog({ open, onOpenChange, title, closeLabel, totalRed, cut
           </section>
 
           <section>
+            <h4 className="font-semibold text-slate-900 mb-1">Why some table rows are pink and others are white</h4>
+            <p className="mb-2">
+              The table under the chart highlights rows to show the Pareto cutoff — <strong>not</strong> a second RAG status.
+              Every row already has a red-flag count; the background only marks priority.
+            </p>
+            <div className="overflow-x-auto rounded-lg border border-slate-200">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 text-slate-600 uppercase tracking-wide">
+                  <tr>
+                    <th className="px-3 py-2">Row colour</th>
+                    <th className="px-3 py-2">Meaning</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-t border-slate-100 bg-red-50/50">
+                    <td className="px-3 py-2 font-semibold">Pink / light red</td>
+                    <td className="px-3 py-2">
+                      “Vital few” — top components whose <strong>cumulative %</strong> first reaches or exceeds
+                      <strong> 80%</strong> of all reds. Same set as “Top N …” in the subtitle
+                      {cutoff > 0 ? (
+                        <>
+                          {" "}(currently top <strong>{cutoff}</strong>)
+                        </>
+                      ) : null}
+                      . Focus remediation here first.
+                    </td>
+                  </tr>
+                  <tr className="border-t border-slate-100">
+                    <td className="px-3 py-2 font-semibold">White / no tint</td>
+                    <td className="px-3 py-2">
+                      “Useful many” — remaining components after the 80% cutoff. They still have reds, but together
+                      they account for the leftover share (for example ~16% after 83.7%).
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul className="mt-2 list-disc pl-5 space-y-1 text-xs text-slate-600">
+              <li>Pink does <strong>not</strong> mean that row is “more red” than its RED COUNT already shows.</li>
+              <li>Highlight stops at the first row where Cumulative ≥ 80% (inclusive).</li>
+              <li>Example: if NSTEP brings cumulative to 83.7%, rows from Digitisation through NSTEP are pink; e-Office onward stay white.</li>
+            </ul>
+          </section>
+
+          <section>
             <h4 className="font-semibold text-slate-900 mb-1">How to read the chart</h4>
             <ul className="list-disc pl-5 space-y-1.5">
               <li>
@@ -159,8 +204,8 @@ pareto_cutoff = first position where cumulative_pct ≥ 80`}</pre>
           <section>
             <h4 className="font-semibold text-slate-900 mb-1">How to use it</h4>
             <ul className="list-disc pl-5 space-y-1">
-              <li>Start with the leftmost bars — they hold the most reds.</li>
-              <li>Use the table under the chart for exact red count, % of total, and cumulative %.</li>
+              <li>Start with the pink table rows / leftmost bars — they hold ≥80% of reds.</li>
+              <li>Use the table for exact red count, % of total, and cumulative %.</li>
               <li>Drill into those components in Physical / Financial trackers (or filters) to see which High Courts or indicators are red.</li>
             </ul>
             <p className="mt-2">
@@ -310,7 +355,19 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
-            <table className="dense-table w-full mt-4 text-xs table-fixed">
+            {cutoff > 0 && series.length > 0 && (
+              <p className="mt-3 text-[11px] text-slate-500 flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="inline-block w-3 h-3 rounded-sm bg-red-50 border border-red-200" aria-hidden="true" />
+                  Pink rows = top {cutoff} covering ≥80% of reds (priority)
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="inline-block w-3 h-3 rounded-sm bg-white border border-slate-200" aria-hidden="true" />
+                  White rows = remaining share
+                </span>
+              </p>
+            )}
+            <table className="dense-table w-full mt-2 text-xs table-fixed">
               <colgroup>
                 <col className="w-[40%]" />
                 <col className="w-[20%]" />
