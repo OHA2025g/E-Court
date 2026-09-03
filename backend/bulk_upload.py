@@ -245,15 +245,21 @@ async def process_physical_bulk(
             "storage_type": storage_type,
         })
         existing = await db.physical_entries.find_one(q)
-        if user["role"] == "CPC" and existing and is_esewa:
-            target_dpr = existing.get("target_dpr")
+        if is_esewa and existing:
+            # DPR/e-Committee columns removed from UI/template — preserve stored values
+            if target_dpr is None:
+                target_dpr = existing.get("target_dpr")
+            if achieved_ecommittee is None:
+                achieved_ecommittee = existing.get("achieved_ecommittee")
+            if user["role"] == "CPC":
+                target_dpr = existing.get("target_dpr")
         if is_esewa:
-            # e-Sewa uses DPR/e-Committee/CPC only — clear cumulative Target/Achieved
+            # e-Sewa uses CPC for progress; no cumulative Target/Achieved
             eff_target = None
             ach_val = None
             percent_ecommittee = safe_div_fn(achieved_ecommittee, target_dpr)
             percent_cpc = safe_div_fn(achieved_cpc, target_cpc)
-            percent = percent_ecommittee
+            percent = percent_cpc
         else:
             eff_target = target_val if (user["role"] == "Admin" and target_val is not None) else (existing.get("target") if existing else None)
             percent = safe_div_fn(ach_val, eff_target)

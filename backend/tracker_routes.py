@@ -262,20 +262,21 @@ def register_tracker_routes(
         achieved_ecommittee = body.achieved_ecommittee if is_esewa else None
         target_cpc = body.target_cpc if is_esewa else None
         achieved_cpc = body.achieved_cpc if is_esewa else None
-        # Legacy iJuris / init payloads often omit DPR/CPC fields — do not wipe filled rows
-        if is_esewa and existing and all(
-            v is None for v in (target_dpr, achieved_ecommittee, target_cpc, achieved_cpc)
-        ):
-            target_dpr = existing.get("target_dpr")
-            achieved_ecommittee = existing.get("achieved_ecommittee")
-            target_cpc = existing.get("target_cpc")
-            achieved_cpc = existing.get("achieved_cpc")
+        # Preserve DPR/e-Committee (no longer editable in UI) and omitted CPC on legacy payloads
+        if is_esewa and existing:
+            if target_dpr is None:
+                target_dpr = existing.get("target_dpr")
+            if achieved_ecommittee is None:
+                achieved_ecommittee = existing.get("achieved_ecommittee")
+            if target_cpc is None and achieved_cpc is None:
+                target_cpc = existing.get("target_cpc")
+                achieved_cpc = existing.get("achieved_cpc")
         percent_ecommittee = safe_div_fn(achieved_ecommittee, target_dpr) if is_esewa else None
         percent_cpc = safe_div_fn(achieved_cpc, target_cpc) if is_esewa else None
-        # e-Sewa uses DPR/e-Committee/CPC fields only — no cumulative Target/Achieved
+        # e-Sewa uses CPC fields for progress; DPR/e-Committee kept for legacy data only
         target_val = None if is_esewa else body.target
         achieved_val = None if is_esewa else body.achieved
-        percent = percent_ecommittee if is_esewa else safe_div_fn(achieved_val, target_val)
+        percent = percent_cpc if is_esewa else safe_div_fn(achieved_val, target_val)
         thresholds = (await db.settings.find_one({"key": "rag_thresholds"}) or {}).get(
             "value", default_rag_thresholds
         )

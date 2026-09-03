@@ -303,11 +303,11 @@ def register_bulk_routes(
         ws = wb.add_worksheet("PhysicalBulk")
         hf = wb.add_format({"bold": True, "bg_color": "#0A1128", "font_color": "white", "border": 1})
         headers = ["High Court", "Component", "Sub-Component", "Type of Storage", "District", "Target", "Achieved",
-                   "Target as per DPR", "Achieved as per e-Committee", "Target as per CPC", "Achieved as per CPC", "Remarks"]
+                   "Target as per CPC", "Achieved as per CPC", "Remarks"]
         for i, h in enumerate(headers):
             ws.write(0, i, h, hf)
         sample = [
-            ["Allahabad", "e-Sewa Kendras", "No of e-sewa kendras in court complexes (in Absolute Count)", "", "", 10, 5, 10, 4, 12, 5, "Sample e-Sewa row"],
+            ["Allahabad", "e-Sewa Kendras", "No of e-sewa kendras in court complexes (in Absolute Count)", "", "", 10, 5, 12, 5, "Sample e-Sewa row"],
         ]
         for r, row in enumerate(sample, start=1):
             for c, v in enumerate(row):

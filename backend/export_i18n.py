@@ -53,7 +53,6 @@ def physical_headers(lang: str) -> list[str]:
         return [
             "High Court", "District", "Component", "Sub-Component", "Type of Storage", "Period", "Target",
             "Achieved", "% Achieved",
-            "Target as per DPR", "Achieved as per e-Committee", "% Achieved as per e-Committee",
             "Target as per CPC", "Achieved as per CPC", "% Achieved as per CPC",
             "RAG", "Remarks",
         ]
@@ -61,7 +60,6 @@ def physical_headers(lang: str) -> list[str]:
         _t("high_court", lang), _t("district", lang), _t("component", lang),
         _t("sub_component", lang), "Type of Storage",
         _t("period", lang), "Target", "Achieved", "% Achieved",
-        "Target as per DPR", "Achieved as per e-Committee", "% Achieved as per e-Committee",
         "Target as per CPC", "Achieved as per CPC", "% Achieved as per CPC",
         _t("rag", lang), _t("remarks", lang),
     ]
