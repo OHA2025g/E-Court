@@ -22,7 +22,17 @@ import {
   Wallet,
 } from "@phosphor-icons/react";
 
-const CHART_COLORS = ["#f59e0b", "#fb923c", "#ea580c", "#14b8a6", "#6366f1", "#ec4899", "#84cc16", "#64748b"];
+// Consecutive colors are high-contrast so Top/Bottom 3 series stay visually distinct.
+const CHART_COLORS = [
+  "#003B73", // navy
+  "#f59e0b", // amber
+  "#14b8a6", // teal
+  "#ec4899", // pink
+  "#6366f1", // indigo
+  "#ea580c", // orange
+  "#84cc16", // lime
+  "#64748b", // slate
+];
 
 function shortLabel(name, max = 18) {
   if (!name) return "-";
