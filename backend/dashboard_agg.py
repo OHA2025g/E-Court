@@ -250,10 +250,9 @@ def resolve_period_pair(reporting_period: Optional[str] = None) -> Optional[tupl
 
 
 async def aggregate_hc_percent_physical(db, match: dict) -> dict[str, float]:
-    """HC physical % = mean of per-indicator achieved/target.
+    """HC physical % aligned with High Court Comparison / KPI (Count-scoped sum ratio).
 
     No usable target (e.g. Cloud capacity) → omitted so callers treat it as NA.
-    Do not invent relative-vs-max ranking.
     """
     def _pct(achieved, target):
         if achieved is None or target is None or not target:
@@ -266,11 +265,13 @@ async def aggregate_hc_percent_physical(db, match: dict) -> dict[str, float]:
         hc = r.get("high_court")
         if hc:
             by_hc[hc].append(r)
-    return {
-        hc: pct
-        for hc, hc_rows in by_hc.items()
-        if (pct := mean_achievement_percent(hc_rows, _pct)) is not None
-    }
+    out: dict[str, float] = {}
+    for hc, hc_rows in by_hc.items():
+        totals = physical_absolute_totals(hc_rows)
+        pct = physical_kpi_achievement_percent(hc_rows, totals, _pct)
+        if pct is not None:
+            out[hc] = pct
+    return out
 
 
 async def aggregate_hc_percent_financial(db, match: dict) -> dict[str, float]:
@@ -977,11 +978,13 @@ def _hc_percent_physical_from_rows(rows: list, safe_div_fn: Callable) -> dict[st
         hc = row.get("high_court")
         if hc:
             by_hc[hc].append(row)
-    return {
-        hc: pct
-        for hc, hc_rows in by_hc.items()
-        if (pct := mean_achievement_percent(hc_rows, safe_div_fn)) is not None
-    }
+    out: dict[str, float] = {}
+    for hc, hc_rows in by_hc.items():
+        totals = physical_absolute_totals(hc_rows)
+        pct = physical_kpi_achievement_percent(hc_rows, totals, safe_div_fn)
+        if pct is not None:
+            out[hc] = pct
+    return out
 
 
 def _outcome_hc_ranking_from_rows(rows: list, safe_div_fn: Callable) -> list:
@@ -1268,8 +1271,10 @@ async def compute_dashboard_by_hc(
     for hc_key in hcs:
         hc_phys = pmap.get(hc_key, [])
         totals = physical_absolute_totals(hc_phys)
-        # Target-based mean % only. Cloud with no target → NA, not ranking vs the top HC.
-        phys_pct = mean_achievement_percent(hc_phys, safe_div_fn) if hc_phys else None
+        # Same formula as tooltip Target/Achieved and national Physical KPI (Count-scoped sum ratio).
+        phys_pct = (
+            physical_kpi_achievement_percent(hc_phys, totals, safe_div_fn) if hc_phys else None
+        )
         f = fmap.get(hc_key, {"released": None, "utilized": None})
         # Prefer scoped component UOM; else homogeneous absolute scope (e.g. Cloud-only filter).
         phys_uom = selected_uom or (None if totals.get("mixed_uom") else totals.get("uom"))

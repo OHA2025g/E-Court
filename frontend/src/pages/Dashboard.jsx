@@ -371,7 +371,7 @@ export default function Dashboard() {
     enabled: periodReady,
   });
   const byHc = useQuery({
-    queryKey: ["dash-hc", "v3-mean", dashParams, cpcCourt],
+    queryKey: ["dash-hc", "v4-kpi-sum", dashParams, cpcCourt],
     queryFn: () => api.get("/dashboard/by-high-court", { params: dashParams }).then(r => r.data),
     enabled: !cpcCourt && periodReady,
   });

@@ -155,6 +155,25 @@ def test_component_phys_percent_is_na_when_cloud_has_no_targets():
     assert pct is not None and 0 < pct <= 100
 
 
+def test_hc_comparison_phys_percent_matches_tooltip_sum_ratio():
+    """HC Comparison % must match Target/Achieved shown in tooltip (not unweighted mean)."""
+    # Count totals 636/626 ≈ 98.43%, but mean of row % can be inflated (e.g. 121.7%).
+    rows = [
+        {"component": "e-Sewa Kendras", "target": 100, "achieved": 50},
+        {"component": "Paperless Courts", "target": 200, "achieved": 100},
+        {"component": "Live Streaming", "target": 336, "achieved": 476},  # >100% row
+        {"component": "Digitisation of Court Records", "target": 5, "achieved": 1},
+        {"component": "Cloud Computing & Storage", "target": 0, "achieved": 9000},
+    ]
+    totals = physical_absolute_totals(rows)
+    assert totals["target"] == 636
+    assert totals["achieved"] == 626
+    kpi = physical_kpi_achievement_percent(rows, totals, _safe_div)
+    mean = mean_achievement_percent(rows, _safe_div)
+    assert kpi == round(626 / 636 * 100, 2)  # 98.43 — matches Target/Achieved tooltip
+    assert mean != kpi  # unweighted mean of indicator % is a different number
+
+
 def test_hc_comparison_percent_is_na_when_target_missing():
     """High Court Comparison must not turn Target NA into a ranking % vs the top court."""
     madras = [{"high_court": "Madras", "target": None, "achieved": 8202.24}]
