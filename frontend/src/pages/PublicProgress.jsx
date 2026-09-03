@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -17,7 +17,7 @@ import PublicIndiaChoropleth from "@/components/PublicIndiaChoropleth";
 import PwaInstallPrompt, { OfflineBanner } from "@/components/PwaInstallPrompt";
 import ComponentHcHeatmap from "@/components/ComponentHcHeatmap";
 import ParetoChart from "@/components/ParetoChart";
-import TrendChart from "@/components/TrendChart";
+import TrendChart, { ProgressTrendInfoButton } from "@/components/TrendChart";
 import RagDeltaWidget from "@/components/RagDeltaWidget";
 import Card from "@/components/Card";
 import {
@@ -207,6 +207,7 @@ function RankList({ title, items, valueKey, accent, icon: Icon }) {
 export default function PublicProgress() {
   const { t } = useTranslation();
   const [accessibleRag] = useAccessibleRag();
+  const [trendInfoOpen, setTrendInfoOpen] = useState(false);
   const { data, isLoading, isError } = useQuery({
     queryKey: ["public-progress"],
     queryFn: fetchPublicProgress,
@@ -348,9 +349,19 @@ export default function PublicProgress() {
                   subtitle="Physical, financial, and outcome reporting over reporting periods"
                   accentHeader
                   elevated
+                  titleAction={(
+                    <ProgressTrendInfoButton
+                      onClick={() => setTrendInfoOpen(true)}
+                      ariaLabel={t("dashboard.progressTrendInfoAria")}
+                    />
+                  )}
                 >
                   <div className="p-5">
-                    <TrendChart trendData={data.viz.trend} />
+                    <TrendChart
+                      trendData={data.viz.trend}
+                      infoOpen={trendInfoOpen}
+                      onInfoOpenChange={setTrendInfoOpen}
+                    />
                   </div>
                 </Card>
               </section>

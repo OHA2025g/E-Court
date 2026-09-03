@@ -44,6 +44,8 @@ export const TID = {
   ragDonutInfoDialog: "rag-donut-info-dialog",
   paretoInfoBtn: "pareto-info-btn",
   paretoInfoDialog: "pareto-info-dialog",
+  progressTrendInfoBtn: "progress-trend-info-btn",
+  progressTrendInfoDialog: "progress-trend-info-dialog",
   componentChart: "component-bar-chart",
   hcChart: "hc-bar-chart",
   // common form

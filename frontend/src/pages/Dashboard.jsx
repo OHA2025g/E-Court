@@ -32,7 +32,7 @@ import RagDeltaWidget from "@/components/RagDeltaWidget";
 import ComponentHcHeatmap from "@/components/ComponentHcHeatmap";
 import DashboardTabErrorBoundary from "@/components/DashboardTabErrorBoundary";
 import ParetoChart from "@/components/ParetoChart";
-import TrendChart from "@/components/TrendChart";
+import TrendChart, { ProgressTrendInfoButton } from "@/components/TrendChart";
 import DashboardAiInsights from "@/components/dashboard/DashboardAiInsights";
 import ScrollRegion from "@/components/ui/ScrollRegion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -315,6 +315,7 @@ export default function Dashboard() {
   const [compSort, setCompSort] = useState({ key: "component", dir: "asc" });
   const [hcSort, setHcSort] = useState({ key: "high_court", dir: "asc" });
   const [ragInfoOpen, setRagInfoOpen] = useState(false);
+  const [trendInfoOpen, setTrendInfoOpen] = useState(false);
   const [accessibleRag] = useAccessibleRag();
   const cpcCourt = user?.role === "CPC" ? user?.high_court : null;
   const visibleTabs = useMemo(
@@ -809,8 +810,21 @@ export default function Dashboard() {
         <TabsContent value="rag-trends" className="mt-5 space-y-5">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {ragDonut}
-            <Card title={labels.progressTrend} elevated>
-              <TrendChart trendData={trend.data} />
+            <Card
+              title={labels.progressTrend}
+              elevated
+              titleAction={(
+                <ProgressTrendInfoButton
+                  onClick={() => setTrendInfoOpen(true)}
+                  ariaLabel={labels.progressTrendInfoAria}
+                />
+              )}
+            >
+              <TrendChart
+                trendData={trend.data}
+                infoOpen={trendInfoOpen}
+                onInfoOpenChange={setTrendInfoOpen}
+              />
             </Card>
           </div>
         </TabsContent>
