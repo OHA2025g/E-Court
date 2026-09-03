@@ -6,7 +6,13 @@ BACKEND = Path(__file__).resolve().parents[1]
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
 
-from rollup import financial_exact_totals_stages, financial_rollup_stages  # noqa: E402
+from rollup import (  # noqa: E402
+    _financial_drop_duplicate_nsc_stages,
+    financial_exact_totals_stages,
+    financial_hc_rollup_stages,
+    financial_rollup_stages,
+)
+from seed_constants import NSC_COMPONENT  # noqa: E402
 
 
 def test_round_then_sum_differs_from_sum_then_round():
@@ -32,11 +38,12 @@ def test_rupee_sum_then_crore_beats_per_row_4dp():
 def test_financial_exact_totals_pipeline_sums_rupees_then_divides():
     stages = financial_exact_totals_stages({"reporting_period": "2026-03"})
     assert stages[0] == {"$match": {"reporting_period": "2026-03"}}
-    group = stages[1]["$group"]
+    assert any("$setWindowFields" in s for s in stages)
+    group = next(s["$group"] for s in stages if "$group" in s)
     assert group["_id"] is None
     assert "released_rupees" in group
     assert "utilized_rupees" in group
-    project = stages[2]["$project"]
+    project = next(s["$project"] for s in stages if "$project" in s)
     assert project["released"]["$cond"][2] == {"$divide": ["$released_rupees", 10_000_000]}
     assert project["utilized"]["$cond"][2] == {"$divide": ["$utilized_rupees", 10_000_000]}
 
@@ -50,3 +57,18 @@ def test_financial_rollup_stages_use_exact_rupees_then_crore():
     assert "fund_utilized_rupees" in group
     project = next(s["$project"] for s in stages if "$project" in s and "fund_released" in s["$project"])
     assert project["fund_released"]["$cond"][2] == {"$divide": ["$fund_released_rupees", 10_000_000]}
+
+
+def test_financial_pipelines_drop_duplicate_nsc_before_grouping():
+    drop = _financial_drop_duplicate_nsc_stages()
+    assert drop[0]["$setWindowFields"]["output"]["_has_nsc_split"]
+    match_expr = drop[1]["$match"]["$expr"]["$or"]
+    assert {"$ne": ["$component", NSC_COMPONENT]} in match_expr
+
+    for stages in (
+        financial_exact_totals_stages({"reporting_period": "2026-06"}),
+        financial_hc_rollup_stages({"reporting_period": "2026-06"}),
+        financial_rollup_stages({"reporting_period": "2026-06"}),
+    ):
+        group_idx = next(i for i, s in enumerate(stages) if "$group" in s)
+        assert any("$setWindowFields" in s for s in stages[:group_idx])

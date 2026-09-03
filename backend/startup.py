@@ -19,6 +19,8 @@ from seed_constants import (
     DEFAULT_STORAGE_TYPE,
     DPR_DELIVERABLES,
     HIGH_COURTS,
+    NSC_COMPONENT,
+    NSC_FINANCIAL_COMPONENTS,
     OUTCOME_SUBJECTS,
     REPORTING_PERIODS,
     RETIRED_REPORTING_PERIODS,
@@ -286,6 +288,48 @@ async def migrate_nsc_room_complex_indicators(db):
         inserted += 1
     if inserted:
         logger.info("NSC indicator migration: inserted=%d indicators", inserted)
+
+
+NSC_FINANCIAL_DEDUPE_CACHE_KEY = "nsc_financial_dedupe_cache_bust_v1"
+
+
+async def purge_duplicate_nsc_financial_canonical(db):
+    """Delete summed BRD NSC financial rows when Rooms/Complex lines already exist.
+
+    Geographic heatmap and national KPIs were adding the canonical
+    'ICT for Newly Set-Up Courts' total on top of the Court Rooms + Court
+    Complex lines from the consolidated tracker (every High Court).
+    """
+    deleted = 0
+    async for row in db.financial_entries.find({"component": NSC_COMPONENT}):
+        split = await db.financial_entries.find_one({
+            "high_court": row.get("high_court"),
+            "reporting_period": row.get("reporting_period"),
+            "district": row.get("district"),
+            "component": {"$in": list(NSC_FINANCIAL_COMPONENTS)},
+        })
+        if not split:
+            continue
+        await db.financial_entries.delete_one({"_id": row["_id"]})
+        deleted += 1
+    bust = await db.settings.find_one({"key": NSC_FINANCIAL_DEDUPE_CACHE_KEY})
+    if deleted or not (bust and bust.get("value")):
+        if deleted:
+            logger.info(
+                "Purged duplicate canonical NSC financial rows: deleted=%d",
+                deleted,
+            )
+        try:
+            from cache_layer import cache_invalidate_prefix
+            cache_invalidate_prefix("dashboard:")
+            cache_invalidate_prefix("public:progress")
+        except Exception as exc:
+            logger.warning("NSC financial dedupe cache invalidation skipped: %s", exc)
+        await db.settings.update_one(
+            {"key": NSC_FINANCIAL_DEDUPE_CACHE_KEY},
+            {"$set": {"value": True}},
+            upsert=True,
+        )
 
 
 async def migrate_ict_in_high_courts_master(db):
@@ -738,6 +782,7 @@ async def ensure_indexes(db):
     await migrate_cloud_to_cumulative_period(db)
     await migrate_digitisation_crore_page_units(db)
     await migrate_nsc_room_complex_indicators(db)
+    await purge_duplicate_nsc_financial_canonical(db)
     await migrate_ict_in_high_courts_master(db)
     await restore_cloud_financial_actuals_from_audits(db)
     await canonicalize_tracker_high_court_dashes(db)

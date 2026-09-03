@@ -1,12 +1,19 @@
 """Rollup aggregation and init-period tests."""
-from datetime import datetime, timezone
-
-"""Rollup aggregation and init-period tests."""
 import uuid
 from datetime import datetime, timezone
 
+import pytest
 from conftest import _sync_db, auth_headers
-from rollup import physical_national_totals_stages
+from rollup import (
+    financial_exact_totals_stages,
+    financial_hc_rollup_stages,
+    physical_national_totals_stages,
+)
+from seed_constants import (
+    NSC_COMPONENT,
+    NSC_FINANCIAL_COMPLEX,
+    NSC_FINANCIAL_ROOMS,
+)
 
 HC = "Allahabad"
 COMPONENT = "e-Sewa Kendras"
@@ -118,3 +125,72 @@ def test_financial_init_period_idempotent(admin_session):
     r2 = client.post("/api/financial/init-period", headers=headers, json=body)
     assert r2.status_code == 200, r2.text
     assert r2.json()["created"] == 0
+
+
+def test_financial_hc_rollup_drops_duplicate_nsc_canonical():
+    """Heatmap Released must not add canonical NSC on top of Rooms + Complex."""
+    hc = "Gauhati – Arunachal Pradesh"
+    period = "2099-01"
+    q = {"high_court": hc, "reporting_period": period}
+    _sync_db.financial_entries.delete_many(q)
+    rooms_rupees = 826_887.0
+    complex_rupees = 5_244_502.0
+    cloud_rupees = 11_710_994.96
+    other_rupees = 193_307_448.0 - rooms_rupees - complex_rupees
+    canonical_cr = 0.6071  # 4dp round of rooms+complex; the duplicate
+    try:
+        _sync_db.financial_entries.insert_many([
+            {
+                **q, "district": None, "component": NSC_COMPONENT,
+                "fund_released": canonical_cr, "fund_utilized": 0.2022,
+            },
+            {
+                **q, "district": None, "component": NSC_FINANCIAL_ROOMS,
+                "fund_released": rooms_rupees / 1e7, "fund_released_rupees": rooms_rupees,
+                "fund_utilized": rooms_rupees / 1e7, "fund_utilized_rupees": rooms_rupees,
+            },
+            {
+                **q, "district": None, "component": NSC_FINANCIAL_COMPLEX,
+                "fund_released": complex_rupees / 1e7, "fund_released_rupees": complex_rupees,
+                "fund_utilized": 1_195_193 / 1e7, "fund_utilized_rupees": 1_195_193,
+            },
+            {
+                **q, "district": None, "component": "Cloud Computing & Storage",
+                "fund_released": cloud_rupees / 1e7, "fund_released_rupees": cloud_rupees,
+                "fund_utilized": 2_545_224.23 / 1e7, "fund_utilized_rupees": 2_545_224.23,
+            },
+            {
+                **q, "district": None, "component": "e-Sewa Kendras",
+                "fund_released": other_rupees / 1e7, "fund_released_rupees": other_rupees,
+                "fund_utilized": 0, "fund_utilized_rupees": 0,
+            },
+        ])
+        hc_rows = list(_sync_db.financial_entries.aggregate(financial_hc_rollup_stages(q)))
+        assert len(hc_rows) == 1
+        expected = (rooms_rupees + complex_rupees + cloud_rupees + other_rupees) / 1e7
+        assert hc_rows[0]["r"] == pytest.approx(expected, rel=0, abs=1e-9)
+        inflated = expected + canonical_cr
+        assert hc_rows[0]["r"] != pytest.approx(inflated, abs=0.001)
+        assert hc_rows[0]["r"] == pytest.approx(20.501844296, abs=1e-9)
+
+        totals = list(_sync_db.financial_entries.aggregate(financial_exact_totals_stages(q)))
+        assert totals[0]["released"] == pytest.approx(expected, rel=0, abs=1e-9)
+    finally:
+        _sync_db.financial_entries.delete_many(q)
+
+
+def test_financial_hc_rollup_keeps_canonical_nsc_when_no_split():
+    hc = "Sikkim"
+    period = "2099-02"
+    q = {"high_court": hc, "reporting_period": period}
+    _sync_db.financial_entries.delete_many(q)
+    try:
+        _sync_db.financial_entries.insert_one({
+            **q, "district": None, "component": NSC_COMPONENT,
+            "fund_released": 1.1095, "fund_released_rupees": 11_095_000,
+            "fund_utilized": 0.5, "fund_utilized_rupees": 5_000_000,
+        })
+        rows = list(_sync_db.financial_entries.aggregate(financial_hc_rollup_stages(q)))
+        assert rows[0]["r"] == pytest.approx(1.1095, abs=1e-9)
+    finally:
+        _sync_db.financial_entries.delete_many(q)

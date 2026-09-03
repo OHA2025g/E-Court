@@ -144,6 +144,50 @@ def _financial_canonical_component_stage() -> dict:
     }
 
 
+def _financial_drop_duplicate_nsc_stages() -> list:
+    """Drop the summed BRD NSC row when Court Rooms/Complex lines already exist.
+
+    Consolidated financial ETL stores Rooms and Complex separately. An earlier
+    load also wrote the 4dp-rounded BRD total for the same High Court × period,
+    so HC/national totals (and the Geographic financial heatmap) double-count.
+    Keep the canonical row only when no split lines exist.
+    """
+    split_names = [NSC_FINANCIAL_ROOMS, NSC_FINANCIAL_COMPLEX]
+    return [
+        {
+            "$setWindowFields": {
+                "partitionBy": {
+                    "high_court": "$high_court",
+                    "reporting_period": "$reporting_period",
+                    "district": {"$ifNull": ["$district", None]},
+                },
+                "output": {
+                    "_has_nsc_split": {
+                        "$max": {
+                            "$cond": [
+                                {"$in": ["$component", split_names]},
+                                1,
+                                0,
+                            ]
+                        }
+                    }
+                },
+            }
+        },
+        {
+            "$match": {
+                "$expr": {
+                    "$or": [
+                        {"$ne": ["$component", NSC_COMPONENT]},
+                        {"$ne": ["$_has_nsc_split", 1]},
+                    ]
+                }
+            }
+        },
+        {"$unset": "_has_nsc_split"},
+    ]
+
+
 def financial_rollup_stages(extra_match: dict | None = None) -> list:
     """Roll up HC×component×period using exact ₹ first, then convert once to ₹ Cr.
 
@@ -153,6 +197,7 @@ def financial_rollup_stages(extra_match: dict | None = None) -> list:
     stages = []
     if extra_match:
         stages.append({"$match": extra_match})
+    stages.extend(_financial_drop_duplicate_nsc_stages())
     stages.extend([
         _financial_canonical_component_stage(),
         {"$group": {
@@ -205,6 +250,7 @@ def financial_hc_rollup_stages(extra_match: dict | None = None) -> list:
     stages = []
     if extra_match:
         stages.append({"$match": extra_match})
+    stages.extend(_financial_drop_duplicate_nsc_stages())
     stages.extend([
         {"$group": {
             "_id": "$high_court",
@@ -321,6 +367,7 @@ def financial_exact_totals_stages(extra_match: dict | None = None) -> list:
     stages = []
     if extra_match:
         stages.append({"$match": extra_match})
+    stages.extend(_financial_drop_duplicate_nsc_stages())
     stages.append({
         "$group": {
             "_id": None,
