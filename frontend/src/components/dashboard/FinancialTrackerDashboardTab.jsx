@@ -148,6 +148,14 @@ function sliceRankedNames(rankedNames, view, n) {
   return list.slice(0, n);
 }
 
+/** Top N and bottom N from a desc-ranked list (shows all when the pool is small). */
+function sliceTopAndBottom(rankedNames, n) {
+  const list = rankedNames || [];
+  if (list.length <= n) return [...list];
+  if (list.length <= n * 2) return [...list];
+  return [...list.slice(0, n), ...list.slice(-n)];
+}
+
 /** Join HC released + utilised into stacked rows: utilised (bottom) + remainder (top = released). */
 function buildHcReleasedSplitRows(hcReleased, hcUtilized) {
   const utilByHc = new Map();
@@ -373,7 +381,6 @@ function UtilPctComponentHcChart({ rows, hcNames, utilPctLabel }) {
 export default function FinancialTrackerDashboardTab({ reportingPeriod, highCourt = "", component = "", labels }) {
   const [hcCompView, setHcCompView] = useState("top");
   const [hcUtilView, setHcUtilView] = useState("top");
-  const [utilPctView, setUtilPctView] = useState("top");
   const filterParams = {
     ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
     ...(highCourt ? { high_court: highCourt } : {}),
@@ -407,10 +414,10 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
     [rankedHcByReleased, hcCompView],
   );
 
-  // Utilisation % chart: Top 3 or Bottom 3 High Courts by funds released.
+  // Utilisation % chart: always Top 3 + Bottom 3 by funds released.
   const utilPctHcNames = useMemo(
-    () => sliceRankedNames(rankedHcByReleased, utilPctView, HC_UTIL_PCT_ENDS),
-    [rankedHcByReleased, utilPctView],
+    () => sliceTopAndBottom(rankedHcByReleased, HC_UTIL_PCT_ENDS),
+    [rankedHcByReleased],
   );
 
   const hcComponentReleasedRows = useMemo(() => {
@@ -451,12 +458,9 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
   }, [selectedCompHcs.length, hcCompView, labels]);
 
   const utilPctSliceHint = useMemo(() => {
-    const n = utilPctHcNames.length;
-    if (!n) return null;
-    return utilPctView === "bottom"
-      ? labels.ftHcCompSliceHintBottom(n)
-      : labels.ftHcCompSliceHintTop(n);
-  }, [utilPctHcNames.length, utilPctView, labels]);
+    if (!utilPctHcNames.length) return null;
+    return labels.ftHcCompSliceHintTopBottom(HC_UTIL_PCT_ENDS, HC_UTIL_PCT_ENDS);
+  }, [utilPctHcNames.length, labels]);
 
   // Rank HCs by total funds utilised (desc) for Top/Bottom 6 utilised chart.
   const rankedHcByUtilized = useMemo(
@@ -631,21 +635,13 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
           title={labels.ftUtilPctComponentHc}
           subtitle={utilPctSliceHint || undefined}
           elevated
-          action={
-            <SliceToggleButton
-              view={utilPctView}
-              setView={setUtilPctView}
-              topLabel={labels.ftTop3}
-              bottomLabel={labels.ftBottom3}
-            />
-          }
         >
           <div className="h-80 p-4">
             {utilPctRowsForSlice.length === 0 || utilPctHcNames.length === 0 ? (
               <EmptyChart message={labels.noData} />
             ) : (
               <UtilPctComponentHcChart
-                key={`${reportingPeriod || "all"}-${utilPctView}-${utilPctHcNames.join("|")}`}
+                key={`${reportingPeriod || "all"}-top-bottom-${utilPctHcNames.join("|")}`}
                 rows={utilPctRowsForSlice}
                 hcNames={utilPctHcNames}
                 utilPctLabel={labels.ftUtilPct}
