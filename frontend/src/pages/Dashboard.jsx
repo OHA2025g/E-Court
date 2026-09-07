@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api, fmtNum, fmtPct, BACKEND_URL } from "@/lib/api";
 import { formatPhysAmountLabel, formatPhysTargetAchieved } from "@/lib/physFormat";
 import { useAuth } from "@/lib/auth";
+import { authQueryScope } from "@/lib/queryScope";
 import Card, { KpiCard } from "@/components/Card";
 import RagBadge from "@/components/RagBadge";
 import { TID } from "@/lib/testIds";
@@ -307,9 +308,14 @@ function DashboardSortTh({ label, columnKey, sort, onSort, align = "left", testI
 export default function Dashboard() {
   const { user } = useAuth();
   const labels = useDashboardLabels();
+  const cpcCourt = user?.role === "CPC" ? user?.high_court : null;
+  const authScope = authQueryScope(user);
   const [period, setPeriod] = useState("");
   const [periodReady, setPeriodReady] = useState(false);
-  const [highCourt, setHighCourt] = useState("");
+  // CPC: seed HC immediately so the first fetch is never national-scoped.
+  const [highCourt, setHighCourt] = useState(() =>
+    user?.role === "CPC" ? (user?.high_court || "") : "",
+  );
   const [component, setComponent] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
   const [compSort, setCompSort] = useState({ key: "component", dir: "asc" });
@@ -317,7 +323,6 @@ export default function Dashboard() {
   const [ragInfoOpen, setRagInfoOpen] = useState(false);
   const [trendInfoOpen, setTrendInfoOpen] = useState(false);
   const [accessibleRag] = useAccessibleRag();
-  const cpcCourt = user?.role === "CPC" ? user?.high_court : null;
   const visibleTabs = useMemo(
     () => (cpcCourt ? DASHBOARD_TABS.filter((tab) => !CPC_HIDDEN_TABS.has(tab)) : DASHBOARD_TABS),
     [cpcCourt],
@@ -361,22 +366,22 @@ export default function Dashboard() {
   }, [period, highCourt, component]);
 
   const summary = useQuery({
-    queryKey: ["dash-summary", "v4-count-abs", dashParams, cpcCourt],
+    queryKey: ["dash-summary", "v4-count-abs", dashParams, authScope],
     queryFn: () => api.get("/dashboard/summary", { params: dashParams }).then(r => r.data),
     enabled: periodReady,
   });
   const byComp = useQuery({
-    queryKey: ["dash-comp", dashParams, cpcCourt],
+    queryKey: ["dash-comp", dashParams, authScope],
     queryFn: () => api.get("/dashboard/by-component", { params: dashParams }).then(r => r.data),
     enabled: periodReady,
   });
   const byHc = useQuery({
-    queryKey: ["dash-hc", "v4-kpi-sum", dashParams, cpcCourt],
+    queryKey: ["dash-hc", "v4-kpi-sum", dashParams, authScope],
     queryFn: () => api.get("/dashboard/by-high-court", { params: dashParams }).then(r => r.data),
     enabled: !cpcCourt && periodReady,
   });
   const trend = useQuery({
-    queryKey: ["dash-trend", highCourt, component, cpcCourt],
+    queryKey: ["dash-trend", highCourt, component, authScope],
     queryFn: () => api.get("/dashboard/trend", {
       params: {
         ...(highCourt ? { high_court: highCourt } : {}),

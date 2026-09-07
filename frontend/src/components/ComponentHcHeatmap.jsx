@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api, fmtNum } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
+import { authQueryScope } from "@/lib/queryScope";
 import Card from "@/components/Card";
 import ScrollRegion from "@/components/ui/ScrollRegion";
 import { formatRagLegendLabel, useAccessibleRag } from "@/lib/ragColors";
@@ -65,6 +67,8 @@ function cellDetail(rowKey, hc, cell, metric) {
 }
 
 export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", component = "", publicMode = false, embedData = null }) {
+  const { user } = useAuth();
+  const authScope = publicMode ? "public" : authQueryScope(user);
   const [accessible] = useAccessibleRag();
   const [metric, setMetric] = useState("physical");
   const [hover, setHover] = useState(null);
@@ -77,7 +81,7 @@ export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", co
   }), [reportingPeriod, highCourt, component, metric]);
 
   const { data: fetched, isLoading, isSuccess } = useQuery({
-    queryKey: ["heatmap", "v3-fallback", filterParams, publicMode],
+    queryKey: ["heatmap", "v3-fallback", filterParams, publicMode, authScope],
     queryFn: () => api.get(`${publicMode ? "/public" : "/dashboard"}/heatmap`, {
       params: filterParams,
     }).then(r => r.data),
@@ -86,7 +90,7 @@ export default function ComponentHcHeatmap({ reportingPeriod, highCourt = "", co
 
   const primaryEmpty = isSuccess && (fetched?.cells || []).every((c) => !c?.rag || c.rag === "NA");
   const { data: fallbackFetched } = useQuery({
-    queryKey: ["heatmap", "v3-all-periods", { highCourt, component, metric, publicMode }],
+    queryKey: ["heatmap", "v3-all-periods", { highCourt, component, metric, publicMode }, authScope],
     queryFn: () => api.get(`${publicMode ? "/public" : "/dashboard"}/heatmap`, {
       params: {
         ...(highCourt ? { high_court: highCourt } : {}),

@@ -14,6 +14,8 @@ import {
   Cell,
 } from "recharts";
 import { api, fmtNum, fmtPct } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
+import { authQueryScope } from "@/lib/queryScope";
 import Card, { KpiCard } from "@/components/Card";
 import {
   CurrencyInr,
@@ -396,6 +398,8 @@ function UtilPctComponentHcChart({ rows, hcNames, utilPctLabel }) {
 }
 
 export default function FinancialTrackerDashboardTab({ reportingPeriod, highCourt = "", component = "", labels }) {
+  const { user } = useAuth();
+  const authScope = authQueryScope(user);
   const [hcCompView, setHcCompView] = useState("top");
   const [hcUtilView, setHcUtilView] = useState("top");
   const [utilPctView, setUtilPctView] = useState("top");
@@ -405,7 +409,7 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
     ...(component ? { component } : {}),
   };
   const { data, isLoading } = useQuery({
-    queryKey: ["dash-financial-tracker", filterParams],
+    queryKey: ["dash-financial-tracker", filterParams, authScope],
     queryFn: () => api.get("/dashboard/financial-tracker", { params: filterParams }).then(r => r.data),
   });
 

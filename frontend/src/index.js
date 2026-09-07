@@ -30,7 +30,7 @@ root.render(
     <I18nextProvider i18n={i18n}>
       <ThemeProvider>
         <BrowserRouter>
-          <AuthProvider>
+          <AuthProvider queryClient={queryClient}>
             <App />
             <Toaster position="top-right" closeButton />
           </AuthProvider>

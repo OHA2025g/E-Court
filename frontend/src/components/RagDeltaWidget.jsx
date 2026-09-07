@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api, BACKEND_URL } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
+import { authQueryScope } from "@/lib/queryScope";
 import Card from "@/components/Card";
 import { TrendUp, TrendDown } from "@phosphor-icons/react";
 
@@ -13,6 +15,8 @@ async function fetchPublicRagDelta(reportingPeriod, metric) {
 }
 
 export default function RagDeltaWidget({ reportingPeriod, highCourt = "", component = "", publicMode = false, embedData = null }) {
+  const { user } = useAuth();
+  const authScope = publicMode ? "public" : authQueryScope(user);
   const [metric, setMetric] = useState("physical");
   const filterParams = useMemo(() => ({
     ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
@@ -21,7 +25,7 @@ export default function RagDeltaWidget({ reportingPeriod, highCourt = "", compon
     metric,
   }), [reportingPeriod, highCourt, component, metric]);
   const { data: fetched, isLoading, isError } = useQuery({
-    queryKey: ["rag-delta", filterParams, publicMode],
+    queryKey: ["rag-delta", filterParams, publicMode, authScope],
     queryFn: () => publicMode
       ? fetchPublicRagDelta(reportingPeriod, metric)
       : api.get("/dashboard/rag-delta", { params: filterParams }).then(r => r.data),

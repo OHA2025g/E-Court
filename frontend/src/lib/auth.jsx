@@ -4,9 +4,17 @@ import { toast } from "sonner";
 
 const AuthCtx = createContext(null);
 
-export function AuthProvider({ children }) {
+export function AuthProvider({ children, queryClient = null }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  function clearQueryCache() {
+    try {
+      queryClient?.clear();
+    } catch {
+      // ignore — auth must still succeed if cache clear fails
+    }
+  }
 
   async function refreshUser() {
     try {
@@ -40,6 +48,8 @@ export function AuthProvider({ children }) {
       if (r.data?.requires_2fa) {
         return { requires_2fa: true, email: r.data.email };
       }
+      // Drop previous user's cached dashboard/tracker responses before mounting the new session.
+      clearQueryCache();
       setUser(r.data.user);
       toast.success(`Welcome, ${r.data.user.name}`);
       return r.data.user;
@@ -57,6 +67,7 @@ export function AuthProvider({ children }) {
       await api.post("/auth/logout");
     } finally {
       setUser(false);
+      clearQueryCache();
     }
   }
 

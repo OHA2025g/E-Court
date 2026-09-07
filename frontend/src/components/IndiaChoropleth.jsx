@@ -2,6 +2,8 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { api } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
+import { authQueryScope } from "@/lib/queryScope";
 import Card from "@/components/Card";
 import {
   INDIA_MAP_DIMENSIONS,
@@ -50,6 +52,8 @@ function statesHaveRag(states) {
 }
 
 export default function IndiaChoropleth({ reportingPeriod, highCourt = "", component = "" }) {
+  const { user } = useAuth();
+  const authScope = authQueryScope(user);
   const [metric, setMetric] = useState("physical");
   const [accessible] = useAccessibleRag();
   const thresholds = useQuery({
@@ -81,7 +85,7 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
   const componentMissing = requireComponent && !component;
 
   const primary = useQuery({
-    queryKey: ["states-rag", "v15-geo", filterParams],
+    queryKey: ["states-rag", "v15-geo", filterParams, authScope],
     queryFn: () => api.get("/dashboard/states-rag", { params: filterParams }).then(r => r.data),
     enabled: !componentMissing,
   });
@@ -89,7 +93,7 @@ export default function IndiaChoropleth({ reportingPeriod, highCourt = "", compo
   // Monthly periods often have no tracker rows - fall back to All periods so the map is not blank.
   const primaryEmpty = !componentMissing && primary.isSuccess && !statesHaveRag(primary.data);
   const fallback = useQuery({
-    queryKey: ["states-rag", "v15-geo-fallback", { highCourt, component, metric }],
+    queryKey: ["states-rag", "v15-geo-fallback", { highCourt, component, metric }, authScope],
     queryFn: () => api.get("/dashboard/states-rag", {
       params: {
         ...(highCourt ? { high_court: highCourt } : {}),

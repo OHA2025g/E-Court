@@ -26,8 +26,15 @@ def scope_key(user: dict) -> str:
     return f"{role}:{hc}"
 
 
-def cache_key(reporting_period: Optional[str], user: dict) -> str:
-    return f"{period_key(reporting_period)}:{scope_key(user)}"
+def cache_key(
+    reporting_period: Optional[str],
+    user: dict,
+    high_court: Optional[str] = None,
+    component: Optional[str] = None,
+) -> str:
+    fhc = high_court or "_all"
+    fcomp = component or "_all"
+    return f"{period_key(reporting_period)}:{scope_key(user)}:fhc={fhc}:fcomp={fcomp}"
 
 
 def _rag_label(pct: Optional[float]) -> str:
@@ -304,8 +311,10 @@ async def generate_insights_payload(
     reporting_period: Optional[str],
     user: dict,
     refresh: bool = False,
+    high_court: Optional[str] = None,
+    component: Optional[str] = None,
 ) -> dict:
-    key = cache_key(reporting_period, user)
+    key = cache_key(reporting_period, user, high_court=high_court, component=component)
     if not refresh:
         cached = await get_cached(db, key)
         if cached:

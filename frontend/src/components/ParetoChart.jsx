@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Info } from "@phosphor-icons/react";
 import { api } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
+import { authQueryScope } from "@/lib/queryScope";
 import Card from "@/components/Card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { barSeriesProps, lineSeriesProps, seriesLegendLabel, useAccessibleRag } from "@/lib/ragColors";
@@ -226,11 +228,13 @@ pareto_cutoff = first position where cumulative_pct ≥ 80`}</pre>
 
 export default function ParetoChart({ reportingPeriod, highCourt = "", component = "", publicMode = false, embedData = null }) {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const authScope = publicMode ? "public" : authQueryScope(user);
   const [accessible] = useAccessibleRag();
   const [metric, setMetric] = useState("physical");
   const [infoOpen, setInfoOpen] = useState(false);
   const { data: fetched, isLoading } = useQuery({
-    queryKey: ["pareto", reportingPeriod, highCourt, component, metric, publicMode],
+    queryKey: ["pareto", reportingPeriod, highCourt, component, metric, publicMode, authScope],
     queryFn: () => api.get(`${publicMode ? "/public" : "/dashboard"}/pareto-red-flags`, {
       params: {
         ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),

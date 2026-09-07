@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { authQueryScope } from "@/lib/queryScope";
 import Card from "@/components/Card";
 import { TID } from "@/lib/testIds";
 import {
@@ -106,6 +107,7 @@ export default function DashboardAiInsights({ reportingPeriod, highCourt = "", c
   const qc = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const isAdmin = user?.role === "Admin";
+  const authScope = authQueryScope(user);
   const filterParams = {
     ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
     ...(highCourt ? { high_court: highCourt } : {}),
@@ -113,7 +115,7 @@ export default function DashboardAiInsights({ reportingPeriod, highCourt = "", c
   };
 
   const insights = useQuery({
-    queryKey: ["dash-ai-insights", filterParams],
+    queryKey: ["dash-ai-insights", filterParams, authScope],
     queryFn: () => api.get("/dashboard/ai-insights", { params: filterParams }).then((r) => r.data),
     staleTime: 5 * 60 * 1000,
   });

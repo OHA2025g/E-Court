@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { authQueryScope } from "@/lib/queryScope";
 import { TID } from "@/lib/testIds";
 import { CheckCircle, ArrowsClockwise, Article } from "@phosphor-icons/react";
 import { toast } from "sonner";
@@ -18,6 +19,7 @@ export function ExecutiveNarrativeSection({ reportingPeriod, highCourt = "", com
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
   const isAdmin = user?.role === "Admin";
+  const authScope = authQueryScope(user);
   const filterParams = {
     ...(reportingPeriod ? { reporting_period: reportingPeriod } : {}),
     ...(highCourt ? { high_court: highCourt } : {}),
@@ -25,7 +27,7 @@ export function ExecutiveNarrativeSection({ reportingPeriod, highCourt = "", com
   };
 
   const narrative = useQuery({
-    queryKey: ["dash-narrative", filterParams],
+    queryKey: ["dash-narrative", filterParams, authScope],
     queryFn: () => api.get("/dashboard/narrative", { params: filterParams }).then((r) => r.data),
   });
 

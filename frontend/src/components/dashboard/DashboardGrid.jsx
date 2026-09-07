@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import GridLayout, { WidthProvider } from "react-grid-layout";
 import { api } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
+import { authQueryScope } from "@/lib/queryScope";
 import { toast } from "sonner";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -13,9 +15,11 @@ const Grid = WidthProvider(GridLayout);
 
 export default function DashboardGrid({ childrenMap, editMode, onEditModeChange }) {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const authScope = authQueryScope(user);
   const qc = useQueryClient();
   const layoutQ = useQuery({
-    queryKey: ["dashboard-layout"],
+    queryKey: ["dashboard-layout", authScope],
     queryFn: () => api.get("/dashboard/layout").then(r => r.data.dashboard_layout),
   });
 

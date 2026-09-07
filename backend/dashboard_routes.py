@@ -351,7 +351,8 @@ def register_dashboard_routes(
         if refresh and user.get("role") != "Admin":
             refresh = False
         return await generate_insights_payload(
-            db, summary, by_component, by_hc, rag_delta, pareto, reporting_period, user, refresh=refresh,
+            db, summary, by_component, by_hc, rag_delta, pareto, reporting_period, user,
+            refresh=refresh, high_court=high_court, component=component,
         )
 
     @api.get("/public/progress")
