@@ -63,7 +63,7 @@ export default function Card({
                 {title && (
                   <h3
                     className={[
-                      "font-display text-sm font-semibold uppercase tracking-[0.12em]",
+                      "font-display text-sm font-bold uppercase tracking-[0.12em]",
                       accentHeader ? "text-white" : "text-slate-800",
                     ].join(" ")}
                   >
@@ -102,7 +102,7 @@ export function KpiCard({ label, value, hint, accent = "primary", testId, icon: 
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${styles.glow} opacity-80`} />
       <div className="relative flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <div className="text-[10px] uppercase tracking-[0.22em] text-slate-500 font-medium">{label}</div>
+          <div className="text-[10px] uppercase tracking-[0.22em] text-slate-500 font-bold">{label}</div>
           <div className="font-display text-2xl sm:text-[1.75rem] font-bold tracking-tight text-slate-900 mt-1.5 tabular-nums">
             {value}
           </div>

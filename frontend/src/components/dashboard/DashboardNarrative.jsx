@@ -78,7 +78,7 @@ export function ExecutiveNarrativeSection({ reportingPeriod, highCourt = "", com
             <Article size={20} weight="duotone" />
           </div>
           <div className="min-w-0">
-            <h3 className="font-display text-sm font-semibold uppercase tracking-[0.1em] text-slate-800">
+            <h3 className="font-display text-sm font-bold uppercase tracking-[0.1em] text-slate-800">
               {t("dashboard.narrativeTitle")}
             </h3>
             <p className="text-xs text-slate-500 mt-1">{subtitle}</p>

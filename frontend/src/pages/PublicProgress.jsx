@@ -108,7 +108,7 @@ function MetricHeroCard({ variant, label, value, hint, percent, Icon }) {
         </div>
         <ProgressRing percent={percent} color={c.ring} />
       </div>
-      <div className="mt-4 text-[10px] uppercase tracking-[0.22em] text-slate-500 font-semibold">{label}</div>
+      <div className="mt-4 text-[10px] uppercase tracking-[0.22em] text-slate-500 font-bold">{label}</div>
       <div className={`public-metric-value ${c.valueClass} mt-1.5`}>{value}</div>
       <div className="text-xs text-slate-500 mt-2 leading-relaxed">{hint}</div>
     </div>
@@ -182,7 +182,7 @@ function RankList({ title, items, valueKey, accent, icon: Icon }) {
       <div className={`public-rank-header ${accentClass}`}>
         <div className="flex items-center gap-2">
           {Icon && <Icon size={18} weight="duotone" className="text-slate-600" />}
-          <h3 className="text-sm font-semibold text-slate-800">{title}</h3>
+          <h3 className="text-sm font-bold text-slate-800">{title}</h3>
         </div>
       </div>
       <ul>

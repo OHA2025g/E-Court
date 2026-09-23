@@ -94,7 +94,7 @@ function SectionCard({ themeKey, title, children, testId }) {
         <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${theme.gradient} text-white shadow-md`}>
           <Icon size={20} weight="duotone" />
         </div>
-        <h3 className="font-display text-sm font-semibold uppercase tracking-[0.1em] text-slate-800">{title}</h3>
+        <h3 className="font-display text-sm font-bold uppercase tracking-[0.1em] text-slate-800">{title}</h3>
       </div>
       <div>{children}</div>
     </div>

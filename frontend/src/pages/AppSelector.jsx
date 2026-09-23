@@ -56,7 +56,7 @@ export default function AppSelector() {
               <div className="workspace-tile-icon bg-gradient-to-br from-[#003B73]/15 to-[#003B73]/5 group-hover:from-[#003B73]/25 group-hover:to-[#003B73]/10">
                 <ListChecks size={30} className="text-[#003B73]" weight="duotone" />
               </div>
-              <h2 className="font-display text-xl font-semibold text-slate-900 dark:text-white">{l.appSelector.taskTitle}</h2>
+              <h2 className="font-display text-xl font-bold text-slate-900 dark:text-white">{l.appSelector.taskTitle}</h2>
               <p className="text-sm text-slate-500 mt-2 leading-relaxed">
                 {l.appSelector.taskDesc}
               </p>
@@ -73,7 +73,7 @@ export default function AppSelector() {
               <div className="workspace-tile-icon bg-gradient-to-br from-emerald-500/15 to-teal-500/5 group-hover:from-emerald-500/25 group-hover:to-teal-500/10">
                 <SquaresFour size={30} className="text-emerald-700" weight="duotone" />
               </div>
-              <h2 className="font-display text-xl font-semibold text-slate-900 dark:text-white">{l.appSelector.appTitle}</h2>
+              <h2 className="font-display text-xl font-bold text-slate-900 dark:text-white">{l.appSelector.appTitle}</h2>
               <p className="text-sm text-slate-500 mt-2 leading-relaxed">
                 {l.appSelector.appDesc}
               </p>

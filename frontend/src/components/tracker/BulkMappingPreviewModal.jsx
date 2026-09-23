@@ -202,7 +202,7 @@ export default function BulkMappingPreviewModal({
           {stage === 1 && (
             <>
               <div>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
                   <ArrowsLeftRight size={14} /> Column mapping (uploaded header → PMIS template)
                 </h3>
                 <div className="overflow-x-auto border border-slate-200 rounded-sm">
@@ -235,7 +235,7 @@ export default function BulkMappingPreviewModal({
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
                   <FileXls size={14} /> Row mapping · uploaded values ↔ template values
                 </h3>
                 <div className="space-y-3">
@@ -265,7 +265,7 @@ export default function BulkMappingPreviewModal({
 
           {stage === 2 && (
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
                 <Database size={14} /> Field diff · template (from Excel) vs database
               </h3>
               <div className="space-y-4">
