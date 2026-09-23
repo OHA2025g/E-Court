@@ -126,8 +126,6 @@
     "hcDrilldownCpc": "Your High Court",
     "tabHcTableCpc": "High Court Summary",
     "tabFinancialTracker": "Financial Tracker",
-    "ftTarget": "Total Funds Target (₹ Cr)",
-    "ftAllocated": "Total Funds Allocated (₹ Cr)",
     "ftReleased": "Total Funds Released (₹ Cr)",
     "ftUtilized": "Funds Utilised (₹ Cr)",
     "ftReleasedShort": "Funds Released",

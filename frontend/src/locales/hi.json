@@ -120,8 +120,6 @@
     "hcDrilldownCpc": "आपका उच्च न्यायालय",
     "tabHcTableCpc": "उच्च न्यायालय सारांश",
     "tabFinancialTracker": "वित्तीय ट्रैकर",
-    "ftTarget": "कुल निधि लक्ष्य (₹ करोड़)",
-    "ftAllocated": "कुल निधि आवंटित (₹ करोड़)",
     "ftReleased": "कुल निधि जारी (₹ करोड़)",
     "ftUtilized": "निधि उपयोग (₹ करोड़)",
     "ftReleasedShort": "निधि जारी",

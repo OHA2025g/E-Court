@@ -17,11 +17,7 @@ import { api, fmtNum, fmtPct } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { authQueryScope } from "@/lib/queryScope";
 import Card, { KpiCard } from "@/components/Card";
-import {
-  CurrencyInr,
-  Target,
-  Wallet,
-} from "@phosphor-icons/react";
+import { CurrencyInr } from "@phosphor-icons/react";
 
 // Consecutive colors are high-contrast so Top/Bottom 3 series stay visually distinct.
 const CHART_COLORS = [
@@ -571,21 +567,7 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
 
   return (
     <div className="space-y-5" data-testid="financial-tracker-dashboard-tab">
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <KpiCard
-          testId="ft-kpi-target"
-          icon={Target}
-          label={labels.ftTarget}
-          value={fmtNum(kpis?.target, { digits: 2 })}
-          accent="primary"
-        />
-        <KpiCard
-          testId="ft-kpi-allocated"
-          icon={Wallet}
-          label={labels.ftAllocated}
-          value={fmtNum(kpis?.allocated, { digits: 2 })}
-          accent="amber"
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <KpiCard
           testId="ft-kpi-released"
           icon={CurrencyInr}

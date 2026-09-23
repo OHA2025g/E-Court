@@ -67,8 +67,6 @@ export function useDashboardLabels() {
       hcSummary: t("dashboard.hcSummary"),
       hcDrilldownCpc: t("dashboard.hcDrilldownCpc"),
       tabHcTableCpc: t("dashboard.tabHcTableCpc"),
-      ftTarget: t("dashboard.ftTarget"),
-      ftAllocated: t("dashboard.ftAllocated"),
       ftReleased: t("dashboard.ftReleased"),
       ftUtilized: t("dashboard.ftUtilized"),
       ftReleasedShort: t("dashboard.ftReleasedShort"),
