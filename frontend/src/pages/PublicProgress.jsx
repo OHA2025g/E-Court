@@ -395,12 +395,12 @@ export default function PublicProgress() {
                   <h2 className="public-section-title">High Court physical progress</h2>
                   <p className="public-section-sub">Achievement percentage by High Court jurisdiction</p>
                 </header>
-                <div className="p-5 h-80">
+                <div className="p-5 h-[24rem]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={hcBars} margin={{ top: 8, right: 8, left: 0, bottom: 72 }}>
+                    <BarChart data={hcBars} margin={{ top: 8, right: 8, left: 8, bottom: 100 }}>
                       <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                      <XAxis dataKey="high_court" stroke="#475569" fontSize={9} angle={-35} textAnchor="end" interval={0} height={80} />
-                      <YAxis stroke="#475569" fontSize={11} unit="%" domain={[0, 100]} />
+                      <XAxis dataKey="high_court" stroke="#475569" fontSize={14} angle={-35} textAnchor="end" interval={0} height={112} />
+                      <YAxis stroke="#475569" fontSize={14} unit="%" width={56} domain={[0, 100]} />
                       <Tooltip formatter={(v, _n, item) => [
                         `${Number(v).toFixed(1)}%`,
                         accessibleRag
@@ -424,12 +424,12 @@ export default function PublicProgress() {
                   <h2 className="public-section-title">High Court outcome KPI reporting</h2>
                   <p className="public-section-sub">Share of KPIs reported per High Court</p>
                 </header>
-                <div className="p-5 h-80">
+                <div className="p-5 h-[24rem]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={outcomeBars} margin={{ top: 8, right: 8, left: 0, bottom: 72 }}>
+                    <BarChart data={outcomeBars} margin={{ top: 8, right: 8, left: 8, bottom: 100 }}>
                       <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                      <XAxis dataKey="high_court" stroke="#475569" fontSize={9} angle={-35} textAnchor="end" interval={0} height={80} />
-                      <YAxis stroke="#475569" fontSize={11} unit="%" domain={[0, 100]} />
+                      <XAxis dataKey="high_court" stroke="#475569" fontSize={14} angle={-35} textAnchor="end" interval={0} height={112} />
+                      <YAxis stroke="#475569" fontSize={14} unit="%" width={56} domain={[0, 100]} />
                       <Tooltip formatter={(v, _n, item) => [
                         `${Number(v).toFixed(1)}% (${item.payload.reported}/${item.payload.total} KPIs)`,
                         "Reporting",

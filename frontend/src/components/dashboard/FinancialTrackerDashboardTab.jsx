@@ -365,14 +365,14 @@ function UtilPctComponentHcChart({ rows, hcNames, utilPctLabel }) {
           <BarChart
             layout="vertical"
             data={chartData}
-            margin={{ top: 4, right: 24, left: 4, bottom: 4 }}
+            margin={{ top: 8, right: 28, left: 8, bottom: 8 }}
             barCategoryGap="12%"
             barGap={3}
             barSize={barSize}
           >
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-            <XAxis type="number" stroke="#475569" fontSize={11} unit="%" domain={[0, "auto"]} />
-            <YAxis type="category" dataKey="component" stroke="#475569" fontSize={10} width={120} />
+            <XAxis type="number" stroke="#475569" fontSize={14} unit="%" domain={[0, "auto"]} />
+            <YAxis type="category" dataKey="component" stroke="#475569" fontSize={14} width={168} />
             <Tooltip formatter={(v) => [fmtPct(v), utilPctLabel]} />
             {hcNames.map((hc, i) => (
               <Bar
@@ -590,27 +590,27 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
         subtitle={hcSplitHint || undefined}
         elevated
       >
-        <div className="h-[28rem] p-4">
+        <div className="h-[32rem] p-4">
           {hcReleasedSplitAll.length === 0 ? (
             <EmptyChart message={labels.noData} />
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={hcReleasedSplitAll}
-                margin={{ top: 8, right: 12, left: 0, bottom: 72 }}
+                margin={{ top: 8, right: 12, left: 8, bottom: 100 }}
                 barCategoryGap="18%"
               >
                 <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
                 <XAxis
                   dataKey="label"
                   stroke="#475569"
-                  fontSize={9}
+                  fontSize={14}
                   angle={-40}
                   textAnchor="end"
                   interval={0}
-                  height={88}
+                  height={120}
                 />
-                <YAxis stroke="#475569" fontSize={11} />
+                <YAxis stroke="#475569" fontSize={14} width={56} />
                 <Tooltip content={<HcReleasedSplitTooltip labels={labels} />} />
                 <Legend content={<HcReleasedSplitLegend labels={labels} />} />
                 <Bar
@@ -647,17 +647,17 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
             />
           }
         >
-          <div className="h-80 p-4 flex flex-col">
+          <div className="h-[24rem] p-4 flex flex-col">
             {hcComponentReleasedRows.length === 0 ? (
               <EmptyChart message={labels.noData} />
             ) : (
               <>
                 <div className="flex-1 min-h-0">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={hcComponentReleasedRows} margin={{ top: 8, right: 12, left: 0, bottom: 56 }}>
+                    <BarChart data={hcComponentReleasedRows} margin={{ top: 8, right: 12, left: 8, bottom: 80 }}>
                       <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                      <XAxis dataKey="label" stroke="#475569" fontSize={10} angle={-25} textAnchor="end" interval={0} height={70} />
-                      <YAxis stroke="#475569" fontSize={11} />
+                      <XAxis dataKey="label" stroke="#475569" fontSize={14} angle={-25} textAnchor="end" interval={0} height={96} />
+                      <YAxis stroke="#475569" fontSize={14} width={56} />
                       <Tooltip content={<HcComponentAmountTooltip pctKey="_release_pct" />} />
                       {chartComponents.map((comp, i) => (
                         <Bar key={comp} dataKey={comp} name={comp} fill={CHART_COLORS[i % CHART_COLORS.length]} radius={[2, 2, 0, 0]} />
@@ -713,17 +713,17 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
             />
           }
         >
-          <div className="h-72 p-3 flex flex-col">
+          <div className="h-[22rem] p-3 flex flex-col">
             {hcComponentUtilizedRows.length === 0 ? (
               <EmptyChart message={labels.noData} />
             ) : (
               <>
                 <div className="flex-1 min-h-0">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={hcComponentUtilizedRows} margin={{ top: 8, right: 8, left: 0, bottom: 48 }}>
+                    <BarChart data={hcComponentUtilizedRows} margin={{ top: 8, right: 8, left: 8, bottom: 72 }}>
                       <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                      <XAxis dataKey="label" stroke="#475569" fontSize={9} angle={-20} textAnchor="end" interval={0} height={56} />
-                      <YAxis stroke="#475569" fontSize={10} />
+                      <XAxis dataKey="label" stroke="#475569" fontSize={14} angle={-20} textAnchor="end" interval={0} height={84} />
+                      <YAxis stroke="#475569" fontSize={14} width={56} />
                       <Tooltip content={<HcComponentAmountTooltip pctKey="_util_pct" />} />
                       {chartComponents.slice(0, 3).map((comp, i) => (
                         <Bar key={comp} dataKey={comp} name={comp} fill={CHART_COLORS[i % CHART_COLORS.length]} />

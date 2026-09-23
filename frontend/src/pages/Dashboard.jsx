@@ -637,12 +637,12 @@ export default function Dashboard() {
 
   const componentBars = (
     <Card title={labels.componentPerformance} testId={TID.componentChart} elevated>
-      <div className="h-96 p-4">
+      <div className="h-[28rem] p-4">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={compChartRows} margin={{ top: 8, right: 16, left: 0, bottom: 60 }}>
+          <BarChart data={compChartRows} margin={{ top: 8, right: 16, left: 8, bottom: 88 }}>
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-            <XAxis dataKey="component" stroke="#475569" fontSize={10} angle={-25} textAnchor="end" interval={0} height={80} />
-            <YAxis stroke="#475569" fontSize={11} unit="%" />
+            <XAxis dataKey="component" stroke="#475569" fontSize={14} angle={-25} textAnchor="end" interval={0} height={110} />
+            <YAxis stroke="#475569" fontSize={14} unit="%" width={56} />
             <Tooltip content={<PerformancePctTooltip nameKey="component" selectedComponent={component} />} />
             <Legend />
             <Bar dataKey="phys_percent" name={seriesLegendLabel("Physical %", "phys_percent", accessibleRag)} {...barSeriesProps("phys_percent", accessibleRag)} />
@@ -655,12 +655,12 @@ export default function Dashboard() {
 
   const hcBars = (
     <Card title={cpcCourt ? labels.hcSummary : labels.hcComparison} testId={TID.hcChart} elevated>
-      <div className="h-[480px] p-4">
+      <div className="h-[560px] p-4">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={hcChartRows} margin={{ top: 8, right: 16, left: 0, bottom: 80 }}>
+          <BarChart data={hcChartRows} margin={{ top: 8, right: 16, left: 8, bottom: 108 }}>
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-            <XAxis dataKey="high_court" stroke="#475569" fontSize={10} angle={-35} textAnchor="end" interval={0} height={100} />
-            <YAxis stroke="#475569" fontSize={11} unit="%" />
+            <XAxis dataKey="high_court" stroke="#475569" fontSize={14} angle={-35} textAnchor="end" interval={0} height={130} />
+            <YAxis stroke="#475569" fontSize={14} unit="%" width={56} />
             <Tooltip content={<PerformancePctTooltip nameKey="high_court" selectedComponent={component} />} />
             <Legend />
             <Bar dataKey="phys_percent" name={seriesLegendLabel("Physical %", "phys_percent", accessibleRag)} {...barSeriesProps("phys_percent_hc", accessibleRag)} />
