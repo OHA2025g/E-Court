@@ -103,7 +103,7 @@ export function KpiCard({ label, value, hint, accent = "primary", testId, icon: 
       <div className="relative flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <div className="kpi-card-title font-display text-xs font-extrabold uppercase tracking-[0.14em] text-slate-800">{label}</div>
-          <div className="font-display text-2xl sm:text-[1.75rem] font-bold tracking-tight text-slate-900 mt-1.5 tabular-nums">
+          <div className="font-display text-2xl sm:text-[1.75rem] font-normal tracking-tight text-slate-900 mt-1.5 tabular-nums">
             {value}
           </div>
           {hint && <div className="text-xs text-slate-500 mt-1.5">{hint}</div>}
