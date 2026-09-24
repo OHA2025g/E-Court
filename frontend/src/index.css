@@ -353,6 +353,7 @@ table.dense-table tr:hover td { @apply bg-slate-50; }
 }
 .kpi-card-value {
   color: #475569;
+  font-weight: 700;
   opacity: 0.9;
 }
 .recharts-cartesian-axis-tick text {
