@@ -351,6 +351,9 @@ table.dense-table tr:hover td { @apply bg-slate-50; }
   font-weight: 800;
   color: #003B73;
 }
+.kpi-card-value {
+  opacity: 0.9;
+}
 .recharts-cartesian-axis-tick text {
   font-weight: 700;
 }
