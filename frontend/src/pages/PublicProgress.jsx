@@ -108,7 +108,7 @@ function MetricHeroCard({ variant, label, value, hint, percent, Icon }) {
         </div>
         <ProgressRing percent={percent} color={c.ring} />
       </div>
-      <div className="mt-4 text-[10px] uppercase tracking-[0.22em] text-slate-500 font-bold">{label}</div>
+      <div className="kpi-card-title mt-4 font-display text-xs font-extrabold uppercase tracking-[0.14em] text-slate-800">{label}</div>
       <div className={`public-metric-value ${c.valueClass} mt-1.5`}>{value}</div>
       <div className="text-xs text-slate-500 mt-2 leading-relaxed">{hint}</div>
     </div>
