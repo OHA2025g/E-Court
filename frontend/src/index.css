@@ -349,7 +349,7 @@ table.dense-table tr:hover td { @apply bg-slate-50; }
 }
 .kpi-card-title {
   font-weight: 800;
-  color: #003B73;
+  color: #000000;
 }
 .kpi-card-value {
   color: #475569;
