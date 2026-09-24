@@ -91,7 +91,7 @@ export function TaskKpiGrid({ items }) {
           disabled={!k.onClick}
           className={`text-left bg-white border border-slate-200 rounded-sm p-4 border-l-4 ${k.accent || "border-l-[#003B73]"} ${k.onClick ? "hover:shadow-sm cursor-pointer" : ""}`}
         >
-          <div className="kpi-card-title font-display text-xs font-extrabold uppercase tracking-[0.14em] text-slate-800">{k.label}</div>
+          <div className="kpi-card-title font-display text-xs font-extrabold uppercase tracking-[0.14em] text-[#003B73]">{k.label}</div>
           <div className="font-display text-2xl font-bold text-slate-900 mt-1 tabular-nums">{k.value ?? 0}</div>
           {k.hint && <div className="text-xs text-slate-500 mt-1">{k.hint}</div>}
         </button>
