@@ -93,22 +93,20 @@ export function KpiCard({ label, value, hint, accent = "primary", testId, icon: 
     <div
       data-testid={testId}
       className={[
-        "group relative overflow-hidden rounded-xl border border-slate-200/80 bg-white p-4 app-card h-full",
+        "group relative overflow-hidden rounded-xl border border-slate-200/80 bg-white p-4 app-card",
         "transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-300/30",
         "border-l-4",
         styles.border,
       ].join(" ")}
     >
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${styles.glow} opacity-80`} />
-      <div className="relative flex items-center justify-between gap-3 h-full">
+      <div className="relative flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <div className="kpi-card-title font-display text-xs font-extrabold uppercase tracking-[0.08em] text-slate-800 leading-tight min-h-[2.25rem] flex items-end">
-            {label}
-          </div>
-          <div className="font-display text-2xl sm:text-[1.75rem] font-normal tracking-tight text-slate-900 mt-1.5 tabular-nums leading-none">
+          <div className="kpi-card-title font-display text-xs font-extrabold uppercase tracking-[0.14em] text-slate-800">{label}</div>
+          <div className="font-display text-2xl sm:text-[1.75rem] font-normal tracking-tight text-slate-900 mt-1.5 tabular-nums">
             {value}
           </div>
-          <div className="text-xs text-slate-500 mt-1.5 min-h-[1rem] leading-4">{hint || "\u00a0"}</div>
+          {hint && <div className="text-xs text-slate-500 mt-1.5">{hint}</div>}
         </div>
         {Icon && (
           <div className={`shrink-0 rounded-lg p-2.5 ${styles.icon}`}>

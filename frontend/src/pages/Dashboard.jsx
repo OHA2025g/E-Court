@@ -527,7 +527,7 @@ export default function Dashboard() {
   // Physical Target / Achieved / Avg % only when a single component is selected.
   const showPhysicalKpis = Boolean(component);
   const kpiRow = (
-    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch ${showPhysicalKpis ? "xl:grid-cols-6" : ""}`}>
+    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 ${showPhysicalKpis ? "xl:grid-cols-6" : ""}`}>
       {showPhysicalKpis && (
         <>
           <KpiCard testId={TID.kpiPhysicalTarget} icon={Target} label={labels.physTargetSum} value={physTargetDisp} accent="primary" />
