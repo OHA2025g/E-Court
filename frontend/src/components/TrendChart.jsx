@@ -224,8 +224,8 @@ export default function TrendChart({ trendData, infoOpen, onInfoOpenChange }) {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={periods} margin={{ top: 8, right: 12, left: 8, bottom: 8 }}>
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-            <XAxis dataKey="period" stroke="#475569" fontSize={14} />
-            <YAxis stroke="#475569" fontSize={14} width={48} />
+            <XAxis dataKey="period" stroke="#475569" fontSize={12} />
+            <YAxis stroke="#475569" fontSize={12} width={48} />
             <Tooltip
               content={({ active, payload, label }) => {
                 if (!active || !payload?.length) return null;

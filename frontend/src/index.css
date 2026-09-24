@@ -347,6 +347,9 @@ table.dense-table tr:hover td { @apply bg-slate-50; }
 .app-card > header h3 {
   font-weight: 700;
 }
+.recharts-cartesian-axis-tick text {
+  font-weight: 700;
+}
 .app-btn-primary {
   display: inline-flex;
   align-items: center;

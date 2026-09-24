@@ -320,9 +320,9 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={series} margin={{ top: 28, right: 16, left: 28, bottom: 100 }}>
                   <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                  <XAxis dataKey={xLabel} stroke="#475569" fontSize={14} angle={-30} textAnchor="end" interval={0} height={112} dy={4} />
-                  <YAxis yAxisId="left" stroke="#475569" fontSize={14} width={48} label={{ value: barLabel, angle: -90, position: "insideLeft", fontSize: 14 }} />
-                  <YAxis yAxisId="right" orientation="right" stroke="#475569" fontSize={14} width={52} domain={[0, 100]} unit="%" />
+                  <XAxis dataKey={xLabel} stroke="#475569" fontSize={12} angle={-30} textAnchor="end" interval={0} height={112} dy={4} />
+                  <YAxis yAxisId="left" stroke="#475569" fontSize={12} width={48} label={{ value: barLabel, angle: -90, position: "insideLeft", fontSize: 12, fontWeight: 700 }} />
+                  <YAxis yAxisId="right" orientation="right" stroke="#475569" fontSize={12} width={52} domain={[0, 100]} unit="%" />
                   <Tooltip content={<ParetoTooltip barLabel={barLabel} />} />
                   <Bar
                     yAxisId="left"
