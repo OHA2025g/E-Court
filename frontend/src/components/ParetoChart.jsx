@@ -323,13 +323,13 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
                   <XAxis
                     dataKey={xLabel}
                     stroke="#475569"
-                    fontSize={11}
+                    fontSize={10.5}
                     angle={-30}
                     textAnchor="end"
                     interval={0}
                     height={112}
                     dy={4}
-                    tick={{ fill: "#475569", fontSize: 11, fontWeight: 700 }}
+                    tick={{ fill: "#475569", fontSize: 10.5, fontWeight: 700 }}
                   />
                   <YAxis yAxisId="left" stroke="#475569" fontSize={12} width={48} label={{ value: barLabel, angle: -90, position: "insideLeft", fontSize: 12, fontWeight: 700 }} />
                   <YAxis yAxisId="right" orientation="right" stroke="#475569" fontSize={12} width={52} domain={[0, 100]} unit="%" />
