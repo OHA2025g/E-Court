@@ -363,6 +363,10 @@ table.dense-table tr:hover td { @apply bg-slate-50; }
   font-weight: 800 !important;
   fill: #64748b !important;
 }
+.pareto-chart .recharts-wrapper,
+.pareto-chart .recharts-surface {
+  overflow: visible;
+}
 .pareto-chart .recharts-xAxis .recharts-cartesian-axis-tick text,
 .pareto-chart .recharts-xAxis .recharts-cartesian-axis-tick-value {
   font-family: "Chivo", "IBM Plex Sans", system-ui, sans-serif !important;

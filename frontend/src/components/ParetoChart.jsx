@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Info } from "@phosphor-icons/react";
@@ -13,6 +13,31 @@ import {
   ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, Tooltip,
   CartesianGrid, LabelList,
 } from "recharts";
+
+const PARETO_X_FONT_SIZE = 10.3;
+const PARETO_X_ANGLE = 30;
+const PARETO_X_FONT = `800 ${PARETO_X_FONT_SIZE}px Chivo, "IBM Plex Sans", system-ui, sans-serif`;
+const PARETO_CHART_MARGIN = { top: 28, right: 16, left: 28, bottom: 100 };
+const PARETO_LEFT_AXIS_WIDTH = 48;
+
+function paretoLabelWidth(text) {
+  const fallback = text.length * 6.7;
+  if (typeof document === "undefined") return fallback;
+  const canvas = paretoLabelWidth.canvas || (paretoLabelWidth.canvas = document.createElement("canvas"));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return fallback;
+  ctx.font = PARETO_X_FONT;
+  return Math.max(fallback, ctx.measureText(text).width);
+}
+
+/** Room so the first angled label stays inside the chart instead of clipping on the left. */
+function paretoXAxisLeftPadding(label) {
+  const text = String(label || "");
+  if (!text) return 12;
+  const horizontal = paretoLabelWidth(text) * Math.cos((PARETO_X_ANGLE * Math.PI) / 180);
+  const reserved = PARETO_CHART_MARGIN.left + PARETO_LEFT_AXIS_WIDTH;
+  return Math.min(140, Math.max(12, Math.ceil(horizontal - reserved + 16)));
+}
 
 function ParetoTooltip({ active, payload, label, barLabel }) {
   if (!active || !payload?.length) return null;
@@ -233,6 +258,9 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
   const [accessible] = useAccessibleRag();
   const [metric, setMetric] = useState("physical");
   const [infoOpen, setInfoOpen] = useState(false);
+  const [fontsReady, setFontsReady] = useState(
+    () => typeof document !== "undefined" && document.fonts?.status === "loaded",
+  );
   const { data: fetched, isLoading } = useQuery({
     queryKey: ["pareto", reportingPeriod, highCourt, component, metric, publicMode, authScope],
     queryFn: () => api.get(`${publicMode ? "/public" : "/dashboard"}/pareto-red-flags`, {
@@ -257,6 +285,21 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
   const subtitle = cutoff
     ? `Top ${cutoff} ${isOutcome ? "subject(s)" : "component(s)"} account for ≥80% of ${isOutcome ? "missing outcome values" : isFinancial ? "red financial components" : "red indicators"} (${totalRed} total)`
     : isOutcome ? "Outcome KPIs without reported values" : isFinancial ? "Financial components at RED RAG" : "Physical indicators at RED RAG";
+
+  useEffect(() => {
+    let active = true;
+    document.fonts?.ready?.then(() => {
+      if (active) setFontsReady(true);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const xPadLeft = useMemo(
+    () => paretoXAxisLeftPadding(series[0]?.[xLabel]),
+    [series, xLabel, fontsReady],
+  );
 
   const infoAria = t("dashboard.paretoInfoAria");
   const infoTitle = t("dashboard.paretoInfoTitle");
@@ -318,20 +361,21 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
           <>
             <div className="pareto-chart h-[26rem]">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={series} margin={{ top: 28, right: 16, left: 28, bottom: 100 }}>
+                <ComposedChart data={series} margin={PARETO_CHART_MARGIN}>
                   <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
                   <XAxis
                     dataKey={xLabel}
                     stroke="#475569"
-                    fontSize={10.3}
-                    angle={-30}
+                    fontSize={PARETO_X_FONT_SIZE}
+                    angle={-PARETO_X_ANGLE}
                     textAnchor="end"
                     interval={0}
                     height={112}
                     dy={4}
-                    tick={{ fill: "#64748b", fontSize: 10.3, fontWeight: 800 }}
+                    padding={{ left: xPadLeft, right: 8 }}
+                    tick={{ fill: "#64748b", fontSize: PARETO_X_FONT_SIZE, fontWeight: 800 }}
                   />
-                  <YAxis yAxisId="left" stroke="#475569" fontSize={10.5} width={48} tick={{ fill: "#64748b", fontSize: 10.5, fontWeight: 800 }} label={{ value: barLabel, angle: -90, position: "insideLeft", fontSize: 10.5, fontWeight: 800 }} />
+                  <YAxis yAxisId="left" stroke="#475569" fontSize={10.5} width={PARETO_LEFT_AXIS_WIDTH} tick={{ fill: "#64748b", fontSize: 10.5, fontWeight: 800 }} label={{ value: barLabel, angle: -90, position: "insideLeft", fontSize: 10.5, fontWeight: 800 }} />
                   <YAxis yAxisId="right" orientation="right" stroke="#475569" fontSize={10.5} width={52} domain={[0, 100]} unit="%" tick={{ fill: "#64748b", fontSize: 10.5, fontWeight: 800 }} />
                   <Tooltip content={<ParetoTooltip barLabel={barLabel} />} />
                   <Bar
