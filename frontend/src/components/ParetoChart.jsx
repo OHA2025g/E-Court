@@ -329,10 +329,10 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
                     interval={0}
                     height={112}
                     dy={4}
-                    tick={{ fill: "#475569", fontSize: 10.5, fontWeight: 700 }}
+                    tick={{ fill: "#475569", fontSize: 10.5, fontWeight: 800 }}
                   />
-                  <YAxis yAxisId="left" stroke="#475569" fontSize={10.5} width={48} label={{ value: barLabel, angle: -90, position: "insideLeft", fontSize: 10.5, fontWeight: 700 }} />
-                  <YAxis yAxisId="right" orientation="right" stroke="#475569" fontSize={10.5} width={52} domain={[0, 100]} unit="%" />
+                  <YAxis yAxisId="left" stroke="#475569" fontSize={10.5} width={48} tick={{ fill: "#475569", fontSize: 10.5, fontWeight: 800 }} label={{ value: barLabel, angle: -90, position: "insideLeft", fontSize: 10.5, fontWeight: 800 }} />
+                  <YAxis yAxisId="right" orientation="right" stroke="#475569" fontSize={10.5} width={52} domain={[0, 100]} unit="%" tick={{ fill: "#475569", fontSize: 10.5, fontWeight: 800 }} />
                   <Tooltip content={<ParetoTooltip barLabel={barLabel} />} />
                   <Bar
                     yAxisId="left"
