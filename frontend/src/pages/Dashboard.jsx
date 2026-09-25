@@ -641,8 +641,8 @@ export default function Dashboard() {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={compChartRows} margin={{ top: 8, right: 16, left: 8, bottom: 88 }}>
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-            <XAxis dataKey="component" stroke="#475569" fontSize={12} angle={-25} textAnchor="end" interval={0} height={110} />
-            <YAxis stroke="#475569" fontSize={12} unit="%" width={56} />
+            <XAxis dataKey="component" stroke="#475569" fontSize={10.5} angle={-25} textAnchor="end" interval={0} height={110} />
+            <YAxis stroke="#475569" fontSize={10.5} unit="%" width={56} />
             <Tooltip content={<PerformancePctTooltip nameKey="component" selectedComponent={component} />} />
             <Legend />
             <Bar dataKey="phys_percent" name={seriesLegendLabel("Physical %", "phys_percent", accessibleRag)} {...barSeriesProps("phys_percent", accessibleRag)} />
@@ -659,8 +659,8 @@ export default function Dashboard() {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={hcChartRows} margin={{ top: 8, right: 16, left: 8, bottom: 108 }}>
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-            <XAxis dataKey="high_court" stroke="#475569" fontSize={12} angle={-35} textAnchor="end" interval={0} height={130} />
-            <YAxis stroke="#475569" fontSize={12} unit="%" width={56} />
+            <XAxis dataKey="high_court" stroke="#475569" fontSize={10.5} angle={-35} textAnchor="end" interval={0} height={130} />
+            <YAxis stroke="#475569" fontSize={10.5} unit="%" width={56} />
             <Tooltip content={<PerformancePctTooltip nameKey="high_court" selectedComponent={component} />} />
             <Legend />
             <Bar dataKey="phys_percent" name={seriesLegendLabel("Physical %", "phys_percent", accessibleRag)} {...barSeriesProps("phys_percent_hc", accessibleRag)} />

@@ -399,8 +399,8 @@ export default function PublicProgress() {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={hcBars} margin={{ top: 8, right: 8, left: 8, bottom: 100 }}>
                       <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                      <XAxis dataKey="high_court" stroke="#475569" fontSize={12} angle={-35} textAnchor="end" interval={0} height={112} />
-                      <YAxis stroke="#475569" fontSize={12} unit="%" width={56} domain={[0, 100]} />
+                      <XAxis dataKey="high_court" stroke="#475569" fontSize={10.5} angle={-35} textAnchor="end" interval={0} height={112} />
+                      <YAxis stroke="#475569" fontSize={10.5} unit="%" width={56} domain={[0, 100]} />
                       <Tooltip formatter={(v, _n, item) => [
                         `${Number(v).toFixed(1)}%`,
                         accessibleRag
@@ -428,8 +428,8 @@ export default function PublicProgress() {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={outcomeBars} margin={{ top: 8, right: 8, left: 8, bottom: 100 }}>
                       <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                      <XAxis dataKey="high_court" stroke="#475569" fontSize={12} angle={-35} textAnchor="end" interval={0} height={112} />
-                      <YAxis stroke="#475569" fontSize={12} unit="%" width={56} domain={[0, 100]} />
+                      <XAxis dataKey="high_court" stroke="#475569" fontSize={10.5} angle={-35} textAnchor="end" interval={0} height={112} />
+                      <YAxis stroke="#475569" fontSize={10.5} unit="%" width={56} domain={[0, 100]} />
                       <Tooltip formatter={(v, _n, item) => [
                         `${Number(v).toFixed(1)}% (${item.payload.reported}/${item.payload.total} KPIs)`,
                         "Reporting",

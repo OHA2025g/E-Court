@@ -357,9 +357,11 @@ table.dense-table tr:hover td { @apply bg-slate-50; }
   opacity: 0.9;
 }
 .recharts-cartesian-axis-tick text {
+  font-size: 10.5px;
   font-weight: 700;
 }
 .pareto-chart .recharts-xAxis .recharts-cartesian-axis-tick text {
+  font-size: 10.5px;
   font-weight: 700;
 }
 .app-btn-primary {

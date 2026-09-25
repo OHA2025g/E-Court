@@ -371,8 +371,8 @@ function UtilPctComponentHcChart({ rows, hcNames, utilPctLabel }) {
             barSize={barSize}
           >
             <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-            <XAxis type="number" stroke="#475569" fontSize={12} unit="%" domain={[0, "auto"]} />
-            <YAxis type="category" dataKey="component" stroke="#475569" fontSize={12} width={148} />
+            <XAxis type="number" stroke="#475569" fontSize={10.5} unit="%" domain={[0, "auto"]} />
+            <YAxis type="category" dataKey="component" stroke="#475569" fontSize={10.5} width={148} />
             <Tooltip formatter={(v) => [fmtPct(v), utilPctLabel]} />
             {hcNames.map((hc, i) => (
               <Bar
@@ -604,13 +604,13 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
                 <XAxis
                   dataKey="label"
                   stroke="#475569"
-                  fontSize={12}
+                  fontSize={10.5}
                   angle={-40}
                   textAnchor="end"
                   interval={0}
                   height={120}
                 />
-                <YAxis stroke="#475569" fontSize={12} width={56} />
+                <YAxis stroke="#475569" fontSize={10.5} width={56} />
                 <Tooltip content={<HcReleasedSplitTooltip labels={labels} />} />
                 <Legend content={<HcReleasedSplitLegend labels={labels} />} />
                 <Bar
@@ -656,8 +656,8 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={hcComponentReleasedRows} margin={{ top: 8, right: 12, left: 8, bottom: 80 }}>
                       <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                      <XAxis dataKey="label" stroke="#475569" fontSize={12} angle={-25} textAnchor="end" interval={0} height={96} />
-                      <YAxis stroke="#475569" fontSize={12} width={56} />
+                      <XAxis dataKey="label" stroke="#475569" fontSize={10.5} angle={-25} textAnchor="end" interval={0} height={96} />
+                      <YAxis stroke="#475569" fontSize={10.5} width={56} />
                       <Tooltip content={<HcComponentAmountTooltip pctKey="_release_pct" />} />
                       {chartComponents.map((comp, i) => (
                         <Bar key={comp} dataKey={comp} name={comp} fill={CHART_COLORS[i % CHART_COLORS.length]} radius={[2, 2, 0, 0]} />
@@ -722,8 +722,8 @@ export default function FinancialTrackerDashboardTab({ reportingPeriod, highCour
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={hcComponentUtilizedRows} margin={{ top: 8, right: 8, left: 8, bottom: 72 }}>
                       <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                      <XAxis dataKey="label" stroke="#475569" fontSize={12} angle={-20} textAnchor="end" interval={0} height={84} />
-                      <YAxis stroke="#475569" fontSize={12} width={56} />
+                      <XAxis dataKey="label" stroke="#475569" fontSize={10.5} angle={-20} textAnchor="end" interval={0} height={84} />
+                      <YAxis stroke="#475569" fontSize={10.5} width={56} />
                       <Tooltip content={<HcComponentAmountTooltip pctKey="_util_pct" />} />
                       {chartComponents.slice(0, 3).map((comp, i) => (
                         <Bar key={comp} dataKey={comp} name={comp} fill={CHART_COLORS[i % CHART_COLORS.length]} />
