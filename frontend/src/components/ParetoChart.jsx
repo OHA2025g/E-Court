@@ -316,11 +316,21 @@ export default function ParetoChart({ reportingPeriod, highCourt = "", component
           </div>
         ) : (
           <>
-            <div className="h-[26rem]">
+            <div className="pareto-chart h-[26rem]">
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={series} margin={{ top: 28, right: 16, left: 28, bottom: 100 }}>
                   <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" />
-                  <XAxis dataKey={xLabel} stroke="#475569" fontSize={12} angle={-30} textAnchor="end" interval={0} height={112} dy={4} />
+                  <XAxis
+                    dataKey={xLabel}
+                    stroke="#475569"
+                    fontSize={11.5}
+                    angle={-30}
+                    textAnchor="end"
+                    interval={0}
+                    height={112}
+                    dy={4}
+                    tick={{ fill: "#475569", fontSize: 11.5, fontWeight: 700 }}
+                  />
                   <YAxis yAxisId="left" stroke="#475569" fontSize={12} width={48} label={{ value: barLabel, angle: -90, position: "insideLeft", fontSize: 12, fontWeight: 700 }} />
                   <YAxis yAxisId="right" orientation="right" stroke="#475569" fontSize={12} width={52} domain={[0, 100]} unit="%" />
                   <Tooltip content={<ParetoTooltip barLabel={barLabel} />} />

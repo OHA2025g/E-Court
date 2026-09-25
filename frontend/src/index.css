@@ -359,6 +359,9 @@ table.dense-table tr:hover td { @apply bg-slate-50; }
 .recharts-cartesian-axis-tick text {
   font-weight: 700;
 }
+.pareto-chart .recharts-xAxis .recharts-cartesian-axis-tick text {
+  font-weight: 700;
+}
 .app-btn-primary {
   display: inline-flex;
   align-items: center;
