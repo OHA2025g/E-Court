@@ -9,6 +9,11 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
+# Production image builds must finish inside the host deploy window.
+# ESLint and source maps are the slow part of a CRA production build.
+ENV DISABLE_ESLINT_PLUGIN=true
+ENV GENERATE_SOURCEMAP=false
+
 ARG REACT_APP_BACKEND_URL=https://ecourt.demoapi.agrayianailabs.com
 ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
 # Runtime fallback for CSP when CSP_API_ORIGIN is unset (Easypanel env injection)
